@@ -41,14 +41,16 @@
         .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: var(--border); }
         .icon-btn.delete:hover { background: rgba(247, 90, 104, 0.2); color: var(--danger); border-color: var(--danger); }
         
-        /* Botão Fechar Modal (X) */
+        /* Botão Fechar Modal (X) - CORRIGIDO */
         .btn-close-modal {
             background: transparent !important; border: none !important; color: var(--text-secondary) !important;
             cursor: pointer; font-size: 1.5rem; padding: 5px; width: auto !important; height: auto !important;
         }
+        .btn-close-modal:hover { color: white !important; }
 
         /* Botão Ver Mais */
-        .btn-ver-mais { width: 100%; background: rgba(255,255,255,0.05); border: 1px dashed var(--border); color: var(--text-secondary); padding: 8px; margin-top: 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; text-align: center; }
+        .btn-ver-mais { width: 100%; background: rgba(255,255,255,0.05); border: 1px dashed var(--border); color: var(--text-secondary); padding: 8px; margin-top: 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; text-align: center; transition: 0.2s; }
+        .btn-ver-mais:hover { background: rgba(255,255,255,0.1); color: white; }
 
         /* GRIDS */
         .card { background: var(--bg-card); border-radius: 8px; padding: 15px; border: 1px solid var(--border); }
@@ -176,11 +178,11 @@
 
 <div class="container" id="app-container" style="opacity:0">
     <header class="header">
-        <div class="brand">AUTOCAR <span>BS</span></div>
+        <div class="brand">AUTOCAR<span>BS</span></div>
         <div style="display:flex; gap:10px;">
-            <button class="icon-btn" onclick="location.reload()" title="Sair"><i class="ph ph-lock-key"></i></button>
+            <button class="icon-btn" onclick="fazerLogout()" title="Sair"><i class="ph ph-lock-key"></i></button>
             <button class="btn btn-primary" onclick="abrirModalCadastro()">
-                <i class="ph ph-plus-circle" style="font-size:1.2rem;"></i> <span>NOVO</span>
+                <i class="ph ph-plus-circle" style="font-size:1.2rem;"></i> <span>CADASTRAR</span>
             </button>
         </div>
     </header>
@@ -201,7 +203,7 @@
             <div style="padding-bottom:15px; border-bottom:1px solid var(--border); margin-bottom:10px;">
                 <div class="search-wrapper">
                     <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" id="input-busca" placeholder="BUSCAR..." onkeyup="pesquisar()">
+                    <input type="text" id="input-busca" placeholder="BUSCAR" onkeyup="pesquisar()">
                 </div>
             </div>
             
@@ -229,12 +231,17 @@
 
         <div class="side-panels">
             <div class="card" style="border-top:3px solid var(--primary);">
-                <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--primary);"><i class="ph ph-warning-circle"></i> Reposição</h3>
+                <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--primary);">
+                    <i class="ph ph-warning-circle"></i> Reposição
+                </h3>
                 <div id="lista-alertas"></div>
                 <div id="btn-alertas-more"></div>
             </div>
+            
             <div class="card" style="border-top:3px solid var(--success);">
-                <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--success);"><i class="ph ph-trend-up"></i> Saídas</h3>
+                <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--success);">
+                    <i class="ph ph-trend-up"></i> Saídas
+                </h3>
                 <div id="lista-ranking"></div>
                 <div id="btn-ranking-more"></div>
             </div>
@@ -319,7 +326,7 @@
     // --- ⚠️ CONFIGURAÇÕES ⚠️ ---
     const SUPABASE_URL = 'https://kbevcnghakaukullqqag.supabase.co'; 
     const SUPABASE_KEY = 'sb_publishable_eOCHnwiD8BzJA75PwAR0nQ_3oQ4kkvX'; 
-    const SENHA_PIN = '1234';        
+    const SENHA_PIN = '2569';        
     const SENHA_EXCLUSAO = '9999';   
 
     const { createClient } = supabase;
@@ -342,15 +349,29 @@
         if(novo !== itemsPerPage) { itemsPerPage = novo; carregarTabela(1); }
     });
 
-    // --- SISTEMA ---
+    // --- CHECK LOGIN NA INICIALIZAÇÃO ---
+    window.onload = function() {
+        if(localStorage.getItem('autocar_sessao') === 'ativa') {
+            document.getElementById('login-screen').style.display = 'none';
+            ajustarItensPorPagina();
+            carregarTudo();
+        }
+    };
+
     function fazerLogin() {
         if(document.getElementById('senha-acesso').value === SENHA_PIN) {
+            localStorage.setItem('autocar_sessao', 'ativa'); // Salva Sessão
             document.getElementById('login-screen').style.display = 'none';
             ajustarItensPorPagina();
             carregarTudo();
         } else {
             document.getElementById('msg-erro').style.display = 'block';
         }
+    }
+
+    function fazerLogout() {
+        localStorage.removeItem('autocar_sessao'); // Remove Sessão
+        location.reload();
     }
 
     function carregarTudo() {
@@ -408,9 +429,7 @@
 
         listaProdutos.forEach(p => {
             const isLow = p.qtd < p.minimo;
-            const style = isLow ? 'color:var(--danger);' : '';
             
-            // Renderiza com Labels (Mobile) e Células (Desktop)
             tbody.innerHTML += `
                 <tr>
                     <td>
@@ -424,7 +443,7 @@
                     <td><span class="mobile-label">VENDA:</span> R$ ${p.venda.toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
                     <td>
                         <span class="mobile-label">ESTOQUE:</span>
-                        <strong style="${style}">${p.qtd}</strong>
+                        <strong style="${isLow ? 'color:var(--danger);' : ''}">${p.qtd}</strong>
                         ${isLow ? '<span class="badge low" style="margin-left:5px">REPOR</span>' : ''}
                     </td>
                     <td>
@@ -583,4 +602,4 @@
     function fecharModal(id) { document.getElementById(id).classList.add('hidden'); idEdicao=null; idExclusao=null; }
 </script>
 </body>
-</html>f
+</html>
