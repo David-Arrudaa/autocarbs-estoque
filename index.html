@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>AutoCar BS - Estoque</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <style>
+      /* --- VISUAL BASE --- */
+      :root {
+        --bg-body: #09090a;
+        --bg-card: #202024;
+        --bg-input: #121214;
+        --border: #323238;
+        --text-primary: #e1e1e6;
+        --text-secondary: #8d8d99;
+        --primary: #ef4444;
+        --primary-hover: #dc2626;
+        --danger: #f75a68;
+        --success: #04d361;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "Segoe UI", "Roboto", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-primary);
+        margin: 0;
+        padding: 15px;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand {
+        font-size: 1.5rem;
+        font-weight: 800;
+        font-style: italic;
+      }
+      .brand span {
+        color: var(--primary);
+        font-style: normal;
+      }
+
+      /* BOTOES */
+      .btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+      .icon-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        font-size: 1.4rem;
+        padding: 5px;
+      }
+      .icon-btn.delete:hover {
+        color: var(--danger);
+        background: rgba(247, 90, 104, 0.1);
+        border-radius: 4px;
+      }
+
+      /* Botão "Ver Mais" */
+      .btn-ver-mais {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px dashed var(--border);
+        color: var(--text-secondary);
+        padding: 8px;
+        margin-top: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        text-align: center;
+        transition: 0.2s;
+      }
+      .btn-ver-mais:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      /* GRIDS */
+      .card {
+        background: var(--bg-card);
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid var(--border);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      .main-grid {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 15px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      /* TABELA */
+      .table-container {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .table-wrapper {
+        overflow: auto;
+        flex: 1;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+      th {
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        position: sticky;
+        top: 0;
+        background: var(--bg-card);
+        z-index: 10;
+      }
+
+      /* SIDEBAR LISTAS */
+      .side-panels {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+      }
+      .list-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+
+      /* INPUTS */
+      .search-wrapper {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .search-wrapper input {
+        background: transparent;
+        border: none;
+        color: white;
+        width: 100%;
+        outline: none;
+        text-transform: uppercase;
+      }
+
+      /* MODAIS */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 2000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      .modal-form {
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 8px;
+        width: 500px;
+        max-width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+      }
+      .modal-list {
+        background: var(--bg-card);
+        padding: 20px;
+        border-radius: 8px;
+        width: 450px;
+        max-width: 100%;
+        max-height: 80vh;
+        overflow-y: auto;
+        border: 1px solid var(--border);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      .form-control label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 5px;
+      }
+      .form-control input {
+        width: 100%;
+        padding: 12px;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: white;
+        outline: none;
+        text-transform: uppercase;
+      }
+
+      .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        padding: 10px;
+        background: rgba(4, 211, 97, 0.1);
+        border-radius: 6px;
+      }
+      .checkbox-wrapper input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--success);
+      }
+
+      .badge {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .badge.low {
+        background: rgba(247, 90, 104, 0.1);
+        color: var(--danger);
+      }
+      .badge.ok {
+        background: rgba(4, 211, 97, 0.1);
+        color: var(--success);
+      }
+      .blur-value {
+        filter: blur(6px);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+          overflow-y: auto;
+          height: auto;
+          min-height: 100vh;
+        }
+        .container {
+          height: auto;
+          display: block;
+        }
+        .main-grid {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+        .table-container {
+          height: 500px;
+        }
+        .form-grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .brand {
+          font-size: 1.2rem;
+        }
+        .btn span {
+          display: none;
+        }
+      }
+
+      #login-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-body);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .login-box {
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        width: 90%;
+        max-width: 350px;
+        text-align: center;
+      }
+
+      /* Modal de Exclusão (Perigo) */
+      .delete-box {
+        border-color: var(--danger);
+        box-shadow: 0 0 20px rgba(247, 90, 104, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login-screen">
+      <div class="login-box">
+        <div
+          class="brand"
+          style="justify-content: center; margin-bottom: 30px; font-size: 2rem"
+        >
+          AUTOCAR <span>BS</span>
+        </div>
+        <input
+          type="password"
+          id="senha-acesso"
+          style="
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            text-align: center;
+          "
+          placeholder="SENHA DE ACESSO"
+          inputmode="numeric"
+        />
+        <button
+          class="btn btn-primary"
+          style="width: 100%; justify-content: center"
+          onclick="fazerLogin()"
+        >
+          ACESSAR
+        </button>
+        <p
+          id="msg-erro"
+          style="color: var(--danger); display: none; margin-top: 10px"
+        >
+          Senha incorreta!
+        </p>
+      </div>
+    </div>
+
+    <div class="container" id="app-container" style="opacity: 0">
+      <header class="header">
+        <div class="brand">AUTOCAR <span>BS</span></div>
+        <div style="display: flex; gap: 10px">
+          <button class="icon-btn" onclick="location.reload()" title="Sair">
+            <i class="ph ph-lock-key"></i>
+          </button>
+          <button class="btn btn-primary" onclick="abrirModalCadastro()">
+            <i class="ph ph-plus-circle" style="font-size: 1.2rem"></i>
+            <span>NOVO</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="stats-grid">
+        <div
+          class="card"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <span style="color: var(--text-secondary); font-size: 0.8rem"
+              >VALOR ESTOQUE</span
+            ><strong
+              id="valor-total"
+              class="blur-value"
+              style="display: block; font-size: 1.2rem"
+              >R$ 0,00</strong
+            >
+          </div>
+          <button class="icon-btn" onclick="toggleFinanceiro()">
+            <i class="ph ph-eye"></i>
+          </button>
+        </div>
+        <div
+          class="card"
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <div>
+            <span style="color: var(--text-secondary); font-size: 0.8rem"
+              >TOTAL ITENS</span
+            ><strong id="total-itens" style="display: block; font-size: 1.2rem"
+              >0</strong
+            >
+          </div>
+          <i
+            class="ph ph-wrench"
+            style="font-size: 1.5rem; color: var(--primary)"
+          ></i>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="card table-container">
+          <div
+            style="
+              padding-bottom: 15px;
+              border-bottom: 1px solid var(--border);
+              margin-bottom: 10px;
+            "
+          >
+            <div class="search-wrapper">
+              <i class="ph ph-magnifying-glass"></i>
+              <input
+                type="text"
+                id="input-busca"
+                placeholder="BUSCAR PEÇA..."
+                onkeyup="renderizarTabela()"
+              />
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Venda</th>
+                  <th>Qtd</th>
+                  <th style="text-align: right">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-estoque"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="side-panels">
+          <div class="card" style="border-top: 3px solid var(--primary)">
+            <h3
+              style="margin: 0 0 10px 0; font-size: 1rem; color: var(--primary)"
+            >
+              <i class="ph ph-warning-circle"></i> Reposição
+            </h3>
+            <div id="lista-alertas"></div>
+            <div id="btn-alertas-more"></div>
+          </div>
+
+          <div class="card" style="border-top: 3px solid var(--success)">
+            <h3
+              style="margin: 0 0 10px 0; font-size: 1rem; color: var(--success)"
+            >
+              <i class="ph ph-trend-up"></i> Saídas
+            </h3>
+            <div id="lista-ranking"></div>
+            <div id="btn-ranking-more"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-cadastro" class="modal-overlay hidden">
+      <div class="modal-form">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+          "
+        >
+          <h3 style="margin: 0">PRODUTO</h3>
+          <button class="icon-btn" onclick="fecharModal('modal-cadastro')">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+        <div class="form-grid">
+          <div class="form-control">
+            <label>TIPO</label
+            ><input type="text" id="tipo" placeholder="EX: FILTRO" />
+          </div>
+          <div class="form-control">
+            <label>MARCA</label
+            ><input type="text" id="marca" placeholder="EX: BOSCH" />
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-control">
+            <label>MODELO</label><input type="text" id="modelo" />
+          </div>
+          <div class="form-control">
+            <label>CÓDIGO</label><input type="text" id="codigo" />
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-control">
+            <label>QTD</label
+            ><input type="number" id="qtd" inputmode="numeric" />
+          </div>
+          <div class="form-control">
+            <label>MÍNIMO</label
+            ><input type="number" id="minimo" inputmode="numeric" />
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-control">
+            <label>CUSTO</label
+            ><input
+              type="text"
+              id="valorCompra"
+              placeholder="0,00"
+              oninput="mascaraMoeda(this)"
+              inputmode="numeric"
+            />
+          </div>
+          <div class="form-control">
+            <label>VENDA</label
+            ><input
+              type="text"
+              id="valorVenda"
+              placeholder="0,00"
+              oninput="mascaraMoeda(this)"
+              inputmode="numeric"
+            />
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          style="width: 100%; justify-content: center; margin-top: 20px"
+          onclick="salvarProduto()"
+        >
+          SALVAR
+        </button>
+      </div>
+    </div>
+
+    <div id="modal-saida" class="modal-overlay hidden">
+      <div class="modal-form" style="width: 350px">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+          "
+        >
+          <h3 style="margin: 0; color: var(--danger)">BAIXAR ESTOQUE</h3>
+          <button class="icon-btn" onclick="fecharModal('modal-saida')">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+        <p
+          id="nome-produto-saida"
+          style="
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+          "
+        >
+          ...
+        </p>
+        <div class="form-control">
+          <label style="text-align: center">QTD RETIRAR</label>
+          <input
+            type="number"
+            id="qtd-saida"
+            value="1"
+            style="font-size: 1.5rem; text-align: center"
+            inputmode="numeric"
+          />
+        </div>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" id="check-venda" checked />
+          <div>
+            <strong
+              style="color: var(--success); display: block; font-size: 0.9rem"
+              >É VENDA?</strong
+            >
+            <span style="font-size: 0.75rem; color: var(--text-secondary)"
+              >Conta no ranking</span
+            >
+          </div>
+        </div>
+        <button
+          class="btn btn-primary"
+          style="width: 100%; justify-content: center; margin-top: 20px"
+          onclick="confirmarSaida()"
+        >
+          CONFIRMAR
+        </button>
+      </div>
+    </div>
+
+    <div id="modal-senha-exclusao" class="modal-overlay hidden">
+      <div
+        class="modal-form delete-box"
+        style="width: 350px; text-align: center"
+      >
+        <div style="margin-bottom: 20px">
+          <i
+            class="ph ph-warning-octagon"
+            style="font-size: 3rem; color: var(--danger)"
+          ></i>
+          <h3 style="color: var(--danger); margin: 10px 0">ÁREA RESTRITA</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary)">
+            Para excluir permanentemente este item, digite a senha de
+            supervisor.
+          </p>
+        </div>
+        <input
+          type="password"
+          id="senha-supervisor"
+          style="
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            background: var(--bg-input);
+            border: 1px solid var(--danger);
+            border-radius: 6px;
+            color: white;
+            text-align: center;
+          "
+          placeholder="SENHA MESTRA"
+          inputmode="numeric"
+        />
+        <div style="display: flex; gap: 10px">
+          <button
+            class="btn"
+            style="flex: 1; background: #333; color: white"
+            onclick="fecharModal('modal-senha-exclusao')"
+          >
+            CANCELAR
+          </button>
+          <button
+            class="btn"
+            style="flex: 1; background: var(--danger); color: white"
+            onclick="confirmarExclusao()"
+          >
+            EXCLUIR
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-lista" class="modal-overlay hidden">
+      <div class="modal-list">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+          "
+        >
+          <h3 id="titulo-modal-lista" style="margin: 0">LISTA</h3>
+          <button class="icon-btn" onclick="fecharModal('modal-lista')">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+        <div id="conteudo-modal-lista"></div>
+      </div>
+    </div>
+
+    <script>
+      // --- ⚠️ CONFIGURAÇÕES DE ACESSO ⚠️ ---
+      const SUPABASE_URL = "https://kbevcnghakaukullqqag.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_eOCHnwiD8BzJA75PwAR0nQ_3oQ4kkvX";
+      const SENHA_PIN = "2569"; // Senha para ENTRAR (Funcionários)
+      const SENHA_EXCLUSAO = "2008"; // Senha para EXCLUIR (Só você)
+
+      const { createClient } = supabase;
+      const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      let listaProdutos = [];
+      let idEdicao = null;
+      let idMovimentacao = null;
+      let idExclusao = null; // Guarda o ID temporariamente para exclusão
+      let financeiroVisivel = false;
+
+      // --- SISTEMA ---
+      function fazerLogin() {
+        if (document.getElementById("senha-acesso").value === SENHA_PIN) {
+          document.getElementById("login-screen").style.display = "none";
+          carregarDados();
+        } else {
+          document.getElementById("msg-erro").style.display = "block";
+        }
+      }
+
+      async function carregarDados() {
+        const { data, error } = await db
+          .from("produtos")
+          .select("*")
+          .order("tipo");
+        if (!error) {
+          listaProdutos = data;
+          renderizarTabela();
+          document.getElementById("app-container").style.opacity = "1";
+        } else {
+          alert("Erro de conexão!");
+        }
+      }
+
+      function renderizarTabela() {
+        const tbody = document.getElementById("tabela-estoque");
+        const alertas = document.getElementById("lista-alertas");
+        const ranking = document.getElementById("lista-ranking");
+        const busca = document
+          .getElementById("input-busca")
+          .value.toUpperCase();
+        let totalVal = 0;
+
+        tbody.innerHTML = "";
+        alertas.innerHTML = "";
+        ranking.innerHTML = "";
+        document.getElementById("btn-alertas-more").innerHTML = "";
+        document.getElementById("btn-ranking-more").innerHTML = "";
+
+        listaProdutos.forEach((p) => {
+          const fullText =
+            `${p.tipo} ${p.marca} ${p.modelo} ${p.codigo}`.toUpperCase();
+          if (!fullText.includes(busca)) return;
+
+          totalVal += p.compra * p.qtd;
+          const isLow = p.qtd < p.minimo;
+
+          tbody.innerHTML += `
+                <tr>
+                    <td>
+                        <div style="font-weight:700; font-size:0.9rem;">${
+                          p.tipo
+                        } ${p.marca}</div>
+                        <div style="font-size:0.75rem; color:var(--text-secondary);">${
+                          p.modelo || ""
+                        } ${p.codigo || ""}</div>
+                    </td>
+                    <td>R$ ${p.venda.toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                    })}</td>
+                    <td><div style="font-weight:bold">${p.qtd}</div>${
+            isLow ? '<span class="badge low">Repor</span>' : ""
+          }</td>
+                    <td style="text-align:right; white-space:nowrap;">
+                        <button class="icon-btn" onclick="movimentarRapido(${
+                          p.id
+                        }, 1)"><i class="ph ph-plus"></i></button>
+                        <button class="icon-btn" onclick="abrirSaida(${
+                          p.id
+                        })"><i class="ph ph-minus"></i></button>
+                        <button class="icon-btn" onclick="editarProduto(${
+                          p.id
+                        })"><i class="ph ph-pencil-simple"></i></button>
+                        <button class="icon-btn delete" onclick="pedirSenhaExclusao(${
+                          p.id
+                        })"><i class="ph ph-trash"></i></button>
+                    </td>
+                </tr>`;
+        });
+
+        document.getElementById("total-itens").innerText = listaProdutos.length;
+        document.getElementById("valor-total").innerText =
+          totalVal.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          });
+
+        // PAGINAÇÃO REPOSIÇÃO
+        const baixos = listaProdutos.filter((p) => p.qtd < p.minimo);
+        baixos.slice(0, 5).forEach((p) => {
+          alertas.innerHTML += `<div class="list-item"><span>${p.tipo} ${p.marca}</span><strong style="color:var(--primary)">${p.qtd} un</strong></div>`;
+        });
+        if (baixos.length > 5)
+          document.getElementById(
+            "btn-alertas-more"
+          ).innerHTML = `<div class="btn-ver-mais" onclick="abrirModalLista('reposicao')">+ ${
+            baixos.length - 5
+          } itens (Ver todos)</div>`;
+        else if (baixos.length === 0)
+          alertas.innerHTML =
+            '<div style="text-align:center; padding:10px; font-size:0.8rem; color:#666">Estoque OK</div>';
+
+        // PAGINAÇÃO RANKING
+        const rank = [...listaProdutos]
+          .sort((a, b) => b.saidas - a.saidas)
+          .filter((p) => p.saidas > 0);
+        rank.slice(0, 5).forEach((p) => {
+          ranking.innerHTML += `<div class="list-item"><span>${p.tipo} ${p.marca}</span><strong style="color:var(--success)">${p.saidas}</strong></div>`;
+        });
+        if (rank.length > 5)
+          document.getElementById(
+            "btn-ranking-more"
+          ).innerHTML = `<div class="btn-ver-mais" onclick="abrirModalLista('ranking')">+ ${
+            rank.length - 5
+          } itens (Ver todos)</div>`;
+        else if (rank.length === 0)
+          ranking.innerHTML =
+            '<div style="text-align:center; padding:10px; font-size:0.8rem; color:#666">Sem vendas</div>';
+      }
+
+      // --- MODAL LISTA COMPLETA ---
+      function abrirModalLista(tipo) {
+        const modal = document.getElementById("modal-lista");
+        const content = document.getElementById("conteudo-modal-lista");
+        const titulo = document.getElementById("titulo-modal-lista");
+        modal.classList.remove("hidden");
+        content.innerHTML = "";
+
+        if (tipo === "reposicao") {
+          titulo.innerText = "REPOSIÇÃO";
+          titulo.style.color = "var(--primary)";
+          const baixos = listaProdutos.filter((p) => p.qtd < p.minimo);
+          baixos.forEach((p) => {
+            content.innerHTML += `<div class="list-item" style="padding:15px 0;"><div><strong style="color:white; font-size:1rem;">${
+              p.tipo
+            } ${
+              p.marca
+            }</strong><br><span style="font-size:0.8rem; color:#888">${
+              p.codigo || ""
+            }</span></div><div style="text-align:right"><strong style="color:var(--primary); font-size:1.2rem;">${
+              p.qtd
+            } un</strong><div style="font-size:0.8rem; color:#666">Mín: ${
+              p.minimo
+            }</div></div></div>`;
+          });
+        } else {
+          titulo.innerText = "MAIS VENDIDOS";
+          titulo.style.color = "var(--success)";
+          const rank = [...listaProdutos]
+            .sort((a, b) => b.saidas - a.saidas)
+            .filter((p) => p.saidas > 0);
+          rank.forEach((p, i) => {
+            content.innerHTML += `<div class="list-item" style="padding:15px 0;"><div><strong style="color:white; font-size:1rem;">${
+              i + 1
+            }. ${p.tipo} ${
+              p.marca
+            }</strong></div><strong style="color:var(--success); font-size:1.2rem;">${
+              p.saidas
+            } un</strong></div>`;
+          });
+        }
+      }
+
+      // --- CRUD E SEGURANÇA ---
+
+      // 1. Abrir modal de senha para exclusão
+      function pedirSenhaExclusao(id) {
+        idExclusao = id;
+        document.getElementById("senha-supervisor").value = "";
+        document
+          .getElementById("modal-senha-exclusao")
+          .classList.remove("hidden");
+        document.getElementById("senha-supervisor").focus();
+      }
+
+      // 2. Confirmar e Excluir
+      async function confirmarExclusao() {
+        const senhaDigitada = document.getElementById("senha-supervisor").value;
+
+        if (senhaDigitada === SENHA_EXCLUSAO) {
+          await db.from("produtos").delete().eq("id", idExclusao);
+          fecharModal("modal-senha-exclusao");
+          carregarDados();
+        } else {
+          alert("Senha Mestra Incorreta!");
+        }
+      }
+
+      async function salvarProduto() {
+        const p = {
+          tipo: document.getElementById("tipo").value.toUpperCase(),
+          marca: document.getElementById("marca").value.toUpperCase(),
+          modelo: document.getElementById("modelo").value.toUpperCase(),
+          codigo: document.getElementById("codigo").value.toUpperCase(),
+          qtd: parseInt(document.getElementById("qtd").value) || 0,
+          minimo: parseInt(document.getElementById("minimo").value) || 0,
+          compra: lerMoeda(document.getElementById("valorCompra").value),
+          venda: lerMoeda(document.getElementById("valorVenda").value),
+        };
+        if (!p.tipo) return alert("Preencha o tipo!");
+
+        if (idEdicao === null) await db.from("produtos").insert([p]);
+        else await db.from("produtos").update(p).eq("id", idEdicao);
+
+        fecharModal("modal-cadastro");
+        carregarDados();
+      }
+
+      async function movimentarRapido(id, delta) {
+        const prod = listaProdutos.find((p) => p.id === id);
+        await db
+          .from("produtos")
+          .update({ qtd: prod.qtd + delta })
+          .eq("id", id);
+        carregarDados();
+      }
+
+      async function confirmarSaida() {
+        const prod = listaProdutos.find((p) => p.id === idMovimentacao);
+        const qtd = parseInt(document.getElementById("qtd-saida").value);
+        if (prod.qtd < qtd) return alert("Estoque insuficiente");
+
+        const update = { qtd: prod.qtd - qtd };
+        if (document.getElementById("check-venda").checked)
+          update.saidas = (prod.saidas || 0) + qtd;
+
+        await db.from("produtos").update(update).eq("id", idMovimentacao);
+        fecharModal("modal-saida");
+        carregarDados();
+      }
+
+      // --- UTILS ---
+      function mascaraMoeda(i) {
+        let v = i.value.replace(/\D/g, "");
+        v = (v / 100).toFixed(2) + "";
+        v = v.replace(".", ",");
+        v = v.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        i.value = v;
+      }
+      function lerMoeda(v) {
+        return parseFloat(v.replace(/\./g, "").replace(",", ".")) || 0;
+      }
+
+      function toggleFinanceiro() {
+        financeiroVisivel = !financeiroVisivel;
+        document.getElementById("valor-total").classList.toggle("blur-value");
+      }
+
+      function editarProduto(id) {
+        idEdicao = id;
+        const p = listaProdutos.find((x) => x.id === id);
+        document.getElementById("tipo").value = p.tipo;
+        document.getElementById("marca").value = p.marca;
+        document.getElementById("modelo").value = p.modelo;
+        document.getElementById("codigo").value = p.codigo;
+        document.getElementById("qtd").value = p.qtd;
+        document.getElementById("minimo").value = p.minimo;
+        document.getElementById("valorCompra").value = p.compra
+          .toFixed(2)
+          .replace(".", ",");
+        document.getElementById("valorVenda").value = p.venda
+          .toFixed(2)
+          .replace(".", ",");
+        abrirModalCadastro();
+      }
+
+      function abrirSaida(id) {
+        idMovimentacao = id;
+        const p = listaProdutos.find((x) => x.id === id);
+        document.getElementById(
+          "nome-produto-saida"
+        ).innerText = `${p.tipo} ${p.marca}`;
+        document.getElementById("qtd-saida").value = 1;
+        document.getElementById("modal-saida").classList.remove("hidden");
+      }
+
+      function abrirModalCadastro() {
+        document.getElementById("modal-cadastro").classList.remove("hidden");
+        if (idEdicao === null)
+          document
+            .querySelectorAll("#modal-cadastro input")
+            .forEach((i) => (i.value = ""));
+      }
+      function fecharModal(id) {
+        document.getElementById(id).classList.add("hidden");
+        idEdicao = null;
+        idExclusao = null;
+      }
+    </script>
+  </body>
+</html>
