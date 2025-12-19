@@ -12,7 +12,7 @@
         :root {
             --bg-body: #09090A; --bg-card: #202024; --bg-input: #121214;
             --border: #323238; --text-primary: #E1E1E6; --text-secondary: #8D8D99;
-            --primary: #EF4444; --primary-hover: #DC2626; --danger: #F75A68; --success: #04D361;
+            --primary: #EF4444; --primary-hover: #DC2626; --danger: #F75A68; --success: #04D361; --blue: #3b82f6;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
@@ -41,7 +41,7 @@
         .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; border-color: var(--border); }
         .icon-btn.delete:hover { background: rgba(247, 90, 104, 0.2); color: var(--danger); border-color: var(--danger); }
         
-        /* Botão Fechar Modal (X) - CORRIGIDO */
+        /* Botão Fechar Modal (X) */
         .btn-close-modal {
             background: transparent !important; border: none !important; color: var(--text-secondary) !important;
             cursor: pointer; font-size: 1.5rem; padding: 5px; width: auto !important; height: auto !important;
@@ -49,8 +49,7 @@
         .btn-close-modal:hover { color: white !important; }
 
         /* Botão Ver Mais */
-        .btn-ver-mais { width: 100%; background: rgba(255,255,255,0.05); border: 1px dashed var(--border); color: var(--text-secondary); padding: 8px; margin-top: 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; text-align: center; transition: 0.2s; }
-        .btn-ver-mais:hover { background: rgba(255,255,255,0.1); color: white; }
+        .btn-ver-mais { width: 100%; background: rgba(255,255,255,0.05); border: 1px dashed var(--border); color: var(--text-secondary); padding: 8px; margin-top: 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; text-align: center; }
 
         /* GRIDS */
         .card { background: var(--bg-card); border-radius: 8px; padding: 15px; border: 1px solid var(--border); }
@@ -94,6 +93,10 @@
 
         .checkbox-wrapper { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px; background: rgba(4, 211, 97, 0.1); border-radius: 6px; }
         .checkbox-wrapper input { width: 20px; height: 20px; accent-color: var(--success); }
+        
+        /* Checkbox Azul para Estorno */
+        .checkbox-blue { background: rgba(59, 130, 246, 0.1); }
+        .checkbox-blue input { accent-color: var(--blue); }
 
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
         .badge.low { background: rgba(247, 90, 104, 0.1); color: var(--danger); }
@@ -102,7 +105,7 @@
         .loading-line { width: 100%; height: 3px; background: #222; position: fixed; top: 0; left: 0; z-index: 9999; }
         .loading-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
 
-        /* --- MOBILE TRANSFORMATION (FINAL FIX) --- */
+        /* --- MOBILE TRANSFORMATION --- */
         @media (max-width: 768px) {
             body { padding: 10px; overflow-y: auto; height: auto; min-height: 100vh; }
             .container { height: auto; display: block; }
@@ -111,49 +114,37 @@
             .form-grid { grid-template-columns: 1fr; gap: 10px; }
             .brand { font-size: 1.2rem; } .btn span { display: none; }
 
-            /* Tabela vira Lista de Cards */
-            table { min-width: 0; width: 100%; display: block; }
-            thead { display: none; } /* Esconde cabeçalho */
-            tbody { display: block; width: 100%; }
+            /* CARD VIEW NA TABELA */
+            thead { display: none; }
+            tr { display: flex; flex-direction: column; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
             
-            tr { 
-                display: flex; flex-direction: column; 
-                background: var(--bg-input); 
-                border: 1px solid var(--border); 
-                border-radius: 8px; margin-bottom: 15px; padding: 15px; 
-            }
+            td { padding: 5px 0; border: none; display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.95rem; }
             
-            td { 
-                padding: 6px 0; border: none; 
-                display: flex; justify-content: space-between; align-items: center; 
-                width: 100%; font-size: 0.95rem; 
-            }
+            /* Rótulos para Mobile */
+            td:nth-of-type(1) { font-weight: bold; font-size: 1rem; color: white; display: block; margin-bottom: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; } 
+            td:nth-of-type(2):before { content: "Custo:"; color: var(--text-secondary); margin-right: 10px; } 
+            td:nth-of-type(3):before { content: "Venda:"; color: var(--text-secondary); margin-right: 10px; } 
+            td:nth-of-type(4):before { content: "Estoque:"; color: var(--text-secondary); margin-right: 10px; } 
             
-            /* Mostra os rótulos */
-            .mobile-label { display: inline-block; color: var(--text-secondary); font-size: 0.85rem; margin-right: 10px; }
+            /* RODAPÉ DO CARD */
+            td:last-child { margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border); display: block; }
             
-            /* Destaque para o Título (1ª coluna) */
-            td:first-child { 
-                display: block; font-weight: bold; font-size: 1.1rem; color: white; 
-                border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 5px; 
-            }
-            td:first-child .mobile-label { display: none; } /* Esconde label do título */
-
-            /* Área de Botões (Rodapé) */
-            td:last-child { 
-                margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border); 
-                display: block; width: 100%;
-            }
-            
-            /* Grid de 4 Botões no Mobile */
+            /* GRID DE AÇÕES NO MOBILE */
             .actions-wrapper { 
-                width: 100%; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; 
+                width: 100%; 
+                display: grid; 
+                grid-template-columns: 1fr 1fr 1fr 1fr; 
+                gap: 8px; 
             }
             
-            /* Botões Grandes e Claros */
+            /* Só afeta os botões de ação da tabela */
             .actions-wrapper .icon-btn { 
-                background: var(--bg-card); border: 1px solid var(--border); 
-                width: 100%; height: 45px; font-size: 1.3rem; border-radius: 6px; 
+                background: var(--bg-card); 
+                border: 1px solid var(--border); 
+                width: 100%; 
+                height: 45px; 
+                font-size: 1.3rem; 
+                border-radius: 6px; 
             }
             .actions-wrapper .icon-btn:hover { background: var(--border); }
         }
@@ -203,7 +194,7 @@
             <div style="padding-bottom:15px; border-bottom:1px solid var(--border); margin-bottom:10px;">
                 <div class="search-wrapper">
                     <i class="ph ph-magnifying-glass"></i>
-                    <input type="text" id="input-busca" placeholder="BUSCAR" onkeyup="pesquisar()">
+                    <input type="text" id="input-busca" placeholder="PESQUISAR" onkeyup="pesquisar()">
                 </div>
             </div>
             
@@ -275,6 +266,28 @@
     </div>
 </div>
 
+<div id="modal-entrada" class="modal-overlay hidden">
+    <div class="modal-form" style="width:350px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h3 style="margin:0; color:var(--success)">ENTRADA ESTOQUE</h3>
+            <button class="btn-close-modal" onclick="fecharModal('modal-entrada')"><i class="ph ph-x"></i></button>
+        </div>
+        <p id="nome-produto-entrada" style="text-align:center; color:var(--text-secondary); margin-bottom:20px;">...</p>
+        <div class="form-control">
+            <label style="text-align:center">QTD ADICIONAR</label>
+            <input type="number" id="qtd-entrada" value="1" style="font-size:1.5rem; text-align:center;" inputmode="numeric">
+        </div>
+        <div class="checkbox-wrapper checkbox-blue">
+            <input type="checkbox" id="check-devolucao">
+            <div>
+                <strong style="color:var(--blue); display:block; font-size:0.9rem;">É DEVOLUÇÃO?</strong>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Estorna do ranking de vendas</span>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:20px; background:var(--success);" onclick="confirmarEntrada()">CONFIRMAR</button>
+    </div>
+</div>
+
 <div id="modal-saida" class="modal-overlay hidden">
     <div class="modal-form" style="width:350px;">
         <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
@@ -327,7 +340,7 @@
     const SUPABASE_URL = 'https://kbevcnghakaukullqqag.supabase.co'; 
     const SUPABASE_KEY = 'sb_publishable_eOCHnwiD8BzJA75PwAR0nQ_3oQ4kkvX'; 
     const SENHA_PIN = '2569';        
-    const SENHA_EXCLUSAO = '9999';   
+    const SENHA_EXCLUSAO = '0177';   
 
     const { createClient } = supabase;
     const db = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -360,7 +373,7 @@
 
     function fazerLogin() {
         if(document.getElementById('senha-acesso').value === SENHA_PIN) {
-            localStorage.setItem('autocar_sessao', 'ativa'); // Salva Sessão
+            localStorage.setItem('autocar_sessao', 'ativa');
             document.getElementById('login-screen').style.display = 'none';
             ajustarItensPorPagina();
             carregarTudo();
@@ -370,7 +383,7 @@
     }
 
     function fazerLogout() {
-        localStorage.removeItem('autocar_sessao'); // Remove Sessão
+        localStorage.removeItem('autocar_sessao');
         location.reload();
     }
 
@@ -413,7 +426,7 @@
     }
 
     async function carregarStats() {
-        const { data } = await db.from('produtos').select('tipo, marca, codigo, qtd, minimo, saidas, compra, venda');
+        const { data } = await db.from('produtos').select('tipo, marca, modelo, codigo, qtd, minimo, saidas, compra, venda');
         if(data) { listaStats = data; renderizarStats(); }
     }
 
@@ -435,8 +448,8 @@
                     <td>
                         <span class="mobile-label">PRODUTO:</span>
                         <div>
-                            <strong style="font-size:0.95rem; color:white;">${p.tipo} ${p.marca}</strong><br>
-                            <span style="font-size:0.8rem; color:var(--text-secondary);">${p.modelo || ''} ${p.codigo || ''}</span>
+                            <strong style="font-size:0.95rem; color:white;">${p.tipo} ${p.modelo || ''}</strong><br>
+                            <span style="font-size:0.8rem; color:var(--text-secondary);">${p.marca} ${p.codigo || ''}</span>
                         </div>
                     </td>
                     <td><span class="mobile-label">CUSTO:</span> R$ ${p.compra.toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
@@ -448,7 +461,7 @@
                     </td>
                     <td>
                         <div class="actions-wrapper">
-                            <button class="icon-btn" onclick="movimentarRapido(${p.id}, 1)" title="Adicionar"><i class="ph ph-plus"></i></button>
+                            <button class="icon-btn" onclick="abrirEntrada(${p.id})" title="Adicionar"><i class="ph ph-plus"></i></button>
                             <button class="icon-btn" onclick="abrirSaida(${p.id})" title="Baixar"><i class="ph ph-minus"></i></button>
                             <button class="icon-btn" onclick="editarProduto(${p.id})" title="Editar"><i class="ph ph-pencil-simple"></i></button>
                             <button class="icon-btn delete" onclick="pedirSenhaExclusao(${p.id})" title="Excluir"><i class="ph ph-trash"></i></button>
@@ -478,16 +491,32 @@
         document.getElementById('total-itens').innerText = totalItems;
         document.getElementById('valor-total').innerText = totalVal.toLocaleString('pt-BR',{style:'currency', currency:'BRL'});
 
+        // REPOSIÇÃO
         const baixos = listaStats.filter(p => p.qtd < p.minimo);
         baixos.slice(0, 5).forEach(p => {
-            alertas.innerHTML += `<div class="list-item"><span>${p.tipo} ${p.marca}</span><strong style="color:var(--primary)">${p.qtd} un</strong></div>`;
+            alertas.innerHTML += `
+                <div class="list-item">
+                    <div>
+                        <strong style="color:white; font-size:0.9rem;">${p.tipo} ${p.modelo || ''}</strong><br>
+                        <span style="font-size:0.75rem; color:#888">${p.marca}</span>
+                    </div>
+                    <strong style="color:var(--primary)">${p.qtd} un</strong>
+                </div>`;
         });
         if (baixos.length > 5) document.getElementById('btn-alertas-more').innerHTML = `<div class="btn-ver-mais" onclick="abrirModalLista('reposicao')">+ ${baixos.length - 5} itens (Ver todos)</div>`;
         else if (baixos.length === 0) alertas.innerHTML = '<div style="text-align:center; padding:10px; font-size:0.8rem; color:#666">Estoque OK</div>';
 
+        // RANKING
         const rank = [...listaStats].sort((a,b)=>b.saidas-a.saidas).filter(p=>p.saidas>0);
         rank.slice(0, 5).forEach(p => {
-            ranking.innerHTML += `<div class="list-item"><span>${p.tipo} ${p.marca}</span><strong style="color:var(--success)">${p.saidas}</strong></div>`;
+            ranking.innerHTML += `
+                <div class="list-item">
+                    <div>
+                        <strong style="color:white; font-size:0.9rem;">${p.tipo} ${p.modelo || ''}</strong><br>
+                        <span style="font-size:0.75rem; color:#888">${p.marca}</span>
+                    </div>
+                    <strong style="color:var(--success)">${p.saidas} un</strong>
+                </div>`;
         });
         if (rank.length > 5) document.getElementById('btn-ranking-more').innerHTML = `<div class="btn-ver-mais" onclick="abrirModalLista('ranking')">+ ${rank.length - 5} itens (Ver todos)</div>`;
         else if (rank.length === 0) ranking.innerHTML = '<div style="text-align:center; padding:10px; font-size:0.8rem; color:#666">Sem vendas</div>';
@@ -503,13 +532,25 @@
             titulo.innerText = "REPOSIÇÃO"; titulo.style.color = "var(--primary)";
             const baixos = listaStats.filter(p => p.qtd < p.minimo);
             baixos.forEach(p => {
-                content.innerHTML += `<div class="list-item" style="padding:15px 0;"><div><strong style="color:white; font-size:1rem;">${p.tipo} ${p.marca}</strong><br><span style="font-size:0.8rem; color:#888">${p.codigo || ''}</span></div><div style="text-align:right"><strong style="color:var(--primary); font-size:1.2rem;">${p.qtd} un</strong><div style="font-size:0.8rem; color:#666">Mín: ${p.minimo}</div></div></div>`;
+                content.innerHTML += `
+                    <div class="list-item" style="padding:15px 0;">
+                        <div>
+                            <strong style="color:white; font-size:1rem;">${p.tipo} ${p.marca}</strong><br><span style="font-size:0.8rem; color:#888">${p.modelo || ''}</span>
+                        </div>
+                        <div style="text-align:right">
+                            <strong style="color:var(--primary); font-size:1.2rem;">${p.qtd} un</strong>
+                            <div style="font-size:0.8rem; color:#666">Mín: ${p.minimo}</div>
+                        </div>
+                    </div>`;
             });
         } else {
             titulo.innerText = "MAIS VENDIDOS"; titulo.style.color = "var(--success)";
             const rank = [...listaStats].sort((a,b)=>b.saidas-a.saidas).filter(p=>p.saidas>0);
             rank.forEach((p, i) => {
-                content.innerHTML += `<div class="list-item" style="padding:15px 0;"><div><strong style="color:white; font-size:1rem;">${i+1}. ${p.tipo} ${p.marca}</strong></div><strong style="color:var(--success); font-size:1.2rem;">${p.saidas} un</strong></div>`;
+                content.innerHTML += `
+                    <div class="list-item" style="padding:15px 0;">
+                        <div><strong style="color:white; font-size:1rem;">${i+1}. ${p.tipo} ${p.modelo || ''}</strong></div><strong style="color:var(--success); font-size:1.2rem;">${p.saidas} un</strong>
+                    </div>`;
             });
         }
     }
@@ -546,10 +587,28 @@
         fecharModal('modal-cadastro'); carregarTudo();
     }
 
-    async function movimentarRapido(id, delta) {
-        const prod = listaProdutos.find(p => p.id === id);
-        await db.from('produtos').update({ qtd: prod.qtd + delta }).eq('id', id);
-        carregarTudo();
+    // --- NOVA LÓGICA DE ENTRADA (ESTORNO) ---
+    function abrirEntrada(id) {
+        idMovimentacao = id; const p = listaProdutos.find(x => x.id === id);
+        document.getElementById('nome-produto-entrada').innerText = `${p.tipo} ${p.marca}`;
+        document.getElementById('qtd-entrada').value = 1;
+        document.getElementById('check-devolucao').checked = false;
+        document.getElementById('modal-entrada').classList.remove('hidden');
+    }
+
+    async function confirmarEntrada() {
+        const prod = listaProdutos.find(p => p.id === idMovimentacao);
+        const qtd = parseInt(document.getElementById('qtd-entrada').value);
+        if(!qtd || qtd <= 0) return alert('Quantidade inválida');
+
+        const update = { qtd: prod.qtd + qtd };
+        // Se for Devolução, desconta da contagem de vendas
+        if(document.getElementById('check-devolucao').checked) {
+            update.saidas = Math.max(0, (prod.saidas || 0) - qtd);
+        }
+        
+        await db.from('produtos').update(update).eq('id', idMovimentacao);
+        fecharModal('modal-entrada'); carregarTudo();
     }
 
     async function confirmarSaida() {
