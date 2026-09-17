@@ -27,7 +27,7 @@ app.use(helmet({
             styleSrc:      ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
             fontSrc:       ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "data:"],
             imgSrc:        ["'self'", "data:", "blob:"],
-            connectSrc:    ["'self'"],
+            connectSrc:    ["'self'", "https://*.supabase.co", "https://*.vercel.app"],
             frameSrc:      ["'none'"],
             objectSrc:     ["'none'"]
         }
@@ -39,12 +39,9 @@ app.use(helmet({
 // ─── 2. CORS: origens explícitas em vez de wildcard ───────────────────────────
 app.use(cors({
     origin: (origin, callback) => {
-        // Permite requisições sem origin (ex: Postman, apps desktop) apenas em dev
-        if (!origin) {
-            if (config.nodeEnv === 'development') return callback(null, true);
-            return callback(new Error('Requisição sem origem não permitida em produção.'));
-        }
-        if (config.allowedOrigins.includes(origin)) {
+        // Permite requisições sem origin (navegação direta, mesmo domínio ou Postman)
+        if (!origin) return callback(null, true);
+        if (config.allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.includes('localhost')) {
             return callback(null, true);
         }
         return callback(new Error(`Origem não autorizada: ${origin}`));
@@ -86,26 +83,30 @@ app.get('*', (req, res, next) => {
 // ─── 8. Handler global de erros ───────────────────────────────────────────────
 app.use(errorHandler);
 
-// ─── 9. Graceful shutdown ─────────────────────────────────────────────────────
-const server = app.listen(config.port, () => {
-    console.log(`=============================================`);
-    console.log(`🚀 AutoCar BS ERP - Oficina & Estoque`);
-    console.log(`📡 Servidor: http://localhost:${config.port}`);
-    console.log(`🌍 Ambiente: ${config.nodeEnv}`);
-    console.log(`🔒 Origens permitidas: ${config.allowedOrigins.join(', ')}`);
-    console.log(`🛡️  Segurança: Helmet + CORS restrito + Body limit 50kb`);
-    console.log(`=============================================`);
-});
-
-process.on('SIGTERM', () => {
-    console.log('SIGTERM recebido — encerrando servidor com graceful shutdown...');
-    server.close(() => {
-        console.log('Servidor encerrado.');
-        process.exit(0);
+// ─── 9. Inicialização e Exportação (Compatível com Local & Vercel Serverless) ─
+if (require.main === module) {
+    const server = app.listen(config.port, () => {
+        console.log(`=============================================`);
+        console.log(`🚀 AutoCar BS ERP - Oficina & Estoque`);
+        console.log(`📡 Servidor: http://localhost:${config.port}`);
+        console.log(`🌍 Ambiente: ${config.nodeEnv}`);
+        console.log(`🔒 Origens permitidas: ${config.allowedOrigins.join(', ')}`);
+        console.log(`🛡️  Segurança: Helmet + CORS restrito + Body limit 50kb`);
+        console.log(`=============================================`);
     });
-});
 
-process.on('SIGINT', () => {
-    console.log('\nSIGINT recebido — encerrando servidor...');
-    server.close(() => process.exit(0));
-});
+    process.on('SIGTERM', () => {
+        console.log('SIGTERM recebido — encerrando servidor com graceful shutdown...');
+        server.close(() => {
+            console.log('Servidor encerrado.');
+            process.exit(0);
+        });
+    });
+
+    process.on('SIGINT', () => {
+        console.log('\nSIGINT recebido — encerrando servidor...');
+        server.close(() => process.exit(0));
+    });
+}
+
+module.exports = app;

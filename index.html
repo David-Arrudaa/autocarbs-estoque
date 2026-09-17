@@ -6,75 +6,79 @@
     <title>AutoCar BS - ERP Oficina & Estoque</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #10181E;
-            color: #F6F6F6;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0b0f17;
+            color: #f8fafc;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             text-align: center;
             padding: 20px;
         }
         .card {
-            background: #18232C;
-            border: 1px solid #263645;
-            border-radius: 12px;
+            background: #131b26;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 14px;
             padding: 40px 30px;
-            max-width: 500px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            max-width: 480px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
         }
-        h1 { font-size: 1.8rem; margin-bottom: 10px; color: #F6F6F6; }
-        h1 span { color: #93272C; }
-        p { color: #98A7B5; font-size: 0.95rem; line-height: 1.6; }
+        h1 {
+            font-size: 1.9rem;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        h1 span { color: #ef4444; }
         .badge {
-            background: rgba(202, 161, 81, 0.15);
-            color: #CAA151;
-            border: 1px solid rgba(202, 161, 81, 0.35);
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.35);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: bold;
+            font-weight: 700;
             display: inline-block;
             margin-bottom: 20px;
         }
-        .code-box {
-            background: #0B1116;
-            border: 1px solid #263645;
-            padding: 12px;
-            border-radius: 6px;
-            font-family: monospace;
-            color: #CAA151;
-            margin: 20px 0;
-            font-size: 1rem;
+        p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 15px 0 25px 0;
         }
         a.btn {
-            display: inline-block;
-            background: #93272C;
-            color: #F6F6F6;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #ef4444;
+            color: #ffffff;
             text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: bold;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.85rem;
-            transition: 0.2s;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
         }
-        a.btn:hover { background: #A82E34; }
+        a.btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <span class="badge">SISTEMA ATUALIZADO PARA NODE.JS</span>
+        <span class="badge">SISTEMA ONLINE (VERCEL)</span>
         <h1>AUTOCAR<span>BS</span> ERP</h1>
-        <p>O sistema foi migrado para uma arquitetura segura em <strong>Node.js</strong> com separação completa de HTML, CSS e JavaScript.</p>
-        
-        <p>Para iniciar o servidor, execute no terminal:</p>
-        <div class="code-box">npm start</div>
-        
-        <p>Em seguida, acesse no navegador:</p>
-        <a class="btn" href="http://localhost:3000" target="_blank">Abrir http://localhost:3000</a>
+        <p>O sistema agora está hospedado online no Vercel com conexão segura e em tempo real ao banco de dados.</p>
+        <a class="btn" href="https://autocarbs-estoque.vercel.app">Acessar Sistema Online</a>
     </div>
 </body>
 </html>
