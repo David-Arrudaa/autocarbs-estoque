@@ -8,8 +8,11 @@
     <!-- Ícones Phosphor -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
+    <!-- Biblioteca Leitor de Código de Barras (Câmera Cross-Device Fallback) -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/style.css?v=32.0">
+    <link rel="stylesheet" href="css/style.css?v=34.0">
 </head>
 <body>
 
@@ -166,6 +169,9 @@
                                 <input type="text" id="input-busca" placeholder="Pesquisar por descrição, marca, modelo ou código..." onkeyup="Estoque.pesquisar()">
                                 <button type="button" class="btn-clear-search hidden" id="btn-clear-busca" onclick="Estoque.limparBusca()" title="Limpar pesquisa">
                                     <i class="ph ph-x"></i>
+                                </button>
+                                <button type="button" class="btn-search-barcode" onclick="Estoque.abrirScannerCodigoBarras('busca')" title="Escanear Código de Barras (Câmera / Leitor)">
+                                    <i class="ph ph-barcode"></i>
                                 </button>
                             </div>
                             <div class="filter-chips">
@@ -639,7 +645,15 @@
             </div>
             <div class="form-grid">
                 <div class="form-control"><label for="modelo">MODELO</label><input type="text" id="modelo"></div>
-                <div class="form-control"><label for="codigo">CÓDIGO</label><input type="text" id="codigo"></div>
+                <div class="form-control">
+                    <label for="codigo">CÓDIGO</label>
+                    <div class="input-with-action">
+                        <input type="text" id="codigo" placeholder="Código de barras ou ref...">
+                        <button type="button" class="btn-input-scan" onclick="Estoque.abrirScannerCodigoBarras('cadastro')" title="Escanear Código com Câmera">
+                            <i class="ph ph-barcode"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="form-grid">
                 <div class="form-control"><label for="qtd">QTD ESTOQUE</label><input type="number" id="qtd" inputmode="numeric"></div>
@@ -773,15 +787,94 @@
         </div>
     </div>
 
+    <!-- MODAL: Scanner de Código de Barras (Câmera / Leitor) -->
+    <div id="modal-barcode-scanner" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="scanner-modal-titulo">
+        <div class="modal-form scanner-modal-box">
+            <div class="scanner-modal-header">
+                <div class="scanner-header-left">
+                    <i class="ph ph-barcode scanner-header-icon"></i>
+                    <div>
+                        <h3 id="scanner-modal-titulo" class="scanner-modal-title">LEITOR DE CÓDIGO DE BARRAS</h3>
+                        <span id="scanner-modal-subtitle" class="scanner-modal-subtitle">Aponte a câmera para o código da peça</span>
+                    </div>
+                </div>
+                <button class="btn-close-modal" aria-label="Fechar scanner" onclick="Estoque.fecharScanner()"><i class="ph ph-x"></i></button>
+            </div>
+
+            <!-- Área do Visor da Câmera -->
+            <div class="scanner-viewport-wrapper">
+                <div id="scanner-reader-container" class="scanner-reader-container">
+                    <!-- Elemento de vídeo para visualização em tempo real -->
+                    <video id="scanner-video" class="scanner-video" playsinline muted autoplay></video>
+                    <!-- Container dedicado para biblioteca html5-qrcode -->
+                    <div id="scanner-html5-view" style="width:100%; height:100%; display:none;"></div>
+                    <!-- Canvas para processamento de imagem -->
+                    <canvas id="scanner-canvas" style="display:none;"></canvas>
+                </div>
+                <!-- Mira e feixe laser visual -->
+                <div class="scanner-overlay-aim">
+                    <div class="scanner-target-box">
+                        <div class="scanner-corner corner-tl"></div>
+                        <div class="scanner-corner corner-tr"></div>
+                        <div class="scanner-corner corner-bl"></div>
+                        <div class="scanner-corner corner-br"></div>
+                        <div class="scanner-laser-line"></div>
+                    </div>
+                </div>
+                <!-- Badge de status do leitor -->
+                <div id="scanner-status-badge" class="scanner-status-badge">
+                    <i class="ph ph-camera"></i> <span id="scanner-status-text">Posicione o código no quadro</span>
+                </div>
+            </div>
+
+            <!-- Barra de Ações Rápidas do Scanner (Câmera, Lanterna) -->
+            <div class="scanner-controls-bar">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-scanner-toggle-camera" onclick="Estoque.alternarCameraScanner()" title="Inverter Câmera (Frontal / Traseira)">
+                    <i class="ph ph-camera-rotate"></i>
+                    <span>Inverter Câmera</span>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm hidden" id="btn-scanner-toggle-torch" onclick="Estoque.alternarLanternaScanner()" title="Ligar / Desligar Lanterna">
+                    <i class="ph ph-flashlight"></i>
+                    <span id="label-scanner-torch">Lanterna</span>
+                </button>
+            </div>
+
+            <!-- Entrada Manual Alternativa -->
+            <div class="scanner-manual-input-box">
+                <span class="scanner-manual-label">Ou digite o código manualmente:</span>
+                <div class="scanner-manual-row">
+                    <input type="text" id="scanner-manual-code" placeholder="Código de barras ou referência..." onkeydown="if(event.key==='Enter') Estoque.confirmarCodigoManual()">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.confirmarCodigoManual()">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <span>Buscar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Resultado do Código Escaneado (Ações Rápidas) -->
+    <div id="modal-scan-resultado" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="scan-res-titulo">
+        <div class="modal-form scan-result-box">
+            <div class="scan-result-header">
+                <div class="scan-result-badge-success" id="scan-res-titulo">
+                    <i class="ph ph-check-circle"></i> PRODUTO IDENTIFICADO
+                </div>
+                <button class="btn-close-modal" aria-label="Fechar" onclick="Estoque.fecharModal('modal-scan-resultado')"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="scan-result-body" id="scan-result-conteudo"></div>
+        </div>
+    </div>
+
     <!-- DOCUMENTO EXCLUSIVO DE IMPRESSÃO / PDF A4 (Oculto na tela, visível apenas na impressão) -->
     <div id="relatorio-documento-impressao" class="print-document-only"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/ui.js?v=33.0"></script>
-    <script src="js/sidebar.js?v=33.0"></script>
-    <script src="js/api.js?v=33.0"></script>
-    <script src="js/cotacao.js?v=33.0"></script>
-    <script src="js/estoque.js?v=33.0"></script>
-    <script src="js/app.js?v=33.0"></script>
+    <script src="js/ui.js?v=34.0"></script>
+    <script src="js/sidebar.js?v=34.0"></script>
+    <script src="js/api.js?v=34.0"></script>
+    <script src="js/cotacao.js?v=34.0"></script>
+    <script src="js/estoque.js?v=34.0"></script>
+    <script src="js/app.js?v=34.0"></script>
 </body>
 </html>

@@ -47,8 +47,19 @@ const Estoque = {
         }
     },
 
+    // Estado do Scanner de Código de Barras (Câmera e USB/HID)
+    scannerContexto: 'busca', // 'busca' ou 'cadastro'
+    scannerStream: null,
+    scannerCameraFacing: 'environment', // 'environment' ou 'user'
+    scannerTorchLigada: false,
+    scannerAtivo: false,
+    scannerHtml5QrCode: null,
+    scannerAnimFrame: null,
+    scannerAudioCtx: null,
+
     init() {
         this.ajustarItensPorPagina();
+        this.iniciarLeitorTecladoUSB();
         window.addEventListener('resize', () => {
             const novo = window.innerWidth < 768 ? 10 : 20;
             if (novo !== this.itemsPerPage) {
@@ -3078,6 +3089,530 @@ const Estoque = {
 
         printArea.innerHTML = html;
         window.print();
+    },
+
+    // =========================================================
+    // LEITOR DE CÓDIGO DE BARRAS (CÂMERA & LEITOR USB/HID)
+    // =========================================================
+
+    /**
+     * Emite um beep audível de confirmação (1800Hz clássico de PDV)
+     * Utiliza Web Audio API sem dependências externas.
+     */
+    tocarBeepScanner() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            if (!this.scannerAudioCtx) {
+                this.scannerAudioCtx = new AudioContext();
+            }
+            if (this.scannerAudioCtx.state === 'suspended') {
+                this.scannerAudioCtx.resume();
+            }
+            const osc = this.scannerAudioCtx.createOscillator();
+            const gain = this.scannerAudioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1800, this.scannerAudioCtx.currentTime);
+            gain.gain.setValueAtTime(0.18, this.scannerAudioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.scannerAudioCtx.currentTime + 0.09);
+            osc.connect(gain);
+            gain.connect(this.scannerAudioCtx.destination);
+            osc.start();
+            osc.stop(this.scannerAudioCtx.currentTime + 0.09);
+        } catch (_) {}
+    },
+
+    /**
+     * Intercepta entradas ultrarrápidas de leitores de código de barras USB/Bluetooth
+     */
+    iniciarLeitorTecladoUSB() {
+        let buffer = '';
+        let lastKeyTime = 0;
+
+        window.addEventListener('keydown', (e) => {
+            const now = Date.now();
+            const diff = now - lastKeyTime;
+            lastKeyTime = now;
+
+            const target = e.target;
+            const isInput = target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable);
+
+            // Leitores físicos de código de barras digitam em alta velocidade (< 85ms entre teclas)
+            if (diff > 85 && buffer.length > 0) {
+                buffer = '';
+            }
+
+            if (e.key === 'Enter') {
+                if (buffer.length >= 3) {
+                    const codigoDetectado = buffer.trim();
+                    buffer = '';
+
+                    // Se o usuário estiver focado no input de código do cadastro
+                    if (isInput && target.id === 'codigo') {
+                        this.tocarBeepScanner();
+                        UI.toast('Código registrado via Leitor USB!', 'success');
+                        return;
+                    }
+
+                    e.preventDefault();
+                    this.tocarBeepScanner();
+                    this.processarCodigoEscaneado(codigoDetectado);
+                }
+                buffer = '';
+            } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                buffer += e.key;
+            }
+        });
+    },
+
+    /**
+     * Abre o modal do scanner por câmera
+     * @param {'busca'|'cadastro'} contexto
+     */
+    async abrirScannerCodigoBarras(contexto = 'busca') {
+        this.scannerContexto = contexto;
+        this.scannerAtivo = true;
+
+        const manualInput = document.getElementById('scanner-manual-code');
+        if (manualInput) manualInput.value = '';
+
+        const modalTitulo = document.getElementById('scanner-modal-titulo');
+        const modalSub = document.getElementById('scanner-modal-subtitle');
+        if (modalTitulo && modalSub) {
+            if (contexto === 'cadastro') {
+                modalTitulo.innerText = 'ESCANEAR PARA CADASTRO';
+                modalSub.innerText = 'Aponte a câmera para o código de barras da nova peça';
+            } else {
+                modalTitulo.innerText = 'LEITOR DE CÓDIGO DE BARRAS';
+                modalSub.innerText = 'Aponte a câmera para consultar ou dar movimentação rápida';
+            }
+        }
+
+        const statusText = document.getElementById('scanner-status-text');
+        if (statusText) statusText.innerText = 'Inicializando câmera...';
+
+        UI.abrirModal('modal-barcode-scanner');
+
+        await this.iniciarCameraScanner();
+    },
+
+    /**
+     * Inicializa stream de vídeo e decodificador com fallback inteligente
+     */
+    async iniciarCameraScanner() {
+        const video = document.getElementById('scanner-video');
+        const html5Container = document.getElementById('scanner-html5-view');
+        const statusText = document.getElementById('scanner-status-text');
+
+        this.fecharCameraScanner();
+        this.scannerAtivo = true;
+
+        // Prioridade 1: BarcodeDetector nativo (Google Chrome / Edge / Android)
+        const temBarcodeDetector = ('BarcodeDetector' in window);
+
+        if (temBarcodeDetector && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                if (html5Container) html5Container.style.display = 'none';
+                if (video) video.style.display = 'block';
+
+                const constraints = {
+                    video: {
+                        facingMode: { ideal: this.scannerCameraFacing },
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                this.scannerStream = stream;
+
+                if (video) {
+                    video.srcObject = stream;
+                    await video.play();
+                }
+
+                // Detecta capacidade de lanterna (Torch)
+                const track = stream.getVideoTracks()[0];
+                const capabilities = (track && track.getCapabilities) ? track.getCapabilities() : {};
+                const btnTorch = document.getElementById('btn-scanner-toggle-torch');
+                if (btnTorch) {
+                    if (capabilities.torch) {
+                        btnTorch.classList.remove('hidden');
+                    } else {
+                        btnTorch.classList.add('hidden');
+                    }
+                }
+
+                if (statusText) statusText.innerText = 'Posicione o código no quadro';
+
+                const formats = ['ean_13', 'ean_8', 'code_128', 'code_39', 'upc_a', 'upc_e', 'qr_code', 'itf'];
+                const detector = new window.BarcodeDetector({ formats });
+
+                const scanLoop = async () => {
+                    if (!this.scannerAtivo) return;
+
+                    if (video && video.readyState === video.HAVE_ENOUGH_DATA) {
+                        try {
+                            const barcodes = await detector.detect(video);
+                            if (barcodes && barcodes.length > 0) {
+                                const rawValue = barcodes[0].rawValue;
+                                if (rawValue && rawValue.trim()) {
+                                    this.tocarBeepScanner();
+                                    this.fecharScanner();
+                                    this.processarCodigoEscaneado(rawValue.trim());
+                                    return;
+                                }
+                            }
+                        } catch (_) {}
+                    }
+                    this.scannerAnimFrame = requestAnimationFrame(scanLoop);
+                };
+
+                this.scannerAnimFrame = requestAnimationFrame(scanLoop);
+                return;
+            } catch (err) {
+                console.warn('Falha no BarcodeDetector nativo, tentando biblioteca html5-qrcode:', err);
+            }
+        }
+
+        // Prioridade 2: Biblioteca html5-qrcode (Fallback universal ZXing)
+        if (window.Html5Qrcode && html5Container) {
+            try {
+                if (video) video.style.display = 'none';
+                html5Container.style.display = 'block';
+                html5Container.innerHTML = '';
+
+                const html5QrCode = new Html5Qrcode('scanner-html5-view');
+                this.scannerHtml5QrCode = html5QrCode;
+
+                const config = {
+                    fps: 15,
+                    qrbox: { width: 250, height: 140 },
+                    aspectRatio: 1.777778
+                };
+
+                await html5QrCode.start(
+                    { facingMode: this.scannerCameraFacing },
+                    config,
+                    (decodedText) => {
+                        if (decodedText && decodedText.trim() && this.scannerAtivo) {
+                            this.tocarBeepScanner();
+                            this.fecharScanner();
+                            this.processarCodigoEscaneado(decodedText.trim());
+                        }
+                    },
+                    () => {}
+                );
+
+                if (statusText) statusText.innerText = 'Posicione o código no quadro';
+                return;
+            } catch (err) {
+                console.warn('Falha na inicialização do html5-qrcode:', err);
+            }
+        }
+
+        // Se nenhuma câmera estiver acessível
+        if (statusText) statusText.innerText = 'Câmera não detectada. Digite abaixo:';
+        const manualInput = document.getElementById('scanner-manual-code');
+        if (manualInput) {
+            setTimeout(() => manualInput.focus(), 150);
+        }
+    },
+
+    /**
+     * Encerra streams e processos de vídeo do scanner
+     */
+    fecharCameraScanner() {
+        this.scannerAtivo = false;
+
+        if (this.scannerAnimFrame) {
+            cancelAnimationFrame(this.scannerAnimFrame);
+            this.scannerAnimFrame = null;
+        }
+
+        if (this.scannerStream) {
+            this.scannerStream.getTracks().forEach(track => {
+                try { track.stop(); } catch (_) {}
+            });
+            this.scannerStream = null;
+        }
+
+        const video = document.getElementById('scanner-video');
+        if (video) {
+            video.srcObject = null;
+        }
+
+        if (this.scannerHtml5QrCode) {
+            try {
+                this.scannerHtml5QrCode.stop().catch(() => {}).then(() => {
+                    try { this.scannerHtml5QrCode.clear(); } catch (_) {}
+                    this.scannerHtml5QrCode = null;
+                });
+            } catch (_) {
+                this.scannerHtml5QrCode = null;
+            }
+        }
+
+        const html5Container = document.getElementById('scanner-html5-view');
+        if (html5Container) {
+            html5Container.innerHTML = '';
+            html5Container.style.display = 'none';
+        }
+
+        this.scannerTorchLigada = false;
+        const labelTorch = document.getElementById('label-scanner-torch');
+        if (labelTorch) labelTorch.innerText = 'Lanterna';
+    },
+
+    /**
+     * Fecha o modal do scanner
+     */
+    fecharScanner() {
+        this.fecharCameraScanner();
+        UI.fecharModal('modal-barcode-scanner');
+    },
+
+    /**
+     * Alterna entre câmera frontal e traseira
+     */
+    async alternarCameraScanner() {
+        this.scannerCameraFacing = (this.scannerCameraFacing === 'environment') ? 'user' : 'environment';
+        await this.iniciarCameraScanner();
+    },
+
+    /**
+     * Liga ou desliga a lanterna do smartphone se suportado
+     */
+    async alternarLanternaScanner() {
+        if (!this.scannerStream) return;
+        const track = this.scannerStream.getVideoTracks()[0];
+        if (!track || !track.applyConstraints) return;
+
+        try {
+            this.scannerTorchLigada = !this.scannerTorchLigada;
+            await track.applyConstraints({
+                advanced: [{ torch: this.scannerTorchLigada }]
+            });
+            const labelTorch = document.getElementById('label-scanner-torch');
+            if (labelTorch) {
+                labelTorch.innerText = this.scannerTorchLigada ? 'Desligar Lanterna' : 'Ligar Lanterna';
+            }
+        } catch (err) {
+            console.warn('Erro ao alternar lanterna:', err);
+        }
+    },
+
+    /**
+     * Confirma código inserido manualmente na barra do scanner
+     */
+    confirmarCodigoManual() {
+        const input = document.getElementById('scanner-manual-code');
+        const codigo = input ? input.value.trim() : '';
+        if (!codigo) {
+            return UI.toast('Por favor, digite um código de barras ou referência.', 'warning');
+        }
+        this.tocarBeepScanner();
+        this.fecharScanner();
+        this.processarCodigoEscaneado(codigo);
+    },
+
+    /**
+     * Localiza um produto na memória pelo código
+     */
+    obterProdutoPorCodigo(codigo) {
+        if (!codigo) return null;
+        const codNormalizado = String(codigo).trim().toLowerCase();
+        return this.listaProdutos.find(x => String(x.codigo || '').trim().toLowerCase() === codNormalizado) ||
+               (this.listaStats.reposicao || []).find(x => String(x.codigo || '').trim().toLowerCase() === codNormalizado) ||
+               (this.listaStats.ranking || []).find(x => String(x.codigo || '').trim().toLowerCase() === codNormalizado) ||
+               (this.rankingPeriodoABC || []).find(x => String(x.codigo || '').trim().toLowerCase() === codNormalizado) ||
+               (this.dadosCurvaABC?.itens || []).find(x => String(x.codigo || '').trim().toLowerCase() === codNormalizado) ||
+               (this.dadosRelatorio?.produtos || []).find(x => String(x.codigo || '').trim().toLowerCase() === codNormalizado);
+    },
+
+    /**
+     * Processa o código obtido pela câmera, USB ou digitação
+     */
+    async processarCodigoEscaneado(codigoRaw) {
+        const codigo = String(codigoRaw || '').trim();
+        if (!codigo) return;
+
+        // Caso 1: Escaneamento acionado a partir do formulário de cadastro/edição
+        if (this.scannerContexto === 'cadastro') {
+            const inputCodigo = document.getElementById('codigo');
+            if (inputCodigo) {
+                inputCodigo.value = codigo;
+                inputCodigo.classList.add('highlight-flash');
+                setTimeout(() => inputCodigo.classList.remove('highlight-flash'), 1200);
+            }
+            UI.toast(`Código preenchido: ${codigo}`, 'success');
+
+            const modalCad = document.getElementById('modal-cadastro');
+            if (modalCad && modalCad.classList.contains('hidden')) {
+                this.abrirModalCadastro();
+                if (inputCodigo) inputCodigo.value = codigo;
+            }
+
+            const inputTipo = document.getElementById('tipo');
+            if (inputTipo && !inputTipo.value) {
+                setTimeout(() => inputTipo.focus(), 100);
+            }
+            return;
+        }
+
+        // Caso 2: Escaneamento na busca rápida geral
+        let produto = this.obterProdutoPorCodigo(codigo);
+
+        if (!produto) {
+            try {
+                UI.setLoading(true);
+                const res = await API.listarProdutos(1, 10, codigo);
+                if (res && res.data && res.data.length > 0) {
+                    produto = res.data.find(p => String(p.codigo || '').trim().toLowerCase() === codigo.toLowerCase()) || res.data[0];
+                }
+            } catch (err) {
+                console.warn('Erro na busca por código via API:', err);
+            } finally {
+                UI.setLoading(false);
+            }
+        }
+
+        if (produto) {
+            // Atualiza input de busca e recarrega visualização
+            const inputBusca = document.getElementById('input-busca');
+            if (inputBusca) {
+                inputBusca.value = codigo;
+                const btnClear = document.getElementById('btn-clear-busca');
+                if (btnClear) btnClear.classList.remove('hidden');
+            }
+            this.carregarTabela(1);
+
+            // Exibe modal de ações rápidas
+            this.exibirResultadoScanner(produto, codigo);
+        } else {
+            // Produto não localizado
+            this.exibirResultadoScanner(null, codigo);
+        }
+    },
+
+    /**
+     * Exibe o modal de resultado de escaneamento com ações imediatas
+     */
+    exibirResultadoScanner(produto, codigoBuscado) {
+        const container = document.getElementById('scan-result-conteudo');
+        const badgeTitulo = document.getElementById('scan-res-titulo');
+        if (!container) return;
+
+        if (produto) {
+            if (badgeTitulo) {
+                badgeTitulo.className = 'scan-result-badge-success';
+                badgeTitulo.style.background = '';
+                badgeTitulo.style.borderColor = '';
+                badgeTitulo.style.color = '';
+                badgeTitulo.innerHTML = '<i class="ph ph-check-circle"></i> PRODUTO IDENTIFICADO';
+            }
+
+            const qtd = Number(produto.qtd) || 0;
+            const minimo = Number(produto.minimo) || 0;
+            const statusCor = qtd === 0 ? '#ef4444' : (qtd <= minimo ? '#eab308' : '#22c55e');
+            const precoVenda = Number(produto.venda || produto.vendaUnit || produto.precoVenda || 0);
+
+            container.innerHTML = `
+                <div class="scan-card-prod">
+                    <div class="scan-card-title">${UI.escapeHtml(produto.tipo || 'Produto')} ${UI.escapeHtml(produto.modelo || '')}</div>
+                    <div class="scan-card-meta">
+                        <strong>CÓD:</strong> ${UI.escapeHtml(produto.codigo || 'S/N')} | <strong>MARCA:</strong> ${UI.escapeHtml(produto.marca || '-')}
+                    </div>
+                    <div class="scan-card-stats-row">
+                        <div class="scan-card-stat-item">
+                            <span class="scan-card-stat-label">Saldo Atual</span>
+                            <span class="scan-card-stat-val" style="color: ${statusCor};">${qtd} un</span>
+                        </div>
+                        <div class="scan-card-stat-item">
+                            <span class="scan-card-stat-label">Estoque Mín.</span>
+                            <span class="scan-card-stat-val">${minimo} un</span>
+                        </div>
+                        <div class="scan-card-stat-item">
+                            <span class="scan-card-stat-label">Preço Venda</span>
+                            <span class="scan-card-stat-val" style="color: var(--gold);">${UI.formatCurrency(precoVenda)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scan-actions-grid">
+                    <button type="button" class="btn btn-primary" onclick="Estoque.fecharModal('modal-scan-resultado'); Estoque.abrirEntrada(${produto.id})">
+                        <i class="ph ph-arrow-circle-up"></i>
+                        <span>+ Entrada</span>
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="Estoque.fecharModal('modal-scan-resultado'); Estoque.abrirSaida(${produto.id})">
+                        <i class="ph ph-arrow-circle-down"></i>
+                        <span>- Baixa / Saída</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="Estoque.fecharModal('modal-scan-resultado'); Estoque.editarProduto(${produto.id})">
+                        <i class="ph ph-pencil-simple"></i>
+                        <span>Editar Peça</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="Estoque.fecharModal('modal-scan-resultado')">
+                        <i class="ph ph-check"></i>
+                        <span>Concluir</span>
+                    </button>
+                </div>
+            `;
+        } else {
+            if (badgeTitulo) {
+                badgeTitulo.className = 'scan-result-badge-success';
+                badgeTitulo.style.background = 'rgba(239, 68, 68, 0.15)';
+                badgeTitulo.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                badgeTitulo.style.color = '#ef4444';
+                badgeTitulo.innerHTML = '<i class="ph ph-x-circle"></i> NÃO ENCONTRADO';
+            }
+
+            container.innerHTML = `
+                <div class="scan-card-prod" style="border-color: rgba(239, 68, 68, 0.35);">
+                    <div style="display:flex; align-items:center; gap:8px; color:#ef4444; font-weight:700; margin-bottom:8px;">
+                        <i class="ph ph-warning-circle" style="font-size:1.3rem;"></i>
+                        <span>Peça não localizada no estoque</span>
+                    </div>
+                    <div class="scan-card-meta" style="font-size:0.88rem; color:#f8fafc;">
+                        Código lido: <strong style="color:var(--gold);">${UI.escapeHtml(codigoBuscado)}</strong>
+                    </div>
+                    <p style="font-size:0.78rem; color:var(--text-secondary); margin:8px 0 0 0; line-height:1.4;">
+                        Nenhum item com este código de barras foi encontrado no estoque da oficina. Deseja cadastrar este item agora com 1 clique?
+                    </p>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <button type="button" class="btn btn-primary" onclick="Estoque.fecharModal('modal-scan-resultado'); Estoque.abrirModalCadastroComCodigo('${UI.escapeHtml(codigoBuscado)}')">
+                        <i class="ph ph-plus-circle"></i>
+                        <span>+ Cadastrar Produto com este Código</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="Estoque.fecharModal('modal-scan-resultado')">
+                        <i class="ph ph-x"></i>
+                        <span>Fechar</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        UI.abrirModal('modal-scan-resultado');
+    },
+
+    /**
+     * Abre modal de cadastro pré-preenchendo com o código escaneado
+     */
+    abrirModalCadastroComCodigo(codigo) {
+        this.abrirModalCadastro();
+        const inputCodigo = document.getElementById('codigo');
+        if (inputCodigo) {
+            inputCodigo.value = codigo || '';
+            inputCodigo.classList.add('highlight-flash');
+            setTimeout(() => inputCodigo.classList.remove('highlight-flash'), 1200);
+        }
+        const inputTipo = document.getElementById('tipo');
+        if (inputTipo) {
+            setTimeout(() => inputTipo.focus(), 80);
+        }
     },
 
     fecharModal(id) {
