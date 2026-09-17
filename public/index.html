@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AutoCar BS - ERP Oficina & Estoque</title>
+    
+    <!-- Ícones Phosphor -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Folha de Estilos Modular (com cache-bust) -->
+    <link rel="stylesheet" href="css/style.css?v=32.0">
+</head>
+<body>
+
+    <!-- Linha de Carregamento Superior -->
+    <div id="loader" class="loading-line">
+        <div class="loading-bar" id="load-bar"></div>
+    </div>
+
+    <!-- Tela de Login com PIN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="brand" style="justify-content:center; margin-bottom:25px; font-size:2rem;">
+                AUTOCAR<span>BS</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:20px;">ACESSO AO SISTEMA</p>
+            
+            <input type="password" id="senha-acesso" placeholder="SENHA DE ACESSO" inputmode="numeric" autofocus>
+            <button id="btn-login" class="btn btn-primary" style="width:100%;" onclick="fazerLogin()">
+                ACESSAR SISTEMA
+            </button>
+            <p id="msg-erro" style="color:var(--danger); display:none; margin-top:12px; font-size:0.85rem;"></p>
+        </div>
+    </div>
+
+    <!-- Aplicação Principal (Layout ERP com Menu Lateral) -->
+    <div class="erp-container" id="app-container" style="opacity:0">
+        
+        <!-- Backdrop para Fechar Sidebar no Mobile -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="Sidebar.fecharDrawer()"></div>
+
+        <!-- MENU LATERAL (SIDEBAR ERP) -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="brand">AUTOCAR<span>BS</span></div>
+                    <span class="module-badge">Oficina & Estoque</span>
+                </div>
+                <!-- Botão de Recolher / Expandir Menu (Desktop - referência sistema Luzz) -->
+                <button class="sidebar-collapse-btn" id="btn-sidebar-collapse" onclick="Sidebar.toggleCollapse()" title="Recolher Menu (apenas ícones)">
+                    <i class="ph ph-caret-left" id="icon-sidebar-collapse"></i>
+                </button>
+                <!-- Botão de Fechar Gaveta (Mobile) -->
+                <button class="sidebar-close-btn" onclick="Sidebar.fecharDrawer()" title="Fechar Menu">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <!-- Navegação Vertical ERP -->
+            <div class="sidebar-menu-wrapper">
+                <div class="sidebar-section-title">MÓDULOS PRINCIPAIS</div>
+                <nav class="sidebar-nav">
+                    <!-- MÓDULO PRINCIPAL: ESTOQUE (com subitens retráteis e flyout no modo mini) -->
+                    <div class="sidebar-module-group open is-active-module" id="group-estoque">
+                        <button class="sidebar-module-btn" onclick="Sidebar.onModuloEstoqueClick()" data-tooltip="Estoque">
+                            <div class="module-btn-left">
+                                <i class="ph ph-package"></i>
+                                <span class="module-btn-title">Estoque</span>
+                            </div>
+                            <div class="module-btn-right">
+                                <i class="ph ph-caret-down group-caret"></i>
+                            </div>
+                        </button>
+
+                        <!-- SUBMÓDULOS DE ESTOQUE (Flyout no modo mini) -->
+                        <div class="sidebar-submodules" id="submodules-estoque">
+                            <div class="submodules-flyout-header">ESTOQUE</div>
+                            <button class="tab-btn sub-tab-btn active" id="tab-btn-produtos" onclick="Estoque.alternarAba('produtos')">
+                                <i class="ph ph-squares-four"></i>
+                                <span>Estoque Geral</span>
+                            </button>
+                            <button class="tab-btn sub-tab-btn" id="tab-btn-reposicao" onclick="Estoque.alternarAba('reposicao')">
+                                <i class="ph ph-warning-circle"></i>
+                                <span>Reposição</span>
+                                <span class="tab-badge" id="badge-count-reposicao" style="display:none;">0</span>
+                            </button>
+                            <button class="tab-btn sub-tab-btn" id="tab-btn-saidas" onclick="Estoque.alternarAba('saidas')">
+                                <i class="ph ph-chart-line-up"></i>
+                                <span>Curva ABC (Giro)</span>
+                            </button>
+                            <button class="tab-btn sub-tab-btn" id="tab-btn-relatorios" onclick="Estoque.alternarAba('relatorios')">
+                                <i class="ph ph-chart-pie-slice"></i>
+                                <span>Relatórios</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO PRINCIPAL: COTAÇÃO DE PEÇAS -->
+                    <div class="sidebar-module-group" id="group-cotacao">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-cotacao" onclick="Estoque.alternarAba('cotacao')" data-tooltip="Cotação de Peças">
+                            <i class="ph ph-receipt"></i>
+                            <span>Cotação de Peças</span>
+                        </button>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Rodapé da Sidebar com Usuário & Logout -->
+            <div class="sidebar-footer">
+                <div class="sidebar-user-box">
+                    <div class="user-avatar">
+                        <i class="ph ph-user-gear"></i>
+                    </div>
+                    <div class="user-info">
+                        <strong id="user-display-name">Oficina BS</strong>
+                        <span id="user-display-role">Operador Ativo</span>
+                    </div>
+                </div>
+                <button class="sidebar-logout-btn" id="sidebar-logout-btn" onclick="fazerLogout()" title="Bloquear / Sair" data-tooltip="Bloquear / Sair">
+                    <i class="ph ph-sign-out"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ÁREA PRINCIPAL (MAIN WRAPPER) -->
+        <main class="main-wrapper">
+            
+            <!-- TOPBAR HEADER (Breadcrumbs + KPIs + Ação Contextual) -->
+            <header class="top-header">
+                <div class="top-header-left">
+                    <button class="sidebar-toggle-btn" id="btn-sidebar-toggle" onclick="Sidebar.toggleDrawer()" title="Abrir Menu">
+                        <i class="ph ph-list"></i>
+                    </button>
+                    <div class="page-title-box">
+                        <div class="page-breadcrumb">
+                            <span class="breadcrumb-module" id="breadcrumb-module">ESTOQUE</span>
+                            <i class="ph ph-caret-right breadcrumb-separator"></i>
+                            <span class="breadcrumb-submodule" id="breadcrumb-submodule">GERAL</span>
+                        </div>
+                        <h1 id="page-title" class="page-title">Estoque Geral</h1>
+                        <span id="page-subtitle" class="page-subtitle">Visão consolidada dos produtos e controle de estoque</span>
+                    </div>
+                </div>
+
+                <div class="top-header-right">
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="btn-header-cadastrar" onclick="Estoque.abrirModalCadastro()">
+                            <i class="ph ph-plus-circle" style="font-size:1.1rem;"></i>
+                            <span>+ NOVO PRODUTO</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Área de Conteúdo das Abas -->
+            <div class="content-area">
+                
+                <!-- ABA 1: Estoque Geral (Produtos) -->
+                <div class="tab-pane" id="tab-pane-produtos">
+                    <div class="card table-container" style="flex:1;">
+                        <!-- Barra de Ferramentas e Filtros Rápidos -->
+                        <div class="inventory-toolbar">
+                            <div class="search-box-erp">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" id="input-busca" placeholder="Pesquisar por descrição, marca, modelo ou código..." onkeyup="Estoque.pesquisar()">
+                                <button type="button" class="btn-clear-search hidden" id="btn-clear-busca" onclick="Estoque.limparBusca()" title="Limpar pesquisa">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            </div>
+                            <div class="filter-chips">
+                                <button type="button" class="chip-pill active" id="chip-filter-todos" onclick="Estoque.filtrarStatusGeral('todos')">
+                                    <span>Todos</span>
+                                    <span class="chip-count" id="chip-count-todos">0</span>
+                                </button>
+                                <button type="button" class="chip-pill warning" id="chip-filter-repor" onclick="Estoque.filtrarStatusGeral('repor')">
+                                    <i class="ph ph-warning"></i>
+                                    <span>Reposição</span>
+                                    <span class="chip-count" id="chip-count-repor">0</span>
+                                </button>
+                                <button type="button" class="chip-pill danger" id="chip-filter-zerados" onclick="Estoque.filtrarStatusGeral('zerados')">
+                                    <i class="ph ph-x-circle"></i>
+                                    <span>Zerados</span>
+                                    <span class="chip-count" id="chip-count-zerados">0</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-wrapper">
+                            <table class="erp-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40%;">Produto / Especificação</th>
+                                        <th style="width:14%;">Preço Custo</th>
+                                        <th style="width:14%;">Preço Venda</th>
+                                        <th style="width:16%;">Estoque Atual</th>
+                                        <th style="width:16%; text-align:right;">Ações Rápidas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-estoque"></tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination-erp" id="container-paginacao-produtos">
+                            <div class="pagination-count" id="pagination-counter">
+                                Carregando produtos...
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="btn-page" id="btn-prev" onclick="Estoque.mudarPagina(-1)">
+                                    <i class="ph ph-caret-left"></i> Anterior
+                                </button>
+                                <span class="page-info" id="page-info">Página 1</span>
+                                <button class="btn-page" id="btn-next" onclick="Estoque.mudarPagina(1)">
+                                    Próxima <i class="ph ph-caret-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 2: Reposição -->
+                <div class="tab-pane hidden" id="tab-pane-reposicao">
+                    <div class="card table-container" style="flex:1; border-top:3px solid var(--gold);">
+                        <div class="inventory-toolbar">
+                            <div class="search-box-erp">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" id="input-busca-reposicao" placeholder="Filtrar itens que necessitam de reposição..." onkeyup="Estoque.filtrarReposicao()">
+                                <button type="button" class="btn-clear-search hidden" id="btn-clear-reposicao" onclick="Estoque.limparBuscaReposicao()" title="Limpar filtro">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            </div>
+                            <div class="toolbar-stats-pill warning">
+                                <i class="ph ph-warning-circle"></i>
+                                <span>Itens abaixo do mínimo:</span>
+                                <strong id="reposicao-total-badge">0</strong>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.imprimirReposicao()" title="Imprimir Ordem de Compra e Reposição em PDF" style="white-space: nowrap;">
+                                <i class="ph ph-printer"></i>
+                                <span>IMPRIMIR / PDF</span>
+                            </button>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table class="erp-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40%;">Produto / Especificação</th>
+                                        <th style="width:15%;">Estoque Atual</th>
+                                        <th style="width:15%;">Estoque Mínimo</th>
+                                        <th style="width:15%;">Déficit (Faltam)</th>
+                                        <th style="width:15%; text-align:right;">Ações Rápidas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-reposicao"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 3: Curva ABC & Giro Estratégico -->
+                <div class="tab-pane hidden" id="tab-pane-saidas">
+                    <!-- Top Bar: Subtabs Segmentadas (Por Peças vs Por Categorias) + Período + Critério -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:12px;">
+                        <div class="report-subtabs-segmented">
+                            <button type="button" class="subtab-btn active" id="subtab-abc-pecas" onclick="Estoque.selecionarVisaoABC('pecas')">
+                                <i class="ph ph-package"></i>
+                                <span>Por Peças</span>
+                            </button>
+                            <button type="button" class="subtab-btn" id="subtab-abc-tipos" onclick="Estoque.selecionarVisaoABC('tipos')">
+                                <i class="ph ph-tag"></i>
+                                <span>Por Categorias / Tipos</span>
+                            </button>
+                        </div>
+
+                        <!-- Controles de Período e Critério -->
+                        <div class="abc-toolbar-controls">
+                            <!-- Seletor de Período Temporal -->
+                            <div class="abc-criteria-toggle" style="margin-left:0;">
+                                <label for="select-periodo-abc"><i class="ph ph-calendar-blank"></i> Período:</label>
+                                <select id="select-periodo-abc" class="form-control form-control-sm" onchange="Estoque.alternarPeriodoABC(this.value)">
+                                    <option value="anual" selected>📅 Anual (Padrão)</option>
+                                    <option value="30dias">🗓️ Últimos 30 Dias</option>
+                                    <option value="90dias">📊 Últimos 90 Dias</option>
+                                    <option value="personalizado">⚙️ Personalizado...</option>
+                                </select>
+                            </div>
+
+                            <!-- Seletor de Critério (Faturamento R$ vs Volume Unidades) -->
+                            <div class="abc-criteria-toggle" style="margin-left:0;">
+                                <label for="select-criterio-abc">Critério:</label>
+                                <select id="select-criterio-abc" class="form-control form-control-sm" onchange="Estoque.alternarCriterioABC(this.value)">
+                                     <option value="faturamento">Faturamento (R$)</option>
+                                     <option value="volume">Volume (Unidades)</option>
+                                </select>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.imprimirCurvaABC()" title="Imprimir ou Salvar Curva ABC em PDF" style="white-space: nowrap;">
+                                <i class="ph ph-printer"></i>
+                                <span>IMPRIMIR / PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Intervalo Personalizado (De / Até) -->
+                    <div id="abc-custom-date-container" class="abc-custom-date-bar hidden">
+                        <div class="abc-custom-date-inner">
+                            <span class="abc-date-label"><i class="ph ph-sliders-horizontal"></i> Intervalo Personalizado:</span>
+                            <div class="date-input-group">
+                                <label for="abc-data-inicio">De:</label>
+                                <input type="date" id="abc-data-inicio" class="form-control form-control-sm">
+                            </div>
+                            <div class="date-input-group">
+                                <label for="abc-data-fim">Até:</label>
+                                <input type="date" id="abc-data-fim" class="form-control form-control-sm">
+                            </div>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="Estoque.aplicarPeriodoPersonalizadoABC()" style="padding: 4px 12px; font-size: 0.8rem;">
+                                <i class="ph ph-funnel"></i> Filtrar Período
+                            </button>
+                            <span id="abc-rotulo-periodo-ativo" style="font-size: 0.78rem; color: var(--gold); font-weight: 600; margin-left: auto;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Cards Executivos de Resumo ABC -->
+                    <div class="abc-summary-grid">
+                        <!-- Card Classe A -->
+                        <div class="abc-card abc-card-a" onclick="Estoque.filtrarClasseABC('A')" title="Filtrar Classe A">
+                            <div class="abc-card-top">
+                                <div class="abc-badge-pill a">CLASSE A</div>
+                                <span class="abc-meta-tag">Prioridade Máxima (~80%)</span>
+                            </div>
+                            <div class="abc-card-main">
+                                <strong class="abc-card-val" id="abc-card-val-a">R$ 0,00</strong>
+                                <span class="abc-card-perc" id="abc-card-perc-a">0% do faturamento</span>
+                            </div>
+                            <div class="abc-card-bottom">
+                                <span id="abc-card-itens-a">0 itens</span>
+                                <span class="abc-click-hint"><i class="ph ph-funnel"></i> Filtrar</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Classe B -->
+                        <div class="abc-card abc-card-b" onclick="Estoque.filtrarClasseABC('B')" title="Filtrar Classe B">
+                            <div class="abc-card-top">
+                                <div class="abc-badge-pill b">CLASSE B</div>
+                                <span class="abc-meta-tag">Intermediário (~15%)</span>
+                            </div>
+                            <div class="abc-card-main">
+                                <strong class="abc-card-val" id="abc-card-val-b">R$ 0,00</strong>
+                                <span class="abc-card-perc" id="abc-card-perc-b">0% do faturamento</span>
+                            </div>
+                            <div class="abc-card-bottom">
+                                <span id="abc-card-itens-b">0 itens</span>
+                                <span class="abc-click-hint"><i class="ph ph-funnel"></i> Filtrar</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Classe C -->
+                        <div class="abc-card abc-card-c" onclick="Estoque.filtrarClasseABC('C')" title="Filtrar Classe C">
+                            <div class="abc-card-top">
+                                <div class="abc-badge-pill c">CLASSE C</div>
+                                <span class="abc-meta-tag">Baixo Giro (~5%)</span>
+                            </div>
+                            <div class="abc-card-main">
+                                <strong class="abc-card-val" id="abc-card-val-c">R$ 0,00</strong>
+                                <span class="abc-card-perc" id="abc-card-perc-c">0% do faturamento</span>
+                            </div>
+                            <div class="abc-card-bottom">
+                                <span id="abc-card-itens-c">0 itens</span>
+                                <span class="abc-click-hint"><i class="ph ph-funnel"></i> Filtrar</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Total Movimentado -->
+                        <div class="abc-card abc-card-total" onclick="Estoque.filtrarClasseABC('todos')" title="Ver todos os itens movimentados">
+                            <div class="abc-card-top">
+                                <div class="abc-badge-pill total">TOTAL MOVIMENTADO</div>
+                                <i class="ph ph-chart-line-up" style="color:var(--text-secondary);"></i>
+                            </div>
+                            <div class="abc-card-main">
+                                <strong class="abc-card-val" id="abc-card-val-total">R$ 0,00</strong>
+                                <span class="abc-card-perc" id="abc-card-unidades-total">0 saídas totais</span>
+                            </div>
+                            <div class="abc-card-bottom">
+                                <span id="abc-card-itens-total">0 itens no escopo</span>
+                                <span class="abc-click-hint"><i class="ph ph-arrows-clockwise"></i> Ver Todos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo da Tabela e Barra de Ferramentas -->
+                    <div class="card table-container" style="flex:1; border-top:3px solid var(--gold);">
+                        <div class="inventory-toolbar" style="flex-wrap:wrap; gap:12px;">
+                            <div class="search-box-erp" style="min-width:220px; flex:1;">
+                                <i class="ph ph-magnifying-glass"></i>
+                                <input type="text" id="input-busca-ranking" placeholder="Filtrar produtos ou categorias na Curva ABC..." onkeyup="Estoque.filtrarRanking()">
+                                <button type="button" class="btn-clear-search hidden" id="btn-clear-ranking" onclick="Estoque.limparBuscaRanking()" title="Limpar filtro">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            </div>
+
+                            <!-- Dropdown de Filtro por Categoria -->
+                            <div class="abc-filter-field" id="box-filtro-tipo-abc" style="display:flex; align-items:center; gap:6px;">
+                                <label for="filtro-abc-tipo" style="font-size:0.72rem; color:var(--text-secondary); font-weight:700; text-transform:uppercase;">Categoria:</label>
+                                <select id="filtro-abc-tipo" class="form-control form-control-sm" onchange="Estoque.filtrarTipoABC(this.value)" style="padding:6px 10px; border-radius:6px; background:#111721; border:1px solid var(--border); color:#f8fafc; font-size:0.8rem; font-weight:600; outline:none;">
+                                    <option value="todos">Todas as Categorias</option>
+                                </select>
+                            </div>
+
+                            <!-- Chips de Filtro por Classe ABC -->
+                            <div class="abc-chips-group">
+                                <button type="button" class="abc-chip active" id="chip-abc-todos" onclick="Estoque.filtrarClasseABC('todos')">
+                                    <span>Todos</span>
+                                    <strong id="badge-chip-todos">0</strong>
+                                </button>
+                                <button type="button" class="abc-chip chip-a" id="chip-abc-A" onclick="Estoque.filtrarClasseABC('A')">
+                                    <span>Classe A</span>
+                                    <strong id="badge-chip-A">0</strong>
+                                </button>
+                                <button type="button" class="abc-chip chip-b" id="chip-abc-B" onclick="Estoque.filtrarClasseABC('B')">
+                                    <span>Classe B</span>
+                                    <strong id="badge-chip-B">0</strong>
+                                </button>
+                                <button type="button" class="abc-chip chip-c" id="chip-abc-C" onclick="Estoque.filtrarClasseABC('C')">
+                                    <span>Classe C</span>
+                                    <strong id="badge-chip-C">0</strong>
+                                </button>
+                                <button type="button" class="abc-chip chip-ruptura" id="chip-abc-ruptura" onclick="Estoque.filtrarClasseABC('ruptura')" title="Itens Classe A ou B com estoque baixo ou zerado">
+                                    <i class="ph ph-warning"></i>
+                                    <span>Risco Ruptura</span>
+                                    <strong id="badge-chip-ruptura">0</strong>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table class="erp-table">
+                                <thead id="thead-ranking"></thead>
+                                <tbody id="tabela-ranking"></tbody>
+                                <tfoot id="tfoot-ranking" style="background:#0f151e; font-weight:700; border-top:2px solid var(--border);"></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- ABA 4: Relatórios Estratégicos -->
+            <div class="tab-pane hidden" id="tab-pane-relatorios">
+                <div class="card report-container" style="flex:1; border-top:3px solid var(--gold);">
+                    <!-- Top Toolbar: Subtabs segmentadas à esquerda + Ações à direita -->
+                    <div class="report-top-bar">
+                        <div class="report-subtabs-segmented">
+                            <button type="button" class="subtab-btn active" id="subtab-geral" onclick="Estoque.selecionarTipoRelatorio('geral')">
+                                <i class="ph ph-chart-pie"></i>
+                                <span>Visão Geral</span>
+                            </button>
+                            <button type="button" class="subtab-btn" id="subtab-tipo" onclick="Estoque.selecionarTipoRelatorio('tipo')">
+                                <i class="ph ph-tag"></i>
+                                <span>Categorias</span>
+                            </button>
+                            <!-- Sub-aba Modelos oculta temporariamente a pedido do usuário -->
+                            <button type="button" class="subtab-btn" id="subtab-modelo" onclick="Estoque.selecionarTipoRelatorio('modelo')" style="display:none;">
+                                <i class="ph ph-car"></i>
+                                <span>Modelos</span>
+                            </button>
+                            <button type="button" class="subtab-btn" id="subtab-pecas" onclick="Estoque.selecionarTipoRelatorio('pecas')">
+                                <i class="ph ph-list-dashes"></i>
+                                <span>Analítico por Peça</span>
+                            </button>
+                        </div>
+
+                        <div class="report-actions-group">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.exportarCSV()" title="Exportar dados para planilha Excel / CSV">
+                                <i class="ph ph-file-csv" style="font-size:1.1rem;"></i>
+                                <span>EXPORTAR CSV</span>
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.imprimirRelatorio()" title="Imprimir ou Salvar em PDF">
+                                <i class="ph ph-printer" style="font-size:1.1rem;"></i>
+                                <span>IMPRIMIR / PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Filtros Refinada com Busca em Tempo Real -->
+                    <div class="report-filter-bar">
+                        <div class="search-box-erp report-search-box">
+                            <i class="ph ph-magnifying-glass"></i>
+                            <input type="text" id="input-busca-relatorio" placeholder="Filtrar dados deste relatório..." onkeyup="Estoque.filtrarBuscaRelatorio()">
+                            <button type="button" class="btn-clear-search hidden" id="btn-clear-relatorio" onclick="Estoque.limparBuscaRelatorio()" title="Limpar busca">
+                                <i class="ph ph-x"></i>
+                            </button>
+                        </div>
+
+                        <div class="report-dropdowns-group">
+                            <div class="filter-field">
+                                <label for="filtro-relatorio-status">Status</label>
+                                <select id="filtro-relatorio-status" onchange="Estoque.aplicarFiltrosRelatorio()">
+                                    <option value="todos">Todos os Status</option>
+                                    <option value="positivo">Estoque Regular (&gt; 0)</option>
+                                    <option value="repor">Reposição (&lt; Mínimo)</option>
+                                    <option value="zerado">Zerados (0 un)</option>
+                                </select>
+                            </div>
+                            <div class="filter-field">
+                                <label for="filtro-relatorio-tipo">Categoria</label>
+                                <select id="filtro-relatorio-tipo" onchange="Estoque.aplicarFiltrosRelatorio()">
+                                    <option value="todos">Todas as Categorias</option>
+                                </select>
+                            </div>
+                            <div class="filter-field">
+                                <label for="filtro-relatorio-marca">Marca</label>
+                                <select id="filtro-relatorio-marca" onchange="Estoque.aplicarFiltrosRelatorio()">
+                                    <option value="todos">Todas as Marcas</option>
+                                </select>
+                            </div>
+                            <div class="filter-field">
+                                <label for="filtro-relatorio-modelo">Modelo</label>
+                                <select id="filtro-relatorio-modelo" onchange="Estoque.aplicarFiltrosRelatorio()">
+                                    <option value="todos">Todos os Modelos</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.limparFiltrosRelatorio()" title="Redefinir todos os filtros">
+                                <i class="ph ph-arrow-counter-clockwise"></i>
+                                <span>Limpar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cabeçalho Exclusivo para Impressão / PDF (AutoCar BS) -->
+                    <div class="print-header">
+                        <div class="print-brand-row">
+                            <div class="print-brand">AUTOCAR <span>BS</span></div>
+                            <div class="print-meta">
+                                <strong>RELATÓRIO GERENCIAL DE ESTOQUE</strong><br>
+                                <span id="print-data-emissao">Data: --/--/----</span>
+                            </div>
+                        </div>
+                        <div class="print-subtitle" id="print-titulo-subtipo">Visão Geral Consolidada</div>
+                    </div>
+
+                    <!-- Conteúdo Dinâmico do Relatório -->
+                    <div id="relatorio-conteudo" class="report-content-body">
+                        <!-- Injetado dinamicamente via Estoque.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA 5: Cotação de Peças & Orçamentos (Integrada ao Estoque) -->
+            <div class="tab-pane hidden" id="tab-pane-cotacao">
+                <div class="card" style="flex:1; display:flex; flex-direction:column;">
+                    
+                    <!-- Barra Superior da Cotação -->
+                    <div class="cot-top-bar">
+                        <div class="cot-header-left">
+                            <input type="text" id="cot-carModel" placeholder="MODELO DO CARRO (EX: GOL G5)" oninput="Cotacao.saveDraft()">
+                            <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
+                            <button class="btn btn-secondary btn-sm" onclick="Cotacao.toggleHistory()">
+                                <i class="ph ph-folder-open"></i> <span>HISTÓRICO</span>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="Cotacao.saveCurrent(true)">
+                                <i class="ph ph-floppy-disk"></i> <span>SALVAR</span>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="Cotacao.smartNewQuote()">
+                                <i class="ph ph-sparkle"></i> <span>NOVO LIMPO</span>
+                            </button>
+                            <button id="cot-btnLavagem" class="btn btn-info btn-sm" onclick="Cotacao.toggleLavagem()">
+                                🚿 INCLUIR LAVAGEM
+                            </button>
+                        </div>
+                        <div class="cot-header-right">
+                            <div id="cot-vendorTags" class="cot-vendor-tags"></div>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <input type="text" id="cot-newVendorInput" placeholder="+ Fornecedor" style="width:130px; font-size:12px; padding:6px 10px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border); color:white;" onkeydown="if(event.key==='Enter') Cotacao.addVendor()">
+                                <button class="btn btn-primary btn-sm" style="padding:6px 10px;" onclick="Cotacao.addVendor()">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Cotação Dinâmica com Colunas Fixas -->
+                    <div class="cot-table-container">
+                        <table id="cot-mainTable">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Botão Adicionar Peça -->
+                    <div style="margin-top: 14px; display:flex; justify-content:space-between; align-items:center;">
+                        <button class="btn btn-secondary" onclick="Cotacao.addPartRow()">
+                            <i class="ph ph-plus-circle" style="font-size:1.1rem;"></i>
+                            <span>ADICIONAR PEÇA</span>
+                        </button>
+                    </div>
+
+                    <!-- Painel de Ações Rápidas & WhatsApp -->
+                    <div class="cot-actions-container">
+                        <div class="cot-action-card" onclick="Cotacao.generateText('quote')">
+                            <h4>📋 COPIAR COTAÇÃO</h4>
+                            <p>Gera texto simples das peças para disparar aos vendedores no WhatsApp.</p>
+                        </div>
+                        <div class="cot-action-card highlight-card" onclick="Cotacao.generateText('order')">
+                            <h4>📦 COPIAR PEDIDOS & SINCRONIZAR</h4>
+                            <p>Gera pedidos das peças vencedoras e dá entrada/baixa automática no estoque.</p>
+                        </div>
+                        <div class="cot-action-card" onclick="Cotacao.generateText('internal')">
+                            <h4>📑 LISTA INTERNA</h4>
+                            <p>Gera resumo de custos, vendas e lucros para controle da equipe.</p>
+                        </div>
+                        <div class="cot-action-card highlight-gold" onclick="Cotacao.openLaborModal()">
+                            <h4>💰 ORÇAMENTO FINAL WHATSAPP</h4>
+                            <p>Inclui mão de obra técnica e gera orçamento completo para o cliente.</p>
+                        </div>
+                    </div>
+
+                    <!-- Painel de Visualização do Texto Copiado -->
+                    <div id="cot-resultPanel" class="cot-result-panel" style="display:none; margin-top:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <strong style="color:var(--gold); font-size:0.9rem;">Texto Gerado (Copiado para a Área de Transferência)</strong>
+                            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cot-resultPanel').style.display='none'">Fechar</button>
+                        </div>
+                        <textarea id="cot-outputText" class="cot-output-textarea" readonly rows="8"></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Cadastro & Edição de Produto -->
+    <div id="modal-cadastro" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-cadastro-titulo">
+        <div class="modal-form">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 id="modal-cadastro-titulo" style="margin:0;">PRODUTO</h3>
+                <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-cadastro')"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="form-grid">
+                <div class="form-control"><label for="tipo">TIPO *</label><input type="text" id="tipo" placeholder="EX: FILTRO"></div>
+                <div class="form-control"><label for="marca">MARCA</label><input type="text" id="marca" placeholder="EX: BOSCH"></div>
+            </div>
+            <div class="form-grid">
+                <div class="form-control"><label for="modelo">MODELO</label><input type="text" id="modelo"></div>
+                <div class="form-control"><label for="codigo">CÓDIGO</label><input type="text" id="codigo"></div>
+            </div>
+            <div class="form-grid">
+                <div class="form-control"><label for="qtd">QTD ESTOQUE</label><input type="number" id="qtd" inputmode="numeric"></div>
+                <div class="form-control"><label for="minimo">ESTOQUE MÍNIMO</label><input type="number" id="minimo" inputmode="numeric"></div>
+            </div>
+            <div class="form-grid">
+                <div class="form-control"><label for="valorCompra">CUSTO (R$)</label><input type="text" id="valorCompra" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric"></div>
+                <div class="form-control"><label for="valorVenda">VENDA (R$)</label><input type="text" id="valorVenda" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric"></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="Estoque.salvarProduto()">SALVAR PRODUTO</button>
+        </div>
+    </div>
+
+    <!-- MODAL: Entrada de Estoque -->
+    <div id="modal-entrada" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-entrada-titulo">
+        <div class="modal-form" style="width:380px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 id="modal-entrada-titulo" style="margin:0; color:var(--success)">ENTRADA ESTOQUE</h3>
+                <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-entrada')"><i class="ph ph-x"></i></button>
+            </div>
+            <p id="nome-produto-entrada" style="text-align:center; color:var(--text-secondary); margin-bottom:20px; font-weight:600;">...</p>
+            <div class="form-control">
+                <label for="qtd-entrada" style="text-align:center">QUANTIDADE A ADICIONAR</label>
+                <input type="number" id="qtd-entrada" value="1" style="font-size:1.5rem; text-align:center;" inputmode="numeric" min="1">
+            </div>
+            <div class="checkbox-wrapper" style="background:var(--gold-bg);">
+                <input type="checkbox" id="check-devolucao" style="accent-color:var(--gold);">
+                <div>
+                    <strong style="color:var(--gold); display:block; font-size:0.9rem;">É DEVOLUÇÃO?</strong>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">Estorna do ranking de saídas</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:20px; background:var(--success);" onclick="Estoque.confirmarEntrada()">CONFIRMAR ENTRADA</button>
+        </div>
+    </div>
+
+    <!-- MODAL: Saída de Estoque -->
+    <div id="modal-saida" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-saida-titulo">
+        <div class="modal-form" style="width:380px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 id="modal-saida-titulo" style="margin:0; color:var(--danger)">BAIXAR ESTOQUE</h3>
+                <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-saida')"><i class="ph ph-x"></i></button>
+            </div>
+            <p id="nome-produto-saida" style="text-align:center; color:var(--text-secondary); margin-bottom:20px; font-weight:600;">...</p>
+            <div class="form-control">
+                <label for="qtd-saida" style="text-align:center">QUANTIDADE A RETIRAR</label>
+                <input type="number" id="qtd-saida" value="1" style="font-size:1.5rem; text-align:center;" inputmode="numeric" min="1">
+            </div>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="check-venda" checked>
+                <div>
+                    <strong style="color:var(--success); display:block; font-size:0.9rem;">É VENDA?</strong>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">Contabiliza no ranking de saídas</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%; margin-top:20px; background:var(--danger);" onclick="Estoque.confirmarSaida()">CONFIRMAR SAÍDA</button>
+        </div>
+    </div>
+
+    <!-- MODAL: Senha de Supervisor para Exclusão -->
+    <div id="modal-senha-exclusao" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-senha-titulo">
+        <div class="modal-form" style="width:360px;">
+            <div style="text-align:center; margin-bottom:20px;">
+                <i class="ph ph-shield-warning" style="font-size:2.8rem; color:var(--danger)"></i>
+                <h3 id="modal-senha-titulo" style="color:var(--danger); margin:10px 0;">ÁREA RESTRITA</h3>
+                <p style="font-size:0.85rem; color:var(--text-secondary)">Digite a senha do supervisor para excluir o item do banco.</p>
+            </div>
+            <input type="password" id="senha-supervisor" style="width:100%; padding:12px; margin-bottom:20px; background:var(--bg-input); border:1px solid var(--danger); border-radius:6px; color:white; text-align:center;" placeholder="SENHA DO SUPERVISOR" inputmode="numeric">
+            <div style="display:flex; gap:10px;">
+                <button class="btn btn-secondary" style="flex:1;" onclick="Estoque.fecharModal('modal-senha-exclusao')">CANCELAR</button>
+                <button class="btn btn-danger" style="flex:1;" onclick="Estoque.confirmarExclusao()">EXCLUIR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Listagem Completa (Reposição / Ranking) -->
+    <div id="modal-lista" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-lista">
+        <div class="modal-list">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+                <h3 id="titulo-modal-lista" style="margin:0;">LISTA</h3>
+                <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-lista')"><i class="ph ph-x"></i></button>
+            </div>
+            <div id="conteudo-modal-lista"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: Mão de Obra da Cotação -->
+    <div id="cot-laborModal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cot-labor-titulo">
+        <div class="modal-form" style="width: 580px; max-width:95vw;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                <h3 id="cot-labor-titulo" style="margin:0; color:var(--gold);">MÃO DE OBRA & SERVIÇOS</h3>
+                <button class="btn-close-modal" aria-label="Fechar modal" onclick="Cotacao.toggleLaborModal()"><i class="ph ph-x"></i></button>
+            </div>
+
+            <div class="labor-type-selector">
+                <label style="cursor:pointer; display:flex; align-items:center; gap:6px;">
+                    <input type="radio" name="cot-laborType" value="popular" checked onchange="Cotacao.updateLaborType('popular')">
+                    <span>Veículo Popular (R$ 200/h)</span>
+                </label>
+                <label style="cursor:pointer; display:flex; align-items:center; gap:6px; margin-left:15px;">
+                    <input type="radio" name="cot-laborType" value="premium" onchange="Cotacao.updateLaborType('premium')">
+                    <span>Veículo Premium (R$ 300/h)</span>
+                </label>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:10px; margin: 15px 0;">
+                <label for="cot-laborRate" style="font-size:0.85rem; color:var(--text-secondary);">VALOR HORA PERSONALIZADO (R$):</label>
+                <input type="number" id="cot-laborRate" value="200" style="width:100px; padding:6px 10px; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; color:white; font-weight:bold;" oninput="Cotacao.updateLaborCalc(true)">
+            </div>
+
+            <div id="cot-laborList" class="labor-items-container"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:10px; border-top:1px solid var(--border);">
+                <button class="btn btn-secondary btn-sm" onclick="Cotacao.addLaborRow()">+ Adicionar Serviço</button>
+                <button class="btn btn-primary" onclick="Cotacao.generateBudgetWithLabor()">GERAR ORÇAMENTO WHATSAPP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Histórico de Cotações -->
+    <div id="cot-historyModal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cot-history-titulo">
+        <div class="modal-form" style="width: 520px; max-width:95vw;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                <h3 id="cot-history-titulo" style="margin:0; color:var(--gold);">ORÇAMENTOS ARQUIVADOS</h3>
+                <button class="btn-close-modal" aria-label="Fechar modal" onclick="Cotacao.toggleHistory()"><i class="ph ph-x"></i></button>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <input type="text" id="cot-searchHistory" placeholder="Pesquisar por modelo ou placa..." style="width:100%; padding:10px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border); color:white;" oninput="Cotacao.loadHistoryItems()">
+            </div>
+            <div id="cot-historyList" class="history-list-container" style="max-height: 400px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- DOCUMENTO EXCLUSIVO DE IMPRESSÃO / PDF A4 (Oculto na tela, visível apenas na impressão) -->
+    <div id="relatorio-documento-impressao" class="print-document-only"></div>
+
+    <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
+    <script src="js/ui.js?v=33.0"></script>
+    <script src="js/sidebar.js?v=33.0"></script>
+    <script src="js/api.js?v=33.0"></script>
+    <script src="js/cotacao.js?v=33.0"></script>
+    <script src="js/estoque.js?v=33.0"></script>
+    <script src="js/app.js?v=33.0"></script>
+</body>
+</html>
