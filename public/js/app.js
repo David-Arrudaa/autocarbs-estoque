@@ -56,7 +56,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const sessao = await API.verificarSessao();
             atualizarPerfilUsuario(sessao.usuario);
-            document.getElementById('login-screen').style.display = 'none';
+            if (window.AuthModule) {
+                AuthModule.ocultarTelaLogin();
+            } else {
+                const ls = document.getElementById('login-screen');
+                if (ls) ls.style.display = 'none';
+            }
             await Estoque.carregarTudo();
             return;
         } catch {
@@ -64,7 +69,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    mostrarTelaLogin();
+    if (window.AuthModule) {
+        AuthModule.mostrarTelaLogin();
+    } else {
+        mostrarTelaLogin();
+    }
 });
 
 function atualizarPerfilUsuario(usuario) {
@@ -103,6 +112,9 @@ function atualizarPerfilUsuario(usuario) {
 }
 
 function mostrarTelaLogin() {
+    if (window.AuthModule) {
+        return AuthModule.mostrarTelaLogin();
+    }
     const loginScreen = document.getElementById('login-screen');
     const appContainer = document.getElementById('app-container');
     if (loginScreen) loginScreen.style.display = 'flex';
@@ -127,6 +139,9 @@ function mostrarTelaLogin() {
 }
 
 async function fazerLogin() {
+    if (window.AuthModule) {
+        return AuthModule.fazerLogin();
+    }
     const inputEmail = document.getElementById('login-email');
     const inputSenha = document.getElementById('login-senha');
     const inputLegado = document.getElementById('senha-acesso');
