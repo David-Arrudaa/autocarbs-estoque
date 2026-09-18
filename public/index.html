@@ -30,11 +30,11 @@
                 <p class="auth-subtitle">Oficina & Controle de Estoque</p>
             </div>
             
-            <form id="form-login">
+            <form id="form-login" autocomplete="off">
                 <div class="auth-form-group">
                     <label class="auth-label" for="login-email">E-mail de Acesso</label>
                     <div class="auth-input-wrapper">
-                        <input type="email" class="auth-input" id="login-email" placeholder="seu.email@autocarbs.com.br" required autocomplete="username" autofocus>
+                        <input type="email" class="auth-input" id="login-email" placeholder="seu.email@autocarbs.com.br" required autocomplete="off" spellcheck="false" autofocus>
                         <i class="ph ph-envelope-simple auth-input-icon"></i>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="auth-form-group">
                     <label class="auth-label" for="login-senha">Senha</label>
                     <div class="auth-input-wrapper">
-                        <input type="password" class="auth-input" id="login-senha" placeholder="Sua senha de acesso" required autocomplete="current-password">
+                        <input type="password" class="auth-input" id="login-senha" placeholder="Sua senha de acesso" required autocomplete="new-password" data-lpignore="true">
                         <i class="ph ph-lock-key auth-input-icon"></i>
                         <button type="button" class="auth-btn-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
                             <i class="ph ph-eye" id="icon-toggle-pwd"></i>
