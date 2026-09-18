@@ -325,7 +325,7 @@ const Usuarios = {
      */
     async salvarUsuario() {
         const nome = document.getElementById('usr-nome')?.value?.trim();
-        const email = document.getElementById('usr-email')?.value?.trim();
+        const email = document.getElementById('usr-email')?.value?.trim().toLowerCase();
         const senha = document.getElementById('usr-pin')?.value?.trim();
         const role = document.getElementById('usr-role')?.value || 'operador';
         const btnSalvar = document.getElementById('btn-salvar-usuario');

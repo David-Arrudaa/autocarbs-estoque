@@ -2097,6 +2097,19 @@ th {
     transition: border-color 0.2s;
 }
 
+.form-control input[type="email"],
+.form-control input.input-email,
+input[type="email"] {
+    text-transform: lowercase !important;
+}
+
+.form-control input[type="password"],
+input[type="password"],
+.form-control input.no-uppercase,
+input.no-uppercase {
+    text-transform: none !important;
+}
+
 .form-control input:focus {
     border-color: var(--primary);
 }
