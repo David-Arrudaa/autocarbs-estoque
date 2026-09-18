@@ -132,3 +132,60 @@
     </div>
 </div>
 
+<!-- MODAL: Editar Colaborador (Exclusivo para Administrador) -->
+<div id="modal-editar-usuario" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-editar-usuario-titulo">
+    <div class="modal-form" style="max-width:480px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <h3 id="modal-editar-usuario-titulo" style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                <i class="ph ph-user-gear" style="color:var(--gold);"></i> EDITAR COLABORADOR
+            </h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="UI.fecharModal('modal-editar-usuario')"><i class="ph ph-x"></i></button>
+        </div>
+        <form id="form-editar-usuario" onsubmit="event.preventDefault(); Usuarios.confirmarEdicao();">
+            <input type="hidden" id="edit-usr-id">
+
+            <div class="form-control" style="margin-bottom:14px;">
+                <label for="edit-usr-nome">NOME DO COLABORADOR *</label>
+                <input type="text" id="edit-usr-nome" placeholder="Nome completo" required autocomplete="name">
+            </div>
+
+            <div class="form-control" style="margin-bottom:14px;">
+                <label for="edit-usr-email">E-MAIL DE ACESSO *</label>
+                <input type="email" id="edit-usr-email" class="input-email" placeholder="colaborador@autocarbs.com.br" required autocomplete="email" style="text-transform: lowercase !important;" oninput="this.value = this.value.toLowerCase()">
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+                <div class="form-control">
+                    <label for="edit-usr-role">CARGO / PERFIL *</label>
+                    <select id="edit-usr-role">
+                        <option value="operador">🔧 Operador (Oficina)</option>
+                        <option value="supervisor">⭐ Supervisor</option>
+                        <option value="admin">👑 Administrador</option>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label for="edit-usr-status">STATUS DE ACESSO *</label>
+                    <select id="edit-usr-status">
+                        <option value="true">✅ Ativo (Acesso Liberado)</option>
+                        <option value="false">⛔ Inativo (Bloqueado)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-control" style="margin-bottom:20px;">
+                <label for="edit-usr-senha">NOVA SENHA (OPCIONAL)</label>
+                <input type="password" id="edit-usr-senha" placeholder="Deixe em branco para manter a senha atual" minlength="6" autocomplete="new-password">
+                <span style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">Preencha apenas se desejar alterar a senha do colaborador.</span>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" class="btn btn-secondary" onclick="UI.fecharModal('modal-editar-usuario')">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btn-atualizar-usuario">
+                    <i class="ph ph-check"></i>
+                    <span>SALVAR ALTERAÇÕES</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+

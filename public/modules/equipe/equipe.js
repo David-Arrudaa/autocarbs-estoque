@@ -166,6 +166,7 @@ const Usuarios = {
         }
 
         const usuarioLogado = window.usuarioLogado || {};
+        const isAdmin = usuarioLogado.role === 'admin';
 
         tbody.innerHTML = filtrados.map(u => {
             const isSelf = usuarioLogado.id && usuarioLogado.id === u.id;
@@ -240,6 +241,15 @@ const Usuarios = {
                     </td>
                     <td data-label="Ações Rápidas" style="text-align:right;">
                         <div class="usr-actions-cell">
+                            ${isAdmin ? `
+                                <button type="button" 
+                                        class="btn-action-usr btn-action-edit" 
+                                        onclick="Usuarios.abrirModalEditar('${u.id}')" 
+                                        title="Editar Dados do Colaborador (Exclusivo Admin)">
+                                    <i class="ph ph-pencil-simple"></i>
+                                    <span class="action-text">Editar</span>
+                                </button>
+                            ` : ''}
                             <button type="button" 
                                     class="btn-action-usr btn-action-pin" 
                                     onclick="Usuarios.abrirModalPin('${u.id}', '${UI.escapeHtml(u.nome)}', '${UI.escapeHtml(u.email || '')}')" 
@@ -453,6 +463,85 @@ const Usuarios = {
         } catch (err) {
             UI.toast(err.message || 'Erro ao excluir colaborador.', 'error');
         } finally {
+            UI.setLoading(false);
+        }
+    },
+
+    /**
+     * Abre modal para editar dados do colaborador (Exclusivo Administrador)
+     */
+    abrirModalEditar(id) {
+        const usuario = this.listaUsuarios.find(u => String(u.id) === String(id));
+        if (!usuario) {
+            UI.toast('Colaborador não encontrado.', 'error');
+            return;
+        }
+
+        const inputId = document.getElementById('edit-usr-id');
+        const inputNome = document.getElementById('edit-usr-nome');
+        const inputEmail = document.getElementById('edit-usr-email');
+        const selectRole = document.getElementById('edit-usr-role');
+        const selectStatus = document.getElementById('edit-usr-status');
+        const inputSenha = document.getElementById('edit-usr-senha');
+
+        if (inputId) inputId.value = usuario.id;
+        if (inputNome) inputNome.value = usuario.nome || '';
+        if (inputEmail) inputEmail.value = usuario.email || '';
+        if (selectRole) selectRole.value = usuario.role || 'operador';
+        if (selectStatus) selectStatus.value = String(usuario.ativo !== false);
+        if (inputSenha) inputSenha.value = '';
+
+        UI.abrirModal('modal-editar-usuario');
+        setTimeout(() => document.getElementById('edit-usr-nome')?.focus(), 100);
+    },
+
+    /**
+     * Confirma a edição dos dados do colaborador
+     */
+    async confirmarEdicao() {
+        const id = document.getElementById('edit-usr-id')?.value;
+        const nome = document.getElementById('edit-usr-nome')?.value?.trim();
+        const email = document.getElementById('edit-usr-email')?.value?.trim().toLowerCase();
+        const role = document.getElementById('edit-usr-role')?.value || 'operador';
+        const ativo = document.getElementById('edit-usr-status')?.value === 'true';
+        const senha = document.getElementById('edit-usr-senha')?.value?.trim();
+        const btnSalvar = document.getElementById('btn-atualizar-usuario');
+
+        if (!id || !nome || !email) {
+            UI.toast('Preencha os campos obrigatórios.', 'warning');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            UI.toast('Informe um e-mail válido (ex: colaborador@autocarbs.com.br).', 'warning');
+            document.getElementById('edit-usr-email')?.focus();
+            return;
+        }
+
+        if (senha && senha.length < 6) {
+            UI.toast('A nova senha deve ter no mínimo 6 caracteres.', 'warning');
+            document.getElementById('edit-usr-senha')?.focus();
+            return;
+        }
+
+        try {
+            if (btnSalvar) btnSalvar.disabled = true;
+            UI.setLoading(true);
+
+            const payload = { nome, email, role, ativo };
+            if (senha) {
+                payload.senha = senha;
+            }
+
+            const res = await API.atualizarUsuario(id, payload);
+            UI.toast(res?.message || `Colaborador ${nome} atualizado com sucesso!`, 'success');
+            UI.fecharModal('modal-editar-usuario');
+            await this.carregarLista();
+        } catch (err) {
+            UI.toast(err.message || 'Erro ao atualizar colaborador.', 'error');
+        } finally {
+            if (btnSalvar) btnSalvar.disabled = false;
             UI.setLoading(false);
         }
     }

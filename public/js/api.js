@@ -178,6 +178,13 @@ const API = {
         });
     },
 
+    async atualizarUsuario(id, dados) {
+        return this.request(`/usuarios/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(dados)
+        });
+    },
+
     async alternarStatusUsuario(id, ativo) {
         return this.request(`/usuarios/${id}/status`, {
             method: 'PUT',

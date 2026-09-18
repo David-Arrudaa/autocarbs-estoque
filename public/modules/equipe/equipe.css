@@ -6,7 +6,9 @@
  */
 
 /* Select de Cargo / Perfil Personalizado */
-#modal-usuario select#usr-role {
+#modal-usuario select#usr-role,
+#modal-editar-usuario select#edit-usr-role,
+#modal-editar-usuario select#edit-usr-status {
     width: 100%;
     padding: 12px 38px 12px 14px;
     background-color: var(--bg-input, #111723);
@@ -27,12 +29,16 @@
     transition: all 0.2s ease;
 }
 
-#modal-usuario select#usr-role:focus {
+#modal-usuario select#usr-role:focus,
+#modal-editar-usuario select#edit-usr-role:focus,
+#modal-editar-usuario select#edit-usr-status:focus {
     border-color: var(--gold, #d4af37);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
 }
 
-#modal-usuario select#usr-role option {
+#modal-usuario select#usr-role option,
+#modal-editar-usuario select#edit-usr-role option,
+#modal-editar-usuario select#edit-usr-status option {
     background-color: #0d131d;
     color: #f8fafc;
     padding: 12px;
@@ -221,6 +227,18 @@
 .btn-action-usr:hover {
     border-color: rgba(255, 255, 255, 0.3);
     background: #1e2c40;
+}
+
+.btn-action-usr.btn-action-edit {
+    padding: 6px 12px;
+    color: var(--gold, #d4af37);
+    border-color: rgba(212, 175, 55, 0.35);
+}
+
+.btn-action-usr.btn-action-edit:hover {
+    border-color: var(--gold, #d4af37);
+    background: rgba(212, 175, 55, 0.15);
+    color: #facc15;
 }
 
 .btn-action-usr.btn-action-pin:hover {

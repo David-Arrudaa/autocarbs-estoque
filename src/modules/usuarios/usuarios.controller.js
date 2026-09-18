@@ -117,6 +117,82 @@ class UsuariosController {
     }
 
     /**
+     * Atualiza os dados de um colaborador (Apenas Perfil Administrador)
+     */
+    async atualizar(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { nome, email, role, ativo, senha } = req.body;
+
+            if (!nome || !String(nome).trim()) {
+                return res.status(400).json({ success: false, error: 'O nome do colaborador é obrigatório.' });
+            }
+
+            const emailFmt = String(email || '').trim().toLowerCase();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailFmt || !emailRegex.test(emailFmt)) {
+                return res.status(400).json({ success: false, error: 'Informe um e-mail válido.' });
+            }
+
+            // Verifica se o e-mail pertence a outro usuário
+            const { data: usuarioExistente } = await supabase
+                .from('usuarios')
+                .select('id')
+                .eq('email', emailFmt)
+                .neq('id', id)
+                .maybeSingle();
+
+            if (usuarioExistente) {
+                return res.status(400).json({ success: false, error: 'Já existe outro colaborador cadastrado com este e-mail.' });
+            }
+
+            const updateData = {
+                nome: String(nome).trim().substring(0, 100),
+                email: emailFmt
+            };
+
+            if (['operador', 'supervisor', 'admin'].includes(role)) {
+                updateData.role = role;
+            }
+
+            if (ativo !== undefined) {
+                updateData.ativo = Boolean(ativo);
+            }
+
+            // Atualização opcional de senha durante a edição
+            if (senha && String(senha).trim().length >= 6) {
+                const senhaHash = await bcrypt.hash(String(senha).trim(), 10);
+                updateData.senha_hash = senhaHash;
+                updateData.pin_hash = senhaHash;
+            }
+
+            const { data, error } = await supabase
+                .from('usuarios')
+                .update(updateData)
+                .eq('id', id)
+                .select('id, nome, email, role, ativo');
+
+            if (error) throw error;
+
+            auditoriaService.registrar({
+                usuario: req.user,
+                acao: 'EDICAO',
+                tabela: 'usuarios',
+                registroId: id,
+                detalhes: { nome: updateData.nome, email: updateData.email, role: updateData.role, ativo: updateData.ativo }
+            });
+
+            return res.json({
+                success: true,
+                data: data ? data[0] : null,
+                message: `Colaborador ${updateData.nome} atualizado com sucesso!`
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    /**
      * Ativa ou desativa um usuário
      */
     async alternarStatus(req, res, next) {
