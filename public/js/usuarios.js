@@ -214,7 +214,10 @@ const Usuarios = {
                                     <strong>${UI.escapeHtml(u.nome)}</strong>
                                     ${isSelf ? '<span class="usr-self-pill">(Você)</span>' : ''}
                                 </div>
-                                <span class="usr-date">Desde: ${dataCriacao}</span>
+                                <span class="usr-email" style="font-size:0.78rem; color:var(--text-secondary); display:flex; align-items:center; gap:4px; margin-top:2px;">
+                                    <i class="ph ph-envelope-simple" style="color:var(--gold);"></i> ${UI.escapeHtml(u.email || 'Sem e-mail')}
+                                </span>
+                                <span class="usr-date" style="font-size:0.7rem; color:var(--text-secondary); margin-top:1px;">Desde: ${dataCriacao}</span>
                             </div>
                         </div>
                     </td>
@@ -232,17 +235,17 @@ const Usuarios = {
                     </td>
                     <td data-label="Segurança">
                         <span class="usr-pin-protected">
-                            <i class="ph ph-lock-key"></i> PIN Criptografado
+                            <i class="ph ph-shield-check"></i> Senha Criptografada
                         </span>
                     </td>
                     <td data-label="Ações Rápidas" style="text-align:right;">
                         <div class="usr-actions-cell">
                             <button type="button" 
                                     class="btn-action-usr btn-action-pin" 
-                                    onclick="Usuarios.abrirModalPin('${u.id}', '${UI.escapeHtml(u.nome)}')" 
-                                    title="Alterar Senha / PIN">
+                                    onclick="Usuarios.abrirModalPin('${u.id}', '${UI.escapeHtml(u.nome)}', '${UI.escapeHtml(u.email || '')}')" 
+                                    title="Redefinir Senha de Acesso">
                                 <i class="ph ph-key"></i>
-                                <span class="action-text">Alterar PIN</span>
+                                <span class="action-text">Redefinir Senha</span>
                             </button>
                             ${!isSelf ? `
                                 <button type="button" 
@@ -305,10 +308,12 @@ const Usuarios = {
         if (form) form.reset();
 
         const inputNome = document.getElementById('usr-nome');
+        const inputEmail = document.getElementById('usr-email');
         const inputPin = document.getElementById('usr-pin');
         const selectRole = document.getElementById('usr-role');
 
         if (inputNome) inputNome.value = '';
+        if (inputEmail) inputEmail.value = '';
         if (inputPin) inputPin.value = '';
         if (selectRole) selectRole.value = 'operador';
 
@@ -320,7 +325,8 @@ const Usuarios = {
      */
     async salvarUsuario() {
         const nome = document.getElementById('usr-nome')?.value?.trim();
-        const pin = document.getElementById('usr-pin')?.value?.trim();
+        const email = document.getElementById('usr-email')?.value?.trim();
+        const senha = document.getElementById('usr-pin')?.value?.trim();
         const role = document.getElementById('usr-role')?.value || 'operador';
         const btnSalvar = document.getElementById('btn-salvar-usuario');
 
@@ -330,8 +336,15 @@ const Usuarios = {
             return;
         }
 
-        if (!pin || pin.length < 4) {
-            UI.toast('O PIN de acesso deve ter no mínimo 4 dígitos numéricos.', 'warning');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email || !emailRegex.test(email)) {
+            UI.toast('Informe um e-mail válido (ex: colaborador@autocarbs.com.br).', 'warning');
+            document.getElementById('usr-email')?.focus();
+            return;
+        }
+
+        if (!senha || senha.length < 6) {
+            UI.toast('A senha de acesso deve ter no mínimo 6 caracteres.', 'warning');
             document.getElementById('usr-pin')?.focus();
             return;
         }
@@ -340,7 +353,7 @@ const Usuarios = {
             if (btnSalvar) btnSalvar.disabled = true;
             UI.setLoading(true);
 
-            await API.cadastrarUsuario({ nome, pin, role });
+            await API.cadastrarUsuario({ nome, email, senha, role });
 
             UI.toast(`Colaborador ${nome} cadastrado com sucesso!`, 'success');
             UI.fecharModal('modal-usuario');
@@ -354,15 +367,17 @@ const Usuarios = {
     },
 
     /**
-     * Abre modal para alterar o PIN de um colaborador
+     * Abre modal para alterar a senha de um colaborador
      */
-    abrirModalPin(id, nome) {
-        this.usuarioPinEdicao = { id, nome };
+    abrirModalPin(id, nome, email) {
+        this.usuarioPinEdicao = { id, nome, email };
 
         const elNome = document.getElementById('modal-pin-usuario-nome');
         const inputPin = document.getElementById('usr-novo-pin');
 
-        if (elNome) elNome.innerText = nome;
+        if (elNome) {
+            elNome.innerText = email ? `${nome} (${email})` : nome;
+        }
         if (inputPin) {
             inputPin.value = '';
             setTimeout(() => inputPin.focus(), 100);
@@ -372,17 +387,17 @@ const Usuarios = {
     },
 
     /**
-     * Confirma a alteração do PIN
+     * Confirma a alteração da senha
      */
     async confirmarAlterarPin() {
         if (!this.usuarioPinEdicao?.id) return;
 
         const inputPin = document.getElementById('usr-novo-pin');
-        const pin = inputPin?.value?.trim();
+        const senha = inputPin?.value?.trim();
         const btnConfirmar = document.getElementById('btn-confirmar-pin');
 
-        if (!pin || pin.length < 4) {
-            UI.toast('O novo PIN deve conter no mínimo 4 dígitos.', 'warning');
+        if (!senha || senha.length < 6) {
+            UI.toast('A nova senha deve conter no mínimo 6 caracteres.', 'warning');
             if (inputPin) inputPin.focus();
             return;
         }
@@ -391,13 +406,13 @@ const Usuarios = {
             if (btnConfirmar) btnConfirmar.disabled = true;
             UI.setLoading(true);
 
-            const res = await API.alterarPinUsuario(this.usuarioPinEdicao.id, pin);
+            const res = await API.alterarSenhaUsuario(this.usuarioPinEdicao.id, senha);
 
-            UI.toast(res.message || 'PIN alterado com sucesso!', 'success');
+            UI.toast(res.message || 'Senha alterada com sucesso!', 'success');
             UI.fecharModal('modal-alterar-pin');
             this.usuarioPinEdicao = null;
         } catch (err) {
-            UI.toast(err.message || 'Erro ao alterar PIN.', 'error');
+            UI.toast(err.message || 'Erro ao alterar senha.', 'error');
         } finally {
             if (btnConfirmar) btnConfirmar.disabled = false;
             UI.setLoading(false);

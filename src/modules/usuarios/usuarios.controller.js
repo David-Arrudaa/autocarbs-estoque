@@ -4,13 +4,13 @@ const auditoriaService = require('../auditoria/auditoria.service');
 
 class UsuariosController {
     /**
-     * Lista todos os usuários cadastrados (sem expor pin_hash)
+     * Lista todos os usuários cadastrados (sem expor hashes de senha)
      */
     async listar(req, res, next) {
         try {
             const { data, error } = await supabase
                 .from('usuarios')
-                .select('id, nome, role, ativo, criado_em')
+                .select('id, nome, email, role, ativo, criado_em')
                 .order('criado_em', { ascending: true });
 
             if (error) {
@@ -18,7 +18,18 @@ class UsuariosController {
                     return res.json({
                         success: true,
                         data: [],
-                        aviso: 'Tabela de usuários ainda não criada no Supabase. Execute o script supabase_migration_fase2.sql.'
+                        aviso: 'Tabela de usuários ainda não criada no Supabase.'
+                    });
+                }
+                // Caso a coluna email ainda não exista, tenta sem a coluna email para compatibilidade
+                if (error.message?.includes('email')) {
+                    const fallbackQuery = await supabase
+                        .from('usuarios')
+                        .select('id, nome, role, ativo, criado_em')
+                        .order('criado_em', { ascending: true });
+                    return res.json({
+                        success: true,
+                        data: fallbackQuery.data || []
                     });
                 }
                 throw error;
@@ -34,26 +45,46 @@ class UsuariosController {
     }
 
     /**
-     * Cadastra um novo usuário com PIN hash (bcrypt)
+     * Cadastra um novo usuário com E-mail e Senha (bcrypt)
      */
     async criar(req, res, next) {
         try {
-            const { nome, pin, role } = req.body;
+            const { nome, email, senha, pin, role } = req.body;
+            const senhaRecebida = senha || pin;
 
             if (!nome || !String(nome).trim()) {
-                return res.status(400).json({ success: false, error: 'O nome do usuário é obrigatório.' });
+                return res.status(400).json({ success: false, error: 'O nome do colaborador é obrigatório.' });
             }
 
-            if (!pin || String(pin).trim().length < 4) {
-                return res.status(400).json({ success: false, error: 'O PIN deve ter no mínimo 4 dígitos.' });
+            const emailFmt = String(email || '').trim().toLowerCase();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailFmt || !emailRegex.test(emailFmt)) {
+                return res.status(400).json({ success: false, error: 'Informe um e-mail válido (ex: colaborador@autocarbs.com.br).' });
+            }
+
+            if (!senhaRecebida || String(senhaRecebida).trim().length < 6) {
+                return res.status(400).json({ success: false, error: 'A senha de acesso deve ter no mínimo 6 caracteres.' });
+            }
+
+            // Verifica se o e-mail já existe
+            const { data: usuarioExistente } = await supabase
+                .from('usuarios')
+                .select('id')
+                .eq('email', emailFmt)
+                .maybeSingle();
+
+            if (usuarioExistente) {
+                return res.status(400).json({ success: false, error: 'Já existe um colaborador cadastrado com este e-mail.' });
             }
 
             const roleFmt = ['operador', 'supervisor', 'admin'].includes(role) ? role : 'operador';
-            const pinHash = await bcrypt.hash(String(pin).trim(), 10);
+            const senhaHash = await bcrypt.hash(String(senhaRecebida).trim(), 10);
 
             const novoUsuario = {
                 nome: String(nome).trim().substring(0, 100),
-                pin_hash: pinHash,
+                email: emailFmt,
+                senha_hash: senhaHash,
+                pin_hash: senhaHash,
                 role: roleFmt,
                 ativo: true
             };
@@ -61,7 +92,7 @@ class UsuariosController {
             const { data, error } = await supabase
                 .from('usuarios')
                 .insert([novoUsuario])
-                .select('id, nome, role, ativo, criado_em');
+                .select('id, nome, email, role, ativo, criado_em');
 
             if (error) throw error;
 
@@ -72,13 +103,13 @@ class UsuariosController {
                 acao: 'CRIACAO',
                 tabela: 'usuarios',
                 registroId: criado?.id,
-                detalhes: { nome: novoUsuario.nome, role: novoUsuario.role }
+                detalhes: { nome: novoUsuario.nome, email: novoUsuario.email, role: novoUsuario.role }
             });
 
             return res.status(201).json({
                 success: true,
                 data: criado,
-                message: 'Usuário cadastrado com sucesso!'
+                message: 'Colaborador cadastrado com sucesso!'
             });
         } catch (err) {
             next(err);
@@ -97,7 +128,7 @@ class UsuariosController {
                 .from('usuarios')
                 .update({ ativo: Boolean(ativo) })
                 .eq('id', id)
-                .select('id, nome, role, ativo');
+                .select('id, nome, email, role, ativo');
 
             if (error) throw error;
 
@@ -112,7 +143,7 @@ class UsuariosController {
             return res.json({
                 success: true,
                 data: data ? data[0] : null,
-                message: `Usuário ${Boolean(ativo) ? 'ativado' : 'desativado'} com sucesso!`
+                message: `Colaborador ${Boolean(ativo) ? 'ativado' : 'desativado'} com sucesso!`
             });
         } catch (err) {
             next(err);
@@ -120,29 +151,30 @@ class UsuariosController {
     }
 
     /**
-     * Altera o PIN de acesso de um colaborador
+     * Altera a senha de acesso de um colaborador
      */
-    async alterarPin(req, res, next) {
+    async alterarSenha(req, res, next) {
         try {
             const { id } = req.params;
-            const { pin } = req.body;
+            const { senha, pin } = req.body;
+            const novaSenha = senha || pin;
 
-            if (!pin || String(pin).trim().length < 4) {
-                return res.status(400).json({ success: false, error: 'O novo PIN deve ter no mínimo 4 dígitos.' });
+            if (!novaSenha || String(novaSenha).trim().length < 6) {
+                return res.status(400).json({ success: false, error: 'A nova senha deve ter no mínimo 6 caracteres.' });
             }
 
-            const pinHash = await bcrypt.hash(String(pin).trim(), 10);
+            const senhaHash = await bcrypt.hash(String(novaSenha).trim(), 10);
 
             const { data, error } = await supabase
                 .from('usuarios')
-                .update({ pin_hash: pinHash })
+                .update({ senha_hash: senhaHash, pin_hash: senhaHash })
                 .eq('id', id)
-                .select('id, nome, role, ativo');
+                .select('id, nome, email, role, ativo');
 
             if (error) throw error;
 
             if (!data || data.length === 0) {
-                return res.status(404).json({ success: false, error: 'Usuário não encontrado.' });
+                return res.status(404).json({ success: false, error: 'Colaborador não encontrado.' });
             }
 
             auditoriaService.registrar({
@@ -150,16 +182,21 @@ class UsuariosController {
                 acao: 'EDICAO',
                 tabela: 'usuarios',
                 registroId: id,
-                detalhes: { campo: 'pin_alterado', usuarioAfetado: data[0].nome }
+                detalhes: { campo: 'senha_alterada', colaborador: data[0].nome }
             });
 
             return res.json({
                 success: true,
-                message: `PIN de ${data[0].nome} alterado com sucesso!`
+                message: `Senha de ${data[0].nome} alterada com sucesso!`
             });
         } catch (err) {
             next(err);
         }
+    }
+
+    // Mantém alias para compatibilidade
+    async alterarPin(req, res, next) {
+        return this.alterarSenha(req, res, next);
     }
 
     /**

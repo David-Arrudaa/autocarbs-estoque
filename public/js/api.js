@@ -59,10 +59,13 @@ const API = {
     },
 
     // --- AUTENTICAÇÃO ---
-    async login(pin) {
+    async login(emailOuPin, senha) {
+        const payload = senha !== undefined 
+            ? { email: emailOuPin, senha }
+            : (typeof emailOuPin === 'object' ? emailOuPin : { pin: emailOuPin });
         return this.request('/auth/login', {
             method: 'POST',
-            body: JSON.stringify({ pin })
+            body: JSON.stringify(payload)
         });
     },
 
@@ -182,11 +185,15 @@ const API = {
         });
     },
 
-    async alterarPinUsuario(id, pin) {
-        return this.request(`/usuarios/${id}/pin`, {
+    async alterarSenhaUsuario(id, senha) {
+        return this.request(`/usuarios/${id}/senha`, {
             method: 'PUT',
-            body: JSON.stringify({ pin })
+            body: JSON.stringify({ senha })
         });
+    },
+
+    async alterarPinUsuario(id, pin) {
+        return this.alterarSenhaUsuario(id, pin);
     },
 
     async excluirUsuario(id) {

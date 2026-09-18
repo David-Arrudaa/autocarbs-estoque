@@ -21,19 +21,42 @@
         <div class="loading-bar" id="load-bar"></div>
     </div>
 
-    <!-- Tela de Login com PIN -->
+    <!-- Tela de Login com E-mail e Senha -->
     <div id="login-screen">
-        <div class="login-box">
-            <div class="brand" style="justify-content:center; margin-bottom:25px; font-size:2rem;">
+        <div class="login-box login-box-modern">
+            <div class="brand" style="justify-content:center; margin-bottom:8px; font-size:2.2rem;">
                 AUTOCAR<span>BS</span>
             </div>
-            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:20px;">ACESSO AO SISTEMA</p>
+            <div style="font-size:0.75rem; color:var(--gold); font-weight:700; letter-spacing:1px; margin-bottom:22px; text-transform:uppercase;">
+                Oficina & Controle de Estoque
+            </div>
             
-            <input type="password" id="senha-acesso" placeholder="SENHA DE ACESSO" inputmode="numeric" autofocus>
-            <button id="btn-login" class="btn btn-primary" style="width:100%;" onclick="fazerLogin()">
-                ACESSAR SISTEMA
-            </button>
-            <p id="msg-erro" style="color:var(--danger); display:none; margin-top:12px; font-size:0.85rem;"></p>
+            <form id="form-login" onsubmit="event.preventDefault(); fazerLogin();" style="text-align:left;">
+                <div class="form-control" style="margin-bottom:14px;">
+                    <label for="login-email" style="font-size:0.76rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; display:block;">E-MAIL DE ACESSO</label>
+                    <div class="login-input-wrapper">
+                        <i class="ph ph-envelope-simple login-field-icon"></i>
+                        <input type="email" id="login-email" placeholder="seu.email@autocarbs.com.br" required autocomplete="username" autofocus>
+                    </div>
+                </div>
+
+                <div class="form-control" style="margin-bottom:20px;">
+                    <label for="login-senha" style="font-size:0.76rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px; display:block;">SENHA</label>
+                    <div class="login-input-wrapper">
+                        <i class="ph ph-lock-key login-field-icon"></i>
+                        <input type="password" id="login-senha" placeholder="Sua senha de acesso" required autocomplete="current-password">
+                        <button type="button" class="btn-toggle-password" onclick="toggleVisibilidadeSenha('login-senha', this)" title="Mostrar / Ocultar Senha" tabindex="-1">
+                            <i class="ph ph-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="btn-login" type="submit" class="btn btn-primary btn-login-submit" style="width:100%; height:46px; font-size:0.95rem;">
+                    <span>ENTRAR NO SISTEMA</span>
+                    <i class="ph ph-arrow-right" style="margin-left:6px;"></i>
+                </button>
+            </form>
+            <p id="msg-erro" style="color:var(--danger); display:none; margin-top:14px; font-size:0.85rem; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:8px 12px;"></p>
         </div>
     </div>
 
@@ -936,9 +959,9 @@
         </div>
     </div>
 
-    <!-- MODAL: Cadastro de Colaborador (RBAC) -->
+    <!-- MODAL: Cadastro de Colaborador (E-mail & Senha / RBAC) -->
     <div id="modal-usuario" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-usuario-titulo">
-        <div class="modal-form" style="max-width:440px;">
+        <div class="modal-form" style="max-width:460px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
                 <h3 id="modal-usuario-titulo" style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
                     <i class="ph ph-user-plus" style="color:var(--gold);"></i> NOVO COLABORADOR
@@ -948,8 +971,14 @@
             <form id="form-usuario" onsubmit="event.preventDefault(); Usuarios.salvarUsuario();">
                 <div class="form-control" style="margin-bottom:14px;">
                     <label for="usr-nome">NOME DO COLABORADOR *</label>
-                    <input type="text" id="usr-nome" placeholder="Ex: Carlos Mecânico" required autocomplete="off">
+                    <input type="text" id="usr-nome" placeholder="Ex: Carlos Silva" required autocomplete="name">
                 </div>
+
+                <div class="form-control" style="margin-bottom:14px;">
+                    <label for="usr-email">E-MAIL DE ACESSO *</label>
+                    <input type="email" id="usr-email" placeholder="carlos@autocarbs.com.br" required autocomplete="email">
+                </div>
+
                 <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
                     <div class="form-control">
                         <label for="usr-role">CARGO / PERFIL *</label>
@@ -960,13 +989,15 @@
                         </select>
                     </div>
                     <div class="form-control">
-                        <label for="usr-pin">PIN DE ACESSO *</label>
-                        <input type="password" id="usr-pin" placeholder="Mínimo 4 dígitos" pattern="[0-9]*" inputmode="numeric" maxlength="8" required autocomplete="new-password">
+                        <label for="usr-pin">SENHA DE ACESSO *</label>
+                        <input type="password" id="usr-pin" placeholder="Mín. 6 caracteres" minlength="6" required autocomplete="new-password">
                     </div>
                 </div>
+
                 <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:6px; padding:10px 14px; font-size:0.75rem; color:var(--text-secondary); margin-bottom:18px; line-height:1.4;">
-                    <i class="ph ph-shield-check" style="color:var(--gold);"></i> <strong>Segurança:</strong> O PIN é criptografado com bcrypt e nunca é exposto na tela ou nos relatórios.
+                    <i class="ph ph-shield-check" style="color:var(--gold);"></i> <strong>Segurança:</strong> A senha é protegida com criptografia forte (bcrypt) e não é armazenada em texto puro.
                 </div>
+
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button type="button" class="btn btn-secondary" onclick="UI.fecharModal('modal-usuario')">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="btn-salvar-usuario">
@@ -978,12 +1009,12 @@
         </div>
     </div>
 
-    <!-- MODAL: Alteração de PIN de Colaborador -->
+    <!-- MODAL: Alteração de Senha de Colaborador -->
     <div id="modal-alterar-pin" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-pin-titulo">
-        <div class="modal-form" style="max-width:380px;">
+        <div class="modal-form" style="max-width:400px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                 <h3 id="modal-pin-titulo" style="margin:0; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
-                    <i class="ph ph-key" style="color:var(--gold);"></i> REDEFINIR PIN
+                    <i class="ph ph-key" style="color:var(--gold);"></i> REDEFINIR SENHA
                 </h3>
                 <button class="btn-close-modal" aria-label="Fechar modal" onclick="UI.fecharModal('modal-alterar-pin')"><i class="ph ph-x"></i></button>
             </div>
@@ -992,14 +1023,14 @@
             </div>
             <form onsubmit="event.preventDefault(); Usuarios.confirmarAlterarPin();">
                 <div class="form-control" style="margin-bottom:18px;">
-                    <label for="usr-novo-pin">NOVO PIN DE ACESSO *</label>
-                    <input type="password" id="usr-novo-pin" placeholder="Novo PIN (mín. 4 dígitos)" pattern="[0-9]*" inputmode="numeric" maxlength="8" required autocomplete="new-password">
+                    <label for="usr-novo-pin">NOVA SENHA DE ACESSO *</label>
+                    <input type="password" id="usr-novo-pin" placeholder="Nova senha (mín. 6 caracteres)" minlength="6" required autocomplete="new-password">
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:10px;">
                     <button type="button" class="btn btn-secondary" onclick="UI.fecharModal('modal-alterar-pin')">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="btn-confirmar-pin">
                         <i class="ph ph-check"></i>
-                        <span>SALVAR PIN</span>
+                        <span>SALVAR SENHA</span>
                     </button>
                 </div>
             </form>

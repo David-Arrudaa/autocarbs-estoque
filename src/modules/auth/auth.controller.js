@@ -15,39 +15,64 @@ function timingSafeMatch(a, b) {
 
 class AuthController {
     /**
-     * Efetua o login via PIN no servidor.
+     * Efetua o login via E-mail e Senha no servidor.
      * 1. Tenta autenticar na tabela 'usuarios' do Supabase com bcrypt hash.
-     * 2. Se a tabela não existir ou o PIN não for de usuário cadastrado,
-     *    testa contra os PINs mestres configurados no .env (Fallback Gracioso).
+     * 2. Se a tabela não existir ou o login não for encontrado,
+     *    testa contra credenciais mestres configuradas no .env (Fallback Gracioso).
      */
     async login(req, res, next) {
         try {
-            const { pin } = req.body;
+            const { email, senha, pin } = req.body;
+            const emailLimpo = email ? String(email).trim().toLowerCase() : '';
+            const senhaLimpa = senha ? String(senha).trim() : (pin ? String(pin).trim() : '');
 
-            if (!pin || !String(pin).trim()) {
-                return res.status(400).json({ success: false, error: 'O PIN de acesso é obrigatório.' });
+            if (!senhaLimpa) {
+                return res.status(400).json({ success: false, error: 'A senha de acesso é obrigatória.' });
             }
 
-            const pinLimpo = String(pin).trim();
             let usuarioAutenticado = null;
 
             // 1. Tenta buscar usuário na tabela 'usuarios' do Supabase
             try {
-                const { data: usuariosCadastrados, error: errDb } = await supabase
-                    .from('usuarios')
-                    .select('id, nome, pin_hash, role')
-                    .eq('ativo', true);
+                if (emailLimpo) {
+                    const { data: usuario, error: errDb } = await supabase
+                        .from('usuarios')
+                        .select('id, nome, email, senha_hash, pin_hash, role')
+                        .eq('email', emailLimpo)
+                        .eq('ativo', true)
+                        .maybeSingle();
 
-                if (!errDb && Array.isArray(usuariosCadastrados) && usuariosCadastrados.length > 0) {
-                    for (const u of usuariosCadastrados) {
-                        const match = await bcrypt.compare(pinLimpo, u.pin_hash);
+                    if (!errDb && usuario) {
+                        const hash = usuario.senha_hash || usuario.pin_hash;
+                        const match = await bcrypt.compare(senhaLimpa, hash);
                         if (match) {
                             usuarioAutenticado = {
-                                id: u.id,
-                                nome: u.nome,
-                                role: u.role
+                                id: usuario.id,
+                                nome: usuario.nome,
+                                email: usuario.email,
+                                role: usuario.role
                             };
-                            break;
+                        }
+                    }
+                } else {
+                    const { data: usuariosCadastrados, error: errDb } = await supabase
+                        .from('usuarios')
+                        .select('id, nome, email, senha_hash, pin_hash, role')
+                        .eq('ativo', true);
+
+                    if (!errDb && Array.isArray(usuariosCadastrados) && usuariosCadastrados.length > 0) {
+                        for (const u of usuariosCadastrados) {
+                            const hash = u.senha_hash || u.pin_hash;
+                            const match = await bcrypt.compare(senhaLimpa, hash);
+                            if (match) {
+                                usuarioAutenticado = {
+                                    id: u.id,
+                                    nome: u.nome,
+                                    email: u.email,
+                                    role: u.role
+                                };
+                                break;
+                            }
                         }
                     }
                 }
@@ -55,18 +80,20 @@ class AuthController {
                 // Tabela ainda não existe ou erro de conexão — segue para o fallback
             }
 
-            // 2. Fallback Gracioso: se não encontrou usuário no banco, testa contra PINs do .env
+            // 2. Fallback Gracioso: se não encontrou usuário no banco, testa contra senhas do .env
             if (!usuarioAutenticado) {
-                if (timingSafeMatch(pinLimpo, config.pinSupervisor)) {
+                if (timingSafeMatch(senhaLimpa, config.pinSupervisor)) {
                     usuarioAutenticado = {
                         id: 'supervisor-master',
                         nome: 'Supervisor AutoCar',
+                        email: emailLimpo || 'supervisor@autocarbs.com.br',
                         role: 'supervisor'
                     };
-                } else if (timingSafeMatch(pinLimpo, config.pinAcesso)) {
+                } else if (timingSafeMatch(senhaLimpa, config.pinAcesso)) {
                     usuarioAutenticado = {
                         id: 'operador-master',
                         nome: 'Operador Oficina',
+                        email: emailLimpo || 'operador@autocarbs.com.br',
                         role: 'operador'
                     };
                 }
@@ -74,7 +101,7 @@ class AuthController {
 
             // Se nenhum bateu, rejeita login
             if (!usuarioAutenticado) {
-                return res.status(401).json({ success: false, error: 'Senha incorreta!' });
+                return res.status(401).json({ success: false, error: 'E-mail ou senha incorretos!' });
             }
 
             // Gera token com identidade e role para RBAC

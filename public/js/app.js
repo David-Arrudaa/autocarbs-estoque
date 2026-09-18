@@ -14,10 +14,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         mostrarTelaLogin();
     });
 
-    // Enter nos inputs de senha
-    const inputLogin = document.getElementById('senha-acesso');
-    if (inputLogin) {
-        inputLogin.addEventListener('keydown', (e) => {
+    // Enter nos inputs de login
+    const inputEmail = document.getElementById('login-email');
+    const inputSenha = document.getElementById('login-senha');
+    const inputLegado = document.getElementById('senha-acesso');
+
+    if (inputEmail) {
+        inputEmail.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (inputSenha && !inputSenha.value) {
+                    inputSenha.focus();
+                } else {
+                    fazerLogin();
+                }
+            }
+        });
+    }
+
+    if (inputSenha) {
+        inputSenha.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') fazerLogin();
+        });
+    }
+
+    if (inputLegado) {
+        inputLegado.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') fazerLogin();
         });
     }
@@ -86,24 +107,51 @@ function mostrarTelaLogin() {
     const appContainer = document.getElementById('app-container');
     if (loginScreen) loginScreen.style.display = 'flex';
     if (appContainer) appContainer.style.opacity = '0';
-    const input = document.getElementById('senha-acesso');
-    if (input) {
-        input.value = '';
-        input.focus();
+    
+    const inputEmail = document.getElementById('login-email');
+    const inputSenha = document.getElementById('login-senha');
+    const inputLegado = document.getElementById('senha-acesso');
+
+    if (inputSenha) inputSenha.value = '';
+    if (inputLegado) inputLegado.value = '';
+
+    if (inputEmail) {
+        if (!inputEmail.value) {
+            inputEmail.focus();
+        } else if (inputSenha) {
+            inputSenha.focus();
+        }
+    } else if (inputLegado) {
+        inputLegado.focus();
     }
 }
 
 async function fazerLogin() {
-    const input = document.getElementById('senha-acesso');
+    const inputEmail = document.getElementById('login-email');
+    const inputSenha = document.getElementById('login-senha');
+    const inputLegado = document.getElementById('senha-acesso');
     const msgErro = document.getElementById('msg-erro');
     const btn = document.getElementById('btn-login');
 
-    const pin = input ? input.value.trim() : '';
-    if (!pin) {
+    const email = inputEmail ? inputEmail.value.trim() : '';
+    const senha = inputSenha ? inputSenha.value.trim() : (inputLegado ? inputLegado.value.trim() : '');
+
+    if (inputEmail && !email) {
         if (msgErro) {
-            msgErro.innerText = 'Digite a senha de acesso!';
+            msgErro.innerText = 'Digite seu e-mail de acesso!';
             msgErro.style.display = 'block';
         }
+        inputEmail.focus();
+        return;
+    }
+
+    if (!senha) {
+        if (msgErro) {
+            msgErro.innerText = 'Digite a sua senha de acesso!';
+            msgErro.style.display = 'block';
+        }
+        if (inputSenha) inputSenha.focus();
+        else if (inputLegado) inputLegado.focus();
         return;
     }
 
@@ -111,7 +159,7 @@ async function fazerLogin() {
         if (btn) btn.disabled = true;
         UI.setLoading(true);
 
-        const res = await API.login(pin);
+        const res = await API.login(email, senha);
         API.setToken(res.token);
         atualizarPerfilUsuario(res.usuario);
 
@@ -121,12 +169,23 @@ async function fazerLogin() {
         await Estoque.carregarTudo();
     } catch (err) {
         if (msgErro) {
-            msgErro.innerText = err.message || 'Senha incorreta!';
+            msgErro.innerText = err.message || 'E-mail ou senha incorretos!';
             msgErro.style.display = 'block';
         }
     } finally {
         if (btn) btn.disabled = false;
         UI.setLoading(false);
+    }
+}
+
+function toggleVisibilidadeSenha(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) {
+        icon.className = isPassword ? 'ph ph-eye-slash' : 'ph ph-eye';
     }
 }
 

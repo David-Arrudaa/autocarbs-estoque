@@ -2223,22 +2223,81 @@ th {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
 
-.login-box input {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 15px;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: white;
-    text-align: center;
-    font-size: 1.1rem;
-    letter-spacing: 2px;
-    outline: none;
+.login-box.login-box-modern {
+    max-width: 400px;
+    border-top: 3px solid var(--gold);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
 }
 
-.login-box input:focus {
-    border-color: var(--primary);
+.login-input-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.login-field-icon {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.login-input-wrapper input {
+    width: 100%;
+    padding: 13px 42px 13px 40px !important;
+    margin-bottom: 0 !important;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px !important;
+    color: #f8fafc;
+    text-align: left !important;
+    letter-spacing: normal !important;
+    font-size: 0.92rem !important;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.login-input-wrapper input:focus {
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    z-index: 2;
+}
+
+.btn-toggle-password:hover {
+    color: #f8fafc;
+}
+
+.btn-login-submit {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
 }
 
 /* =========================================================
