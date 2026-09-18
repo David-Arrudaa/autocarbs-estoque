@@ -39,8 +39,26 @@ const Usuarios = {
      * Carrega todos os usuários do backend
      */
     async carregarLista() {
+        const usuarioLogado = window.usuarioLogado || {};
         const tbody = document.getElementById('tabela-usuarios');
         const countBox = document.getElementById('pagination-counter-usuarios');
+
+        if (usuarioLogado.role !== 'admin') {
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state-card" style="text-align:center; padding:40px 20px;">
+                            <i class="ph ph-shield-warning" style="font-size:2.5rem; color:var(--gold); margin-bottom:12px;"></i>
+                            <h3 style="color:#f8fafc; font-size:1.05rem; margin-bottom:6px;">Acesso Restrito ao Administrador</h3>
+                            <p style="color:var(--text-secondary); font-size:0.85rem;">
+                                O gerenciamento da equipe e senhas de acesso é exclusivo para o perfil Administrador.
+                            </p>
+                        </td>
+                    </tr>
+                `;
+            }
+            return;
+        }
 
         try {
             UI.setLoading(true);
@@ -552,6 +570,12 @@ window.Usuarios = Usuarios;
 // Auto-inicialização quando a view for carregada via ViewLoader
 window.addEventListener('view:loaded', (e) => {
     if (e.detail && e.detail.module === 'equipe') {
+        const usuarioLogado = window.usuarioLogado || {};
+        if (usuarioLogado.role !== 'admin') {
+            if (window.UI) UI.toast('Acesso restrito exclusivamente ao Administrador.', 'warning');
+            if (window.Estoque) Estoque.alternarAba('produtos');
+            return;
+        }
         Usuarios.init();
         Usuarios.carregarLista();
     }

@@ -101,6 +101,14 @@ const Estoque = {
     },
 
     async alternarAba(aba) {
+        if (aba === 'usuarios') {
+            const usuario = window.usuarioLogado || {};
+            if (usuario.role !== 'admin') {
+                if (window.UI) UI.toast('Acesso restrito exclusivamente ao Administrador.', 'warning');
+                return this.alternarAba('produtos');
+            }
+        }
+
         this.abaAtiva = aba;
 
         try {

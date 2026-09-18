@@ -69,7 +69,7 @@ const Sidebar = {
             id: 'group-usuarios',
             nome: 'Equipe & Acessos',
             tipo: 'standalone',
-            somenteRole: ['supervisor', 'admin'],
+            somenteRole: ['admin'],
             submodulos: {
                 usuarios: {
                     id: 'tab-btn-usuarios',
@@ -324,6 +324,14 @@ const Sidebar = {
      * a árvore retrátil do Estoque é automaticamente recolhida (fechada)!
      */
     async atualizarNavegacao(aba) {
+        if (aba === 'usuarios') {
+            const usuario = window.usuarioLogado || {};
+            if (usuario.role !== 'admin') {
+                if (window.UI) UI.toast('Acesso restrito exclusivamente ao Administrador.', 'warning');
+                return this.atualizarNavegacao('produtos');
+            }
+        }
+
         this.abaAtiva = aba;
 
         try {
