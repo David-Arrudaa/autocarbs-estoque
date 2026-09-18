@@ -3,6 +3,7 @@ const supabase = require('../../config/supabase');
 const config = require('../../config/env');
 const auditoriaService = require('../auditoria/auditoria.service');
 const movimentacoesService = require('./movimentacoes.service');
+const estoqueService = require('./estoque.service');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Utilitários internos
@@ -76,29 +77,11 @@ class EstoqueController {
 
             if (error) throw error;
 
-            const produtos = data || [];
-            let valorTotalEstoque = 0;
-            let totalItens = produtos.length;
-
-            const reposicao = [];
-            const ranking   = [];
-
-            for (const p of produtos) {
-                valorTotalEstoque += (Number(p.compra) || 0) * (Number(p.qtd) || 0);
-
-                if (Number(p.qtd) < Number(p.minimo)) {
-                    reposicao.push(p);
-                }
-                if (Number(p.saidas) > 0) {
-                    ranking.push(p);
-                }
-            }
-
-            ranking.sort((a, b) => (b.saidas || 0) - (a.saidas || 0));
+            const stats = estoqueService.processarEstatisticas(data || []);
 
             return res.json({
                 success: true,
-                stats: { valorTotalEstoque, totalItens, reposicao, ranking }
+                stats
             });
         } catch (err) {
             next(err);

@@ -136,7 +136,12 @@ const Estoque = {
             // Alterna painéis visíveis
             document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
             const paneAtivo = document.getElementById(`tab-pane-${aba}`);
-            if (paneAtivo) paneAtivo.classList.remove('hidden');
+            if (paneAtivo) {
+                paneAtivo.classList.remove('hidden');
+                if (paneAtivo.dataset.module && window.ViewLoader) {
+                    ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
+                }
+            }
 
             // Atualiza títulos e breadcrumbs dinâmicos da página na Topbar
             const titulos = {
@@ -3178,6 +3183,9 @@ const Estoque = {
      * @param {'busca'|'cadastro'} contexto
      */
     async abrirScannerCodigoBarras(contexto = 'busca') {
+        if (window.ScannerModule) {
+            return ScannerModule.abrirScanner(contexto);
+        }
         this.scannerContexto = contexto;
         this.scannerAtivo = true;
 
@@ -3633,3 +3641,11 @@ const Estoque = {
 
 window.Estoque = Estoque;
 
+// Sincronização com o carregamento dinâmico de views modulares
+window.addEventListener('view:loaded', (e) => {
+    if (e.detail && e.detail.module === 'relatorios') {
+        if (typeof Estoque.carregarRelatorio === 'function') {
+            Estoque.carregarRelatorio();
+        }
+    }
+});

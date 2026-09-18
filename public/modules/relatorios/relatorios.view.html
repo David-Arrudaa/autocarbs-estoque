@@ -1,0 +1,100 @@
+<!-- MÓDULO MODULAR: RELATÓRIOS ESTRATÉGICOS & IMPRESSÃO A4 (AUTOCAR BS) -->
+<div class="card report-container" style="flex:1; border-top:3px solid var(--gold);">
+    <!-- Top Toolbar: Subtabs segmentadas à esquerda + Ações à direita -->
+    <div class="report-top-bar">
+        <div class="report-subtabs-segmented">
+            <button type="button" class="subtab-btn active" id="subtab-geral" onclick="Estoque.selecionarTipoRelatorio('geral')">
+                <i class="ph ph-chart-pie"></i>
+                <span>Visão Geral</span>
+            </button>
+            <button type="button" class="subtab-btn" id="subtab-tipo" onclick="Estoque.selecionarTipoRelatorio('tipo')">
+                <i class="ph ph-tag"></i>
+                <span>Categorias</span>
+            </button>
+            <button type="button" class="subtab-btn" id="subtab-modelo" onclick="Estoque.selecionarTipoRelatorio('modelo')" style="display:none;">
+                <i class="ph ph-car"></i>
+                <span>Modelos</span>
+            </button>
+            <button type="button" class="subtab-btn" id="subtab-pecas" onclick="Estoque.selecionarTipoRelatorio('pecas')">
+                <i class="ph ph-list-dashes"></i>
+                <span>Analítico por Peça</span>
+            </button>
+        </div>
+
+        <div class="report-actions-group">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.exportarCSV()" title="Exportar dados para planilha Excel / CSV">
+                <i class="ph ph-file-csv" style="font-size:1.1rem;"></i>
+                <span>EXPORTAR CSV</span>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.imprimirRelatorio()" title="Imprimir ou Salvar em PDF">
+                <i class="ph ph-printer" style="font-size:1.1rem;"></i>
+                <span>IMPRIMIR / PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Barra de Filtros Refinada com Busca em Tempo Real -->
+    <div class="report-filter-bar">
+        <div class="search-box-erp report-search-box">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="input-busca-relatorio" placeholder="Filtrar dados deste relatório..." onkeyup="Estoque.filtrarBuscaRelatorio()">
+            <button type="button" class="btn-clear-search hidden" id="btn-clear-relatorio" onclick="Estoque.limparBuscaRelatorio()" title="Limpar busca">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <div class="report-dropdowns-group">
+            <div class="filter-field">
+                <label for="filtro-relatorio-status">Status</label>
+                <select id="filtro-relatorio-status" onchange="Estoque.aplicarFiltrosRelatorio()">
+                    <option value="todos">Todos os Status</option>
+                    <option value="positivo">Estoque Regular (&gt; 0)</option>
+                    <option value="repor">Reposição (&lt; Mínimo)</option>
+                    <option value="zerado">Zerados (0 un)</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filtro-relatorio-tipo">Categoria</label>
+                <select id="filtro-relatorio-tipo" onchange="Estoque.aplicarFiltrosRelatorio()">
+                    <option value="todos">Todas as Categorias</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filtro-relatorio-marca">Marca</label>
+                <select id="filtro-relatorio-marca" onchange="Estoque.aplicarFiltrosRelatorio()">
+                    <option value="todos">Todas as Marcas</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="filtro-relatorio-modelo">Modelo</label>
+                <select id="filtro-relatorio-modelo" onchange="Estoque.aplicarFiltrosRelatorio()">
+                    <option value="todos">Todos os Modelos</option>
+                </select>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.limparFiltrosRelatorio()" title="Redefinir todos os filtros">
+                <i class="ph ph-arrow-counter-clockwise"></i>
+                <span>Limpar</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Cabeçalho Exclusivo para Impressão / PDF (AutoCar BS) -->
+    <div class="print-header">
+        <div class="print-brand-row">
+            <div class="print-brand">AUTOCAR <span>BS</span></div>
+            <div class="print-meta">
+                <strong>RELATÓRIO GERENCIAL DE ESTOQUE</strong><br>
+                <span id="print-data-emissao">Data: --/--/----</span>
+            </div>
+        </div>
+        <div class="print-subtitle" id="print-titulo-subtipo">Visão Geral Consolidada</div>
+    </div>
+
+    <!-- Conteúdo Dinâmico do Relatório -->
+    <div id="relatorio-conteudo" class="report-content-body">
+        <!-- Injetado dinamicamente via Estoque.js -->
+    </div>
+</div>
+
+<!-- DOCUMENTO EXCLUSIVO DE IMPRESSÃO / PDF A4 (Oculto na tela, visível apenas na impressão) -->
+<div id="relatorio-documento-impressao" class="print-document-only"></div>

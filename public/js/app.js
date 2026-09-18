@@ -6,6 +6,15 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Pré-carrega as views estruturais essenciais (Estoque & Scanner)
+    if (window.ViewLoader) {
+        await ViewLoader.loadAll([
+            { module: 'estoque', targetId: 'container-modulo-estoque' },
+            { module: 'scanner', targetId: 'container-modulo-scanner' }
+        ]);
+    }
+
+    if (window.ScannerModule) ScannerModule.init();
     if (window.Sidebar) Sidebar.init();
     Estoque.init();
 

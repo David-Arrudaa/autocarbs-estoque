@@ -1007,3 +1007,9 @@ const Cotacao = {
 
 window.Cotacao = Cotacao;
 
+// Inicialização automática ao carregar o módulo via ViewLoader
+window.addEventListener('view:loaded', (e) => {
+    if (e.detail && e.detail.module === 'cotacao') {
+        Cotacao.iniciar();
+    }
+});

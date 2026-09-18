@@ -1,0 +1,137 @@
+<!-- MÓDULO MODULAR: GESTÃO DE EQUIPE & PERMISSÕES RBAC (AUTOCAR BS) -->
+<div class="card table-container" style="flex:1; border-top:3px solid var(--gold);">
+    <!-- Barra de Ferramentas e Filtros da Equipe -->
+    <div class="inventory-toolbar">
+        <div class="search-box-erp">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" id="input-busca-usuarios" placeholder="Pesquisar colaborador por nome..." onkeyup="Usuarios.pesquisar()">
+            <button type="button" class="btn-clear-search hidden" id="btn-clear-busca-usuarios" onclick="Usuarios.limparBusca()" title="Limpar pesquisa">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+        <div class="filter-chips">
+            <button type="button" class="chip-pill filter-usr-chip active" data-role="todos" onclick="Usuarios.filtrarRole('todos')">
+                <span>Todos</span>
+                <span class="chip-count" id="chip-count-usr-todos">0</span>
+            </button>
+            <button type="button" class="chip-pill filter-usr-chip" data-role="admin" onclick="Usuarios.filtrarRole('admin')">
+                <i class="ph ph-shield-check"></i>
+                <span>Admin</span>
+                <span class="chip-count" id="chip-count-usr-admin">0</span>
+            </button>
+            <button type="button" class="chip-pill filter-usr-chip" data-role="supervisor" onclick="Usuarios.filtrarRole('supervisor')">
+                <i class="ph ph-crown"></i>
+                <span>Supervisor</span>
+                <span class="chip-count" id="chip-count-usr-supervisor">0</span>
+            </button>
+            <button type="button" class="chip-pill filter-usr-chip" data-role="operador" onclick="Usuarios.filtrarRole('operador')">
+                <i class="ph ph-wrench"></i>
+                <span>Operador</span>
+                <span class="chip-count" id="chip-count-usr-operador">0</span>
+            </button>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" onclick="Usuarios.abrirModalNovo()" style="white-space: nowrap;">
+            <i class="ph ph-user-plus"></i>
+            <span>+ NOVO COLABORADOR</span>
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="erp-table" id="table-usuarios">
+            <thead>
+                <tr>
+                    <th style="width:35%;">Colaborador</th>
+                    <th style="width:20%;">Cargo</th>
+                    <th style="width:15%;">Status</th>
+                    <th style="width:15%;">Segurança</th>
+                    <th style="width:15%; text-align:right;">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-usuarios"></tbody>
+        </table>
+    </div>
+
+    <div class="pagination-erp" id="container-paginacao-usuarios">
+        <div class="pagination-count" id="pagination-counter-usuarios">
+            0 colaboradores registrados
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Cadastro de Colaborador (E-mail & Senha / RBAC) -->
+<div id="modal-usuario" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-usuario-titulo">
+    <div class="modal-form" style="max-width:460px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <h3 id="modal-usuario-titulo" style="margin:0; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                <i class="ph ph-user-plus" style="color:var(--gold);"></i> NOVO COLABORADOR
+            </h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="UI.fecharModal('modal-usuario')"><i class="ph ph-x"></i></button>
+        </div>
+        <form id="form-usuario" onsubmit="event.preventDefault(); Usuarios.salvarUsuario();">
+            <div class="form-control" style="margin-bottom:14px;">
+                <label for="usr-nome">NOME DO COLABORADOR *</label>
+                <input type="text" id="usr-nome" placeholder="Ex: Carlos Silva" required autocomplete="name">
+            </div>
+
+            <div class="form-control" style="margin-bottom:14px;">
+                <label for="usr-email">E-MAIL DE ACESSO *</label>
+                <input type="email" id="usr-email" placeholder="carlos@autocarbs.com.br" required autocomplete="email">
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+                <div class="form-control">
+                    <label for="usr-role">CARGO / PERFIL *</label>
+                    <select id="usr-role">
+                        <option value="operador">Operador (Oficina)</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label for="usr-pin">SENHA DE ACESSO *</label>
+                    <input type="password" id="usr-pin" placeholder="Mín. 6 caracteres" minlength="6" required autocomplete="new-password">
+                </div>
+            </div>
+
+            <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:6px; padding:10px 14px; font-size:0.75rem; color:var(--text-secondary); margin-bottom:18px; line-height:1.4;">
+                <i class="ph ph-shield-check" style="color:var(--gold);"></i> <strong>Segurança:</strong> A senha é protegida com criptografia forte (bcrypt) e não é armazenada em texto puro.
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" class="btn btn-secondary" onclick="UI.fecharModal('modal-usuario')">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btn-salvar-usuario">
+                    <i class="ph ph-check"></i>
+                    <span>CADASTRAR</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: Alteração de Senha de Colaborador -->
+<div id="modal-alterar-pin" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-pin-titulo">
+    <div class="modal-form" style="max-width:400px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 id="modal-pin-titulo" style="margin:0; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+                <i class="ph ph-key" style="color:var(--gold);"></i> REDEFINIR SENHA
+            </h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="UI.fecharModal('modal-alterar-pin')"><i class="ph ph-x"></i></button>
+        </div>
+        <div style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:14px;">
+            Colaborador: <strong id="modal-pin-usuario-nome" style="color:#f8fafc;">-</strong>
+        </div>
+        <form onsubmit="event.preventDefault(); Usuarios.confirmarAlterarPin();">
+            <div class="form-control" style="margin-bottom:18px;">
+                <label for="usr-novo-pin">NOVA SENHA DE ACESSO *</label>
+                <input type="password" id="usr-novo-pin" placeholder="Nova senha (mín. 6 caracteres)" minlength="6" required autocomplete="new-password">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" class="btn btn-secondary" onclick="UI.fecharModal('modal-alterar-pin')">Cancelar</button>
+                <button type="submit" class="btn btn-primary" id="btn-confirmar-pin">
+                    <i class="ph ph-check"></i>
+                    <span>SALVAR SENHA</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

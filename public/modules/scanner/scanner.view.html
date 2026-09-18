@@ -1,0 +1,77 @@
+<!-- MÓDULO MODULAR: SCANNER DE CÓDIGO DE BARRAS & CÂMERA (AUTOCAR BS) -->
+
+<!-- MODAL: Leitor por Câmera / Leitor USB -->
+<div id="modal-barcode-scanner" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="scanner-modal-titulo">
+    <div class="modal-form scanner-modal-box">
+        <div class="scanner-modal-header">
+            <div class="scanner-header-left">
+                <i class="ph ph-barcode scanner-header-icon"></i>
+                <div>
+                    <h3 id="scanner-modal-titulo" class="scanner-modal-title">LEITOR DE CÓDIGO DE BARRAS</h3>
+                    <span id="scanner-modal-subtitle" class="scanner-modal-subtitle">Aponte a câmera para o código da peça</span>
+                </div>
+            </div>
+            <button class="btn-close-modal" aria-label="Fechar scanner" onclick="ScannerModule.fecharScanner()"><i class="ph ph-x"></i></button>
+        </div>
+
+        <!-- Área do Visor da Câmera -->
+        <div class="scanner-viewport-wrapper">
+            <div id="scanner-reader-container" class="scanner-reader-container">
+                <video id="scanner-video" class="scanner-video" playsinline muted autoplay></video>
+                <div id="scanner-html5-view" style="width:100%; height:100%; display:none;"></div>
+                <canvas id="scanner-canvas" style="display:none;"></canvas>
+            </div>
+            <!-- Mira e feixe laser visual -->
+            <div class="scanner-overlay-aim">
+                <div class="scanner-target-box">
+                    <div class="scanner-corner corner-tl"></div>
+                    <div class="scanner-corner corner-tr"></div>
+                    <div class="scanner-corner corner-bl"></div>
+                    <div class="scanner-corner corner-br"></div>
+                    <div class="scanner-laser-line"></div>
+                </div>
+            </div>
+            <!-- Badge de status do leitor -->
+            <div id="scanner-status-badge" class="scanner-status-badge">
+                <i class="ph ph-camera"></i> <span id="scanner-status-text">Posicione o código no quadro</span>
+            </div>
+        </div>
+
+        <!-- Barra de Ações Rápidas do Scanner (Câmera, Lanterna) -->
+        <div class="scanner-controls-bar">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-scanner-toggle-camera" onclick="ScannerModule.alternarCameraScanner()" title="Inverter Câmera (Frontal / Traseira)">
+                <i class="ph ph-camera-rotate"></i>
+                <span>Inverter Câmera</span>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm hidden" id="btn-scanner-toggle-torch" onclick="ScannerModule.alternarLanternaScanner()" title="Ligar / Desligar Lanterna">
+                <i class="ph ph-flashlight"></i>
+                <span id="label-scanner-torch">Lanterna</span>
+            </button>
+        </div>
+
+        <!-- Entrada Manual Alternativa -->
+        <div class="scanner-manual-input-box">
+            <span class="scanner-manual-label">Ou digite o código manualmente:</span>
+            <div class="scanner-manual-row">
+                <input type="text" id="scanner-manual-code" placeholder="Código de barras ou referência..." onkeydown="if(event.key==='Enter') ScannerModule.confirmarCodigoManual()">
+                <button type="button" class="btn btn-primary btn-sm" onclick="ScannerModule.confirmarCodigoManual()">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <span>Buscar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Resultado do Código Escaneado (Ações Rápidas) -->
+<div id="modal-scan-resultado" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="scan-res-titulo">
+    <div class="modal-form scan-result-box">
+        <div class="scan-result-header">
+            <div class="scan-result-badge-success" id="scan-res-titulo">
+                <i class="ph ph-check-circle"></i> PRODUTO IDENTIFICADO
+            </div>
+            <button class="btn-close-modal" aria-label="Fechar" onclick="UI.fecharModal('modal-scan-resultado')"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="scan-result-body" id="scan-result-conteudo"></div>
+    </div>
+</div>

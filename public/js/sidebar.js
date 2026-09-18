@@ -371,7 +371,12 @@ const Sidebar = {
         // Alterna os painéis visíveis do ERP
         document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
         const paneAtivo = document.getElementById(`tab-pane-${aba}`);
-        if (paneAtivo) paneAtivo.classList.remove('hidden');
+        if (paneAtivo) {
+            paneAtivo.classList.remove('hidden');
+            if (paneAtivo.dataset.module && window.ViewLoader) {
+                ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
+            }
+        }
 
         // Atualiza Header Superior / Topbar (Breadcrumbs e Títulos)
         if (submoduloInfo) {

@@ -1,0 +1,42 @@
+/**
+ * =========================================================
+ * AUTOCAR BS - ERP OFICINA
+ * Sistema de Design: Tokens, Cores e Variáveis Globais
+ * =========================================================
+ */
+
+:root {
+    /* Paleta Oficial AutoCar BS */
+    --bg-body: #10181E;         /* Fundo escuro azul-petróleo */
+    --bg-card: #18232C;         /* Superfície de cards e painéis */
+    --bg-input: #0B1116;        /* Fundo de inputs e caixas de texto */
+    --border: #263645;          /* Linhas e bordas sutis */
+    --border-hover: #384F63;    /* Bordas com foco ou hover */
+    
+    --text-primary: #F6F6F6;    /* Branco off-white principal */
+    --text-secondary: #98A7B5;  /* Texto secundário e legendas */
+    --text-muted: #64748b;      /* Texto suavizado / placeholders */
+    
+    --primary: #93272C;         /* Vermelho carmim / bordô principal */
+    --primary-hover: #A82E34;   /* Hover para botões e ações primárias */
+    
+    --gold: #CAA151;            /* Dourado / bronze metálico para destaques */
+    --gold-hover: #D8B266;      /* Hover do tom dourado */
+    --gold-bg: rgba(202, 161, 81, 0.12); /* Fundo sutil dourado */
+    
+    --accent: #CAA151;          /* Destaque secundário padrão */
+    --danger: #93272C;          /* Alertas críticos alinhados ao vermelho carmim */
+    --danger-bg: rgba(147, 39, 44, 0.15);
+    --success: #0FB665;         /* Sucesso e entradas no estoque */
+    --success-bg: rgba(15, 182, 101, 0.15);
+    --warning: #eab308;
+    --warning-bg: rgba(234, 179, 8, 0.15);
+    --info: #38bdf8;
+
+    /* Tipografia e Raio */
+    --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+}

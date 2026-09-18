@@ -1,0 +1,270 @@
+/**
+ * =========================================================
+ * AUTOCAR BS - ERP OFICINA
+ * Módulo de Scanner de Código de Barras & Câmera: Estilos
+ * =========================================================
+ */
+
+.scanner-modal-box {
+    width: 440px;
+    max-width: 95vw;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75);
+    padding: 20px;
+}
+
+.scanner-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.scanner-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.scanner-header-icon {
+    font-size: 1.8rem;
+    color: var(--gold);
+}
+
+.scanner-modal-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: 0.3px;
+}
+
+.scanner-modal-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.scanner-viewport-wrapper {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    background: #000000;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scanner-reader-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.scanner-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Mira do Scanner com cantoneiras de foco */
+.scanner-overlay-aim {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.scanner-target-box {
+    position: relative;
+    width: 240px;
+    height: 140px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+}
+
+.scanner-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--gold);
+    border-style: solid;
+}
+
+.corner-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-top-left-radius: 6px; }
+.corner-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-top-right-radius: 6px; }
+.corner-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-bottom-left-radius: 6px; }
+.corner-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-bottom-right-radius: 6px; }
+
+/* Feixe laser animado */
+.scanner-laser-line {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ef4444 30%, #f87171 50%, #ef4444 70%, transparent);
+    box-shadow: 0 0 8px #ef4444, 0 0 16px rgba(239, 68, 68, 0.6);
+    animation: scannerLaser 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes scannerLaser {
+    0% { top: 10px; }
+    100% { top: calc(100% - 12px); }
+}
+
+.scanner-status-badge {
+    position: absolute;
+    bottom: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(202, 161, 81, 0.4);
+    backdrop-filter: blur(4px);
+    color: #f8fafc;
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.scanner-controls-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.scanner-manual-input-box {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dotted var(--border);
+}
+
+.scanner-manual-label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.scanner-manual-row {
+    display: flex;
+    gap: 8px;
+}
+
+.scanner-manual-row input {
+    flex: 1;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: #f8fafc;
+    font-size: 0.84rem;
+    font-family: monospace;
+}
+
+.scanner-manual-row input:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+/* Modal de Resultado Rápido do Scanner */
+.scan-result-box {
+    width: 400px;
+    max-width: 95vw;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.scan-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.scan-result-badge-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(34, 197, 94, 0.15);
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    color: var(--success);
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.scan-card-prod {
+    background: var(--bg-input);
+    border: 1px solid rgba(202, 161, 81, 0.25);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.scan-card-title {
+    font-size: 1.05rem;
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.scan-card-meta {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+    margin-bottom: 10px;
+}
+
+.scan-card-stats-row {
+    display: flex;
+    gap: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
+.scan-card-stat-item {
+    flex: 1;
+}
+
+.scan-card-stat-label {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.scan-card-stat-val {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.scan-actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}

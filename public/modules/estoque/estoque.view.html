@@ -1,0 +1,394 @@
+<!-- MÓDULO MODULAR: ESTOQUE, REPOSIÇÃO & CURVA ABC (AUTOCAR BS) -->
+
+<!-- ABA 1: Estoque Geral (Produtos) -->
+<div class="tab-pane" id="tab-pane-produtos">
+    <div class="card table-container" style="flex:1;">
+        <!-- Barra de Ferramentas e Filtros Rápidos -->
+        <div class="inventory-toolbar">
+            <div class="search-box-erp">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="input-busca" placeholder="Pesquisar por descrição, marca, modelo ou código..." onkeyup="Estoque.pesquisar()">
+                <button type="button" class="btn-clear-search hidden" id="btn-clear-busca" onclick="Estoque.limparBusca()" title="Limpar pesquisa">
+                    <i class="ph ph-x"></i>
+                </button>
+                <button type="button" class="btn-search-barcode" onclick="ScannerModule.abrirScanner('busca')" title="Escanear Código de Barras (Câmera / Leitor)">
+                    <i class="ph ph-barcode"></i>
+                </button>
+            </div>
+            <div class="filter-chips">
+                <button type="button" class="chip-pill active" id="chip-filter-todos" onclick="Estoque.filtrarStatusGeral('todos')">
+                    <span>Todos</span>
+                    <span class="chip-count" id="chip-count-todos">0</span>
+                </button>
+                <button type="button" class="chip-pill warning" id="chip-filter-repor" onclick="Estoque.filtrarStatusGeral('repor')">
+                    <i class="ph ph-warning"></i>
+                    <span>Reposição</span>
+                    <span class="chip-count" id="chip-count-repor">0</span>
+                </button>
+                <button type="button" class="chip-pill danger" id="chip-filter-zerados" onclick="Estoque.filtrarStatusGeral('zerados')">
+                    <i class="ph ph-x-circle"></i>
+                    <span>Zerados</span>
+                    <span class="chip-count" id="chip-count-zerados">0</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="table-wrapper">
+            <table class="erp-table" id="table-estoque-geral">
+                <thead>
+                    <tr>
+                        <th style="width:40%;">Produto / Especificação</th>
+                        <th style="width:14%;">Preço Custo</th>
+                        <th style="width:14%;">Preço Venda</th>
+                        <th style="width:16%;">Estoque Atual</th>
+                        <th style="width:16%; text-align:right;">Ações Rápidas</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-estoque"></tbody>
+            </table>
+        </div>
+        
+        <div class="pagination-erp" id="container-paginacao-produtos">
+            <div class="pagination-count" id="pagination-counter">
+                Carregando produtos...
+            </div>
+            <div class="pagination-controls">
+                <button class="btn-page" id="btn-prev" onclick="Estoque.mudarPagina(-1)">
+                    <i class="ph ph-caret-left"></i> Anterior
+                </button>
+                <span class="page-info" id="page-info">Página 1</span>
+                <button class="btn-page" id="btn-next" onclick="Estoque.mudarPagina(1)">
+                    Próxima <i class="ph ph-caret-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ABA 2: Reposição -->
+<div class="tab-pane hidden" id="tab-pane-reposicao">
+    <div class="card table-container" style="flex:1; border-top:3px solid var(--gold);">
+        <div class="inventory-toolbar">
+            <div class="search-box-erp">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="input-busca-reposicao" placeholder="Filtrar itens que necessitam de reposição..." onkeyup="Estoque.filtrarReposicao()">
+                <button type="button" class="btn-clear-search hidden" id="btn-clear-reposicao" onclick="Estoque.limparBuscaReposicao()" title="Limpar filtro">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="toolbar-stats-pill warning">
+                <i class="ph ph-warning-circle"></i>
+                <span>Itens abaixo do mínimo:</span>
+                <strong id="reposicao-total-badge">0</strong>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.imprimirReposicao()" title="Imprimir Ordem de Compra e Reposição em PDF" style="white-space: nowrap;">
+                <i class="ph ph-printer"></i>
+                <span>IMPRIMIR / PDF</span>
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="erp-table" id="table-estoque-reposicao">
+                <thead>
+                    <tr>
+                        <th style="width:40%;">Produto / Especificação</th>
+                        <th style="width:15%;">Estoque Atual</th>
+                        <th style="width:15%;">Estoque Mínimo</th>
+                        <th style="width:15%;">Déficit (Faltam)</th>
+                        <th style="width:15%; text-align:right;">Ações Rápidas</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-reposicao"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ABA 3: Curva ABC & Giro Estratégico -->
+<div class="tab-pane hidden" id="tab-pane-saidas">
+    <!-- Top Bar: Subtabs Segmentadas (Por Peças vs Por Categorias) + Período + Critério -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:12px;">
+        <div class="report-subtabs-segmented">
+            <button type="button" class="subtab-btn active" id="subtab-abc-pecas" onclick="Estoque.selecionarVisaoABC('pecas')">
+                <i class="ph ph-package"></i>
+                <span>Por Peças</span>
+            </button>
+            <button type="button" class="subtab-btn" id="subtab-abc-tipos" onclick="Estoque.selecionarVisaoABC('tipos')">
+                <i class="ph ph-tag"></i>
+                <span>Por Categorias / Tipos</span>
+            </button>
+        </div>
+
+        <!-- Controles de Período e Critério -->
+        <div class="abc-toolbar-controls">
+            <div class="abc-criteria-toggle" style="margin-left:0;">
+                <label for="select-periodo-abc"><i class="ph ph-calendar-blank"></i> Período:</label>
+                <select id="select-periodo-abc" class="form-control form-control-sm" onchange="Estoque.alternarPeriodoABC(this.value)">
+                    <option value="anual" selected>📅 Anual (Padrão)</option>
+                    <option value="30dias">🗓️ Últimos 30 Dias</option>
+                    <option value="90dias">📊 Últimos 90 Dias</option>
+                    <option value="personalizado">⚙️ Personalizado...</option>
+                </select>
+            </div>
+
+            <div class="abc-criteria-toggle" style="margin-left:0;">
+                <label for="select-criterio-abc">Critério:</label>
+                <select id="select-criterio-abc" class="form-control form-control-sm" onchange="Estoque.alternarCriterioABC(this.value)">
+                     <option value="faturamento">Faturamento (R$)</option>
+                     <option value="volume">Volume (Unidades)</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.imprimirCurvaABC()" title="Imprimir ou Salvar Curva ABC em PDF" style="white-space: nowrap;">
+                <i class="ph ph-printer"></i>
+                <span>IMPRIMIR / PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Barra de Intervalo Personalizado (De / Até) -->
+    <div id="abc-custom-date-container" class="abc-custom-date-bar hidden">
+        <div class="abc-custom-date-inner">
+            <span class="abc-date-label"><i class="ph ph-sliders-horizontal"></i> Intervalo Personalizado:</span>
+            <div class="date-input-group">
+                <label for="abc-data-inicio">De:</label>
+                <input type="date" id="abc-data-inicio" class="form-control form-control-sm">
+            </div>
+            <div class="date-input-group">
+                <label for="abc-data-fim">Até:</label>
+                <input type="date" id="abc-data-fim" class="form-control form-control-sm">
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" onclick="Estoque.aplicarPeriodoPersonalizadoABC()" style="padding: 4px 12px; font-size: 0.8rem;">
+                <i class="ph ph-funnel"></i> Filtrar Período
+            </button>
+            <span id="abc-rotulo-periodo-ativo" style="font-size: 0.78rem; color: var(--gold); font-weight: 600; margin-left: auto;"></span>
+        </div>
+    </div>
+
+    <!-- Cards Executivos de Resumo ABC -->
+    <div class="abc-summary-grid">
+        <div class="abc-card abc-card-a" onclick="Estoque.filtrarClasseABC('A')" title="Filtrar Classe A">
+            <div class="abc-card-top">
+                <div class="abc-badge-pill a">CLASSE A</div>
+                <span class="abc-meta-tag">Prioridade Máxima (~80%)</span>
+            </div>
+            <div class="abc-card-main">
+                <strong class="abc-card-val" id="abc-card-val-a">R$ 0,00</strong>
+                <span class="abc-card-perc" id="abc-card-perc-a">0% do faturamento</span>
+            </div>
+            <div class="abc-card-bottom">
+                <span id="abc-card-itens-a">0 itens</span>
+                <span class="abc-click-hint"><i class="ph ph-funnel"></i> Filtrar</span>
+            </div>
+        </div>
+
+        <div class="abc-card abc-card-b" onclick="Estoque.filtrarClasseABC('B')" title="Filtrar Classe B">
+            <div class="abc-card-top">
+                <div class="abc-badge-pill b">CLASSE B</div>
+                <span class="abc-meta-tag">Intermediário (~15%)</span>
+            </div>
+            <div class="abc-card-main">
+                <strong class="abc-card-val" id="abc-card-val-b">R$ 0,00</strong>
+                <span class="abc-card-perc" id="abc-card-perc-b">0% do faturamento</span>
+            </div>
+            <div class="abc-card-bottom">
+                <span id="abc-card-itens-b">0 itens</span>
+                <span class="abc-click-hint"><i class="ph ph-funnel"></i> Filtrar</span>
+            </div>
+        </div>
+
+        <div class="abc-card abc-card-c" onclick="Estoque.filtrarClasseABC('C')" title="Filtrar Classe C">
+            <div class="abc-card-top">
+                <div class="abc-badge-pill c">CLASSE C</div>
+                <span class="abc-meta-tag">Baixo Giro (~5%)</span>
+            </div>
+            <div class="abc-card-main">
+                <strong class="abc-card-val" id="abc-card-val-c">R$ 0,00</strong>
+                <span class="abc-card-perc" id="abc-card-perc-c">0% do faturamento</span>
+            </div>
+            <div class="abc-card-bottom">
+                <span id="abc-card-itens-c">0 itens</span>
+                <span class="abc-click-hint"><i class="ph ph-funnel"></i> Filtrar</span>
+            </div>
+        </div>
+
+        <div class="abc-card abc-card-total" onclick="Estoque.filtrarClasseABC('todos')" title="Ver todos os itens movimentados">
+            <div class="abc-card-top">
+                <div class="abc-badge-pill total">TOTAL MOVIMENTADO</div>
+                <i class="ph ph-chart-line-up" style="color:var(--text-secondary);"></i>
+            </div>
+            <div class="abc-card-main">
+                <strong class="abc-card-val" id="abc-card-val-total">R$ 0,00</strong>
+                <span class="abc-card-perc" id="abc-card-unidades-total">0 saídas totais</span>
+            </div>
+            <div class="abc-card-bottom">
+                <span id="abc-card-itens-total">0 itens no escopo</span>
+                <span class="abc-click-hint"><i class="ph ph-arrows-clockwise"></i> Ver Todos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo da Tabela e Barra de Ferramentas -->
+    <div class="card table-container" style="flex:1; border-top:3px solid var(--gold);">
+        <div class="inventory-toolbar" style="flex-wrap:wrap; gap:12px;">
+            <div class="search-box-erp" style="min-width:220px; flex:1;">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" id="input-busca-ranking" placeholder="Filtrar produtos ou categorias na Curva ABC..." onkeyup="Estoque.filtrarRanking()">
+                <button type="button" class="btn-clear-search hidden" id="btn-clear-ranking" onclick="Estoque.limparBuscaRanking()" title="Limpar filtro">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <div class="abc-filter-field" id="box-filtro-tipo-abc" style="display:flex; align-items:center; gap:6px;">
+                <label for="filtro-abc-tipo" style="font-size:0.72rem; color:var(--text-secondary); font-weight:700; text-transform:uppercase;">Categoria:</label>
+                <select id="filtro-abc-tipo" class="form-control form-control-sm" onchange="Estoque.filtrarTipoABC(this.value)" style="padding:6px 10px; border-radius:6px; background:#111721; border:1px solid var(--border); color:#f8fafc; font-size:0.8rem; font-weight:600; outline:none;">
+                    <option value="todos">Todas as Categorias</option>
+                </select>
+            </div>
+
+            <div class="abc-chips-group">
+                <button type="button" class="abc-chip active" id="chip-abc-todos" onclick="Estoque.filtrarClasseABC('todos')">
+                    <span>Todos</span>
+                    <strong id="badge-chip-todos">0</strong>
+                </button>
+                <button type="button" class="abc-chip chip-a" id="chip-abc-A" onclick="Estoque.filtrarClasseABC('A')">
+                    <span>Classe A</span>
+                    <strong id="badge-chip-A">0</strong>
+                </button>
+                <button type="button" class="abc-chip chip-b" id="chip-abc-B" onclick="Estoque.filtrarClasseABC('B')">
+                    <span>Classe B</span>
+                    <strong id="badge-chip-B">0</strong>
+                </button>
+                <button type="button" class="abc-chip chip-c" id="chip-abc-C" onclick="Estoque.filtrarClasseABC('C')">
+                    <span>Classe C</span>
+                    <strong id="badge-chip-C">0</strong>
+                </button>
+                <button type="button" class="abc-chip chip-ruptura" id="chip-abc-ruptura" onclick="Estoque.filtrarClasseABC('ruptura')" title="Itens Classe A ou B com estoque baixo ou zerado">
+                    <i class="ph ph-warning"></i>
+                    <span>Risco Ruptura</span>
+                    <strong id="badge-chip-ruptura">0</strong>
+                </button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="erp-table">
+                <thead id="thead-ranking"></thead>
+                <tbody id="tabela-ranking"></tbody>
+                <tfoot id="tfoot-ranking" style="background:#0f151e; font-weight:700; border-top:2px solid var(--border);"></tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAIS DE OPERAÇÃO DO ESTOQUE
+     ========================================================= -->
+
+<!-- MODAL: Cadastro & Edição de Produto -->
+<div id="modal-cadastro" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-cadastro-titulo">
+    <div class="modal-form">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 id="modal-cadastro-titulo" style="margin:0;">PRODUTO</h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-cadastro')"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="form-grid">
+            <div class="form-control"><label for="tipo">TIPO *</label><input type="text" id="tipo" placeholder="EX: FILTRO"></div>
+            <div class="form-control"><label for="marca">MARCA</label><input type="text" id="marca" placeholder="EX: BOSCH"></div>
+        </div>
+        <div class="form-grid">
+            <div class="form-control"><label for="modelo">MODELO</label><input type="text" id="modelo"></div>
+            <div class="form-control">
+                <label for="codigo">CÓDIGO</label>
+                <div class="input-with-action">
+                    <input type="text" id="codigo" placeholder="Código de barras ou ref...">
+                    <button type="button" class="btn-input-scan" onclick="ScannerModule.abrirScanner('cadastro')" title="Escanear Código com Câmera">
+                        <i class="ph ph-barcode"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-grid">
+            <div class="form-control"><label for="qtd">QTD ESTOQUE</label><input type="number" id="qtd" inputmode="numeric"></div>
+            <div class="form-control"><label for="minimo">ESTOQUE MÍNIMO</label><input type="number" id="minimo" inputmode="numeric"></div>
+        </div>
+        <div class="form-grid">
+            <div class="form-control"><label for="valorCompra">CUSTO (R$)</label><input type="text" id="valorCompra" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric"></div>
+            <div class="form-control"><label for="valorVenda">VENDA (R$)</label><input type="text" id="valorVenda" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric"></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="Estoque.salvarProduto()">SALVAR PRODUTO</button>
+    </div>
+</div>
+
+<!-- MODAL: Entrada de Estoque -->
+<div id="modal-entrada" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-entrada-titulo">
+    <div class="modal-form" style="width:380px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 id="modal-entrada-titulo" style="margin:0; color:var(--success)">ENTRADA ESTOQUE</h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-entrada')"><i class="ph ph-x"></i></button>
+        </div>
+        <p id="nome-produto-entrada" style="text-align:center; color:var(--text-secondary); margin-bottom:20px; font-weight:600;">...</p>
+        <div class="form-control">
+            <label for="qtd-entrada" style="text-align:center">QUANTIDADE A ADICIONAR</label>
+            <input type="number" id="qtd-entrada" value="1" style="font-size:1.5rem; text-align:center;" inputmode="numeric" min="1">
+        </div>
+        <div class="checkbox-wrapper" style="background:var(--gold-bg);">
+            <input type="checkbox" id="check-devolucao" style="accent-color:var(--gold);">
+            <div>
+                <strong style="color:var(--gold); display:block; font-size:0.9rem;">É DEVOLUÇÃO?</strong>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Estorna do ranking de saídas</span>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:20px; background:var(--success);" onclick="Estoque.confirmarEntrada()">CONFIRMAR ENTRADA</button>
+    </div>
+</div>
+
+<!-- MODAL: Saída de Estoque -->
+<div id="modal-saida" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-saida-titulo">
+    <div class="modal-form" style="width:380px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 id="modal-saida-titulo" style="margin:0; color:var(--danger)">BAIXAR ESTOQUE</h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-saida')"><i class="ph ph-x"></i></button>
+        </div>
+        <p id="nome-produto-saida" style="text-align:center; color:var(--text-secondary); margin-bottom:20px; font-weight:600;">...</p>
+        <div class="form-control">
+            <label for="qtd-saida" style="text-align:center">QUANTIDADE A RETIRAR</label>
+            <input type="number" id="qtd-saida" value="1" style="font-size:1.5rem; text-align:center;" inputmode="numeric" min="1">
+        </div>
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="check-venda" checked>
+            <div>
+                <strong style="color:var(--success); display:block; font-size:0.9rem;">É VENDA?</strong>
+                <span style="font-size:0.75rem; color:var(--text-secondary);">Contabiliza no ranking de saídas</span>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:20px; background:var(--danger);" onclick="Estoque.confirmarSaida()">CONFIRMAR SAÍDA</button>
+    </div>
+</div>
+
+<!-- MODAL: Senha de Supervisor para Exclusão -->
+<div id="modal-senha-exclusao" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-senha-titulo">
+    <div class="modal-form" style="width:360px;">
+        <div style="text-align:center; margin-bottom:20px;">
+            <i class="ph ph-shield-warning" style="font-size:2.8rem; color:var(--danger)"></i>
+            <h3 id="modal-senha-titulo" style="color:var(--danger); margin:10px 0;">ÁREA RESTRITA</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary)">Digite a senha do supervisor para excluir o item do banco.</p>
+        </div>
+        <input type="password" id="senha-supervisor" style="width:100%; padding:12px; margin-bottom:20px; background:var(--bg-input); border:1px solid var(--danger); border-radius:6px; color:white; text-align:center;" placeholder="SENHA DO SUPERVISOR" inputmode="numeric">
+        <div style="display:flex; gap:10px;">
+            <button class="btn btn-secondary" style="flex:1;" onclick="Estoque.fecharModal('modal-senha-exclusao')">CANCELAR</button>
+            <button class="btn btn-danger" style="flex:1;" onclick="Estoque.confirmarExclusao()">EXCLUIR</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Listagem Completa (Reposição / Ranking) -->
+<div id="modal-lista" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="titulo-modal-lista">
+    <div class="modal-list">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+            <h3 id="titulo-modal-lista" style="margin:0;">LISTA</h3>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-lista')"><i class="ph ph-x"></i></button>
+        </div>
+        <div id="conteudo-modal-lista"></div>
+    </div>
+</div>

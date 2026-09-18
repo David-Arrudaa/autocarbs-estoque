@@ -460,7 +460,15 @@ const Usuarios = {
 
 window.Usuarios = Usuarios;
 
-// Auto-inicialização quando o DOM estiver pronto
+// Auto-inicialização quando a view for carregada via ViewLoader
+window.addEventListener('view:loaded', (e) => {
+    if (e.detail && e.detail.module === 'equipe') {
+        Usuarios.init();
+        Usuarios.carregarLista();
+    }
+});
+
+// Fallback caso já esteja no DOM
 document.addEventListener('DOMContentLoaded', () => {
     Usuarios.init();
 });

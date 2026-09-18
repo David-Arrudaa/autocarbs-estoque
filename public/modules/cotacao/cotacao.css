@@ -1,0 +1,522 @@
+/**
+ * =========================================================
+ * AUTOCAR BS - ERP OFICINA
+ * Módulo de Cotação de Peças & Orçamentos: Folha de Estilos
+ * =========================================================
+ */
+
+.cot-top-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    background: var(--bg-card);
+    padding: 14px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--primary);
+}
+
+.cot-top-bar input {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.cot-top-bar input:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+#cot-carModel {
+    flex: 3;
+    min-width: 240px;
+}
+
+#cot-carPlate {
+    flex: 1;
+    min-width: 100px;
+    text-transform: uppercase;
+}
+
+/* Botões do Cotador */
+.btn-brand {
+    background: var(--primary);
+    color: #ffffff;
+}
+.btn-brand:hover {
+    background: var(--primary-hover);
+}
+
+.btn-dark {
+    background: #222e38;
+    color: #ffffff;
+    border: 1px solid var(--border);
+}
+.btn-dark:hover {
+    background: #2c3c4a;
+}
+
+.btn-green {
+    background: var(--success);
+    color: #ffffff;
+}
+.btn-green:hover {
+    filter: brightness(1.1);
+}
+
+.btn-red {
+    background: #b82d34;
+    color: #ffffff;
+}
+.btn-red:hover {
+    background: #d3343c;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: #ffffff;
+}
+.btn-info:hover {
+    background: #138496;
+}
+
+@keyframes blinker { 50% { opacity: 0.5; } }
+.blink-red {
+    background-color: #b82d34 !important;
+    color: #ffffff !important;
+    border: 2px solid #ff7a82 !important;
+    animation: blinker 1s linear infinite;
+    font-weight: 800;
+}
+
+.vendor-area {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.vendor-tag {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 14px;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.vendor-tag span {
+    cursor: pointer;
+    color: #ff6b72;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* Tabela de Cotação */
+.cot-table-container {
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    width: 100%;
+}
+
+#cot-mainTable {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+#cot-mainTable th {
+    background: #0f161c;
+    color: #ffffff;
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    vertical-align: middle;
+}
+
+#cot-mainTable th.th-stock {
+    background: #0d2b4d !important;
+    border-left: 2px solid rgba(255,255,255,0.2);
+    border-right: 2px solid rgba(255,255,255,0.2);
+    color: #9dcaff !important;
+}
+
+#cot-mainTable th.th-vendor {
+    background: #1c2730;
+    border-left: 2px solid var(--border);
+}
+
+#cot-mainTable th.th-qty {
+    position: sticky;
+    left: 0;
+    background: #0f161c;
+    z-index: 11;
+    width: 50px;
+    text-align: center;
+}
+
+#cot-mainTable th.th-part {
+    position: sticky;
+    left: 50px;
+    background: #0f161c;
+    z-index: 10;
+    width: 250px;
+    border-right: 2px solid var(--border);
+}
+
+#cot-mainTable td {
+    border: 1px solid var(--border);
+    padding: 5px;
+    text-align: center;
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+#cot-mainTable td.td-qty {
+    position: sticky;
+    left: 0;
+    z-index: 6;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+}
+
+#cot-mainTable td.td-part {
+    position: sticky;
+    left: 50px;
+    z-index: 5;
+    border-right: 2px solid var(--border);
+    background: var(--bg-card);
+}
+
+#cot-mainTable td.td-stock-section {
+    border-left: 2px solid #204060;
+    background-color: rgba(13, 43, 77, 0.35);
+}
+
+#cot-mainTable td.td-check {
+    border-left: 2px solid var(--border);
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Inputs da Tabela */
+#cot-mainTable input.inp-qty {
+    width: 42px;
+    padding: 6px 2px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-weight: bold;
+    background: var(--bg-input);
+    color: #ffffff;
+}
+
+#cot-mainTable input.inp-sm {
+    width: 72px;
+    padding: 6px 4px;
+    text-align: right;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: #ffffff;
+}
+
+#cot-mainTable input.inp-brand {
+    width: 82px;
+    padding: 6px 4px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+#cot-mainTable input.inp-name {
+    width: 100%;
+    border: none;
+    padding: 6px 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    min-width: 220px;
+    background: transparent;
+    color: #ffffff;
+}
+
+#cot-mainTable input.inp-sale {
+    width: 72px;
+    padding: 6px 4px;
+    text-align: right;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-weight: bold;
+    color: var(--gold);
+    font-size: 0.85rem;
+    background: #0b1116;
+}
+
+#cot-mainTable input.inp-sale:focus {
+    border-color: var(--gold);
+    outline: none;
+}
+
+.freight-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 3px;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+.freight-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.inp-freight-small {
+    width: 65px !important;
+    padding: 3px;
+    text-align: center;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    font-weight: bold;
+    font-size: 0.75rem;
+    background-color: var(--bg-input);
+    color: var(--gold);
+}
+
+.bg-custo {
+    background-color: #121d26 !important;
+}
+
+/* Zebrado e Destaques */
+#cot-mainTable tr:nth-child(even) td {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+#cot-mainTable tr.has-winner td {
+    background-color: rgba(147, 39, 44, 0.12) !important;
+}
+#cot-mainTable tr.has-winner td.td-qty {
+    border-left: 4px solid var(--primary) !important;
+}
+
+#cot-mainTable tr.winner-is-stock td {
+    background-color: rgba(13, 75, 140, 0.22) !important;
+}
+#cot-mainTable tr.winner-is-stock td.td-qty {
+    border-left: 4px solid #1a73e8 !important;
+}
+
+#cot-mainTable tr.no-winner td.td-qty {
+    border-left: 4px solid var(--gold) !important;
+}
+
+.radio-win {
+    transform: scale(1.4);
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+.radio-stock {
+    accent-color: #1a73e8;
+}
+
+/* Cards de Ação do Cotador */
+.cot-actions-container {
+    margin-top: 15px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cot-action-card {
+    background: var(--bg-card);
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 190px;
+    border: 1px solid var(--border);
+    border-left-width: 5px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.cot-action-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-hover);
+}
+
+.cot-action-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.cot-action-card p {
+    margin: 0;
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+.cot-action-card.highlight-card {
+    border-left-color: var(--primary);
+}
+
+.cot-action-card.highlight-gold {
+    border-left-color: var(--gold);
+}
+
+/* Modais de Cotação */
+.labor-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.labor-desc {
+    flex: 2;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.82rem;
+}
+
+.labor-hours {
+    width: 75px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-input);
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+}
+
+.labor-total {
+    width: 95px;
+    padding: 8px;
+    background: #18232c;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-align: right;
+    font-weight: bold;
+    color: var(--gold);
+}
+
+.labor-type-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.labor-header {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    padding: 0 4px;
+}
+
+/* Histórico de Cotações */
+.history-item {
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-input);
+    margin-bottom: 8px;
+    border-left: 4px solid var(--border);
+    border-radius: 4px;
+    transition: 0.15s;
+}
+
+.history-item:hover {
+    border-left-color: var(--success);
+    background: #16222b;
+}
+
+.history-group {
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-input);
+    margin-bottom: 8px;
+    border-left: 4px solid #1a73e8;
+    border-radius: 4px;
+    transition: 0.15s;
+}
+
+.history-group:hover {
+    background: #16222b;
+    transform: translateX(3px);
+}
+
+/* Responsividade de Cotação Mobile */
+@media (max-width: 768px) {
+    .cot-top-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .cot-header-left,
+    .cot-header-right {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .cot-header-left input {
+        width: 100% !important;
+    }
+    .cot-actions-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .cot-action-card {
+        width: 100%;
+        min-width: 0;
+    }
+    #cot-mainTable {
+        min-width: 600px;
+    }
+}
