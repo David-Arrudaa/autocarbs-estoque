@@ -75,6 +75,36 @@ const Cotacao = {
         this.renderHeader();
         this.renderBody();
         this.renderTags();
+        this.updateLiveSummary();
+    },
+
+    updateLiveSummary() {
+        const elCount = document.getElementById('cot-sum-count');
+        const elWinners = document.getElementById('cot-sum-winners');
+        const elTotal = document.getElementById('cot-sum-total');
+        if (!elCount && !elWinners && !elTotal) return;
+
+        let totalParts = this.state.pecas.length;
+        let winnersCount = 0;
+        let totalVenda = 0;
+
+        this.state.pecas.forEach(p => {
+            if (p.vencedor) {
+                winnersCount++;
+                const pr = p.precos[p.vencedor];
+                if (pr) {
+                    let v = pr.venda;
+                    if (v === null || v === undefined) {
+                        v = this.calculateSellPrice(pr.custo, p.vencedor, true);
+                    }
+                    totalVenda += (Number(v) || 0) * (Number(p.qty) || 1);
+                }
+            }
+        });
+
+        if (elCount) elCount.innerText = totalParts;
+        if (elWinners) elWinners.innerText = winnersCount;
+        if (elTotal) elTotal.innerText = `R$ ${totalVenda.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     },
 
     // --- LÓGICA DE LAVAGEM ---
@@ -217,6 +247,7 @@ const Cotacao = {
             });
         });
 
+        this.updateLiveSummary();
         this.saveDraft();
     },
 
@@ -293,7 +324,8 @@ const Cotacao = {
                 <td class="td-stock-section">
                     <input class="inp-sale inp-stock-venda" 
                            value="${stockData.venda ? stockData.venda.toFixed(2) : ''}"
-                           onchange="Cotacao.updateManualSellPrice(${p.id}, 'ESTOQUE', this.value)">
+                           onchange="Cotacao.updateManualSellPrice(${p.id}, 'ESTOQUE', this.value)"
+                           onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
                 </td>
             `;
 
@@ -308,7 +340,8 @@ const Cotacao = {
                                 <input class="inp-sale" 
                                        data-vendor-venda="${v}" 
                                        value="${pr.venda ? pr.venda.toFixed(2) : ''}"
-                                       onchange="Cotacao.updateManualSellPrice(${p.id}, '${v}', this.value)">
+                                       onchange="Cotacao.updateManualSellPrice(${p.id}, '${v}', this.value)"
+                                       onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
                             </td>`;
                 }).join('');
             } else {
@@ -322,7 +355,7 @@ const Cotacao = {
                             <input type="number" class="inp-qty" value="${p.qty}" min="1" oninput="Cotacao.updateQty(${p.id}, this.value)">
                             ${warningIcon}
                         </td>
-                        <td class="td-part"><input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)"></td>
+                        <td class="td-part"><input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)" onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})"></td>
                         ${stockCols}
                         ${vendorCols}
                         <td><button type="button" class="btn-remove-part" title="Remover Peça" onclick="Cotacao.removePart(${p.id})">&times;</button></td>
@@ -424,6 +457,21 @@ const Cotacao = {
         } else {
             this.renderAll();
             this.recalcAllPricesAndRefresh();
+        }
+    },
+
+    handleRowEnter(currentId) {
+        const lastPeca = this.state.pecas[this.state.pecas.length - 1];
+        if (lastPeca && lastPeca.id === currentId) {
+            this.addPartRow();
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#cot-mainTable tbody tr');
+                const lastRow = rows[rows.length - 1];
+                if (lastRow) {
+                    const inputName = lastRow.querySelector('.inp-name');
+                    if (inputName) inputName.focus();
+                }
+            }, 60);
         }
     },
 

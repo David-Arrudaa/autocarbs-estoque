@@ -1,64 +1,80 @@
 <!-- MÓDULO MODULAR: COTAÇÃO DE PEÇAS & ORÇAMENTOS (AUTOCAR BS) -->
-<div class="card cot-module-card" style="flex:1; display:flex; flex-direction:column; gap:16px;">
-    <!-- Barra Superior da Cotação -->
+<div class="card cot-module-card">
+    <!-- Barra Superior de Comando Integrada (Ribbon Executivo) -->
     <div class="cot-top-bar">
-        <!-- Linha 1: Botões de Ação com Cores Semânticas -->
-        <div class="cot-top-actions">
-            <button type="button" class="btn btn-dark-cot" onclick="Cotacao.toggleHistory()">
-                <i class="ph ph-folder-open"></i> <span>HISTÓRICO</span>
-            </button>
-            <button type="button" class="btn btn-green-cot" onclick="Cotacao.saveCurrent(true)">
-                <i class="ph ph-floppy-disk"></i> <span>SALVAR</span>
-            </button>
-            <button type="button" class="btn btn-red-cot" onclick="Cotacao.smartNewQuote()">
-                <i class="ph ph-plus-circle"></i> <span>NOVO LIMPO</span>
-            </button>
-            <button type="button" id="cot-btnLavagem" class="btn btn-cyan-cot" onclick="Cotacao.toggleLavagem()">
-                <i class="ph ph-drop"></i> <span>INCLUIR LAVAGEM</span>
-            </button>
+        <!-- Linha 1: Identificação do Veículo (Esq) + Botões de Ação (Dir) -->
+        <div class="cot-top-primary-row">
+            <div class="cot-vehicle-inputs">
+                <div class="cot-input-group cot-group-model">
+                    <i class="ph ph-car cot-input-icon"></i>
+                    <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" oninput="Cotacao.saveDraft()">
+                </div>
+                <div class="cot-input-group cot-group-plate">
+                    <i class="ph ph-identification-card cot-input-icon"></i>
+                    <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
+                </div>
+            </div>
+
+            <div class="cot-top-actions">
+                <button type="button" class="btn btn-dark-cot" onclick="Cotacao.toggleHistory()" title="Ver orçamentos salvos por veículo">
+                    <i class="ph ph-folder-open"></i> <span>HISTÓRICO</span>
+                </button>
+                <button type="button" class="btn btn-green-cot" onclick="Cotacao.saveCurrent(true)" title="Salvar orçamento atual">
+                    <i class="ph ph-floppy-disk"></i> <span>SALVAR</span>
+                </button>
+                <button type="button" class="btn btn-red-cot" onclick="Cotacao.smartNewQuote()" title="Limpar e iniciar nova cotação">
+                    <i class="ph ph-plus-circle"></i> <span>NOVO LIMPO</span>
+                </button>
+                <button type="button" id="cot-btnLavagem" class="btn btn-cyan-cot" onclick="Cotacao.toggleLavagem()" title="Incluir taxa de lavagem (+R$ 100 diluído)">
+                    <i class="ph ph-drop"></i> <span>INCLUIR LAVAGEM</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Linha 2: Dados do Veículo & Vendedores em Linha Integrada -->
-        <div class="cot-vehicle-bar">
-            <div class="cot-input-group cot-group-model">
-                <i class="ph ph-car cot-input-icon"></i>
-                <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" oninput="Cotacao.saveDraft()">
-            </div>
-            <div class="cot-input-group cot-group-plate">
-                <i class="ph ph-identification-card cot-input-icon"></i>
-                <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
+        <!-- Linha 2: Fornecedores Externos (Esq) + Métricas em Tempo Real (Dir) -->
+        <div class="cot-top-secondary-row">
+            <div class="cot-vendor-box">
+                <div class="cot-add-vendor-inline">
+                    <i class="ph ph-user-plus" style="margin-left:8px; color:var(--text-secondary);"></i>
+                    <input type="text" id="cot-newVendorInput" placeholder="Add Vendedor" onkeydown="if(event.key==='Enter') Cotacao.addVendor()">
+                    <button type="button" class="btn-vendor-add" onclick="Cotacao.addVendor()" title="Adicionar Coluna de Vendedor">+</button>
+                </div>
+                <div id="cot-vendorTags" class="cot-vendor-tags"></div>
             </div>
 
-            <!-- Área de Vendedores -->
-            <div class="cot-vendor-box">
-                <div id="cot-vendorTags" class="cot-vendor-tags"></div>
-                <div class="cot-add-vendor-inline">
-                    <input type="text" id="cot-newVendorInput" placeholder="Add Vendedor" onkeydown="if(event.key==='Enter') Cotacao.addVendor()">
-                    <button type="button" class="btn-vendor-add" onclick="Cotacao.addVendor()" title="Adicionar Vendedor / Fornecedor">+</button>
-                </div>
+            <!-- Mini Resumo ao Vivo -->
+            <div id="cot-liveSummary" class="cot-live-summary">
+                <span class="summary-badge"><i class="ph ph-package"></i> <strong id="cot-sum-count">0</strong> peças</span>
+                <span class="summary-divider">•</span>
+                <span class="summary-badge"><i class="ph ph-check-circle" style="color:var(--success);"></i> <strong id="cot-sum-winners">0</strong> selecionadas</span>
+                <span class="summary-divider">•</span>
+                <span class="summary-badge total-badge"><i class="ph ph-money"></i> Total Venda: <strong id="cot-sum-total">R$ 0,00</strong></span>
             </div>
         </div>
     </div>
 
-    <!-- Tabela de Cotação Dinâmica com Colunas Fixas e Alto Contraste -->
+    <!-- Grade de Cotação de Alta Densidade (Estilo Data Grid ERP) -->
     <div class="cot-table-container">
         <table id="cot-mainTable">
             <thead></thead>
             <tbody></tbody>
         </table>
         
-        <!-- Rodapé da Tabela: Botão Adicionar Peça -->
+        <!-- Rodapé da Tabela Otimizado -->
         <div class="cot-table-footer">
             <button type="button" class="btn btn-green-cot btn-add-part" onclick="Cotacao.addPartRow()">
-                <i class="ph ph-plus-circle" style="font-size:1.15rem;"></i>
+                <i class="ph ph-plus-circle"></i>
                 <span>ADICIONAR PEÇA</span>
             </button>
+            <span class="cot-footer-hint">
+                <i class="ph ph-info"></i> Pressione <strong>Enter</strong> no valor de venda para adicionar a próxima linha automaticamente
+            </span>
         </div>
     </div>
 
-    <!-- Painel de Ações Rápidas & WhatsApp (Cards com Tarjas Coloridas) -->
+    <!-- Dock Horizontal de Ações Rápidas (Compacto & Elegante) -->
     <div class="cot-actions-container">
-        <div class="cot-action-card card-purple" onclick="Cotacao.generateText('quote')" title="Clique para copiar lista para cotação">
+        <div class="cot-action-card card-purple" onclick="Cotacao.generateText('quote')" title="Clique para copiar lista das peças para cotação no WhatsApp">
             <div class="card-icon"><i class="ph ph-clipboard-text"></i></div>
             <div class="card-text">
                 <span class="card-title">COPIAR COTAÇÃO</span>
@@ -66,7 +82,7 @@
             </div>
         </div>
 
-        <div class="cot-action-card card-red" onclick="Cotacao.generateText('order')" title="Clique para copiar pedidos e sincronizar">
+        <div class="cot-action-card card-red" onclick="Cotacao.generateText('order')" title="Clique para copiar pedidos divididos por vendedor e estoque">
             <div class="card-icon"><i class="ph ph-shopping-cart"></i></div>
             <div class="card-text">
                 <span class="card-title">COPIAR PEDIDOS</span>
@@ -74,7 +90,7 @@
             </div>
         </div>
 
-        <div class="cot-action-card card-gray" onclick="Cotacao.generateText('internal')" title="Clique para gerar resumo e imprimir folha">
+        <div class="cot-action-card card-gray" onclick="Cotacao.generateText('internal')" title="Clique para gerar relatório de custo/lucro e imprimir folha A4">
             <div class="card-icon"><i class="ph ph-file-text"></i></div>
             <div class="card-text">
                 <span class="card-title">LISTA INTERNA</span>
@@ -82,7 +98,7 @@
             </div>
         </div>
 
-        <div class="cot-action-card card-green" onclick="Cotacao.openLaborModal()" title="Clique para configurar mão de obra e orçamento">
+        <div class="cot-action-card card-green" onclick="Cotacao.openLaborModal()" title="Clique para configurar mão de obra técnica e orçamento do cliente">
             <div class="card-icon"><i class="ph ph-currency-dollar"></i></div>
             <div class="card-text">
                 <span class="card-title">ORÇAMENTO FINAL</span>
@@ -93,21 +109,21 @@
 
     <!-- Painel de Visualização do Texto Copiado -->
     <div id="cot-resultPanel" class="cot-result-panel" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-            <strong style="color:var(--gold); font-size:0.88rem; display:flex; align-items:center; gap:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong style="color:var(--gold); font-size:0.85rem; display:flex; align-items:center; gap:6px;">
                 <i class="ph ph-check-circle" style="color:var(--success);"></i> Texto Gerado (Copiado para Área de Transferência)
             </strong>
             <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('cot-resultPanel').style.display='none'">Fechar</button>
         </div>
-        <textarea id="cot-outputText" class="cot-output-textarea" readonly rows="7"></textarea>
+        <textarea id="cot-outputText" class="cot-output-textarea" readonly rows="6"></textarea>
     </div>
 </div>
 
 <!-- MODAL: Mão de Obra da Cotação -->
 <div id="cot-laborModal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cot-labor-titulo" onclick="if(event.target === this) Cotacao.toggleLaborModal()">
     <div class="modal-form" style="width: 620px; max-width:95vw;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:12px;">
-            <h3 id="cot-labor-titulo" style="margin:0; color:var(--gold); display:flex; align-items:center; gap:8px; font-size:1.15rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+            <h3 id="cot-labor-titulo" style="margin:0; color:var(--gold); display:flex; align-items:center; gap:8px; font-size:1.1rem;">
                 <i class="ph ph-wrench"></i> CONFIGURAR MÃO DE OBRA &amp; SERVIÇOS
             </h3>
             <button type="button" class="btn-close-modal" aria-label="Fechar modal" onclick="Cotacao.toggleLaborModal()"><i class="ph ph-x"></i></button>
@@ -141,11 +157,11 @@
             <i class="ph ph-plus"></i> <span>Adicionar Serviço</span>
         </button>
 
-        <div style="display:flex; gap:12px; margin-top:20px; padding-top:15px; border-top:1px solid var(--border);">
-            <button type="button" class="btn btn-green-cot" style="flex:1; padding:12px; font-size:0.9rem;" onclick="Cotacao.generateBudgetWithLabor('text')">
+        <div style="display:flex; gap:10px; margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
+            <button type="button" class="btn btn-green-cot" style="flex:1; padding:11px; font-size:0.88rem;" onclick="Cotacao.generateBudgetWithLabor('text')">
                 <i class="ph ph-whatsapp-logo"></i> <span>COPIAR TEXTO (WHATSAPP)</span>
             </button>
-            <button type="button" class="btn btn-red-cot" style="flex:1; padding:12px; font-size:0.9rem;" onclick="Cotacao.generateBudgetWithLabor('pdf')">
+            <button type="button" class="btn btn-red-cot" style="flex:1; padding:11px; font-size:0.88rem;" onclick="Cotacao.generateBudgetWithLabor('pdf')">
                 <i class="ph ph-file-pdf"></i> <span>GERAR PDF (IMPRESSÃO)</span>
             </button>
         </div>
@@ -155,7 +171,7 @@
 <!-- MODAL: Histórico de Cotações Agrupado por Veículo -->
 <div id="cot-historyModal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cot-history-titulo" onclick="if(event.target === this) Cotacao.toggleHistory()">
     <div class="modal-form" style="width: 580px; max-width:95vw;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:10px;">
             <h3 id="cot-history-titulo" style="margin:0; color:var(--gold); display:flex; align-items:center; gap:8px; font-size:1.1rem;">
                 <i class="ph ph-archive-box"></i> HISTÓRICO DE ORÇAMENTOS
             </h3>
@@ -173,7 +189,7 @@
         <input type="file" id="cot-importFile" accept=".json" style="display:none" onchange="Cotacao.handleImport(event)">
 
         <div style="margin-bottom: 12px; position:relative;">
-            <input type="text" id="cot-searchHistory" placeholder="🔍 Pesquisar por placa ou modelo..." style="width:100%; padding:10px 12px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border); color:white; font-size:0.88rem;" oninput="Cotacao.loadHistoryItems()">
+            <input type="text" id="cot-searchHistory" placeholder="🔍 Pesquisar por placa ou modelo..." style="width:100%; padding:9px 12px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border); color:white; font-size:0.88rem;" oninput="Cotacao.loadHistoryItems()">
         </div>
 
         <div id="cot-historyList" class="history-list-container" style="max-height: 400px; overflow-y: auto;"></div>
