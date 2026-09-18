@@ -78,23 +78,19 @@
                 <input type="email" id="usr-email" class="input-email" placeholder="carlos@autocarbs.com.br" required autocomplete="email" style="text-transform: lowercase !important;" oninput="this.value = this.value.toLowerCase()">
             </div>
 
-            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+            <div class="form-grid" style="grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:20px;">
                 <div class="form-control">
                     <label for="usr-role">CARGO / PERFIL *</label>
                     <select id="usr-role">
-                        <option value="operador">Operador (Oficina)</option>
-                        <option value="supervisor">Supervisor</option>
-                        <option value="admin">Administrador</option>
+                        <option value="operador">🔧 Operador (Oficina)</option>
+                        <option value="supervisor">⭐ Supervisor</option>
+                        <option value="admin">👑 Administrador</option>
                     </select>
                 </div>
                 <div class="form-control">
                     <label for="usr-pin">SENHA DE ACESSO *</label>
                     <input type="password" id="usr-pin" placeholder="Mín. 6 caracteres" minlength="6" required autocomplete="new-password">
                 </div>
-            </div>
-
-            <div style="background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.2); border-radius:6px; padding:10px 14px; font-size:0.75rem; color:var(--text-secondary); margin-bottom:18px; line-height:1.4;">
-                <i class="ph ph-shield-check" style="color:var(--gold);"></i> <strong>Segurança:</strong> A senha é protegida com criptografia forte (bcrypt) e não é armazenada em texto puro.
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px;">

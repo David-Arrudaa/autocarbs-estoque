@@ -2110,8 +2110,35 @@ input.no-uppercase {
     text-transform: none !important;
 }
 
-.form-control input:focus {
+.form-control input:focus,
+.form-control select:focus {
     border-color: var(--primary);
+}
+
+.form-control select {
+    width: 100%;
+    padding: 12px 36px 12px 14px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: white;
+    outline: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%23d4af37'%3e%3cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3e%3c/path%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control select option {
+    background-color: #0f1520;
+    color: #f8fafc;
+    padding: 10px;
 }
 
 .checkbox-wrapper {
