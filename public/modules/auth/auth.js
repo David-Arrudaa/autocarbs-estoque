@@ -208,3 +208,4 @@ window.toggleVisibilidadeSenha = (id, btn) => AuthModule.toggleVisibilidadeSenha
 document.addEventListener('DOMContentLoaded', () => {
     AuthModule.init();
 });
+

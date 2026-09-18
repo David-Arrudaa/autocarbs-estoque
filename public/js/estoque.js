@@ -3167,7 +3167,7 @@ const Estoque = {
                     this.processarCodigoEscaneado(codigoDetectado);
                 }
                 buffer = '';
-            } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            } else if (e.key && e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
                 buffer += e.key;
             }
         });
