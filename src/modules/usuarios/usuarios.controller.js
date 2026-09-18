@@ -77,7 +77,9 @@ class UsuariosController {
                 return res.status(400).json({ success: false, error: 'Já existe um colaborador cadastrado com este e-mail.' });
             }
 
-            const roleFmt = ['operador', 'supervisor', 'admin'].includes(role) ? role : 'operador';
+            const roleFmt = ['operador', 'supervisor', 'gerencia', 'admin'].includes(role) 
+                ? (role === 'gerencia' ? 'supervisor' : role) 
+                : 'operador';
             const senhaHash = await bcrypt.hash(String(senhaRecebida).trim(), 10);
 
             const novoUsuario = {
@@ -151,8 +153,8 @@ class UsuariosController {
                 email: emailFmt
             };
 
-            if (['operador', 'supervisor', 'admin'].includes(role)) {
-                updateData.role = role;
+            if (['operador', 'supervisor', 'gerencia', 'admin'].includes(role)) {
+                updateData.role = role === 'gerencia' ? 'supervisor' : role;
             }
 
             if (ativo !== undefined) {

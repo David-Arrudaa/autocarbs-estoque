@@ -94,11 +94,12 @@ function atualizarPerfilUsuario(usuario) {
     if (elRole) {
         const roles = {
             admin: 'Administrador',
-            supervisor: 'Supervisor',
+            supervisor: 'Gerência',
+            gerencia: 'Gerência',
             operador: 'Operador'
         };
         elRole.innerText = roles[usuario.role] || (usuario.role ? usuario.role.toUpperCase() : 'Operador');
-        if (usuario.role === 'supervisor' || usuario.role === 'admin') {
+        if (usuario.role === 'supervisor' || usuario.role === 'gerencia' || usuario.role === 'admin') {
             elRole.style.color = 'var(--gold)';
             elRole.style.fontWeight = '600';
         } else {

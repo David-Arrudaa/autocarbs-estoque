@@ -126,7 +126,7 @@ const Usuarios = {
     atualizarContadores() {
         const total = this.listaUsuarios.length;
         const totalAdmin = this.listaUsuarios.filter(u => u.role === 'admin').length;
-        const totalSuper = this.listaUsuarios.filter(u => u.role === 'supervisor').length;
+        const totalSuper = this.listaUsuarios.filter(u => u.role === 'supervisor' || u.role === 'gerencia').length;
         const totalOp = this.listaUsuarios.filter(u => u.role === 'operador').length;
 
         const elTodos = document.getElementById('chip-count-usr-todos');
@@ -193,8 +193,8 @@ const Usuarios = {
             let roleBadge = '';
             if (u.role === 'admin') {
                 roleBadge = `<span class="badge-role badge-role-admin"><i class="ph ph-shield-check"></i> Administrador</span>`;
-            } else if (u.role === 'supervisor') {
-                roleBadge = `<span class="badge-role badge-role-supervisor"><i class="ph ph-crown"></i> Supervisor</span>`;
+            } else if (u.role === 'supervisor' || u.role === 'gerencia') {
+                roleBadge = `<span class="badge-role badge-role-supervisor"><i class="ph ph-crown"></i> Gerência</span>`;
             } else {
                 roleBadge = `<span class="badge-role badge-role-operador"><i class="ph ph-wrench"></i> Operador</span>`;
             }

@@ -476,12 +476,12 @@ class EstoqueController {
             const { senhaSupervisor } = req.body;
 
             if (!senhaSupervisor) {
-                return res.status(400).json({ success: false, error: 'Senha de supervisor é obrigatória.' });
+                return res.status(400).json({ success: false, error: 'Senha da gerência é obrigatória.' });
             }
 
             // Comparação segura contra timing attacks
             if (!comparadorSeguro(senhaSupervisor, config.pinSupervisor)) {
-                return res.status(403).json({ success: false, error: 'Senha de supervisor incorreta!' });
+                return res.status(403).json({ success: false, error: 'Senha da gerência incorreta!' });
             }
 
             // Verifica se produto existe antes de deletar

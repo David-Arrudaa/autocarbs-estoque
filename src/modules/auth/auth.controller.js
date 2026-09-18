@@ -85,8 +85,8 @@ class AuthController {
                 if (timingSafeMatch(senhaLimpa, config.pinSupervisor)) {
                     usuarioAutenticado = {
                         id: 'supervisor-master',
-                        nome: 'Supervisor AutoCar',
-                        email: emailLimpo || 'supervisor@autocarbs.com.br',
+                        nome: 'Gerência AutoCar',
+                        email: emailLimpo || 'gerencia@autocarbs.com.br',
                         role: 'supervisor'
                     };
                 } else if (timingSafeMatch(senhaLimpa, config.pinAcesso)) {

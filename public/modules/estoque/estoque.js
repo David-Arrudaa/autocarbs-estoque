@@ -1561,7 +1561,7 @@ const Estoque = {
     async confirmarExclusao() {
         const senhaSupervisor = document.getElementById('senha-supervisor').value.trim();
         if (!senhaSupervisor) {
-            return UI.toast('Digite a senha de supervisor.', 'warning');
+            return UI.toast('Digite a senha da gerência.', 'warning');
         }
 
         try {
@@ -1571,7 +1571,7 @@ const Estoque = {
             this.fecharModal('modal-senha-exclusao');
             await this.carregarTudo();
         } catch (err) {
-            UI.toast(err.message || 'Senha de supervisor incorreta ou erro ao excluir.', 'error');
+            UI.toast(err.message || 'Senha da gerência incorreta ou erro ao excluir.', 'error');
         } finally {
             UI.setLoading(false);
         }
@@ -2695,7 +2695,7 @@ const Estoque = {
                     </div>
                     <div class="print-sig-col">
                         <div class="print-sig-line"></div>
-                        <span>Gerente / Supervisor</span>
+                        <span>Gerência / Responsável</span>
                     </div>
                 </div>
                 <div class="print-footer-note">
