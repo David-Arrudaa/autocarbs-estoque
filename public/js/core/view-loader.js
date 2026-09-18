@@ -32,7 +32,7 @@ const ViewLoader = {
         }
 
         const fileName = customFileName || `${moduleName}.view.html`;
-        const path = `modules/${moduleName}/${fileName}?v=38.0`;
+        const path = `modules/${moduleName}/${fileName}?v=39.0`;
 
         try {
             let html = this._cache.get(path);
@@ -40,6 +40,7 @@ const ViewLoader = {
                 const res = await fetch(path);
                 if (!res.ok) {
                     throw new Error(`Falha HTTP ao carregar view [${res.status}]: ${path}`);
+                }
                 html = await res.text();
                 this._cache.set(path, html);
             }

@@ -323,7 +323,7 @@ const Sidebar = {
      * Quando o usuário NÃO estiver dentro do módulo Estoque,
      * a árvore retrátil do Estoque é automaticamente recolhida (fechada)!
      */
-    atualizarNavegacao(aba) {
+    async atualizarNavegacao(aba) {
         this.abaAtiva = aba;
 
         try {
@@ -374,7 +374,7 @@ const Sidebar = {
         if (paneAtivo) {
             paneAtivo.classList.remove('hidden');
             if (paneAtivo.dataset.module && window.ViewLoader) {
-                ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
+                await ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
             }
         }
 

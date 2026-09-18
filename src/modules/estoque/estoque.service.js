@@ -178,3 +178,4 @@ class EstoqueService {
 }
 
 module.exports = EstoqueService;
+

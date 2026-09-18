@@ -18,6 +18,7 @@ const Cotacao = {
     iniciado: false,
 
     iniciar() {
+        if (!document.getElementById('cot-carModel')) return;
         if (this.iniciado) return;
         this.iniciado = true;
 

@@ -366,3 +366,4 @@ if (window.Estoque) {
 document.addEventListener('DOMContentLoaded', () => {
     ScannerModule.init();
 });
+

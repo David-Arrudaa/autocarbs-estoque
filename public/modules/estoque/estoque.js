@@ -100,7 +100,7 @@ const Estoque = {
         if (el) el.classList.toggle('open');
     },
 
-    alternarAba(aba) {
+    async alternarAba(aba) {
         this.abaAtiva = aba;
 
         try {
@@ -112,7 +112,7 @@ const Estoque = {
 
         // Atualização da Sidebar e Topbar via arquitetura modular
         if (window.Sidebar) {
-            Sidebar.atualizarNavegacao(aba);
+            await Sidebar.atualizarNavegacao(aba);
         } else {
             // Fallback caso sidebar.js não esteja carregado
             const groupEstoque = document.getElementById('group-estoque');
