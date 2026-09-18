@@ -118,6 +118,91 @@ class UsuariosController {
             next(err);
         }
     }
+
+    /**
+     * Altera o PIN de acesso de um colaborador
+     */
+    async alterarPin(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { pin } = req.body;
+
+            if (!pin || String(pin).trim().length < 4) {
+                return res.status(400).json({ success: false, error: 'O novo PIN deve ter no mínimo 4 dígitos.' });
+            }
+
+            const pinHash = await bcrypt.hash(String(pin).trim(), 10);
+
+            const { data, error } = await supabase
+                .from('usuarios')
+                .update({ pin_hash: pinHash })
+                .eq('id', id)
+                .select('id, nome, role, ativo');
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                return res.status(404).json({ success: false, error: 'Usuário não encontrado.' });
+            }
+
+            auditoriaService.registrar({
+                usuario: req.user,
+                acao: 'EDICAO',
+                tabela: 'usuarios',
+                registroId: id,
+                detalhes: { campo: 'pin_alterado', usuarioAfetado: data[0].nome }
+            });
+
+            return res.json({
+                success: true,
+                message: `PIN de ${data[0].nome} alterado com sucesso!`
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    /**
+     * Exclui um colaborador do sistema
+     */
+    async excluir(req, res, next) {
+        try {
+            const { id } = req.params;
+
+            // Impede auto-exclusão do próprio usuário autenticado
+            if (req.user && req.user.id === id) {
+                return res.status(400).json({ success: false, error: 'Você não pode excluir o seu próprio usuário logado.' });
+            }
+
+            const { data: usuarioExistente } = await supabase
+                .from('usuarios')
+                .select('id, nome, role')
+                .eq('id', id)
+                .single();
+
+            const { error } = await supabase
+                .from('usuarios')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            auditoriaService.registrar({
+                usuario: req.user,
+                acao: 'EXCLUSAO',
+                tabela: 'usuarios',
+                registroId: id,
+                detalhes: { usuarioExcluido: usuarioExistente?.nome || id }
+            });
+
+            return res.json({
+                success: true,
+                message: 'Usuário excluído com sucesso!'
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = new UsuariosController();

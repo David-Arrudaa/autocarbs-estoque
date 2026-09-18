@@ -2588,10 +2588,11 @@ th {
     }
 
     /* =========================================================
-       TRANSFORMAÇÃO DA TABELA DE ESTOQUE E REPOSIÇÃO EM CARDS
+       TRANSFORMAÇÃO DA TABELA DE ESTOQUE, REPOSIÇÃO E USUÁRIOS EM CARDS
        ========================================================= */
     #table-estoque-geral,
-    #table-estoque-reposicao {
+    #table-estoque-reposicao,
+    #table-usuarios {
         display: block !important;
         width: 100% !important;
         max-width: 100% !important;
@@ -2606,7 +2607,8 @@ th {
     }
 
     #table-estoque-geral thead,
-    #table-estoque-reposicao thead {
+    #table-estoque-reposicao thead,
+    #table-usuarios thead {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
@@ -2614,7 +2616,8 @@ th {
     }
 
     #table-estoque-geral tbody,
-    #table-estoque-reposicao tbody {
+    #table-estoque-reposicao tbody,
+    #table-usuarios tbody {
         display: block !important;
         width: 100% !important;
         min-width: 0 !important;
@@ -2625,7 +2628,8 @@ th {
     }
 
     #table-estoque-geral tbody tr,
-    #table-estoque-reposicao tbody tr {
+    #table-estoque-reposicao tbody tr,
+    #table-usuarios tbody tr {
         display: flex !important;
         flex-direction: column !important;
         width: 100% !important;
@@ -2640,12 +2644,14 @@ th {
     }
 
     #table-estoque-geral tbody tr:hover,
-    #table-estoque-reposicao tbody tr:hover {
+    #table-estoque-reposicao tbody tr:hover,
+    #table-usuarios tbody tr:hover {
         background: #141f2d !important;
     }
 
     #table-estoque-geral tbody td,
-    #table-estoque-reposicao tbody td {
+    #table-estoque-reposicao tbody td,
+    #table-usuarios tbody td {
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
@@ -2657,8 +2663,22 @@ th {
         border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
     }
 
+    #table-usuarios tbody td::before {
+        content: attr(data-label);
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    #table-usuarios tbody td:first-child::before {
+        display: none !important;
+    }
+
     #table-estoque-geral tbody td:first-child,
-    #table-estoque-reposicao tbody td:first-child {
+    #table-estoque-reposicao tbody td:first-child,
+    #table-usuarios tbody td:first-child {
         display: block !important;
         margin-bottom: 4px !important;
         padding-top: 0 !important;
@@ -2672,7 +2692,8 @@ th {
     }
 
     #table-estoque-geral tbody td:last-child,
-    #table-estoque-reposicao tbody td:last-child {
+    #table-estoque-reposicao tbody td:last-child,
+    #table-usuarios tbody td:last-child {
         border-bottom: none !important;
         padding-bottom: 0 !important;
         padding-top: 10px !important;
@@ -2680,7 +2701,8 @@ th {
 
     /* Estado Vazio (ex: Estoque 100% abastecido) */
     #table-estoque-geral tbody td[colspan],
-    #table-estoque-reposicao tbody td[colspan] {
+    #table-estoque-reposicao tbody td[colspan],
+    #table-usuarios tbody td[colspan] {
         display: block !important;
         text-align: center !important;
         width: 100% !important;
@@ -4372,5 +4394,224 @@ th {
         max-width: calc(100vw - 24px);
     }
 }
+
+/* =========================================================
+   MÓDULO: GESTÃO DE EQUIPE & USUÁRIOS (RBAC)
+   ========================================================= */
+
+/* Perfil do Colaborador na Célula */
+.usr-cell-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.usr-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: #1a2332;
+    color: #f8fafc;
+}
+
+.usr-avatar.admin {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.08));
+    border-color: rgba(212, 175, 55, 0.5);
+    color: var(--gold);
+}
+
+.usr-avatar.supervisor {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(56, 189, 248, 0.08));
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+}
+
+.usr-avatar.operador {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.08));
+    border-color: rgba(16, 185, 129, 0.5);
+    color: #34d399;
+}
+
+.usr-profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.usr-nome {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.92rem;
+    color: #f8fafc;
+}
+
+.usr-date {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}
+
+.usr-self-pill {
+    font-size: 0.68rem;
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--gold);
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+/* Badges de Cargo (Role) */
+.badge-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.badge-role-admin {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.badge-role-supervisor {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+
+.badge-role-operador {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+/* Status do Usuário */
+.btn-toggle-status {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-toggle-status:hover:not(:disabled) {
+    opacity: 0.8;
+}
+
+.btn-toggle-status:disabled {
+    cursor: default;
+}
+
+.badge-status-usr {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+.badge-status-usr.ativo {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-status-usr.inativo {
+    background: rgba(148, 163, 184, 0.12);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* Segurança e PIN */
+.usr-pin-protected {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.usr-pin-protected i {
+    color: var(--gold);
+}
+
+/* Linha Inativa */
+.usr-row-inativo td {
+    opacity: 0.65;
+}
+
+/* Ações na Célula */
+.usr-actions-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.btn-action-usr {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #182333;
+    border: 1px solid var(--border);
+    color: #f8fafc;
+    transition: all 0.2s ease;
+    height: 34px;
+}
+
+.btn-action-usr:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: #1e2c40;
+}
+
+.btn-action-usr.btn-action-pin:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.btn-action-usr.btn-action-delete {
+    padding: 6px 10px;
+    color: #f87171;
+}
+
+.btn-action-usr.btn-action-delete:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #ef4444;
+}
+
+@media (max-width: 768px) {
+    .usr-actions-cell {
+        width: 100%;
+        justify-content: stretch;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+    }
+
+    .btn-action-usr {
+        height: 42px;
+        justify-content: center;
+    }
+}
+
 
 

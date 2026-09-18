@@ -173,6 +173,26 @@ const API = {
             method: 'POST',
             body: JSON.stringify(dados)
         });
+    },
+
+    async alternarStatusUsuario(id, ativo) {
+        return this.request(`/usuarios/${id}/status`, {
+            method: 'PUT',
+            body: JSON.stringify({ ativo })
+        });
+    },
+
+    async alterarPinUsuario(id, pin) {
+        return this.request(`/usuarios/${id}/pin`, {
+            method: 'PUT',
+            body: JSON.stringify({ pin })
+        });
+    },
+
+    async excluirUsuario(id) {
+        return this.request(`/usuarios/${id}`, {
+            method: 'DELETE'
+        });
     }
 };
 

@@ -64,6 +64,22 @@ const Sidebar = {
                     mostrarBotaoCadastrar: false
                 }
             }
+        },
+        usuarios: {
+            id: 'group-usuarios',
+            nome: 'Equipe & Acessos',
+            tipo: 'standalone',
+            somenteRole: ['supervisor', 'admin'],
+            submodulos: {
+                usuarios: {
+                    id: 'tab-btn-usuarios',
+                    titulo: 'Equipe & Controle de Acessos',
+                    subtitulo: 'Gerenciamento de colaboradores, cargos e senhas de acesso individuais',
+                    moduloBreadcrumb: 'CONFIGURAÇÕES',
+                    submoduloBreadcrumb: 'EQUIPE & ACESSOS',
+                    mostrarBotaoCadastrar: false
+                }
+            }
         }
     },
 
@@ -113,7 +129,7 @@ const Sidebar = {
         // Recuperar e aplicar aba ativa salva para evitar qualquer salto de tela no refresh (F5)
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao'];
+            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
             const abaSalva = (hash && abasValidas.includes(hash))
                 ? hash
                 : localStorage.getItem('autocar_active_tab');

@@ -169,6 +169,12 @@ const Estoque = {
                     submodulo: 'COTAÇÃO DE PEÇAS', 
                     titulo: 'Cotação de Peças & Orçamentos', 
                     subtitulo: 'Cote com múltiplos fornecedores e gere orçamentos para clientes' 
+                },
+                usuarios: { 
+                    modulo: 'CONFIGURAÇÕES', 
+                    submodulo: 'EQUIPE & ACESSOS', 
+                    titulo: 'Equipe & Controle de Acessos', 
+                    subtitulo: 'Gerenciamento de colaboradores, cargos e senhas de acesso individuais' 
                 }
             };
 
@@ -205,6 +211,8 @@ const Estoque = {
             this.carregarRelatorio();
         } else if (aba === 'cotacao') {
             if (window.Cotacao) Cotacao.iniciar();
+        } else if (aba === 'usuarios') {
+            if (window.Usuarios) Usuarios.carregarLista();
         }
     },
 
@@ -226,7 +234,7 @@ const Estoque = {
         let aba = 'produtos';
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao'];
+            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
             if (hash && abasValidas.includes(hash)) {
                 aba = hash;
             } else {
