@@ -2436,83 +2436,146 @@ th {
         display: none;
     }
 
+    /* Top Header Mobile */
+    .top-header {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 8px 12px !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .top-header-left {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        width: 100% !important;
+        gap: 10px !important;
+    }
+
+    .page-title-box {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .page-breadcrumb {
+        font-size: 0.64rem !important;
+        margin-bottom: 1px !important;
+    }
+
+    .page-title {
+        font-size: 1.05rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .page-subtitle {
+        display: none !important;
+    }
+
     .top-header-right {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        gap: 8px;
-        flex-wrap: wrap;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        gap: 8px !important;
     }
 
     .header-stats {
-        display: flex;
-        gap: 6px;
-        flex: 1;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-
-    .header-stats::-webkit-scrollbar {
-        display: none;
+        display: flex !important;
+        gap: 6px !important;
+        flex: 1 !important;
+        min-width: 0 !important;
     }
 
     .stat-pill {
-        padding: 4px 8px;
-        font-size: 0.72rem;
-        white-space: nowrap;
-        flex-shrink: 0;
+        flex: 1 !important;
+        min-width: 0 !important;
+        padding: 4px 6px !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    .stat-pill span {
+        display: block !important;
+        font-size: 0.58rem !important;
+        color: var(--text-secondary) !important;
+    }
+
+    .stat-pill strong {
+        display: block !important;
+        font-size: 0.76rem !important;
     }
 
     #btn-header-cadastrar {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        flex-shrink: 0;
+        padding: 7px 12px !important;
+        font-size: 0.76rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        height: 38px !important;
     }
 
     /* Toolbar de Busca e Filtros */
     .erp-toolbar,
     .inventory-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .search-box-erp {
         width: 100% !important;
         max-width: 100% !important;
         min-width: 0 !important;
-        box-sizing: border-box;
+        box-sizing: border-box !important;
+    }
+
+    .search-box-erp input {
+        width: 100% !important;
+        min-width: 0 !important;
+        font-size: 0.82rem !important;
     }
 
     .filter-chips {
-        display: flex;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 4px;
-        width: 100%;
-        scrollbar-width: none;
-        gap: 6px;
+        display: flex !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-bottom: 4px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        scrollbar-width: none !important;
+        gap: 6px !important;
     }
 
     .filter-chips::-webkit-scrollbar {
-        display: none;
+        display: none !important;
     }
 
     .chip-pill {
-        white-space: nowrap;
-        flex-shrink: 0;
-        padding: 6px 12px;
-        font-size: 0.76rem;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+        padding: 5px 11px !important;
+        font-size: 0.74rem !important;
     }
 
     .table-container {
-        padding: 10px;
-        height: auto;
-        min-height: 400px;
-        box-sizing: border-box;
+        padding: 10px 8px !important;
+        height: auto !important;
+        min-height: 400px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
     }
 
     .form-grid {
@@ -2524,89 +2587,125 @@ th {
         font-size: 1.2rem;
     }
 
-    /* Transformação da Tabela Principal e de Reposição em Cards Nítidos */
-    #tabela-estoque,
-    #tabela-reposicao {
-        width: 100% !important;
+    /* =========================================================
+       TRANSFORMAÇÃO DA TABELA DE ESTOQUE E REPOSIÇÃO EM CARDS
+       ========================================================= */
+    #table-estoque-geral,
+    #table-estoque-reposicao {
         display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        border: none !important;
         border-collapse: separate !important;
         border-spacing: 0 12px !important;
-        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        table-layout: fixed !important;
+        box-sizing: border-box !important;
     }
 
-    #tabela-estoque thead,
-    #tabela-reposicao thead {
+    #table-estoque-geral thead,
+    #table-estoque-reposicao thead {
         display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
 
-    #tabela-estoque tbody,
-    #tabela-reposicao tbody {
-        width: 100% !important;
+    #table-estoque-geral tbody,
+    #table-estoque-reposicao tbody {
         display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
 
-    #tabela-estoque tr,
-    #tabela-reposicao tr {
+    #table-estoque-geral tbody tr,
+    #table-estoque-reposicao tbody tr {
         display: flex !important;
         flex-direction: column !important;
         width: 100% !important;
-        background: var(--bg-input) !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        background: #111822 !important;
         border: 1px solid var(--border) !important;
         border-radius: 10px !important;
         padding: 14px 12px !important;
         margin-bottom: 12px !important;
-        box-sizing: border-box !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
     }
 
-    #tabela-estoque td,
-    #tabela-reposicao td {
+    #table-estoque-geral tbody tr:hover,
+    #table-estoque-reposicao tbody tr:hover {
+        background: #141f2d !important;
+    }
+
+    #table-estoque-geral tbody td,
+    #table-estoque-reposicao tbody td {
         display: flex !important;
         justify-content: space-between !important;
         align-items: center !important;
         width: 100% !important;
         max-width: 100% !important;
+        box-sizing: border-box !important;
         padding: 7px 0 !important;
         border: none !important;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        box-sizing: border-box !important;
     }
 
-    #tabela-estoque td:first-child,
-    #tabela-reposicao td:first-child {
+    #table-estoque-geral tbody td:first-child,
+    #table-estoque-reposicao tbody td:first-child {
         display: block !important;
         margin-bottom: 4px !important;
+        padding-top: 0 !important;
         padding-bottom: 10px !important;
         border-bottom: 1px solid var(--border) !important;
     }
 
-    #tabela-estoque td:last-child,
-    #tabela-reposicao td:last-child {
+    #table-estoque-geral tbody td:first-child .mobile-label,
+    #table-estoque-reposicao tbody td:first-child .mobile-label {
+        display: none !important;
+    }
+
+    #table-estoque-geral tbody td:last-child,
+    #table-estoque-reposicao tbody td:last-child {
         border-bottom: none !important;
+        padding-bottom: 0 !important;
         padding-top: 10px !important;
     }
 
-    #tabela-estoque td:first-child .mobile-label,
-    #tabela-reposicao td:first-child .mobile-label {
-        display: none !important;
+    /* Estado Vazio (ex: Estoque 100% abastecido) */
+    #table-estoque-geral tbody td[colspan],
+    #table-estoque-reposicao tbody td[colspan] {
+        display: block !important;
+        text-align: center !important;
+        width: 100% !important;
+        padding: 35px 15px !important;
+        border-bottom: none !important;
     }
 
     .mobile-label {
         display: inline-block !important;
-        color: var(--text-secondary) !important;
-        font-size: 0.78rem !important;
-        font-weight: 600 !important;
+        color: #94a3b8 !important;
+        font-size: 0.74rem !important;
+        font-weight: 700 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.4px !important;
+        letter-spacing: 0.5px !important;
     }
 
-    /* Ações Rápidas no Card Mobile: botões confortáveis ao toque com min 44px de altura */
+    /* Ações Rápidas no Card Mobile: 4 botões proporcionais e fáceis de tocar */
     .actions-wrapper {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 8px !important;
         width: 100% !important;
-        margin-top: 4px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
 
     .actions-wrapper .action-btn,
@@ -2615,8 +2714,9 @@ th {
         height: 44px !important;
         font-size: 1.25rem !important;
         border-radius: 6px !important;
-        background: var(--bg-card) !important;
+        background: #182333 !important;
         border: 1px solid var(--border) !important;
+        color: #f8fafc !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -2629,17 +2729,18 @@ th {
 
     /* Tabelas Densas (Curva ABC, Ranking, Relatórios, Cotação): rolagem horizontal fluida */
     .table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
     }
 
-    #tabela-curva-abc,
     #tabela-ranking,
     #tabela-relatorio-categorias,
     #tabela-relatorio-produtos,
     #cot-mainTable {
-        min-width: 620px;
+        min-width: 600px;
     }
 
     /* Paginação Mobile */
