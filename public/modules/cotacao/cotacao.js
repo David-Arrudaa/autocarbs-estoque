@@ -13,11 +13,15 @@ const Cotacao = {
         pecas: [],
         frete: {},
         labor: { type: 'popular', rate: 200, items: [] },
-        lavagem: false
+        lavagem: false,
+        margin: 90
     },
     iniciado: false,
 
-    iniciar() {
+    /**
+     * Inicializa o módulo quando a view for inserida no DOM
+     */
+    init() {
         if (!document.getElementById('cot-carModel')) return;
         if (this.iniciado) return;
         this.iniciado = true;
@@ -28,6 +32,9 @@ const Cotacao = {
                 const saved = JSON.parse(draft);
                 if (saved.state) {
                     this.state = saved.state;
+                    if (this.state.margin === undefined || this.state.margin === null) {
+                        this.state.margin = 90;
+                    }
                     const modelEl = document.getElementById('cot-carModel');
                     const plateEl = document.getElementById('cot-carPlate');
                     if (modelEl && saved.model) modelEl.value = saved.model;
@@ -81,24 +88,43 @@ const Cotacao = {
         const btn = document.getElementById('cot-btnLavagem');
         if (!btn) return;
         if (this.state.lavagem) {
-            btn.innerHTML = '🚿 LAVAGEM ON (+R$ 100)';
-            btn.className = 'btn-info blink-red';
+            btn.innerHTML = '<i class="ph ph-drop"></i> <span>LAVAGEM ON (R$ 100)</span>';
+            btn.className = 'btn btn-cyan-cot cot-blink-lavagem';
         } else {
-            btn.innerHTML = '🚿 INCLUIR LAVAGEM';
-            btn.className = 'btn-info';
+            btn.innerHTML = '<i class="ph ph-drop"></i> <span>INCLUIR LAVAGEM</span>';
+            btn.className = 'btn btn-cyan-cot';
         }
         this.saveDraft();
     },
 
+    // --- LÓGICA DE MARGEM DINÂMICA (PADRÃO 90%) ---
+    updateMargin(val) {
+        let m = parseFloat(val);
+        if (isNaN(m) || m < 0) m = 90;
+        this.state.margin = m;
+        this.recalcAllPricesAndRefresh();
+        this.saveDraft();
+    },
+
+    /**
+     * Calcula o preço de venda de uma peça com base na margem dinâmica,
+     * diluição de frete do fornecedor e diluição da lavagem.
+     */
     calculateSellPrice(custo, vendor, isWinnerRow) {
         if (custo === null || custo === undefined || isNaN(custo)) return null;
 
-        let finalPrice = custo * 1.85;
+        const marginPerc = (this.state.margin !== undefined && this.state.margin !== null) 
+            ? Number(this.state.margin) 
+            : 90;
+        const multiplier = 1 + (marginPerc / 100);
+
+        let finalPrice = custo * multiplier;
 
         if (!isWinnerRow) {
             return finalPrice;
         }
 
+        // Diluição do Frete do Vencedor
         if (vendor !== 'ESTOQUE') {
             const freightTotal = this.state.frete[vendor] || 0;
             let winningTotalQty = 0;
@@ -114,6 +140,7 @@ const Cotacao = {
             }
         }
 
+        // Diluição da Lavagem (+R$ 100) entre todas as peças vencedoras
         if (this.state.lavagem) {
             let globalWinningQty = 0;
             this.state.pecas.forEach(p => {
@@ -137,11 +164,11 @@ const Cotacao = {
         const p = this.state.pecas.find(x => x.id === id);
         if (p && p.precos[vendor]) {
             if (!isNaN(num)) {
-                p.precos[vendor].venda = num;
                 p.precos[vendor].manual = true;
+                p.precos[vendor].venda = num;
             } else {
                 p.precos[vendor].manual = false;
-                if (p.precos[vendor].custo !== null) {
+                if (p.precos[vendor].custo !== null && p.precos[vendor].custo !== undefined) {
                     const isWinner = (p.vencedor === vendor);
                     p.precos[vendor].venda = this.calculateSellPrice(p.precos[vendor].custo, vendor, isWinner);
                 } else {
@@ -149,6 +176,7 @@ const Cotacao = {
                 }
             }
             this.saveDraft();
+            this.recalcAllPricesAndRefresh();
         }
     },
 
@@ -196,6 +224,10 @@ const Cotacao = {
         const thead = document.querySelector('#cot-mainTable thead');
         if (!thead) return;
 
+        const currentMargin = (this.state.margin !== undefined && this.state.margin !== null) 
+            ? this.state.margin 
+            : 90;
+
         let html = `<tr>
             <th class="th-qty">QTD</th>
             <th class="th-part">DESCRIÇÃO DA PEÇA</th>
@@ -204,31 +236,37 @@ const Cotacao = {
         if (this.state.vendedores.length > 0) {
             html += this.state.vendedores.map(v => {
                 const freteVal = this.state.frete[v] || '';
-                const vEsc = UI.escapeHtml(v);
+                const vEsc = UI ? UI.escapeHtml(v) : v;
                 const vParam = v.replace(/'/g, "\\'");
-                return `<th colspan="4" class="th-vendor" style="border-left: 3px solid #777;">
-                            <div style="font-size: 13px; margin-bottom: 3px; color:#fff;">${vEsc}</div>
+                return `<th colspan="4" class="th-vendor">
+                            <div style="font-size: 13px; margin-bottom: 3px; color:#fff; font-weight:800;">${vEsc}</div>
                             <div class="freight-container">
-                                <span class="freight-label">FRETE</span>
+                                <span class="freight-label">FRETE R$</span>
                                 <input type="number" class="inp-freight-small" placeholder="0,00" value="${freteVal}" oninput="Cotacao.updateFreight('${vParam}', this.value)">
                             </div>
                         </th>`;
             }).join('');
         } else {
-            html += `<th style="color:#aaa; font-weight:normal; font-style:italic; padding:15px;">Adicione vendedores ao lado ↗</th>`;
+            html += `<th style="color:#94a3b8; font-weight:normal; font-style:italic; padding:15px;">Adicione vendedores ao lado ↗</th>`;
         }
 
-        html += `<th style="width:30px"></th></tr>
+        html += `<th style="width:36px"></th></tr>
                   <tr>
-                    <th class="th-qty" style="background:#222;"></th>
-                    <th class="th-part" style="font-size:9.5px; color:#aaa; text-align:right; padding-right:10px;">MARGEM 85% ➔</th>
-                    <th class="th-stock" style="width:28px; background:#0d2b4d;">✔</th>
-                    <th class="th-stock" style="background:#0d2b4d;">MARCA</th>
-                    <th class="th-stock" style="background:#0d2b4d;">CUSTO</th>
-                    <th class="th-stock" style="background:#0d2b4d;">VENDA</th>`;
+                    <th class="th-qty" style="background:#0f1620;"></th>
+                    <th class="th-part" style="text-align:right; padding-right:10px; vertical-align:middle;">
+                        <div class="cot-margin-control">
+                            <span class="margin-label">MARGEM</span>
+                            <input type="number" id="globalMargin" class="inp-margem" value="${currentMargin}" min="0" max="500" oninput="Cotacao.updateMargin(this.value)">
+                            <span class="margin-suffix">% ➔</span>
+                        </div>
+                    </th>
+                    <th class="th-stock" style="width:30px;">✔</th>
+                    <th class="th-stock">MARCA</th>
+                    <th class="th-stock">CUSTO</th>
+                    <th class="th-stock">VENDA</th>`;
 
         if (this.state.vendedores.length > 0) {
-            html += this.state.vendedores.map(() => `<th style="width:28px; border-left: 3px solid #999; background:#333;">✔</th><th>MARCA</th><th>CUSTO</th><th>VENDA</th>`).join('');
+            html += this.state.vendedores.map(() => `<th style="width:30px; border-left: 3px solid #64748b; background:#1e293b;">✔</th><th>MARCA</th><th>CUSTO</th><th>VENDA</th>`).join('');
         } else {
             html += `<th></th>`;
         }
@@ -274,10 +312,10 @@ const Cotacao = {
                             </td>`;
                 }).join('');
             } else {
-                vendorCols = `<td style="background:var(--bg-input);"></td>`;
+                vendorCols = `<td style="background:#111a24;"></td>`;
             }
 
-            const warningIcon = !p.vencedor ? '<span style="color:#d4a017; font-weight:bold; margin-left:3px; font-size:13px;" title="Selecione o vencedor">⚠</span>' : '';
+            const warningIcon = !p.vencedor ? '<span style="color:#eab308; font-weight:bold; margin-left:3px; font-size:14px;" title="Selecione o vencedor">⚠</span>' : '';
 
             return `<tr class="${rowClass}" data-cot-id="${p.id}">
                         <td class="td-qty" style="display:flex; align-items:center; justify-content:center;">
@@ -287,7 +325,7 @@ const Cotacao = {
                         <td class="td-part"><input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)"></td>
                         ${stockCols}
                         ${vendorCols}
-                        <td><button class="btn-red" style="padding: 4px 8px; border-radius:4px; width:26px; height:26px; font-weight:bold;" onclick="Cotacao.removePart(${p.id})">&times;</button></td>
+                        <td><button type="button" class="btn-remove-part" title="Remover Peça" onclick="Cotacao.removePart(${p.id})">&times;</button></td>
                     </tr>`;
         }).join('');
     },
@@ -296,9 +334,9 @@ const Cotacao = {
         const el = document.getElementById('cot-vendorTags');
         if (!el) return;
         el.innerHTML = this.state.vendedores.map(v => {
-            const vEsc = UI.escapeHtml(v);
+            const vEsc = UI ? UI.escapeHtml(v) : v;
             const vParam = v.replace(/'/g, "\\'");
-            return `<span class="vendor-tag">${vEsc} <span onclick="Cotacao.removeVendor('${vParam}')">&times;</span></span>`;
+            return `<span class="cot-vendor-tag">${vEsc} <span class="remove-tag" onclick="Cotacao.removeVendor('${vParam}')">&times;</span></span>`;
         }).join('');
     },
 
@@ -322,10 +360,11 @@ const Cotacao = {
 
     updateBrand(id, vendor, val) {
         const p = this.state.pecas.find(x => x.id === id);
-        if (!p) return;
-        if (!p.precos[vendor]) p.precos[vendor] = {};
-        p.precos[vendor].marca = val;
-        this.saveDraft();
+        if (p) {
+            if (!p.precos[vendor]) p.precos[vendor] = {};
+            p.precos[vendor].marca = val;
+            this.saveDraft();
+        }
     },
 
     updateFreight(vendor, val) {
@@ -356,11 +395,14 @@ const Cotacao = {
         this.recalcAllPricesAndRefresh();
     },
 
+    /**
+     * Define vencedor ou desmarca se clicar novamente no mesmo
+     */
     setWinner(id, vendor) {
         const p = this.state.pecas.find(x => x.id === id);
         if (!p) return;
         if (p.vencedor === vendor) {
-            p.vencedor = null;
+            p.vencedor = null; // Toggle off
         } else {
             p.vencedor = vendor;
         }
@@ -378,26 +420,26 @@ const Cotacao = {
     removePart(id) {
         this.state.pecas = this.state.pecas.filter(x => x.id !== id);
         if (this.state.pecas.length === 0) {
-            this.state.pecas.push({ id: Date.now(), qty: 1, nome: '', precos: {}, vencedor: null });
+            this.addPartRow();
+        } else {
+            this.renderAll();
+            this.recalcAllPricesAndRefresh();
         }
-        this.renderAll();
-        this.recalcAllPricesAndRefresh();
     },
 
     addVendor() {
         const input = document.getElementById('cot-newVendorInput');
-        if (!input) return;
-        const name = input.value.trim().toUpperCase();
+        const name = input ? input.value.trim().toUpperCase() : '';
         if (name && !this.state.vendedores.includes(name)) {
             this.state.vendedores.push(name);
-            input.value = '';
+            if (input) input.value = '';
             this.renderAll();
             this.saveDraft();
         }
     },
 
     removeVendor(name) {
-        if (confirm(`Remover a coluna do fornecedor "${name}"?`)) {
+        if (confirm(`Remover coluna do vendedor "${name}"?`)) {
             this.state.vendedores = this.state.vendedores.filter(v => v !== name);
             delete this.state.frete[name];
             this.renderAll();
@@ -405,7 +447,9 @@ const Cotacao = {
         }
     },
 
-    // --- MÃO DE OBRA ---
+    // =========================================================
+    // MODAL DE MÃO DE OBRA & ORÇAMENTO FINAL
+    // =========================================================
     openLaborModal() {
         const modal = document.getElementById('cot-laborModal');
         if (!modal) return;
@@ -430,8 +474,12 @@ const Cotacao = {
     updateLaborType(type) {
         const inputRate = document.getElementById('cot-laborRate');
         this.state.labor.type = type;
-        if (type === 'popular' && inputRate) inputRate.value = 200;
-        if (type === 'premium' && inputRate) inputRate.value = 300;
+        if (type === 'popular') {
+            if (inputRate) inputRate.value = 200;
+        }
+        if (type === 'premium') {
+            if (inputRate) inputRate.value = 300;
+        }
         this.updateLaborCalc(true);
     },
 
@@ -452,36 +500,36 @@ const Cotacao = {
         let displayVal = item.total ? item.total.toFixed(2) : '0.00';
 
         div.innerHTML = `
-            <input type="text" class="labor-desc" placeholder="DESCRIÇÃO DO SERVIÇO" value="${item.desc}" oninput="Cotacao.updateLaborItem(${item.id}, 'desc', this.value)">
-            <input type="number" class="labor-hours" placeholder="Horas" value="${item.hours}" min="0.5" step="0.5" oninput="Cotacao.updateLaborItem(${item.id}, 'hours', this.value)">
+            <input type="text" class="labor-desc" placeholder="DESCRIÇÃO DO SERVIÇO" value="${item.desc || ''}" oninput="Cotacao.updateLaborItem(${item.id}, 'desc', this.value)">
+            <input type="number" class="labor-hours" placeholder="Horas" value="${item.hours || 1}" min="0.5" step="0.5" oninput="Cotacao.updateLaborItem(${item.id}, 'hours', this.value)">
             <input type="text" class="labor-total" placeholder="0,00" value="R$ ${displayVal}" 
                    onfocus="this.value = this.value.replace('R$ ', '')" 
                    onblur="Cotacao.updateLaborItem(${item.id}, 'total', this.value)">
-            <button class="btn-red" style="padding: 8px 12px;" onclick="Cotacao.removeLaborRow(${item.id})">&times;</button>
+            <button type="button" class="btn-remove-part" style="width:28px; height:28px;" onclick="Cotacao.removeLaborRow(${item.id})">&times;</button>
         `;
         container.appendChild(div);
     },
 
     updateLaborItem(id, field, val) {
         const item = this.state.labor.items.find(i => i.id === id);
-        if (!item) return;
-
-        if (field === 'hours') {
-            item.hours = parseFloat(val) || 0;
-            const currentRate = parseFloat(document.getElementById('cot-laborRate')?.value) || 0;
-            item.total = item.hours * currentRate;
-            const row = document.querySelector(`.labor-row[data-id="${id}"]`);
-            if (row) row.querySelector('.labor-total').value = `R$ ${item.total.toFixed(2)}`;
-        } else if (field === 'desc') {
-            item.desc = val;
-        } else if (field === 'total') {
-            let num = parseFloat(String(val).replace(',', '.').replace('R$', '').trim());
-            if (isNaN(num)) num = 0;
-            item.total = num;
-            const row = document.querySelector(`.labor-row[data-id="${id}"]`);
-            if (row) row.querySelector('.labor-total').value = `R$ ${num.toFixed(2)}`;
+        if (item) {
+            if (field === 'hours') {
+                item.hours = parseFloat(val) || 0;
+                const currentRate = parseFloat(document.getElementById('cot-laborRate')?.value) || 0;
+                item.total = item.hours * currentRate;
+                const row = document.querySelector(`.labor-row[data-id="${id}"]`);
+                if (row) row.querySelector('.labor-total').value = `R$ ${item.total.toFixed(2)}`;
+            } else if (field === 'desc') {
+                item.desc = val;
+            } else if (field === 'total') {
+                let num = parseFloat(String(val).replace(',', '.').replace('R$', '').trim());
+                if (isNaN(num)) num = 0;
+                item.total = num;
+                const row = document.querySelector(`.labor-row[data-id="${id}"]`);
+                if (row) row.querySelector('.labor-total').value = `R$ ${num.toFixed(2)}`;
+            }
+            this.saveDraft();
         }
-        this.saveDraft();
     },
 
     removeLaborRow(id) {
@@ -504,14 +552,17 @@ const Cotacao = {
             const item = this.state.labor.items.find(i => i.id === id);
             if (item) {
                 item.total = item.hours * currentRate;
-                const totInput = row.querySelector('.labor-total');
-                if (totInput) totInput.value = `R$ ${item.total.toFixed(2)}`;
+                const totalInput = row.querySelector('.labor-total');
+                if (totalInput) totalInput.value = `R$ ${item.total.toFixed(2)}`;
             }
         });
         this.saveDraft();
     },
 
-    async generateBudgetWithLabor() {
+    // =========================================================
+    // GERAÇÃO DE ORÇAMENTO WHATSAPP & IMPRESSÃO PDF
+    // =========================================================
+    generateBudgetWithLabor(mode = 'text') {
         try {
             this.recalcAllPricesAndRefresh();
 
@@ -524,81 +575,205 @@ const Cotacao = {
 
             for (const vendor of usedVendors) {
                 if (this.state.frete[vendor] === undefined || this.state.frete[vendor] === null) {
-                    alert(`⚠️ ATENÇÃO: O fornecedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete (coloque 0 se for grátis) antes de gerar o orçamento.`);
+                    alert(`⚠️ ATENÇÃO: O vendedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete (coloque 0 se for grátis) antes de gerar o orçamento.`);
                     return;
                 }
             }
 
-            this.toggleLaborModal();
-            const model = document.getElementById('cot-carModel')?.value.toUpperCase() || '';
-            const plate = document.getElementById('cot-carPlate')?.value.toUpperCase() || '';
-            let text = `ORÇAMENTO - ${model}\nPLACA: ${plate}\n\n`;
-            text += `PEÇAS:\n\n`;
+            const model = (document.getElementById('cot-carModel')?.value || '').toUpperCase();
+            const plate = (document.getElementById('cot-carPlate')?.value || '').toUpperCase();
+
+            let text = `ORÇAMENTO - ${model || 'VEÍCULO NÃO INFORMADO'}\n`;
+            if (plate) text += `PLACA: ${plate}\n`;
+            text += `\nPEÇAS:\n\n`;
 
             let totalPartsSum = 0;
             let hasParts = false;
+            let partsHtml = '';
 
             this.state.pecas.forEach(p => {
                 if (p.vencedor && p.nome.trim()) {
                     hasParts = true;
+
                     let vendaFinal = p.precos[p.vencedor].venda;
                     if (vendaFinal === null || vendaFinal === undefined) {
                         vendaFinal = this.calculateSellPrice(p.precos[p.vencedor].custo, p.vencedor, true);
                     }
 
-                    const totalVal = (vendaFinal || 0) * p.qty;
+                    const unitVal = vendaFinal || 0;
+                    const totalVal = unitVal * (p.qty || 1);
                     totalPartsSum += totalVal;
 
-                    const priceFmt = totalVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    const brandFmt = p.precos[p.vencedor].marca ? ` ${p.precos[p.vencedor].marca.toUpperCase()}` : '';
-                    text += `${p.qty}x ${p.nome.toUpperCase()}${brandFmt} R$ ${priceFmt}\n`;
-                    text += "__________________________________\n";
+                    const unitFmt = unitVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const totalFmt = totalVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const brandFmt = p.precos[p.vencedor].marca ? ` (${p.precos[p.vencedor].marca.toUpperCase()})` : '';
+
+                    text += `${p.qty}x ${p.nome.toUpperCase()}${brandFmt} - R$ ${unitFmt} un. = R$ ${totalFmt}\n`;
+
+                    partsHtml += `
+                        <tr>
+                            <td style="text-align:center;">${p.qty}x</td>
+                            <td>${p.nome.toUpperCase()}${brandFmt}</td>
+                            <td style="text-align:right;">R$ ${unitFmt}</td>
+                            <td style="text-align:right;">R$ ${totalFmt}</td>
+                        </tr>
+                    `;
                 }
             });
-            if (!hasParts) text += "(Nenhuma peça selecionada)\n";
 
-            text += `\nMÃO DE OBRA:\n\n`;
+            if (!hasParts) {
+                text += "(Nenhuma peça selecionada)\n";
+                partsHtml += '<tr><td colspan="4" style="text-align:center;">Nenhuma peça selecionada</td></tr>';
+            }
+
+            text += `\n----------------------------------\n`;
+            text += `MÃO DE OBRA & SERVIÇOS:\n\n`;
 
             let totalLaborSum = 0;
             let hasLabor = false;
+            let laborHtml = '';
 
             this.state.labor.items.forEach(item => {
-                if (item.desc.trim()) {
+                if (item.desc && item.desc.trim()) {
                     hasLabor = true;
-                    totalLaborSum += item.total;
-                    const priceFmt = item.total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    text += `${item.desc.toUpperCase()} R$ ${priceFmt}\n`;
-                    text += "__________________________________\n";
+                    totalLaborSum += item.total || 0;
+                    const priceFmt = (item.total || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                    text += `${item.desc.toUpperCase()} = R$ ${priceFmt}\n`;
+
+                    laborHtml += `
+                        <tr>
+                            <td style="text-align:center;">-</td>
+                            <td>${item.desc.toUpperCase()}</td>
+                            <td style="text-align:right;">-</td>
+                            <td style="text-align:right;">R$ ${priceFmt}</td>
+                        </tr>
+                    `;
                 }
             });
-            if (!hasLabor) text += "(Sem mão de obra inclusa)\n";
+
+            if (!hasLabor) {
+                text += "(Sem mão de obra inclusa)\n";
+                laborHtml += '<tr><td colspan="4" style="text-align:center;">Nenhuma mão de obra inclusa</td></tr>';
+            }
 
             const grandTotal = totalPartsSum + totalLaborSum;
+            const grandTotalFmt = grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const partsSumFmt = totalPartsSum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const laborSumFmt = totalLaborSum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             text += `\n==================================\n`;
-            text += `TOTAL PEÇAS: R$ ${totalPartsSum.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}\n`;
-            text += `TOTAL MÃO DE OBRA: R$ ${totalLaborSum.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}\n`;
-            text += `\nTOTAL GERAL: R$ ${grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}\n`;
+            text += `TOTAL PEÇAS: R$ ${partsSumFmt}\n`;
+            text += `TOTAL MÃO DE OBRA: R$ ${laborSumFmt}\n`;
+            text += `\nTOTAL GERAL: R$ ${grandTotalFmt}\n`;
             text += `==================================\n`;
+            text += `\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 10 dias.*`;
 
-            text += "\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 5 dias.*";
-
-            const area = document.getElementById('cot-outputText');
-            const panel = document.getElementById('cot-resultPanel');
-            if (area && panel) {
-                area.value = text;
-                panel.style.display = 'block';
-                await UI.copiarParaClipboard(text, area);
-                UI.toast('Orçamento Completo copiado para a Área de Transferência!', 'success');
+            if (mode === 'text') {
+                const area = document.getElementById('cot-outputText');
+                const panel = document.getElementById('cot-resultPanel');
+                if (area && panel) {
+                    area.value = text;
+                    panel.style.display = 'block';
+                    area.select();
+                    navigator.clipboard.writeText(text).catch(() => {});
+                    if (UI) UI.toast('Orçamento copiado para a área de transferência!', 'success');
+                    else alert('Orçamento Copiado para o WhatsApp!');
+                }
+            } else if (mode === 'pdf') {
+                const dateStr = new Date().toLocaleDateString('pt-BR');
+                const printWindow = window.open('', '', 'width=900,height=700');
+                if (!printWindow) {
+                    alert("O navegador bloqueou a abertura do PDF. Por favor, permita pop-ups para este site.");
+                    return;
+                }
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Orçamento_${plate || 'S_PLACA'}</title>
+                        <style>
+                            body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 25px; color: #1e293b; background: #fff; }
+                            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #D60000; padding-bottom: 12px; margin-bottom: 20px; }
+                            .logo { font-size: 26px; font-weight: 900; font-style: italic; color: #0f172a; }
+                            .logo span { color: #D60000; font-style: normal; }
+                            .info { text-align: right; font-size: 12px; line-height: 1.5; color: #475569; }
+                            h2 { text-align: center; color: #0f172a; margin-bottom: 18px; font-size: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
+                            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px; }
+                            th, td { border: 1px solid #cbd5e1; padding: 7px 10px; }
+                            th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; text-transform: uppercase; font-size: 10px; }
+                            .section-title { background-color: #e2e8f0 !important; font-size: 11px; text-align: left !important; padding-left: 10px; font-weight: 800; }
+                            .total-box { width: 320px; float: right; border: 2px solid #0f172a; padding: 12px; margin-top: 10px; background: #f8fafc; border-radius: 4px; }
+                            .total-line { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; font-weight: 600; }
+                            .grand-total { font-weight: 900; font-size: 17px; border-top: 2px solid #0f172a; padding-top: 8px; margin-top: 8px; color: #D60000; }
+                            .footer-note { clear: both; margin-top: 45px; font-size: 10px; color: #64748b; text-align: center; font-style: italic; }
+                            tr:nth-child(even) { background-color: #f8fafc; }
+                            @media print {
+                                body { padding: 0; }
+                                @page { margin: 1.2cm; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <div class="logo">AUTOCAR<span>BS</span> <small style="font-size:12px; color:#64748b; font-style:normal; font-weight:700;">| SISTEMA DE GESTÃO</small></div>
+                            <div class="info">
+                                <strong>DATA:</strong> ${dateStr}<br>
+                                <strong>VEÍCULO:</strong> ${model || 'Não Informado'}<br>
+                                <strong>PLACA:</strong> ${plate || 'Não Informada'}
+                            </div>
+                        </div>
+                        <h2>Orçamento de Peças e Serviços</h2>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px; text-align:center;">QTD</th>
+                                    <th>DESCRIÇÃO</th>
+                                    <th style="width: 110px; text-align:right;">V. UNITÁRIO</th>
+                                    <th style="width: 110px; text-align:right;">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><th colspan="4" class="section-title">📦 PEÇAS</th></tr>
+                                ${partsHtml}
+                                <tr><th colspan="4" class="section-title">🔧 MÃO DE OBRA &amp; SERVIÇOS</th></tr>
+                                ${laborHtml}
+                            </tbody>
+                        </table>
+                        <div class="total-box">
+                            <div class="total-line">
+                                <span>Subtotal Peças:</span>
+                                <span>R$ ${partsSumFmt}</span>
+                            </div>
+                            <div class="total-line">
+                                <span>Subtotal Mão de Obra:</span>
+                                <span>R$ ${laborSumFmt}</span>
+                            </div>
+                            <div class="total-line grand-total">
+                                <span>TOTAL GERAL:</span>
+                                <span>R$ ${grandTotalFmt}</span>
+                            </div>
+                        </div>
+                        <div class="footer-note">
+                            * Valores sujeitos a alteração sem aviso prévio. Orçamento válido por 10 dias. AutoCar BS Oficina &amp; Peças.
+                        </div>
+                        <script>
+                            setTimeout(() => { window.print(); window.close(); }, 500);
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
             }
         } catch (error) {
-            UI.toast("Erro ao gerar orçamento: " + error.message, 'error');
+            alert("Erro ao gerar orçamento: " + error.message);
             console.error(error);
         }
     },
 
-    // --- GERADOR DE TEXTOS & SINCRONIZAÇÃO DE ESTOQUE ---
-    async generateText(type) {
+    // =========================================================
+    // AÇÕES RÁPIDAS (COPIAR COTAÇÃO, PEDIDOS, LISTA INTERNA)
+    // =========================================================
+    generateText(type) {
         const usedVendors = new Set();
         this.state.pecas.forEach(p => {
             if (p.vencedor && p.vencedor !== 'ESTOQUE') {
@@ -608,39 +783,44 @@ const Cotacao = {
 
         for (const vendor of usedVendors) {
             if (this.state.frete[vendor] === undefined || this.state.frete[vendor] === null) {
-                UI.toast(`Preencha o frete do fornecedor "${vendor}" (ou 0 se grátis) antes de gerar.`, 'warning');
+                alert(`⚠️ ATENÇÃO: O vendedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete (coloque 0 se for grátis) antes de gerar a lista.`);
                 return;
             }
         }
 
-        const model = document.getElementById('cot-carModel')?.value.toUpperCase() || '';
-        const plate = document.getElementById('cot-carPlate')?.value.toUpperCase() || '';
+        const model = (document.getElementById('cot-carModel')?.value || '').toUpperCase();
+        const plate = (document.getElementById('cot-carPlate')?.value || '').toUpperCase();
         let text = "";
         const area = document.getElementById('cot-outputText');
         const panel = document.getElementById('cot-resultPanel');
 
         if (type === 'quote') {
-            text = `COTAÇÃO - ${model}\nPLACA: ${plate}\n\n`;
-            const partsToQuote = this.state.pecas.filter(p => p.vencedor !== 'ESTOQUE' && p.nome.trim() !== '');
+            text = `COTAÇÃO - ${model || 'VEÍCULO'}\n`;
+            if (plate) text += `PLACA: ${plate}\n`;
+            text += `\n`;
+            const partsToQuote = this.state.pecas.filter(p => p.vencedor !== 'ESTOQUE' && p.nome && p.nome.trim() !== '');
             if (partsToQuote.length === 0) text += "(Nenhuma peça para cotar)";
             else partsToQuote.forEach(p => { text += `- ${p.nome.toUpperCase()}\n`; });
 
             if (area && panel) {
                 area.value = text;
                 panel.style.display = 'block';
-                await UI.copiarParaClipboard(text, area);
-                UI.toast('Lista de cotação copiada!', 'success');
+                area.select();
+                navigator.clipboard.writeText(text).catch(() => {});
+                if (UI) UI.toast('Lista de cotação copiada com sucesso!', 'success');
+                else alert('Lista Copiada!');
             }
         } else if (type === 'order') {
-            text = `PEDIDOS DE COMPRA - ${model}\nPLACA: ${plate}\n`;
+            text = `PEDIDOS DE COMPRA - ${model || 'VEÍCULO'}\n`;
+            if (plate) text += `PLACA: ${plate}\n`;
             const buyItems = this.state.pecas.filter(p => p.vencedor && p.vencedor !== 'ESTOQUE');
 
             this.state.vendedores.forEach(v => {
                 const items = buyItems.filter(p => p.vencedor === v);
                 if (items.length) {
-                    text += `\n👤 FORNECEDOR: ${v}:\n`;
+                    text += `\n👤 ${v}:\n`;
                     items.forEach(i => {
-                        const m = i.precos[v]?.marca ? `(${i.precos[v].marca.toUpperCase()})` : '';
+                        const m = i.precos[v].marca ? `(${i.precos[v].marca.toUpperCase()})` : '';
                         text += ` [ ] ${i.qty}x ${i.nome} ${m}\n`;
                     });
                     if (this.state.frete[v] !== undefined && this.state.frete[v] !== null) {
@@ -651,7 +831,7 @@ const Cotacao = {
 
             const stockItems = this.state.pecas.filter(p => p.vencedor === 'ESTOQUE');
             if (stockItems.length > 0) {
-                text += `\n📦 SEPARAR DO ESTOQUE DA OFICINA:\n`;
+                text += `\n📦 SEPARAR DO ESTOQUE FÍSICO:\n`;
                 stockItems.forEach(i => {
                     const m = i.precos['ESTOQUE']?.marca ? `(${i.precos['ESTOQUE'].marca.toUpperCase()})` : '';
                     text += ` [ ] ${i.qty}x ${i.nome} ${m}\n`;
@@ -661,102 +841,148 @@ const Cotacao = {
             if (area && panel) {
                 area.value = text;
                 panel.style.display = 'block';
-                await UI.copiarParaClipboard(text, area);
-            }
+                area.select();
+                navigator.clipboard.writeText(text).catch(() => {});
 
-            // PERGUNTA SE DESEJA SINCRONIZAR COM O ESTOQUE
-            if (buyItems.length > 0 || stockItems.length > 0) {
-                const msg = `Texto do Pedido Copiado com Sucesso!\n\n` +
-                            `📦 Deseja FINALIZAR e SINCRONIZAR com o Estoque do ERP agora?\n` +
-                            `- ${buyItems.length} peça(s) compradas darão ENTRADA no estoque.\n` +
-                            `- ${stockItems.length} peça(s) da oficina terão BAIXA automática.`;
-
-                if (confirm(msg)) {
-                    await this.sincronizarComEstoque(buyItems, stockItems, plate, model);
+                if (buyItems.length > 0) {
+                    if (confirm("Texto dos pedidos copiado!\n\nDeseja sincronizar essas peças no controle de pedidos?")) {
+                        const today = new Date().toLocaleDateString('pt-BR');
+                        const orderData = {
+                            id: Date.now(),
+                            model: model || "MODELO NÃO INFORMADO",
+                            plate: plate,
+                            created_at: new Date().toLocaleString(),
+                            items: buyItems.map(p => ({
+                                qty: p.qty,
+                                name: p.nome.toUpperCase(),
+                                vendor: p.vencedor,
+                                date: today,
+                                arrived: false
+                            }))
+                        };
+                        localStorage.setItem('autocar_incoming_order', JSON.stringify(orderData));
+                        if (UI) UI.toast('Pedidos sincronizados com sucesso!', 'success');
+                    }
+                } else {
+                    if (UI) UI.toast('Pedidos copiados com sucesso!', 'success');
                 }
-            } else {
-                UI.toast('Copiado! (Nenhum item selecionado para compra)', 'info');
             }
         } else if (type === 'internal') {
-            text = `RELATÓRIO INTERNO - ${model}\nPLACA: ${plate}\n(Qtd / Peça / Custo Un. / Venda Un. / Marca / Fornecedor)\n\n`;
+            text = `RELATÓRIO INTERNO - ${model || 'VEÍCULO'}\n`;
+            if (plate) text += `PLACA: ${plate}\n`;
+            text += `(Qtd / Peça / Custo Un. / Venda Un. / Marca / Fornecedor)\n\n`;
+            let rowsHtml = '';
+
             this.state.pecas.forEach(p => {
                 if (p.vencedor && p.precos[p.vencedor]) {
                     const d = p.precos[p.vencedor];
-                    const custo = d.custo ? Number(d.custo).toFixed(2) : '0.00';
-                    const venda = d.venda ? Number(d.venda).toFixed(2) : '0.00';
-                    text += `${p.qty}x ${p.nome.toUpperCase()} / R$ ${custo} / R$ ${venda} / ${d.marca ? d.marca.toUpperCase() : 'S/ MARCA'} / ${p.vencedor}\n`;
+                    let custoFinal = d.custo || 0;
+                    let vendaFinal = d.venda;
+                    if (vendaFinal === null || vendaFinal === undefined) {
+                        vendaFinal = this.calculateSellPrice(d.custo, p.vencedor, true);
+                    }
+                    vendaFinal = vendaFinal || 0;
+
+                    text += `${p.qty}x ${p.nome.toUpperCase()} / R$ ${custoFinal.toFixed(2)} / R$ ${vendaFinal.toFixed(2)} / ${d.marca ? d.marca.toUpperCase() : 'S/ MARCA'} / ${p.vencedor}\n`;
                     text += "--------------------------------------------------\n";
+
+                    rowsHtml += `
+                        <tr>
+                            <td style="text-align:center;">${p.qty}x</td>
+                            <td>${p.nome.toUpperCase()}</td>
+                            <td style="text-align:right;">R$ ${custoFinal.toFixed(2)}</td>
+                            <td style="text-align:right;">R$ ${vendaFinal.toFixed(2)}</td>
+                            <td style="text-align:center;">${d.marca ? d.marca.toUpperCase() : '-'}</td>
+                            <td style="text-align:center;">${p.vencedor}</td>
+                        </tr>
+                    `;
                 }
             });
+
+            if (rowsHtml === '') {
+                rowsHtml = '<tr><td colspan="6" style="text-align:center;">Nenhuma peça selecionada</td></tr>';
+                text += "(Nenhuma peça selecionada)\n";
+            }
 
             if (area && panel) {
                 area.value = text;
                 panel.style.display = 'block';
-                await UI.copiarParaClipboard(text, area);
-                UI.toast('Relatório interno copiado!', 'success');
+                area.select();
+                navigator.clipboard.writeText(text).catch(() => {});
             }
+
+            const dateStr = new Date().toLocaleDateString('pt-BR');
+            const printWindow = window.open('', '', 'width=900,height=700');
+            if (!printWindow) {
+                alert("Seu navegador bloqueou o PDF. Por favor, permita pop-ups para este site e tente novamente.");
+                return;
+            }
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Relatório_${plate || 'S_PLACA'}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 25px; color: #1e293b; background:#fff; }
+                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #D60000; padding-bottom: 12px; margin-bottom: 20px; }
+                        .logo { font-size: 26px; font-weight: 900; font-style: italic; color: #0f172a; }
+                        .logo span { color: #D60000; font-style: normal; }
+                        .info { text-align: right; font-size: 12px; line-height: 1.5; color: #475569; }
+                        h2 { text-align: center; color: #0f172a; margin-bottom: 18px; font-size: 18px; text-transform: uppercase; }
+                        table { width: 100%; border-collapse: collapse; font-size: 11px; }
+                        th, td { border: 1px solid #cbd5e1; padding: 7px 10px; }
+                        th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; text-transform: uppercase; font-size: 10px; }
+                        tr:nth-child(even) { background-color: #f8fafc; }
+                        @media print {
+                            body { padding: 0; }
+                            @page { margin: 1.2cm; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="logo">AUTOCAR<span>BS</span> <small style="font-size:12px; color:#64748b; font-style:normal; font-weight:700;">| RELATÓRIO DE CUSTO &amp; LUCRO</small></div>
+                        <div class="info">
+                            <strong>DATA:</strong> ${dateStr}<br>
+                            <strong>VEÍCULO:</strong> ${model || 'Não Informado'}<br>
+                            <strong>PLACA:</strong> ${plate || 'Não Informada'}
+                        </div>
+                    </div>
+                    <h2>Relatório Interno de Conferência</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px; text-align:center;">QTD</th>
+                                <th>DESCRIÇÃO DA PEÇA</th>
+                                <th style="width: 100px; text-align:right;">CUSTO UN.</th>
+                                <th style="width: 100px; text-align:right;">VENDA UN.</th>
+                                <th style="width: 120px; text-align:center;">MARCA</th>
+                                <th style="width: 150px; text-align:center;">FORNECEDOR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                    <script>
+                        setTimeout(() => { window.print(); window.close(); }, 500);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
     },
 
-    // --- EXECUTA A SINCRONIZAÇÃO VIA API ---
-    async sincronizarComEstoque(buyItems, stockItems, plate, model) {
-        try {
-            UI.setLoading(true);
-
-            const itensCompraPayload = buyItems.map(p => {
-                const info = p.precos[p.vencedor] || {};
-                return {
-                    qty: p.qty,
-                    name: p.nome,
-                    brand: info.marca || '',
-                    cost: info.custo || 0,
-                    sale: info.venda || 0,
-                    vendor: p.vencedor
-                };
-            });
-
-            const itensEstoquePayload = stockItems.map(p => {
-                const info = p.precos['ESTOQUE'] || {};
-                return {
-                    qty: p.qty,
-                    name: p.nome,
-                    brand: info.marca || '',
-                    cost: info.custo || 0,
-                    sale: info.venda || 0
-                };
-            });
-
-            const res = await API.sincronizarCotacao({
-                placa: plate,
-                modelo: model,
-                itensCompra: itensCompraPayload,
-                itensEstoque: itensEstoquePayload
-            });
-
-            alert(`🎉 ${res.message}\n\n` +
-                  `• Peças que entraram: ${res.detalhes?.entradas || 0}\n` +
-                  `• Novos cadastros criados: ${res.detalhes?.novosCadastros || 0}\n` +
-                  `• Peças baixadas do estoque: ${res.detalhes?.saidas || 0}`);
-
-            // Atualiza tabelas do ERP em segundo plano
-            if (window.Estoque) {
-                await Estoque.carregarTudo();
-            }
-        } catch (err) {
-            alert('Erro ao sincronizar com o estoque: ' + (err.message || err));
-        } finally {
-            UI.setLoading(false);
-        }
-    },
-
-    // --- HISTÓRICO & PERSISTÊNCIA ---
+    // =========================================================
+    // LIMPAR TELA & NOVO LIMPO INTELIGENTE
+    // =========================================================
     smartNewQuote() {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
         if (hasData) {
-            if (confirm("Salvar o orçamento atual antes de limpar?")) {
+            if (confirm("Deseja salvar a cotação atual antes de limpar?")) {
                 if (this.saveCurrent(false)) this.clearScreen();
             } else {
-                if (confirm("Apagar tudo e começar um novo limpo?")) this.clearScreen();
+                if (confirm("Deseja apagar a tela sem salvar?")) this.clearScreen();
             }
         } else {
             this.clearScreen();
@@ -765,21 +991,70 @@ const Cotacao = {
 
     clearScreen() {
         this.currentId = null;
-        this.state.pecas = [];
-        this.state.vendedores = [];
-        this.state.frete = {};
-        this.state.lavagem = false;
-        this.state.labor = { type: 'popular', rate: 200, items: [] };
-
+        const currentMargin = this.state.margin || 90;
+        this.state = {
+            vendedores: [],
+            pecas: [],
+            frete: {},
+            labor: { type: 'popular', rate: 200, items: [] },
+            lavagem: false,
+            margin: currentMargin
+        };
         const modelEl = document.getElementById('cot-carModel');
         const plateEl = document.getElementById('cot-carPlate');
         if (modelEl) modelEl.value = '';
         if (plateEl) plateEl.value = '';
-
         this.addPartRow();
         this.updateLavagemButton();
         this.renderAll();
         this.saveDraft();
+        if (UI) UI.toast('Tela limpa para nova cotação.', 'info');
+    },
+
+    // =========================================================
+    // SALVAR & HISTÓRICO COM AGRUPAMENTO POR PLACA / VEÍCULO
+    // =========================================================
+    saveCurrent(showMessage = true) {
+        const m = document.getElementById('cot-carModel')?.value?.trim();
+        const p = document.getElementById('cot-carPlate')?.value?.trim();
+
+        if (!m) {
+            if (UI) UI.toast('Informe o modelo do veículo para salvar!', 'warning');
+            else alert('Digite o modelo do veículo!');
+            document.getElementById('cot-carModel')?.focus();
+            return false;
+        }
+        if (!p) {
+            if (showMessage) {
+                if (UI) UI.toast('Informe a PLACA para salvar no histórico!', 'warning');
+                else alert('Digite a PLACA para salvar no histórico!');
+                document.getElementById('cot-carPlate')?.focus();
+            }
+            return false;
+        }
+
+        const cleanPlate = p.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+        let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+        const r = {
+            id: this.currentId || Date.now(),
+            date: new Date().toLocaleString(),
+            model: m,
+            plate: cleanPlate,
+            state: this.state
+        };
+
+        const i = h.findIndex(x => x.id === r.id);
+        if (i >= 0) h[i] = r;
+        else h.push(r);
+
+        localStorage.setItem('cotador_history', JSON.stringify(h));
+        this.currentId = r.id;
+        if (showMessage) {
+            if (UI) UI.toast(`Orçamento de ${cleanPlate} salvo no histórico!`, 'success');
+            else alert('Orçamento salvo no histórico!');
+        }
+        return true;
     },
 
     toggleHistory() {
@@ -797,62 +1072,13 @@ const Cotacao = {
         }
     },
 
-    saveCurrent(alertOnSave = true) {
-        const m = document.getElementById('cot-carModel')?.value.trim() || '';
-        const p = document.getElementById('cot-carPlate')?.value.trim() || '';
-
-        if (!m) {
-            UI.toast('Digite o modelo do veículo!', 'warning');
-            return false;
-        }
-        if (!p) {
-            if (alertOnSave) UI.toast('Digite a PLACA do veículo para salvar no histórico!', 'warning');
-            return false;
-        }
-
-        const cleanPlate = p.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
-        const r = {
-            id: this.currentId || Date.now(),
-            date: new Date().toLocaleString(),
-            model: m,
-            plate: cleanPlate,
-            state: this.state
-        };
-
-        const i = h.findIndex(x => x.id === r.id);
-        if (i >= 0) h[i] = r;
-        else h.push(r);
-
-        localStorage.setItem('cotador_history', JSON.stringify(h));
-        this.currentId = r.id;
-
-        // Persistência centralizada no Supabase em background
-        let valorTotal = 0;
-        if (Array.isArray(this.state.pecas)) {
-            this.state.pecas.forEach(item => {
-                if (item.vencedor && item.precos[item.vencedor]) {
-                    valorTotal += (Number(item.precos[item.vencedor].venda) || 0) * (Number(item.qty) || 1);
-                }
-            });
-        }
-        API.salvarCotacao({
-            placa: cleanPlate,
-            modelo: m,
-            valorTotal,
-            dados: this.state
-        }).catch(err => console.warn('[Cotacao] Persistência remota em cache:', err.message));
-
-        if (alertOnSave) UI.toast('Orçamento salvo com sucesso no histórico!', 'success');
-        return true;
-    },
-
     loadHistoryItems() {
         let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
         const term = (document.getElementById('cot-searchHistory')?.value || '').toUpperCase();
         const container = document.getElementById('cot-historyList');
         if (!container) return;
 
+        // Visualização dentro de uma pasta de veículo específica
         if (this.currentHistoryGroupKey) {
             const carQuotes = h.filter(x => {
                 const p = x.plate ? x.plate.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : "";
@@ -864,26 +1090,30 @@ const Cotacao = {
             carQuotes.sort((a, b) => b.id - a.id);
 
             const first = carQuotes[0] || {};
-            const folderTitle = first.plate || first.model || "Orçamentos";
+            const folderTitle = first.plate || first.model || "Orçamento";
             const folderSub = first.plate ? first.model : "";
 
             let html = `
-                <div style="background:var(--bg-card); border:1px solid var(--border); padding:10px; border-radius:6px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-weight:bold; color:var(--gold);">📂 ${folderTitle} <small style="color:var(--text-secondary)">(${folderSub})</small></span>
-                    <button onclick="Cotacao.exitHistoryGroup()" class="btn btn-secondary btn-sm" style="padding:4px 10px; cursor:pointer;">⬅ Voltar</button>
+                <div style="background:#1e293b; padding:10px 14px; border-radius:6px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border);">
+                    <span style="font-weight:bold; color:var(--gold); display:flex; align-items:center; gap:6px;">
+                        <i class="ph ph-folder-open"></i> ${folderTitle} <small style="color:#cbd5e1;">(${folderSub})</small>
+                    </span>
+                    <button type="button" onclick="Cotacao.exitHistoryGroup()" class="btn btn-secondary btn-sm" style="padding:4px 10px;">⬅ Voltar</button>
                 </div>
             `;
 
             if (carQuotes.length === 0) {
-                html += '<p style="text-align:center; color:var(--text-secondary); padding:20px;">Nenhum orçamento encontrado.</p>';
+                html += '<p style="text-align:center; color:var(--text-secondary);">Nenhum orçamento encontrado nesta pasta.</p>';
             } else {
                 html += carQuotes.map(x => `
                     <div class="history-item" onclick="Cotacao.loadItem(${x.id})">
                         <div>
-                            <strong style="color:white;">${x.date}</strong><br>
-                            <small style="color:var(--text-secondary);">${x.model}</small>
+                            <strong style="color:#ffffff;">${x.date}</strong><br>
+                            <small style="color:var(--text-secondary)">${x.model || 'Sem Modelo'}</small>
                         </div>
-                        <button class="btn-red" style="padding:6px 12px; border-radius:4px;" onclick="Cotacao.deleteItem(${x.id}, event)">🗑️</button>
+                        <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem(${x.id}, event)" title="Excluir este orçamento">
+                            <i class="ph ph-trash"></i>
+                        </button>
                     </div>
                 `).join('');
             }
@@ -891,7 +1121,8 @@ const Cotacao = {
             return;
         }
 
-        const filtered = h.filter(x => ((x.model || '') + ' ' + (x.plate || '')).toUpperCase().includes(term));
+        // Visualização geral agrupada por veículo
+        const filtered = h.filter(x => (String(x.model || '') + ' ' + String(x.plate || '')).toUpperCase().includes(term));
         const groups = {};
 
         filtered.forEach(x => {
@@ -921,23 +1152,28 @@ const Cotacao = {
             return;
         }
 
-        container.innerHTML = groupArr.map(g => `
-            <div class="history-group" onclick="Cotacao.openHistoryGroup('${g.key.replace(/'/g, "\\'")}')">
-                <div>
-                    <span style="font-size:16px;">📂</span> <strong style="color:white;">${g.plate || g.latestModel}</strong> <br>
-                    <span style="font-size:11px; color:var(--text-secondary);">${g.plate ? g.latestModel : "S/ Placa"}</span>
+        container.innerHTML = groupArr.map(g => {
+            const safeKey = g.key.replace(/'/g, "\\'");
+            return `
+                <div class="history-group" onclick="Cotacao.openHistoryGroup('${safeKey}')">
+                    <div>
+                        <span style="font-size:1.1rem; color:var(--gold); margin-right:4px;">📂</span> 
+                        <strong style="color:#ffffff;">${g.plate || g.latestModel}</strong> <br>
+                        <span style="font-size:0.75rem; color:var(--text-secondary);">${g.plate ? g.latestModel : "Sem Placa"}</span>
+                    </div>
+                    <div style="font-size:0.8rem; font-weight:bold; color:var(--gold); display:flex; align-items:center; gap:4px;">
+                        <span>${g.count} orçamento${g.count !== 1 ? 's' : ''}</span>
+                        <i class="ph ph-caret-right"></i>
+                    </div>
                 </div>
-                <div style="font-size:12px; font-weight:bold; color:var(--gold);">
-                    ${g.count} cotações ➤
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     },
 
     openHistoryGroup(key) {
         this.currentHistoryGroupKey = key;
-        const searchInput = document.getElementById('cot-searchHistory');
-        if (searchInput) searchInput.value = '';
+        const input = document.getElementById('cot-searchHistory');
+        if (input) input.value = '';
         this.loadHistoryItems();
     },
 
@@ -953,6 +1189,7 @@ const Cotacao = {
             const item = JSON.parse(localStorage.getItem('cotador_history') || '[]').find(x => x.id === id);
             if (item) {
                 this.state = item.state;
+                if (this.state.margin === undefined) this.state.margin = 90;
                 this.state.pecas.forEach(p => { if (!p.qty) p.qty = 1; });
                 if (!this.state.labor) this.state.labor = { type: 'popular', rate: 200, items: [] };
                 if (!this.state.frete) this.state.frete = {};
@@ -961,21 +1198,22 @@ const Cotacao = {
                 this.currentId = item.id;
                 const modelEl = document.getElementById('cot-carModel');
                 const plateEl = document.getElementById('cot-carPlate');
-                if (modelEl) modelEl.value = item.model;
-                if (plateEl) plateEl.value = item.plate;
+                if (modelEl) modelEl.value = item.model || '';
+                if (plateEl) plateEl.value = item.plate || '';
 
                 this.updateLavagemButton();
                 this.renderAll();
                 this.recalcAllPricesAndRefresh();
                 this.toggleHistory();
+                if (UI) UI.toast(`Orçamento de ${item.plate || item.model} carregado!`, 'success');
             }
         };
 
         if (hasData) {
-            if (confirm("Salvar a cotação atual antes de carregar a outra?")) {
+            if (confirm("Deseja salvar a cotação atual antes de abrir este orçamento?")) {
                 if (this.saveCurrent(false)) performLoad();
             } else {
-                if (confirm("Carregar sem salvar a atual?")) performLoad();
+                if (confirm("Trocar sem salvar o atual?")) performLoad();
             }
         } else {
             performLoad();
@@ -984,7 +1222,7 @@ const Cotacao = {
 
     deleteItem(id, ev) {
         if (ev) ev.stopPropagation();
-        if (confirm('Apagar permanentemente este orçamento do histórico?')) {
+        if (confirm('Tem certeza que deseja apagar este orçamento permanentemente?')) {
             let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
             const newH = h.filter(x => x.id !== id);
             localStorage.setItem('cotador_history', JSON.stringify(newH));
@@ -996,21 +1234,82 @@ const Cotacao = {
                     const key = p !== "" ? p : m;
                     return key === this.currentHistoryGroupKey;
                 });
-
                 if (remaining.length === 0) {
                     this.currentHistoryGroupKey = null;
                 }
             }
             this.loadHistoryItems();
+            if (UI) UI.toast('Orçamento excluído do histórico.', 'info');
         }
+    },
+
+    exportHistory() {
+        const historyData = localStorage.getItem('cotador_history');
+        if (!historyData || historyData === '[]') {
+            if (UI) UI.toast('Seu histórico está vazio. Não há nada para exportar.', 'warning');
+            else alert('Seu histórico está vazio.');
+            return;
+        }
+        const blob = new Blob([historyData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const dateStr = new Date().toISOString().split('T')[0];
+        a.download = `autocar_historico_${dateStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        if (UI) UI.toast('Backup JSON do histórico exportado com sucesso!', 'success');
+    },
+
+    handleImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (!Array.isArray(importedData)) throw new Error("Formato inválido.");
+
+                if (confirm(`Deseja importar ${importedData.length} orçamentos ao seu histórico atual?`)) {
+                    let currentHistory = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+                    const existingIds = new Set(currentHistory.map(item => item.id));
+                    let addedCount = 0;
+
+                    importedData.forEach(item => {
+                        if (!existingIds.has(item.id)) {
+                            currentHistory.push(item);
+                            addedCount++;
+                        }
+                    });
+
+                    localStorage.setItem('cotador_history', JSON.stringify(currentHistory));
+                    if (UI) UI.toast(`Importação concluída! ${addedCount} novos orçamentos foram adicionados.`, 'success');
+                    else alert(`Importação concluída! ${addedCount} novos orçamentos adicionados.`);
+                    this.loadHistoryItems();
+                }
+            } catch (error) {
+                alert("Erro: O arquivo não é um backup JSON válido do sistema.");
+                console.error(error);
+            }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
     }
 };
 
 window.Cotacao = Cotacao;
 
-// Inicialização automática ao carregar o módulo via ViewLoader
+// Auto-inicialização quando a view for carregada via ViewLoader
 window.addEventListener('view:loaded', (e) => {
     if (e.detail && e.detail.module === 'cotacao') {
-        Cotacao.iniciar();
+        Cotacao.init();
     }
+});
+
+// Fallback caso já esteja no DOM
+document.addEventListener('DOMContentLoaded', () => {
+    Cotacao.init();
 });

@@ -5,125 +5,221 @@
  * =========================================================
  */
 
+/* Container Principal do Módulo */
+.cot-module-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================================================
+   BARRA SUPERIOR (TOP BAR)
+   ========================================================= */
 .cot-top-bar {
     display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    background: var(--bg-card);
-    padding: 14px 20px;
+    flex-direction: column;
+    gap: 14px;
+    background: #0b1118;
+    padding: 16px 20px;
     border-radius: 8px;
     border: 1px solid var(--border);
     border-left: 5px solid var(--primary);
 }
 
-.cot-top-bar input {
-    padding: 9px 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: var(--bg-input);
-    color: var(--text-primary);
-    font-size: 0.88rem;
-    font-weight: 600;
-}
-
-.cot-top-bar input:focus {
-    border-color: var(--gold);
-    outline: none;
-}
-
-#cot-carModel {
-    flex: 3;
-    min-width: 240px;
-}
-
-#cot-carPlate {
-    flex: 1;
-    min-width: 100px;
-    text-transform: uppercase;
+/* Linha 1: Botões de Ação com Cores Semânticas */
+.cot-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 /* Botões do Cotador */
-.btn-brand {
-    background: var(--primary);
+.btn-dark-cot {
+    background: #24303d;
     color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
-.btn-brand:hover {
-    background: var(--primary-hover);
+.btn-dark-cot:hover {
+    background: #2e3e50;
+    color: #ffffff;
 }
 
-.btn-dark {
-    background: #222e38;
-    color: #ffffff;
-    border: 1px solid var(--border);
+.btn-green-cot {
+    background: #16a34a !important;
+    color: #ffffff !important;
+    border: 1px solid #22c55e !important;
 }
-.btn-dark:hover {
-    background: #2c3c4a;
-}
-
-.btn-green {
-    background: var(--success);
-    color: #ffffff;
-}
-.btn-green:hover {
+.btn-green-cot:hover {
+    background: #15803d !important;
     filter: brightness(1.1);
 }
 
-.btn-red {
-    background: #b82d34;
-    color: #ffffff;
-}
-.btn-red:hover {
-    background: #d3343c;
-}
-
-.btn-info {
-    background: #17a2b8;
-    color: #ffffff;
-}
-.btn-info:hover {
-    background: #138496;
-}
-
-@keyframes blinker { 50% { opacity: 0.5; } }
-.blink-red {
-    background-color: #b82d34 !important;
+.btn-red-cot {
+    background: #dc2626 !important;
     color: #ffffff !important;
-    border: 2px solid #ff7a82 !important;
-    animation: blinker 1s linear infinite;
-    font-weight: 800;
+    border: 1px solid #ef4444 !important;
+}
+.btn-red-cot:hover {
+    background: #b91c1c !important;
+    filter: brightness(1.1);
 }
 
-.vendor-area {
+.btn-cyan-cot {
+    background: #0891b2 !important;
+    color: #ffffff !important;
+    border: 1px solid #06b6d4 !important;
+}
+.btn-cyan-cot:hover {
+    background: #0e7490 !important;
+    filter: brightness(1.1);
+}
+
+/* Efeito de piscar da lavagem quando ativa */
+@keyframes cotBlinker { 50% { opacity: 0.55; } }
+.cot-blink-lavagem {
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    border: 2px solid #fca5a5 !important;
+    animation: cotBlinker 1s linear infinite;
+    font-weight: 800 !important;
+}
+
+/* Linha 2: Dados do Veículo & Vendedores */
+.cot-vehicle-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cot-input-group {
+    display: flex;
+    align-items: center;
+    background: #16202c;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 10px;
+    transition: border-color 0.2s;
+}
+
+.cot-input-group:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(202, 161, 81, 0.2);
+}
+
+.cot-input-icon {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    margin-right: 6px;
+}
+
+.cot-group-model {
+    flex: 3;
+    min-width: 260px;
+}
+
+.cot-group-plate {
+    flex: 1;
+    min-width: 120px;
+}
+
+.cot-vehicle-bar input {
+    width: 100%;
+    padding: 9px 4px;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.cot-vehicle-bar input:focus {
+    outline: none;
+}
+
+#cot-carPlate {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Área de Vendedores */
+.cot-vendor-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin-left: auto;
     flex-wrap: wrap;
 }
 
-.vendor-tag {
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    padding: 5px 10px;
+.cot-vendor-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.cot-vendor-tag {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 4px 10px;
     border-radius: 14px;
     font-size: 0.75rem;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--text-primary);
-    font-weight: 600;
+    color: #f8fafc;
+    font-weight: 700;
 }
 
-.vendor-tag span {
+.cot-vendor-tag span.remove-tag {
     cursor: pointer;
-    color: #ff6b72;
+    color: #f87171;
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
 }
 
-/* Tabela de Cotação */
+.cot-vendor-tag span.remove-tag:hover {
+    color: #ef4444;
+}
+
+.cot-add-vendor-inline {
+    display: flex;
+    align-items: center;
+    background: #16202c;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.cot-add-vendor-inline input {
+    width: 115px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    border: none;
+    background: transparent;
+    color: white;
+}
+
+.btn-vendor-add {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-vendor-add:hover {
+    background: var(--primary-hover);
+}
+
+/* =========================================================
+   TABELA DE COTAÇÃO (ALTO CONTRASTE & ERGONOMIA)
+   ========================================================= */
 .cot-table-container {
     background: var(--bg-card);
     border-radius: 8px;
@@ -139,51 +235,94 @@
 }
 
 #cot-mainTable th {
-    background: #0f161c;
+    background: #0f1620;
     color: #ffffff;
     border: 1px solid var(--border);
-    padding: 7px 10px;
+    padding: 8px 10px;
     font-size: 0.72rem;
     text-transform: uppercase;
     font-weight: 800;
     vertical-align: middle;
 }
 
+/* Cabeçalho de Estoque */
 #cot-mainTable th.th-stock {
     background: #0d2b4d !important;
-    border-left: 2px solid rgba(255,255,255,0.2);
-    border-right: 2px solid rgba(255,255,255,0.2);
-    color: #9dcaff !important;
+    color: #93c5fd !important;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
+    border-right: 2px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Cabeçalho de Vendedores */
 #cot-mainTable th.th-vendor {
-    background: #1c2730;
-    border-left: 2px solid var(--border);
+    background: #1e293b;
+    border-left: 3px solid #64748b;
 }
 
+/* Sticky Headers */
 #cot-mainTable th.th-qty {
     position: sticky;
     left: 0;
-    background: #0f161c;
+    background: #0f1620;
     z-index: 11;
-    width: 50px;
+    width: 55px;
     text-align: center;
 }
 
 #cot-mainTable th.th-part {
     position: sticky;
-    left: 50px;
-    background: #0f161c;
+    left: 55px;
+    background: #0f1620;
     z-index: 10;
-    width: 250px;
+    width: 270px;
     border-right: 2px solid var(--border);
 }
 
+/* Bloco de Margem Dinâmica no Cabeçalho */
+.cot-margin-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.cot-margin-control .margin-label {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.cot-margin-control input.inp-margem {
+    width: 46px;
+    padding: 2px 4px;
+    text-align: center;
+    border-radius: 4px;
+    border: 1px solid #475569;
+    background: #1e293b;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+.cot-margin-control input.inp-margem:focus {
+    border-color: var(--gold);
+    outline: none;
+    background: #0f172a;
+}
+
+.cot-margin-control .margin-suffix {
+    font-size: 0.72rem;
+    color: var(--gold);
+    font-weight: 800;
+}
+
+/* Células da Tabela */
 #cot-mainTable td {
     border: 1px solid var(--border);
-    padding: 5px;
+    padding: 6px;
     text-align: center;
-    background: var(--bg-card);
+    background: #111a24;
     color: var(--text-primary);
 }
 
@@ -191,251 +330,331 @@
     position: sticky;
     left: 0;
     z-index: 6;
-    background: var(--bg-card);
+    background: #111a24;
     border-right: 1px solid var(--border);
 }
 
 #cot-mainTable td.td-part {
     position: sticky;
-    left: 50px;
+    left: 55px;
     z-index: 5;
     border-right: 2px solid var(--border);
-    background: var(--bg-card);
+    background: #111a24;
 }
 
 #cot-mainTable td.td-stock-section {
-    border-left: 2px solid #204060;
-    background-color: rgba(13, 43, 77, 0.35);
+    border-left: 2px solid #1e3a8a;
+    background-color: rgba(13, 43, 77, 0.45);
 }
 
 #cot-mainTable td.td-check {
-    border-left: 2px solid var(--border);
-    background-color: rgba(0, 0, 0, 0.2);
+    border-left: 2px solid #475569;
+    background-color: rgba(30, 41, 59, 0.4);
 }
 
-/* Inputs da Tabela */
+/* Inputs de Alta Legibilidade (Alto Contraste) */
 #cot-mainTable input.inp-qty {
     width: 42px;
-    padding: 6px 2px;
+    padding: 7px 2px;
     text-align: center;
-    border: 1px solid var(--border);
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
-    font-weight: bold;
-    background: var(--bg-input);
-    color: #ffffff;
-}
-
-#cot-mainTable input.inp-sm {
-    width: 72px;
-    padding: 6px 4px;
-    text-align: right;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--bg-input);
-    color: #ffffff;
-}
-
-#cot-mainTable input.inp-brand {
-    width: 82px;
-    padding: 6px 4px;
-    text-align: center;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--bg-input);
-    color: #ffffff;
-    text-transform: uppercase;
+    font-weight: 800;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.88rem;
 }
 
 #cot-mainTable input.inp-name {
     width: 100%;
-    border: none;
-    padding: 6px 8px;
-    font-weight: 600;
-    text-transform: uppercase;
-    min-width: 220px;
-    background: transparent;
-    color: #ffffff;
-}
-
-#cot-mainTable input.inp-sale {
-    width: 72px;
-    padding: 6px 4px;
-    text-align: right;
-    border: 1px solid var(--border);
+    min-width: 230px;
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
-    font-weight: bold;
-    color: var(--gold);
+    font-weight: 700;
+    text-transform: uppercase;
+    background: #ffffff;
+    color: #0f172a;
     font-size: 0.85rem;
-    background: #0b1116;
 }
 
-#cot-mainTable input.inp-sale:focus {
+#cot-mainTable input.inp-name:focus {
     border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(202, 161, 81, 0.3);
     outline: none;
 }
 
+#cot-mainTable input.inp-brand {
+    width: 86px;
+    padding: 7px 6px;
+    text-align: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+}
+
+/* Custo em Amarelo Suave */
+#cot-mainTable input.inp-sm.bg-custo {
+    width: 76px;
+    padding: 7px 6px;
+    text-align: right;
+    border: 1px solid #fde047;
+    border-radius: 4px;
+    background: #fef9c3 !important;
+    color: #713f12 !important;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+#cot-mainTable input.inp-sm.bg-custo:focus {
+    border-color: #eab308;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
+}
+
+/* Preço de Venda em Azul Suave */
+#cot-mainTable input.inp-sale {
+    width: 76px;
+    padding: 7px 6px;
+    text-align: right;
+    border: 1px solid #93c5fd;
+    border-radius: 4px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-weight: 800;
+    font-size: 0.88rem;
+}
+
+#cot-mainTable input.inp-sale:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+    color: #0f172a;
+    outline: none;
+}
+
+/* Frete em Amarelo no Cabeçalho */
 .freight-container {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    margin-top: 3px;
-    background: rgba(0, 0, 0, 0.25);
+    margin-top: 4px;
+    background: rgba(0, 0, 0, 0.3);
     padding: 3px 6px;
     border-radius: 4px;
 }
 
 .freight-label {
     font-size: 0.65rem;
-    color: var(--text-secondary);
-    font-weight: bold;
+    color: #cbd5e1;
+    font-weight: 800;
     letter-spacing: 0.5px;
 }
 
 .inp-freight-small {
-    width: 65px !important;
-    padding: 3px;
+    width: 68px !important;
+    padding: 3px 4px;
     text-align: center;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    font-weight: bold;
-    font-size: 0.75rem;
-    background-color: var(--bg-input);
-    color: var(--gold);
+    border-radius: 4px;
+    border: 1px solid #fde047;
+    font-weight: 800;
+    font-size: 0.78rem;
+    background-color: #fef9c3;
+    color: #713f12;
 }
 
-.bg-custo {
-    background-color: #121d26 !important;
-}
-
-/* Zebrado e Destaques */
-#cot-mainTable tr:nth-child(even) td {
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-#cot-mainTable tr.has-winner td {
-    background-color: rgba(147, 39, 44, 0.12) !important;
-}
-#cot-mainTable tr.has-winner td.td-qty {
-    border-left: 4px solid var(--primary) !important;
-}
-
-#cot-mainTable tr.winner-is-stock td {
-    background-color: rgba(13, 75, 140, 0.22) !important;
-}
-#cot-mainTable tr.winner-is-stock td.td-qty {
-    border-left: 4px solid #1a73e8 !important;
-}
-
-#cot-mainTable tr.no-winner td.td-qty {
-    border-left: 4px solid var(--gold) !important;
-}
-
+/* Rádio de Vencedor */
 .radio-win {
     transform: scale(1.4);
     cursor: pointer;
     accent-color: var(--primary);
 }
+
 .radio-stock {
-    accent-color: #1a73e8;
+    accent-color: #0284c7;
 }
 
-/* Cards de Ação do Cotador */
-.cot-actions-container {
-    margin-top: 15px;
+/* Botão Excluir Peça */
+.btn-remove-part {
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+}
+
+.btn-remove-part:hover {
+    background: #b91c1c;
+    transform: scale(1.15);
+}
+
+/* Destaques de Vencedor nas Linhas */
+#cot-mainTable tr.has-winner td {
+    background-color: rgba(220, 38, 38, 0.08) !important;
+}
+#cot-mainTable tr.has-winner td.td-qty {
+    border-left: 5px solid #dc2626 !important;
+}
+
+#cot-mainTable tr.winner-is-stock td {
+    background-color: rgba(2, 132, 199, 0.12) !important;
+}
+#cot-mainTable tr.winner-is-stock td.td-qty {
+    border-left: 5px solid #0284c7 !important;
+}
+
+#cot-mainTable tr.no-winner td.td-qty {
+    border-left: 5px solid #f59e0b !important;
+}
+
+/* Rodapé da Tabela */
+.cot-table-footer {
+    padding: 12px 16px;
+    background: #0b1118;
+    border-top: 1px solid var(--border);
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn-add-part {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px;
+    padding: 10px 18px !important;
+}
+
+/* =========================================================
+   CARDS DE AÇÃO INFERIORES (WHATSAPP, PEDIDOS, PDF)
+   ========================================================= */
+.cot-actions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
 }
 
 .cot-action-card {
-    background: var(--bg-card);
+    background: #0d1520;
     color: #ffffff;
-    padding: 12px 16px;
+    padding: 14px 18px;
     border-radius: 8px;
-    flex: 1;
-    min-width: 190px;
     border: 1px solid var(--border);
-    border-left-width: 5px;
+    border-left-width: 6px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 14px;
     cursor: pointer;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .cot-action-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--border-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
-.cot-action-card h4 {
-    margin: 0 0 4px 0;
-    font-size: 0.85rem;
-    font-weight: 700;
+.cot-action-card .card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
 }
 
-.cot-action-card p {
-    margin: 0;
+.cot-action-card .card-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.cot-action-card .card-title {
+    font-weight: 800;
+    font-size: 0.88rem;
+    letter-spacing: 0.4px;
+}
+
+.cot-action-card .card-desc {
     font-size: 0.72rem;
     color: var(--text-secondary);
-    line-height: 1.3;
+    margin-top: 2px;
 }
 
-.cot-action-card.highlight-card {
-    border-left-color: var(--primary);
+/* Cores das Faixas Laterais */
+.cot-action-card.card-purple {
+    border-left-color: #9333ea;
+}
+.cot-action-card.card-purple .card-icon {
+    color: #c084fc;
 }
 
-.cot-action-card.highlight-gold {
-    border-left-color: var(--gold);
+.cot-action-card.card-red {
+    border-left-color: #dc2626;
+}
+.cot-action-card.card-red .card-icon {
+    color: #f87171;
 }
 
-/* Modais de Cotação */
-.labor-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-    align-items: center;
+.cot-action-card.card-gray {
+    border-left-color: #64748b;
+}
+.cot-action-card.card-gray .card-icon {
+    color: #cbd5e1;
 }
 
-.labor-desc {
-    flex: 2;
-    padding: 8px;
+.cot-action-card.card-green {
+    border-left-color: #10b981;
+}
+.cot-action-card.card-green .card-icon {
+    color: #34d399;
+}
+
+/* Painel de Texto Copiado */
+.cot-result-panel {
+    background: #0b1118;
+    padding: 16px;
+    border-radius: 8px;
     border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--bg-input);
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: 0.82rem;
+    border-bottom: 4px solid var(--gold);
 }
 
-.labor-hours {
-    width: 75px;
-    padding: 8px;
+.cot-output-textarea {
+    width: 100%;
+    font-family: monospace;
+    font-size: 0.85rem;
     border: 1px solid var(--border);
-    border-radius: 4px;
-    background: var(--bg-input);
-    color: #ffffff;
-    text-align: center;
-    font-weight: bold;
+    border-radius: 6px;
+    background: #111a24;
+    color: #f8fafc;
+    padding: 12px;
+    outline: none;
+    resize: vertical;
 }
 
-.labor-total {
-    width: 95px;
-    padding: 8px;
-    background: #18232c;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    text-align: right;
-    font-weight: bold;
-    color: var(--gold);
-}
-
+/* =========================================================
+   MODAL DE MÃO DE OBRA & SERVIÇOS
+   ========================================================= */
 .labor-type-selector {
     display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-    background: var(--bg-input);
+    gap: 16px;
+    margin-bottom: 16px;
+    background: #111a24;
     border: 1px solid var(--border);
     padding: 12px 16px;
     border-radius: 6px;
@@ -443,18 +662,109 @@
     flex-wrap: wrap;
 }
 
-.labor-header {
+.labor-radio-lbl {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.rate-input-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.rate-input-box input {
+    width: 80px;
+    padding: 5px 8px;
+    background: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: white;
+    font-weight: 800;
+    text-align: center;
+}
+
+.labor-table-header {
     display: flex;
     gap: 8px;
-    margin-bottom: 5px;
-    font-size: 0.7rem;
-    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+    font-weight: 800;
     color: var(--text-secondary);
-    text-transform: uppercase;
+    letter-spacing: 0.5px;
     padding: 0 4px;
 }
 
-/* Histórico de Cotações */
+.labor-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.labor-row .labor-desc {
+    flex: 2;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #111a24;
+    color: #ffffff;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.82rem;
+}
+
+.labor-row .labor-hours {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: #111a24;
+    color: #ffffff;
+    text-align: center;
+    font-weight: 800;
+}
+
+.labor-row .labor-total {
+    width: 110px;
+    padding: 8px 10px;
+    background: #1e293b;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-align: right;
+    font-weight: 800;
+    color: var(--gold);
+}
+
+/* =========================================================
+   HISTÓRICO DE COTAÇÕES AGRUPADO POR VEÍCULO
+   ========================================================= */
+.history-group {
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111a24;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--primary);
+    border-radius: 6px;
+    transition: transform 0.15s, background 0.15s;
+}
+
+.history-group:hover {
+    background: #172330;
+    transform: translateX(3px);
+}
+
 .history-item {
     border: 1px solid var(--border);
     padding: 12px 14px;
@@ -462,62 +772,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--bg-input);
+    background: #0f1722;
     margin-bottom: 8px;
-    border-left: 4px solid var(--border);
+    border-left: 4px solid #475569;
     border-radius: 4px;
-    transition: 0.15s;
+    transition: border-color 0.15s, background 0.15s;
 }
 
 .history-item:hover {
     border-left-color: var(--success);
-    background: #16222b;
+    background: #14202d;
 }
-
-.history-group {
-    border: 1px solid var(--border);
-    padding: 12px 14px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--bg-input);
-    margin-bottom: 8px;
-    border-left: 4px solid #1a73e8;
-    border-radius: 4px;
-    transition: 0.15s;
-}
-
-.history-group:hover {
-    background: #16222b;
-    transform: translateX(3px);
-}
-
-/* Responsividade de Cotação Mobile */
-@media (max-width: 768px) {
-    .cot-top-bar {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .cot-header-left,
-    .cot-header-right {
-        width: 100%;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    .cot-header-left input {
-        width: 100% !important;
-    }
-    .cot-actions-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .cot-action-card {
-        width: 100%;
-        min-width: 0;
-    }
-    #cot-mainTable {
-        min-width: 600px;
-    }
-}
-
