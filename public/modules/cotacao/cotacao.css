@@ -49,6 +49,37 @@
     min-width: 320px;
 }
 
+/* Badge de Identificação: Nova Cotação vs Editando Existente */
+.cot-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    user-select: none;
+    flex-shrink: 0;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cot-status-badge.cot-badge-new {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);
+}
+
+.cot-status-badge.cot-badge-editing {
+    background: rgba(234, 179, 8, 0.15);
+    color: #fbbf24;
+    border: 1px solid rgba(234, 179, 8, 0.45);
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.12);
+}
+
 .cot-input-group {
     display: flex;
     align-items: center;

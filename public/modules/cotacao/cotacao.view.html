@@ -5,6 +5,9 @@
         <!-- Linha 1: Identificação do Veículo (Esq) + Botões de Ação (Dir) -->
         <div class="cot-top-primary-row">
             <div class="cot-vehicle-inputs">
+                <span id="cot-statusBadge" class="cot-status-badge cot-badge-new" title="Cotação nova criada do zero">
+                    <i class="ph ph-sparkle"></i> Nova Cotação
+                </span>
                 <div class="cot-input-group cot-group-model">
                     <i class="ph ph-car cot-input-icon"></i>
                     <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" oninput="Cotacao.saveDraft()">
@@ -19,8 +22,8 @@
                 <button type="button" class="btn btn-dark-cot" onclick="Cotacao.toggleHistory()" title="Ver orçamentos salvos por veículo">
                     <i class="ph ph-folder-open"></i> <span>HISTÓRICO</span>
                 </button>
-                <button type="button" class="btn btn-green-cot" onclick="Cotacao.saveCurrent(true)" title="Salvar orçamento atual">
-                    <i class="ph ph-floppy-disk"></i> <span>SALVAR</span>
+                <button type="button" id="cot-btnSave" class="btn btn-green-cot" onclick="Cotacao.saveCurrent(true)" title="Salvar orçamento atual">
+                    <i id="cot-btnSaveIcon" class="ph ph-floppy-disk"></i> <span id="cot-btnSaveText">SALVAR</span>
                 </button>
                 <button type="button" class="btn btn-red-cot" onclick="Cotacao.smartNewQuote()" title="Limpar e iniciar nova cotação">
                     <i class="ph ph-plus-circle"></i> <span>NOVO LIMPO</span>

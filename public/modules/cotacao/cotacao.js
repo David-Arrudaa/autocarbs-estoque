@@ -30,6 +30,9 @@ const Cotacao = {
         if (draft) {
             try {
                 const saved = JSON.parse(draft);
+                if (saved.currentId) {
+                    this.currentId = saved.currentId;
+                }
                 if (saved.state) {
                     this.state = saved.state;
                     if (this.state.margin === undefined || this.state.margin === null) {
@@ -52,6 +55,7 @@ const Cotacao = {
 
         this.updateLavagemButton();
         this.renderAll();
+        this.updateStatusBadge();
     },
 
     formatPlate(input) {
@@ -60,15 +64,41 @@ const Cotacao = {
         input.value = val;
     },
 
+    updateStatusBadge() {
+        const badge = document.getElementById('cot-statusBadge');
+        const btnText = document.getElementById('cot-btnSaveText');
+        const btn = document.getElementById('cot-btnSave');
+
+        if (this.currentId) {
+            if (badge) {
+                badge.className = 'cot-status-badge cot-badge-editing';
+                badge.innerHTML = `<i class="ph ph-note-pencil"></i> Editando Salvo`;
+                badge.title = `Editando cotação salva existente (ID: ${this.currentId})`;
+            }
+            if (btnText) btnText.textContent = 'ATUALIZAR';
+            if (btn) btn.title = 'Atualizar cotação existente (não cria duplicada)';
+        } else {
+            if (badge) {
+                badge.className = 'cot-status-badge cot-badge-new';
+                badge.innerHTML = `<i class="ph ph-sparkle"></i> Nova Cotação`;
+                badge.title = 'Cotação nova criada do zero';
+            }
+            if (btnText) btnText.textContent = 'SALVAR';
+            if (btn) btn.title = 'Salvar como nova cotação no histórico';
+        }
+    },
+
     saveDraft() {
         const modelEl = document.getElementById('cot-carModel');
         const plateEl = document.getElementById('cot-carPlate');
         const data = {
+            currentId: this.currentId || null,
             state: this.state,
             model: modelEl ? modelEl.value : '',
             plate: plateEl ? plateEl.value : ''
         };
         localStorage.setItem('cotador_v40_draft', JSON.stringify(data));
+        this.updateStatusBadge();
     },
 
     renderAll() {
@@ -1282,7 +1312,8 @@ const Cotacao = {
         this.updateLavagemButton();
         this.renderAll();
         this.saveDraft();
-        if (UI) UI.toast('Tela limpa para nova cotação.', 'info');
+        this.updateStatusBadge();
+        if (UI) UI.toast('Tela limpa para nova cotação do zero.', 'info');
     },
 
     // =========================================================
@@ -1310,22 +1341,35 @@ const Cotacao = {
         const cleanPlate = p.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
         let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+        const existingIndex = this.currentId ? h.findIndex(x => String(x.id) === String(this.currentId)) : -1;
+        const isUpdate = existingIndex >= 0;
+
+        const targetId = isUpdate ? this.currentId : Date.now();
         const r = {
-            id: this.currentId || Date.now(),
-            date: new Date().toLocaleString(),
+            id: targetId,
+            date: new Date().toLocaleString('pt-BR'),
             model: m,
             plate: cleanPlate,
             state: this.state
         };
 
-        const i = h.findIndex(x => x.id === r.id);
-        if (i >= 0) h[i] = r;
-        else h.push(r);
+        if (isUpdate) {
+            h[existingIndex] = r;
+        } else {
+            h.push(r);
+        }
 
         localStorage.setItem('cotador_history', JSON.stringify(h));
-        this.currentId = r.id;
+        this.currentId = targetId;
+        this.saveDraft();
+        this.updateStatusBadge();
+
         if (showMessage) {
-            if (UI) UI.toast(`Orçamento de ${cleanPlate} salvo no histórico!`, 'success');
+            if (isUpdate) {
+                if (UI) UI.toast(`Cotação de ${cleanPlate} atualizada com sucesso!`, 'success');
+            } else {
+                if (UI) UI.toast(`Nova cotação de ${cleanPlate} salva no histórico!`, 'success');
+            }
         }
         return true;
     },
@@ -1459,7 +1503,7 @@ const Cotacao = {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
 
         const performLoad = () => {
-            const item = JSON.parse(localStorage.getItem('cotador_history') || '[]').find(x => x.id === id);
+            const item = JSON.parse(localStorage.getItem('cotador_history') || '[]').find(x => String(x.id) === String(id));
             if (item) {
                 this.state = item.state;
                 if (this.state.margin === undefined) this.state.margin = 90;
@@ -1477,8 +1521,10 @@ const Cotacao = {
                 this.updateLavagemButton();
                 this.renderAll();
                 this.recalcAllPricesAndRefresh();
+                this.saveDraft();
+                this.updateStatusBadge();
                 this.toggleHistory();
-                if (UI) UI.toast(`Orçamento de ${item.plate || item.model} carregado!`, 'success');
+                if (UI) UI.toast(`Orçamento de ${item.plate || item.model} carregado para edição!`, 'success');
             }
         };
 
@@ -1515,8 +1561,14 @@ const Cotacao = {
         });
         if (confirmou) {
             let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
-            const newH = h.filter(x => x.id !== id);
+            const newH = h.filter(x => String(x.id) !== String(id));
             localStorage.setItem('cotador_history', JSON.stringify(newH));
+
+            if (String(this.currentId) === String(id)) {
+                this.currentId = null;
+                this.saveDraft();
+                this.updateStatusBadge();
+            }
 
             if (this.currentHistoryGroupKey) {
                 const remaining = newH.filter(x => {
