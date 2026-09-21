@@ -434,9 +434,9 @@ const Cotacao = {
                                 <button type="button" 
                                         class="btn-stock-toggle ${isStock ? 'is-stock' : ''}" 
                                         onclick="Cotacao.toggleStockOnly(${p.id})" 
-                                        title="${isStock ? 'Peça do Estoque Oficina:\n• NÃO será enviada na cotação para fornecedores (WhatsApp)\n• APARECERÁ no orçamento final do cliente (PDF/WhatsApp)' : 'Clique se já possui essa peça em estoque (não cotar no WhatsApp)'}">
-                                    <i class="ph ${isStock ? 'ph-package' : 'ph-storefront'}"></i>
-                                    <span>${isStock ? 'EM ESTOQUE' : 'COTAR'}</span>
+                                        title="${isStock ? '📦 Estoque da Oficina:\n• NÃO será enviada aos fornecedores (WhatsApp)\n• Aparecerá no orçamento do cliente' : '📤 Para Cotação:\n• Será enviada aos fornecedores (WhatsApp)\n• Clique para marcar como estoque'}">
+                                    <i class="ph ${isStock ? 'ph-package' : 'ph-paper-plane-tilt'}"></i>
+                                    <span>${isStock ? 'Estoque' : 'Cotar'}</span>
                                 </button>
                                 <input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)" onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
                             </div>
