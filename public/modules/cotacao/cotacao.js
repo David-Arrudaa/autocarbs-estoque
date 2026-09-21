@@ -1298,23 +1298,16 @@ const Cotacao = {
     async smartNewQuote() {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
         if (hasData) {
-            const salvar = await Modal.confirm("Deseja salvar a cotação atual antes de limpar a tela?", {
+            const salvar = await Modal.confirm("Deseja salvar as alterações da cotação atual antes de iniciar uma nova do zero?", {
                 title: 'Nova Cotação',
                 type: 'question',
                 confirmText: 'Salvar e Limpar',
-                cancelText: 'Não Salvar'
+                cancelText: 'Limpar sem Salvar'
             });
             if (salvar) {
-                if (this.saveCurrent(false)) this.clearScreen();
-            } else {
-                const descartar = await Modal.confirm("Tem certeza que deseja apagar a tela sem salvar os dados?", {
-                    title: 'Descartar Cotação',
-                    type: 'danger',
-                    confirmText: 'Sim, Limpar',
-                    cancelText: 'Cancelar'
-                });
-                if (descartar) this.clearScreen();
+                this.saveCurrent(false);
             }
+            this.clearScreen();
         } else {
             this.clearScreen();
         }
@@ -1343,8 +1336,24 @@ const Cotacao = {
         if (UI) UI.toast('Tela limpa para nova cotação do zero.', 'info');
     },
 
+    /**
+     * Deduplica o histórico garantindo estritamente 1 registro atualizado por veículo/placa
+     */
+    deduplicateHistory(list) {
+        if (!Array.isArray(list)) return [];
+        const map = new Map();
+        list.sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
+        list.forEach(item => {
+            if (!item.id) item.id = Date.now() + Math.floor(Math.random() * 1000);
+            const plateKey = (item.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            const key = plateKey !== '' ? plateKey : (item.model || String(item.id));
+            map.set(key, item);
+        });
+        return Array.from(map.values()).sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
+    },
+
     // =========================================================
-    // SALVAR & HISTÓRICO COM AGRUPAMENTO POR PLACA / VEÍCULO
+    // SALVAR & HISTÓRICO COM ATUALIZAÇÃO IN-PLACE GARANTIDA
     // =========================================================
     saveCurrent(showMessage = true) {
         const m = document.getElementById('cot-carModel')?.value?.trim();
@@ -1367,7 +1376,12 @@ const Cotacao = {
 
         const cleanPlate = p.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-        let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+        let h = [];
+        try {
+            h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+        } catch (e) {
+            h = [];
+        }
 
         // 1. Procura primeiro pelo ID ativo da cotação
         let existingIndex = -1;
@@ -1375,7 +1389,7 @@ const Cotacao = {
             existingIndex = h.findIndex(x => String(x.id) === String(this.currentId));
         }
 
-        // 2. Se não encontrou por ID (ou se currentId era nulo), busca se já existe orçamento para a mesma placa!
+        // 2. Se não encontrou por ID, busca se já existe orçamento para a mesma placa
         if (existingIndex < 0 && cleanPlate) {
             existingIndex = h.findIndex(x => {
                 const itemPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -1397,8 +1411,11 @@ const Cotacao = {
         if (isUpdate) {
             h[existingIndex] = r;
         } else {
-            h.push(r);
+            h.unshift(r);
         }
+
+        // Limpa duplicatas para que cada veículo tenha somente 1 cotação salva
+        h = this.deduplicateHistory(h);
 
         localStorage.setItem('cotador_history', JSON.stringify(h));
         this.currentId = targetId;
@@ -1431,111 +1448,43 @@ const Cotacao = {
     },
 
     loadHistoryItems() {
-        let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
-
-        // Garante que todo item legado do histórico possua um id válido único
-        let migrated = false;
-        h.forEach((item, idx) => {
-            if (!item.id) {
-                item.id = Date.now() + idx;
-                migrated = true;
-            }
-        });
-        if (migrated) {
-            localStorage.setItem('cotador_history', JSON.stringify(h));
+        let h = [];
+        try {
+            h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+        } catch (e) {
+            h = [];
         }
 
-        const term = (document.getElementById('cot-searchHistory')?.value || '').toUpperCase();
+        // Deduplica e higieniza automaticamente o histórico existente
+        h = this.deduplicateHistory(h);
+        localStorage.setItem('cotador_history', JSON.stringify(h));
+
+        const term = (document.getElementById('cot-searchHistory')?.value || '').trim().toUpperCase();
         const container = document.getElementById('cot-historyList');
         if (!container) return;
 
-        // Visualização dentro de uma pasta de veículo específica
-        if (this.currentHistoryGroupKey) {
-            const carQuotes = h.filter(x => {
-                const p = x.plate ? x.plate.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : "";
-                const m = x.model || "S/ Modelo";
-                const uniqueKey = p !== "" ? p : m;
-                return uniqueKey === this.currentHistoryGroupKey;
-            });
-
-            carQuotes.sort((a, b) => b.id - a.id);
-
-            const first = carQuotes[0] || {};
-            const folderTitle = first.plate || first.model || "Orçamento";
-            const folderSub = first.plate ? first.model : "";
-
-            let html = `
-                <div style="background:#1e293b; padding:10px 14px; border-radius:6px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--border);">
-                    <span style="font-weight:bold; color:var(--gold); display:flex; align-items:center; gap:6px;">
-                        <i class="ph ph-folder-open"></i> ${folderTitle} <small style="color:#cbd5e1;">(${folderSub})</small>
-                    </span>
-                    <button type="button" onclick="Cotacao.exitHistoryGroup()" class="btn btn-secondary btn-sm" style="padding:4px 10px;">⬅ Voltar</button>
-                </div>
-            `;
-
-            if (carQuotes.length === 0) {
-                html += '<p style="text-align:center; color:var(--text-secondary);">Nenhum orçamento encontrado nesta pasta.</p>';
-            } else {
-                html += carQuotes.map(x => `
-                    <div class="history-item" onclick="Cotacao.loadItem('${x.id}')">
-                        <div>
-                            <strong style="color:#ffffff;">${x.date}</strong><br>
-                            <small style="color:var(--text-secondary)">${x.model || 'Sem Modelo'}</small>
-                        </div>
-                        <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
-                            <i class="ph ph-trash"></i>
-                        </button>
-                    </div>
-                `).join('');
-            }
-            container.innerHTML = html;
-            return;
-        }
-
-        // Visualização geral agrupada por veículo
-        const filtered = h.filter(x => (String(x.model || '') + ' ' + String(x.plate || '')).toUpperCase().includes(term));
-        const groups = {};
-
-        filtered.forEach(x => {
-            const rawPlate = x.plate ? x.plate.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : "";
-            const uniqueKey = rawPlate !== "" ? rawPlate : (x.model || "S/ Modelo");
-
-            if (!groups[uniqueKey]) {
-                groups[uniqueKey] = {
-                    key: uniqueKey,
-                    plate: rawPlate,
-                    latestModel: x.model,
-                    count: 0,
-                    lastDate: 0
-                };
-            }
-            groups[uniqueKey].count++;
-            if (x.id > groups[uniqueKey].lastDate) {
-                groups[uniqueKey].lastDate = x.id;
-                groups[uniqueKey].latestModel = x.model;
-            }
+        const filtered = h.filter(x => {
+            const fullText = (String(x.model || '') + ' ' + String(x.plate || '')).toUpperCase();
+            return fullText.includes(term);
         });
 
-        const groupArr = Object.values(groups).sort((a, b) => b.lastDate - a.lastDate);
-
-        if (groupArr.length === 0) {
+        if (filtered.length === 0) {
             container.innerHTML = '<p style="text-align:center; color:var(--text-secondary); margin-top:20px;">Nenhum orçamento arquivado.</p>';
             return;
         }
 
-        container.innerHTML = groupArr.map(g => {
-            const safeKey = g.key.replace(/'/g, "\\'");
+        container.innerHTML = filtered.map(x => {
+            const cleanPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
             return `
-                <div class="history-group" onclick="Cotacao.openHistoryGroup('${safeKey}')">
-                    <div>
-                        <span style="font-size:1.1rem; color:var(--gold); margin-right:4px;">📂</span> 
-                        <strong style="color:#ffffff;">${g.plate || g.latestModel}</strong> <br>
-                        <span style="font-size:0.75rem; color:var(--text-secondary);">${g.plate ? g.latestModel : "Sem Placa"}</span>
+                <div class="history-item" onclick="Cotacao.loadItem('${x.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#1e293b; border:1px solid var(--border); border-radius:6px; margin-bottom:8px; cursor:pointer;">
+                    <div style="flex:1;">
+                        <span style="color:var(--gold); font-weight:800; font-size:1.05rem; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
+                        <strong style="color:#ffffff; margin-left:8px; font-size:0.95rem;">${x.model || 'Sem Modelo'}</strong><br>
+                        <small style="color:var(--text-secondary);"><i class="ph ph-calendar"></i> ${x.date}</small>
                     </div>
-                    <div style="font-size:0.8rem; font-weight:bold; color:var(--gold); display:flex; align-items:center; gap:4px;">
-                        <span>${g.count} orçamento${g.count !== 1 ? 's' : ''}</span>
-                        <i class="ph ph-caret-right"></i>
-                    </div>
+                    <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
+                        <i class="ph ph-trash"></i>
+                    </button>
                 </div>
             `;
         }).join('');
@@ -1557,8 +1506,15 @@ const Cotacao = {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
 
         const performLoad = () => {
-            let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
-            const item = h.find(x => String(x.id) === String(id));
+            let h = [];
+            try {
+                h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+            } catch (e) {
+                h = [];
+            }
+            const item = h.find(x => String(x.id) === String(id)) || 
+                         h.find(x => (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '') === String(id).toUpperCase().replace(/[^A-Z0-9]/g, ''));
+
             if (item) {
                 this.state = JSON.parse(JSON.stringify(item.state));
                 if (this.state.margin === undefined) this.state.margin = 90;
@@ -1584,7 +1540,7 @@ const Cotacao = {
         };
 
         if (hasData) {
-            const salvar = await Modal.confirm("Deseja salvar a cotação atual antes de abrir a outra?", {
+            const salvar = await Modal.confirm("Deseja salvar as alterações da cotação atual antes de abrir a outra?", {
                 title: 'Trocar de Cotação',
                 type: 'question',
                 confirmText: 'Salvar e Abrir',
@@ -1608,7 +1564,8 @@ const Cotacao = {
             cancelText: 'Cancelar'
         });
         if (confirmou) {
-            let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+            let h = [];
+            try { h = JSON.parse(localStorage.getItem('cotador_history') || '[]'); } catch (e) {}
             const newH = h.filter(x => String(x.id) !== String(id));
             localStorage.setItem('cotador_history', JSON.stringify(newH));
 
@@ -1618,17 +1575,6 @@ const Cotacao = {
                 this.updateStatusBadge();
             }
 
-            if (this.currentHistoryGroupKey) {
-                const remaining = newH.filter(x => {
-                    const p = x.plate ? x.plate.trim().toUpperCase().replace(/[^A-Z0-9]/g, '') : "";
-                    const m = x.model || "S/ Modelo";
-                    const key = p !== "" ? p : m;
-                    return key === this.currentHistoryGroupKey;
-                });
-                if (remaining.length === 0) {
-                    this.currentHistoryGroupKey = null;
-                }
-            }
             this.loadHistoryItems();
             if (UI) UI.toast('Orçamento excluído do histórico.', 'info');
         }
