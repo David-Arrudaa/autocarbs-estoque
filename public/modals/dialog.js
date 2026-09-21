@@ -210,3 +210,4 @@ if (document.readyState === 'loading') {
 } else {
     DialogModal.ensureDOM();
 }
+
