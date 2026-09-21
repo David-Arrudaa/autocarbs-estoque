@@ -1,6 +1,14 @@
 const supabase = require('../../config/supabase');
 const auditoriaService = require('../auditoria/auditoria.service');
 
+/**
+ * Escapa caracteres especiais do operador ILIKE (%, _, \).
+ * Sem isso, uma busca com "%" retorna todos os registros.
+ */
+function escaparIlike(valor) {
+    return String(valor).replace(/[\\%_]/g, (c) => `\\${c}`);
+}
+
 class CotacoesController {
     /**
      * Lista o histórico de orçamentos e cotações arquivadas
@@ -14,7 +22,8 @@ class CotacoesController {
                 .order('criado_em', { ascending: false });
 
             if (busca) {
-                query = query.or(`placa.ilike.%${busca}%,modelo.ilike.%${busca}%`);
+                const buscaSegura = escaparIlike(busca);
+                query = query.or(`placa.ilike.%${buscaSegura}%,modelo.ilike.%${buscaSegura}%`);
             }
 
             const { data, error } = await query.limit(100);
@@ -144,18 +153,35 @@ class CotacoesController {
     }
 
     /**
-     * Exclui um orçamento do histórico
+     * Exclui um orçamento do histórico.
+     * Regra: admin pode excluir qualquer cotação; operador/supervisor apenas as próprias.
      */
     async excluir(req, res, next) {
         try {
             const { id } = req.params;
+            const isAdmin = req.user?.role === 'admin';
 
-            const { error } = await supabase
+            let deleteQuery = supabase
                 .from('cotacoes')
                 .delete()
                 .eq('id', id);
 
+            // Operadores e supervisores só podem deletar suas próprias cotações
+            if (!isAdmin) {
+                deleteQuery = deleteQuery.eq('usuario_id', req.user?.id);
+            }
+
+            const { error, count } = await deleteQuery;
+
             if (error) throw error;
+
+            // Se nenhuma linha foi afetada e não é admin, o registro não pertence ao usuário
+            if (count === 0 && !isAdmin) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'Você não tem permissão para excluir este orçamento.'
+                });
+            }
 
             auditoriaService.registrar({
                 usuario: req.user,

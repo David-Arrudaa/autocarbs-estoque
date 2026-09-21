@@ -14,6 +14,10 @@ const usuariosRoutes = require('./src/modules/usuarios/usuarios.routes');
 
 const app = express();
 
+// ─── 0. Trust Proxy — OBRIGATÓRIO para rate limiting funcionar no Vercel/Nginx ─
+// Sem isso, req.ip aponta para o IP do proxy, tornando o rate limit ineficaz.
+app.set('trust proxy', 1);
+
 // ─── 0. Logger de Requisições HTTP (Morgan) ──────────────────────────────────
 app.use(morgan('[:date[iso]] :method :url :status :response-time ms - :res[content-length]'));
 
