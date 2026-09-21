@@ -8,6 +8,8 @@
 const Cotacao = {
     currentId: null,
     currentHistoryGroupKey: null,
+    historyPage: 1,
+    historyPageSize: 30,
     state: {
         vendedores: [],
         pecas: [],
@@ -1419,9 +1421,17 @@ const Cotacao = {
         // Se estiver atualizando, mantém o ID original. Se for novo (criado no "Novo Limpo"), gera um ID único oculto
         const targetId = isUpdate ? currentId : ('cot_' + Date.now() + '_' + Math.random().toString(36).substr(2, 7));
 
+        const now = new Date();
+        const existingItem = isUpdate ? h[existingIndex] : null;
+        const itemTimestamp = existingItem ? (existingItem.timestamp || this.getHistoryTimestamp(existingItem) || now.getTime()) : now.getTime();
+
         const r = {
             id: targetId,
-            date: new Date().toLocaleString('pt-BR'),
+            timestamp: itemTimestamp,
+            created_at: itemTimestamp,
+            updated_at: now.getTime(),
+            date: existingItem ? (existingItem.date || now.toLocaleString('pt-BR')) : now.toLocaleString('pt-BR'),
+            last_modified: now.toLocaleString('pt-BR'),
             model: m,
             plate: cleanPlate,
             state: JSON.parse(JSON.stringify(this.state))
@@ -1449,8 +1459,46 @@ const Cotacao = {
         return true;
     },
 
+    getHistoryTimestamp(item) {
+        if (!item) return 0;
+        if (item.timestamp && !isNaN(item.timestamp)) return Number(item.timestamp);
+        if (item.created_at && !isNaN(item.created_at)) return Number(item.created_at);
+
+        if (item.date && typeof item.date === 'string') {
+            const m = item.date.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[,\s]+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+            if (m) {
+                const day = parseInt(m[1], 10);
+                const month = parseInt(m[2], 10) - 1;
+                const year = parseInt(m[3], 10);
+                const hour = m[4] ? parseInt(m[4], 10) : 0;
+                const min = m[5] ? parseInt(m[5], 10) : 0;
+                const sec = m[6] ? parseInt(m[6], 10) : 0;
+                const d = new Date(year, month, day, hour, min, sec);
+                if (!isNaN(d.getTime())) return d.getTime();
+            }
+            const iso = new Date(item.date);
+            if (!isNaN(iso.getTime())) return iso.getTime();
+        }
+
+        if (typeof item.id === 'string' && item.id.startsWith('cot_')) {
+            const parts = item.id.split('_');
+            const ts = Number(parts[1]);
+            if (!isNaN(ts) && ts > 1000000000000) return ts;
+        } else if (typeof item.id === 'number' && item.id > 1000000000000) {
+            return item.id;
+        }
+
+        return 0;
+    },
+
+    changeHistoryPage(page) {
+        this.historyPage = page;
+        this.loadHistoryItems();
+    },
+
     toggleHistory() {
         this.currentHistoryGroupKey = null;
+        this.historyPage = 1;
         const modal = document.getElementById('cot-historyModal');
         if (!modal) return;
         if (modal.style.display === 'flex') {
@@ -1486,21 +1534,42 @@ const Cotacao = {
 
         const term = (document.getElementById('cot-searchHistory')?.value || '').trim().toUpperCase();
         const container = document.getElementById('cot-historyList');
+        const pagContainer = document.getElementById('cot-historyPagination');
         if (!container) return;
 
+        // 1. Filtra por placa ou modelo
         const filtered = h.filter(x => {
             const fullText = (String(x.model || '') + ' ' + String(x.plate || '')).toUpperCase();
             return fullText.includes(term);
         });
 
+        // 2. Ordena RIGOROSAMENTE pela data de criação / mais recente no topo
+        filtered.sort((a, b) => {
+            const timeA = Cotacao.getHistoryTimestamp(a);
+            const timeB = Cotacao.getHistoryTimestamp(b);
+            if (timeB !== timeA) return timeB - timeA;
+            return String(b.id).localeCompare(String(a.id));
+        });
+
         if (filtered.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:var(--text-secondary); margin-top:20px;">Nenhum orçamento arquivado.</p>';
+            container.innerHTML = '<p style="text-align:center; color:var(--text-secondary); margin-top:40px; font-size:0.95rem;">Nenhum orçamento encontrado.</p>';
+            if (pagContainer) pagContainer.innerHTML = '';
             return;
         }
 
-        container.innerHTML = filtered.map(x => {
+        // 3. Paginação de 30 em 30 orçamentos
+        const totalFiltered = filtered.length;
+        const totalPages = Math.ceil(totalFiltered / this.historyPageSize) || 1;
+
+        if (this.historyPage > totalPages) this.historyPage = totalPages;
+        if (this.historyPage < 1) this.historyPage = 1;
+
+        const startIndex = (this.historyPage - 1) * this.historyPageSize;
+        const pageItems = filtered.slice(startIndex, startIndex + this.historyPageSize);
+
+        // 4. Renderiza itens paginados
+        container.innerHTML = pageItems.map(x => {
             const cleanPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-            // Calcula total aproximado de peças vencedoras + serviços
             let total = 0;
             if (x.state && Array.isArray(x.state.pecas)) {
                 x.state.pecas.forEach(p => {
@@ -1519,31 +1588,53 @@ const Cotacao = {
             const totalStr = total > 0 ? `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
 
             return `
-                <div class="history-item" onclick="Cotacao.loadItem('${x.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#1e293b; border:1px solid var(--border); border-radius:6px; margin-bottom:8px; cursor:pointer;">
+                <div class="history-item" onclick="Cotacao.loadItem('${x.id}')">
                     <div style="flex:1;">
-                        <span style="color:var(--gold); font-weight:800; font-size:1.05rem; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
-                        <strong style="color:#ffffff; margin-left:8px; font-size:0.95rem;">${x.model || 'Sem Modelo'}</strong>
-                        ${totalStr ? `<span style="display:inline-block; font-size:0.75rem; color:#38bdf8; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:700;">${totalStr}</span>` : ''}<br>
-                        <small style="color:var(--text-secondary);"><i class="ph ph-calendar"></i> ${x.date}</small>
+                        <span style="color:var(--gold); font-weight:800; font-size:1.08rem; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
+                        <strong style="color:#ffffff; margin-left:10px; font-size:0.98rem;">${x.model || 'Sem Modelo'}</strong>
+                        ${totalStr ? `<span style="display:inline-block; font-size:0.8rem; color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); padding:2px 8px; border-radius:4px; margin-left:10px; font-weight:700;">${totalStr}</span>` : ''}<br>
+                        <small style="color:var(--text-secondary); font-size:0.82rem; margin-top:4px; display:inline-block;"><i class="ph ph-calendar"></i> Criado em: ${x.date || '-'}</small>
                     </div>
-                    <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
-                        <i class="ph ph-trash"></i>
+                    <button type="button" class="btn-red-cot" style="padding:8px 12px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
+                        <i class="ph ph-trash" style="font-size:1.1rem;"></i>
                     </button>
                 </div>
             `;
         }).join('');
-    },
 
-    openHistoryGroup(key) {
-        this.currentHistoryGroupKey = key;
-        const input = document.getElementById('cot-searchHistory');
-        if (input) input.value = '';
-        this.loadHistoryItems();
-    },
-
-    exitHistoryGroup() {
-        this.currentHistoryGroupKey = null;
-        this.loadHistoryItems();
+        // 5. Renderiza barra de paginação
+        if (pagContainer) {
+            if (totalFiltered <= this.historyPageSize) {
+                pagContainer.innerHTML = `
+                    <div class="cot-history-pagination" style="justify-content: flex-end;">
+                        <span class="cot-pagination-info">Total de <strong>${totalFiltered}</strong> orçamento(s)</span>
+                    </div>
+                `;
+            } else {
+                pagContainer.innerHTML = `
+                    <div class="cot-history-pagination">
+                        <div class="cot-pagination-info">
+                            Mostrando <strong>${startIndex + 1} - ${Math.min(startIndex + this.historyPageSize, totalFiltered)}</strong> de <strong>${totalFiltered}</strong> orçamentos
+                        </div>
+                        <div class="cot-pagination-buttons">
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="Cotacao.changeHistoryPage(1)" ${this.historyPage === 1 ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : ''} title="Primeira página">
+                                <i class="ph ph-caret-double-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="Cotacao.changeHistoryPage(${this.historyPage - 1})" ${this.historyPage === 1 ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : ''} title="Página anterior">
+                                <i class="ph ph-caret-left"></i> Anterior
+                            </button>
+                            <span class="cot-pagination-current">Página <strong>${this.historyPage}</strong> de <strong>${totalPages}</strong></span>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="Cotacao.changeHistoryPage(${this.historyPage + 1})" ${this.historyPage === totalPages ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : ''} title="Próxima página">
+                                Próxima <i class="ph ph-caret-right"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="Cotacao.changeHistoryPage(${totalPages})" ${this.historyPage === totalPages ? 'disabled style="opacity:0.35; cursor:not-allowed;"' : ''} title="Última página">
+                                <i class="ph ph-caret-double-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
     },
 
     async loadItem(id) {
