@@ -312,7 +312,7 @@ const Cotacao = {
                 const freteVal = this.state.frete[v] || '';
                 const vEsc = UI ? UI.escapeHtml(v) : v;
                 const vParam = v.replace(/'/g, "\\'");
-                const c = `vtheme-${vIndex % 6}`;
+                const c = `vtheme-${vIndex % 2}`;
                 return `<th colspan="4" class="th-vendor ${c}">
                             <div style="font-size: 13px; margin-bottom: 3px; font-weight:800; letter-spacing:0.4px;">${vEsc}</div>
                             <div class="freight-container">
@@ -342,7 +342,7 @@ const Cotacao = {
 
         if (this.state.vendedores.length > 0) {
             html += this.state.vendedores.map((v, vIndex) => {
-                const c = `vtheme-${vIndex % 6}`;
+                const c = `vtheme-${vIndex % 2}`;
                 return `
                     <th class="th-sub-vendor th-check ${c}" style="width:30px;">✔</th>
                     <th class="th-sub-vendor ${c}">MARCA</th>
@@ -365,13 +365,13 @@ const Cotacao = {
         tbody.innerHTML = this.state.pecas.map(p => {
             const isStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
             
-            // Determina a cor do indicador na linha de acordo com o vendedor vencedor
+            // Determina a cor do indicador na linha de acordo com o tom do vendedor vencedor
             let rowClass = 'no-winner';
             if (isStock) {
                 rowClass = 'winner-is-stock';
             } else if (p.vencedor) {
                 const vIdx = this.state.vendedores.indexOf(p.vencedor);
-                rowClass = (vIdx >= 0) ? `has-winner winner-vtheme-${vIdx % 6}` : 'has-winner';
+                rowClass = (vIdx >= 0) ? `has-winner winner-vtheme-${vIdx % 2}` : 'has-winner';
             }
 
             const stockData = p.precos['ESTOQUE'] || {};
@@ -396,7 +396,7 @@ const Cotacao = {
                 vendorCols = this.state.vendedores.map((v, vIndex) => {
                     const pr = p.precos[v] || {};
                     const isWinner = (p.vencedor === v);
-                    const c = `vtheme-${vIndex % 6}`;
+                    const c = `vtheme-${vIndex % 2}`;
                     const winClass = isWinner ? 'is-vendor-winner' : '';
 
                     return `
@@ -454,7 +454,7 @@ const Cotacao = {
         el.innerHTML = this.state.vendedores.map((v, vIndex) => {
             const vEsc = UI ? UI.escapeHtml(v) : v;
             const vParam = v.replace(/'/g, "\\'");
-            const c = `vtheme-${vIndex % 6}`;
+            const c = `vtheme-${vIndex % 2}`;
             return `<span class="cot-vendor-tag ${c}">${vEsc} <span class="remove-tag" onclick="Cotacao.removeVendor('${vParam}')">&times;</span></span>`;
         }).join('');
     },
