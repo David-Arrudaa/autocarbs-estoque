@@ -779,7 +779,7 @@ const Cotacao = {
                         <style>
                             @page {
                                 size: A4 portrait;
-                                margin: 12mm 15mm;
+                                margin: 0;
                             }
                             * {
                                 box-sizing: border-box;
@@ -789,7 +789,7 @@ const Cotacao = {
                                 color: #000;
                                 background: #fff;
                                 margin: 0;
-                                padding: 10px;
+                                padding: 12mm 15mm;
                                 font-size: 11px;
                                 line-height: 1.4;
                             }
@@ -890,8 +890,13 @@ const Cotacao = {
                                 font-style: italic;
                             }
                             @media print {
-                                body { padding: 0; }
-                                @page { margin: 10mm 12mm; }
+                                @page {
+                                    margin: 0;
+                                }
+                                body {
+                                    margin: 0;
+                                    padding: 12mm 15mm;
+                                }
                             }
                         </style>
                     </head>
@@ -1132,9 +1137,9 @@ const Cotacao = {
                     <meta charset="UTF-8">
                     <title>Relatório_Interno_${plate || 'S_PLACA'}</title>
                     <style>
-                        @page { size: A4 portrait; margin: 12mm 15mm; }
+                        @page { size: A4 portrait; margin: 0; }
                         * { box-sizing: border-box; }
-                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 10px; color: #000; background:#fff; font-size: 11px; line-height: 1.4; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 12mm 15mm; color: #000; background:#fff; font-size: 11px; line-height: 1.4; }
                         .header-row { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; }
                         .logo-main { font-size: 24px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; color: #000; line-height: 1; }
                         .logo-main span { color: #D60000; font-style: normal; }
@@ -1150,8 +1155,8 @@ const Cotacao = {
                         td { border: 1px solid #cbd5e1; padding: 6px 8px; }
                         .footer-totals { margin-top: 16px; border: 1px solid #cbd5e1; padding: 10px 14px; background: #fff; font-size: 12px; display: flex; justify-content: space-between; font-weight: bold; }
                         @media print {
-                            body { padding: 0; }
-                            @page { margin: 10mm 12mm; }
+                            @page { margin: 0; }
+                            body { margin: 0; padding: 12mm 15mm; }
                         }
                     </style>
                 </head>
