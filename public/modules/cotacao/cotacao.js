@@ -506,30 +506,6 @@ const Cotacao = {
         const inputRate = document.getElementById('cot-laborRate');
         if (inputRate) inputRate.value = this.state.labor.rate || 200;
 
-        if (!this.state.clientInfo) {
-            this.state.clientInfo = {
-                name: '',
-                phone: '',
-                km: '',
-                docNumber: this.currentId ? String(this.currentId).slice(-3) : '907',
-                defect: 'Substituição de óleo e filtros',
-                responsible: (window.Auth && window.Auth.getUser && window.Auth.getUser()?.name) || 'Alessandra'
-            };
-        }
-
-        const clientNameEl = document.getElementById('cot-clientName');
-        if (clientNameEl) clientNameEl.value = this.state.clientInfo.name || '';
-        const clientPhoneEl = document.getElementById('cot-clientPhone');
-        if (clientPhoneEl) clientPhoneEl.value = this.state.clientInfo.phone || '';
-        const clientKmEl = document.getElementById('cot-clientKm');
-        if (clientKmEl) clientKmEl.value = this.state.clientInfo.km || '';
-        const docNumEl = document.getElementById('cot-docNumber');
-        if (docNumEl) docNumEl.value = this.state.clientInfo.docNumber || (this.currentId ? String(this.currentId).slice(-3) : '907');
-        const defectEl = document.getElementById('cot-clientDefect');
-        if (defectEl) defectEl.value = this.state.clientInfo.defect || 'Substituição de óleo e filtros';
-        const respEl = document.getElementById('cot-docResponsible');
-        if (respEl) respEl.value = this.state.clientInfo.responsible || (window.Auth && window.Auth.getUser && window.Auth.getUser()?.name) || 'Alessandra';
-
         const container = document.getElementById('cot-laborList');
         if (container) {
             container.innerHTML = '';
@@ -633,7 +609,7 @@ const Cotacao = {
     },
 
     // =========================================================
-    // GERAÇÃO DE ORÇAMENTO WHATSAPP & IMPRESSÃO PDF
+    // GERAÇÃO DE ORÇAMENTO WHATSAPP & IMPRESSÃO PDF (JOGO RÁPIDO)
     // =========================================================
     generateBudgetWithLabor(mode = 'text') {
         try {
@@ -656,28 +632,8 @@ const Cotacao = {
             const model = (document.getElementById('cot-carModel')?.value || '').toUpperCase();
             const plate = (document.getElementById('cot-carPlate')?.value || '').toUpperCase();
 
-            // Metadados do modal
-            const clientName = (document.getElementById('cot-clientName')?.value || '').trim() || 'CLIENTE NÃO INFORMADO';
-            const clientPhone = (document.getElementById('cot-clientPhone')?.value || '').trim();
-            const clientKm = (document.getElementById('cot-clientKm')?.value || '').trim();
-            const docNumber = (document.getElementById('cot-docNumber')?.value || '').trim() || (this.currentId ? String(this.currentId).slice(-3) : '907');
-            const clientDefect = (document.getElementById('cot-clientDefect')?.value || '').trim() || 'SUBSTITUIÇÃO DE OLEO E FILTRO / REVISÃO PREVENTIVA';
-            const docResponsible = (document.getElementById('cot-docResponsible')?.value || '').trim() || (window.Auth && window.Auth.getUser && window.Auth.getUser()?.name) || 'Alessandra';
-
-            // Salvar no estado para persistência
-            this.state.clientInfo = {
-                name: clientName,
-                phone: clientPhone,
-                km: clientKm,
-                docNumber: docNumber,
-                defect: clientDefect,
-                responsible: docResponsible
-            };
-            this.saveDraft();
-
             let text = `ORÇAMENTO - ${model || 'VEÍCULO NÃO INFORMADO'}\n`;
             if (plate) text += `PLACA: ${plate}\n`;
-            if (clientName && clientName !== 'CLIENTE NÃO INFORMADO') text += `CLIENTE: ${clientName}\n`;
             text += `\nPEÇAS:\n\n`;
 
             let totalPartsSum = 0;
@@ -707,10 +663,10 @@ const Cotacao = {
 
                     partsRowsHtml += `
                         <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left;">${fullDesc}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center;">${qtyVal}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">${unitFmt}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">R$ ${totalFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left;">${fullDesc}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: center;">${qtyVal}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: right;">${unitFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: right; font-weight: 600;">R$ ${totalFmt}</td>
                         </tr>
                     `;
                 }
@@ -718,11 +674,8 @@ const Cotacao = {
 
             if (!hasParts) {
                 text += "(Nenhuma peça selecionada)\n";
-                partsRowsHtml += '<tr><td colspan="4" style="border: 1px solid #cbd5e1; padding: 8px; text-align:center;">Nenhuma peça selecionada</td></tr>';
+                partsRowsHtml += '<tr><td colspan="4" style="border: 1px solid #cbd5e1; padding: 10px; text-align:center;">Nenhuma peça selecionada</td></tr>';
             }
-
-            text += `\n----------------------------------\n`;
-            text += `MÃO DE OBRA & SERVIÇOS:\n\n`;
 
             let totalLaborSum = 0;
             let hasLabor = false;
@@ -737,21 +690,26 @@ const Cotacao = {
                     const priceUnitFmt = (totalItem / (hoursVal || 1)).toFixed(2);
                     const priceTotalFmt = totalItem.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                    text += `${item.desc.toUpperCase()} = R$ ${priceTotalFmt}\n`;
-
                     laborRowsHtml += `
                         <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left;">${item.desc.toUpperCase()}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center;">${hoursVal}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">${priceUnitFmt}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">R$ ${priceTotalFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left;">${item.desc.toUpperCase()}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: center;">${hoursVal}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: right;">${priceUnitFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: right; font-weight: 600;">R$ ${priceTotalFmt}</td>
                         </tr>
                     `;
                 }
             });
 
-            if (!hasLabor) {
-                text += "(Sem mão de obra inclusa)\n";
+            if (hasLabor) {
+                text += `\n----------------------------------\n`;
+                text += `MÃO DE OBRA & SERVIÇOS:\n\n`;
+                this.state.labor.items.forEach(item => {
+                    if (item.desc && item.desc.trim()) {
+                        const priceTotalFmt = (item.total || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        text += `${item.desc.toUpperCase()} = R$ ${priceTotalFmt}\n`;
+                    }
+                });
             }
 
             const grandTotal = totalPartsSum + totalLaborSum;
@@ -780,8 +738,6 @@ const Cotacao = {
             } else if (mode === 'pdf') {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('pt-BR');
-                const finalDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-                const dateFinalStr = finalDate.toLocaleDateString('pt-BR');
 
                 const printWindow = window.open('', '', 'width=950,height=750');
                 if (!printWindow) {
@@ -789,24 +745,24 @@ const Cotacao = {
                     return;
                 }
 
-                // Tabela de Serviços opcional
                 let laborTableBlock = '';
                 if (hasLabor) {
                     laborTableBlock = `
-                        <table style="width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 11px;">
+                        <div style="font-weight: bold; font-size: 11px; margin-top: 16px; margin-bottom: 4px; text-transform: uppercase;">MÃO DE OBRA &amp; SERVIÇOS</div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
                             <thead>
                                 <tr>
-                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; font-weight: bold; background: #fff;">Serviço</th>
-                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; width: 80px; text-align: center; font-weight: bold; background: #fff;">Quantidade</th>
-                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; width: 100px; text-align: right; font-weight: bold; background: #fff;">Preço unit.</th>
-                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; width: 110px; text-align: right; font-weight: bold; background: #fff;">Sub-total</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; font-weight: bold; background: #fff;">Serviço</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 10px; width: 80px; text-align: center; font-weight: bold; background: #fff;">Quantidade</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 10px; width: 100px; text-align: right; font-weight: bold; background: #fff;">Preço unit.</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 10px; width: 110px; text-align: right; font-weight: bold; background: #fff;">Sub-total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${laborRowsHtml}
                                 <tr>
                                     <td colspan="4" style="border: 1px solid #cbd5e1; text-align: right; font-weight: bold; padding: 6px 10px; background: #fff;">
-                                        Total: R$ ${laborSumFmt}
+                                        Total Serviços: R$ ${laborSumFmt}
                                     </td>
                                 </tr>
                             </tbody>
@@ -819,7 +775,7 @@ const Cotacao = {
                     <html lang="pt-BR">
                     <head>
                         <meta charset="UTF-8">
-                        <title>Orçamento_${plate || docNumber}</title>
+                        <title>Orçamento_${plate || 'PECAS'}</title>
                         <style>
                             @page {
                                 size: A4 portrait;
@@ -887,103 +843,51 @@ const Cotacao = {
                                 text-align: right;
                                 font-size: 10px;
                             }
-                            .os-number {
-                                font-size: 12px;
-                                font-weight: bold;
-                                color: #000;
-                            }
                             .divider-line {
                                 border-top: 1px solid #e2e8f0;
-                                margin: 8px 0;
-                            }
-                            .two-col-grid {
-                                display: flex;
-                                justify-content: space-between;
                                 margin: 10px 0;
-                                font-size: 10px;
-                                line-height: 1.45;
                             }
-                            .two-col-left {
-                                flex: 1.3;
-                            }
-                            .two-col-right {
-                                flex: 1;
-                                padding-left: 20px;
-                            }
-                            .sec-title {
-                                font-weight: 900;
+                            .info-strip {
+                                border: 1px solid #cbd5e1;
+                                padding: 8px 12px;
+                                margin: 12px 0;
                                 font-size: 11px;
-                                margin-bottom: 4px;
-                                text-transform: uppercase;
-                                letter-spacing: 0.3px;
-                            }
-                            .status-strip {
-                                border-top: 1px solid #cbd5e1;
-                                border-bottom: 1px solid #cbd5e1;
-                                padding: 6px 0;
-                                margin: 10px 0;
-                                font-size: 9.5px;
                                 display: flex;
                                 justify-content: space-between;
-                                font-weight: 600;
-                            }
-                            .vehicle-box {
-                                font-size: 10px;
-                                line-height: 1.5;
-                                margin-bottom: 12px;
+                                background: #f8fafc;
                             }
                             .items-table {
                                 width: 100%;
                                 border-collapse: collapse;
                                 font-size: 11px;
-                                margin-top: 6px;
+                                margin-top: 4px;
                             }
                             .items-table th {
                                 border: 1px solid #cbd5e1;
-                                padding: 6px 8px;
+                                padding: 6px 10px;
                                 font-weight: bold;
                                 background: #fff;
                                 font-size: 10.5px;
                             }
                             .items-table td {
                                 border: 1px solid #cbd5e1;
-                                padding: 6px 8px;
+                                padding: 6px 10px;
                             }
                             .grand-total-row {
                                 text-align: right;
-                                font-size: 15px;
+                                font-size: 16px;
                                 font-weight: 900;
-                                margin-top: 16px;
-                                margin-bottom: 24px;
-                                color: #000;
-                            }
-                            .signatures-container {
-                                display: flex;
-                                width: 100%;
-                                border: 1px solid #cbd5e1;
-                                height: 50px;
                                 margin-top: 20px;
-                                page-break-inside: avoid;
-                            }
-                            .sig-date {
-                                width: 120px;
-                                border-right: 1px solid #cbd5e1;
-                                padding: 5px 6px;
-                                font-size: 9.5px;
                                 color: #000;
+                                border-top: 2px solid #000;
+                                padding-top: 8px;
                             }
-                            .sig-client {
-                                flex: 1;
-                                border-right: 1px solid #cbd5e1;
-                                padding: 5px 6px;
+                            .footer-note {
+                                margin-top: 25px;
                                 font-size: 9.5px;
-                                color: #000;
-                            }
-                            .sig-resp {
-                                flex: 1;
-                                padding: 5px 6px;
-                                font-size: 9.5px;
-                                color: #000;
+                                color: #64748b;
+                                text-align: center;
+                                font-style: italic;
                             }
                             @media print {
                                 body { padding: 0; }
@@ -1005,47 +909,21 @@ const Cotacao = {
                                 <div>E-mail: autocarbstatui@gmail.com - Fone: (15) 99666-1359</div>
                             </div>
                             <div class="meta-right-col">
-                                <div class="os-number">N° OS: ${docNumber}</div>
-                                <div style="margin-top: 12px; color: #334155;">Emissão: ${dateStr}</div>
+                                <div style="font-weight: bold; font-size: 12px; color: #000;">COTAÇÃO DE PEÇAS</div>
+                                <div style="margin-top: 8px; color: #334155;">Emissão: ${dateStr}</div>
                             </div>
                         </div>
 
                         <div class="divider-line"></div>
 
-                        <div class="two-col-grid">
-                            <div class="two-col-left">
-                                <div class="sec-title">CLIENTE</div>
-                                <div style="font-weight: 700; font-size: 10.5px;">${clientName}</div>
-                                <div>Rua Coronel Fernando Prestes, 120, Vila Doutor Laurindo, Tatuí - SP</div>
-                                <div>E-mail: autocarbstatui@gmail.com</div>
-                                <div>Celular: ${clientPhone || '(15) 99825-5908'}</div>
-                            </div>
-                            <div class="two-col-right">
-                                <div class="sec-title">RESPONSÁVEL</div>
-                                <div style="font-weight: 700; font-size: 10.5px;">${docResponsible}</div>
-                                <div>Telefone: (15)99666-1359</div>
-                                <div>Email: alesoncin16@gmail.com</div>
-                            </div>
-                        </div>
-
-                        <div class="status-strip">
-                            <div><strong>STATUS OS:</strong> Orçamento</div>
-                            <div><strong>DATA INICIAL:</strong> ${dateStr}</div>
-                            <div><strong>DATA FINAL:</strong> ${dateFinalStr}</div>
-                            <div><strong>GARANTIA:</strong> 90 DIAS</div>
-                        </div>
-
-                        <div class="vehicle-box">
-                            <div><strong>DESCRIÇÃO:</strong> ${model || 'VOLKSWAGEN JETTA 2.0 TSI'}</div>
-                            <div style="margin: 2px 0;">
-                                <span style="margin-right: 25px;"><strong>KM:</strong> ${clientKm || '-'}</span>
-                                <span style="margin-right: 25px;"><strong>PLACA:</strong> ${plate || 'OGI-6E60'}</span>
-                                <span><strong>CHASSI:</strong> -</span>
-                            </div>
-                            <div style="margin-top: 2px;"><strong>DEFEITO APRESENTADO:</strong> ${clientDefect}</div>
+                        <div class="info-strip">
+                            <div><strong>VEÍCULO:</strong> ${model || 'NÃO INFORMADO'}</div>
+                            <div><strong>PLACA:</strong> ${plate || 'NÃO INFORMADA'}</div>
+                            <div><strong>DATA:</strong> ${dateStr}</div>
                         </div>
 
                         <!-- Tabela de Peças / Produtos -->
+                        <div style="font-weight: bold; font-size: 11px; margin-bottom: 4px; text-transform: uppercase;">PEÇAS COTADAS</div>
                         <table class="items-table">
                             <thead>
                                 <tr>
@@ -1059,7 +937,7 @@ const Cotacao = {
                                 ${partsRowsHtml}
                                 <tr>
                                     <td colspan="4" style="border: 1px solid #cbd5e1; text-align: right; font-weight: bold; padding: 6px 10px; background: #fff;">
-                                        Total: R$ ${partsSumFmt}
+                                        Total Peças: R$ ${partsSumFmt}
                                     </td>
                                 </tr>
                             </tbody>
@@ -1070,14 +948,11 @@ const Cotacao = {
 
                         <!-- Valor Total Geral -->
                         <div class="grand-total-row">
-                            Valor Total: R$${grandTotalFmt}
+                            Valor Total: R$ ${grandTotalFmt}
                         </div>
 
-                        <!-- Bloco de Assinaturas -->
-                        <div class="signatures-container">
-                            <div class="sig-date">Data</div>
-                            <div class="sig-client">Assinatura do Cliente</div>
-                            <div class="sig-resp">Assinatura do Técnico Responsável</div>
+                        <div class="footer-note">
+                            * Valores sujeitos a alteração sem aviso prévio. Orçamento de peças válido por 7 dias. AutoCar BS.
                         </div>
 
                         <script>

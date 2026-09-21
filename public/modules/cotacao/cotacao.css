@@ -745,51 +745,6 @@
 /* =========================================================
    MODAIS (MÃO DE OBRA & HISTÓRICO)
    ========================================================= */
-.budget-meta-box {
-    background: #111a24;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px 12px;
-    margin-bottom: 12px;
-}
-
-.budget-meta-grid {
-    display: flex;
-    gap: 8px;
-    align-items: flex-end;
-}
-
-.meta-field {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-}
-
-.meta-field label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    color: var(--text-secondary);
-    letter-spacing: 0.4px;
-}
-
-.meta-field input {
-    background: #0f1722;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 6px 8px;
-    color: #ffffff;
-    font-size: 0.78rem;
-    font-weight: 600;
-    outline: none;
-    transition: border-color 0.15s;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.meta-field input:focus {
-    border-color: var(--gold);
-}
-
 .labor-type-selector {
     display: flex;
     gap: 14px;
