@@ -20,6 +20,17 @@ const Cotacao = {
     },
     iniciado: false,
 
+    getDefaultMargin() {
+        try {
+            const saved = localStorage.getItem('cotador_default_margin');
+            if (saved !== null && saved !== undefined && saved !== '') {
+                const num = parseFloat(saved);
+                if (!isNaN(num) && num >= 0) return num;
+            }
+        } catch (e) {}
+        return 90;
+    },
+
     /**
      * Inicializa o módulo quando a view for inserida no DOM
      */
@@ -40,7 +51,7 @@ const Cotacao = {
                 if (saved.state) {
                     this.state = saved.state;
                     if (this.state.margin === undefined || this.state.margin === null) {
-                        this.state.margin = 90;
+                        this.state.margin = this.getDefaultMargin();
                     }
                     const modelEl = document.getElementById('cot-carModel');
                     const plateEl = document.getElementById('cot-carPlate');
@@ -50,6 +61,8 @@ const Cotacao = {
             } catch (e) {
                 console.error("Erro ao carregar rascunho de cotação:", e);
             }
+        } else {
+            this.state.margin = this.getDefaultMargin();
         }
 
         if (!this.state.pecas || this.state.pecas.length === 0) {
@@ -170,11 +183,17 @@ const Cotacao = {
         this.saveDraft();
     },
 
-    // --- LÓGICA DE MARGEM DINÂMICA (PADRÃO 90%) ---
+    // --- LÓGICA DE MARGEM DINÂMICA (MEMORIZAÇÃO AUTOMÁTICA DA OFICINA) ---
     updateMargin(val) {
         let m = parseFloat(val);
-        if (isNaN(m) || m < 0) m = 90;
+        if (isNaN(m) || m < 0) m = this.getDefaultMargin();
         this.state.margin = m;
+
+        // Memorização Automática: grava como o novo padrão da oficina para os próximos orçamentos
+        try {
+            localStorage.setItem('cotador_default_margin', String(m));
+        } catch (e) {}
+
         this.recalcAllPricesAndRefresh();
         this.saveDraft();
     },
@@ -188,7 +207,7 @@ const Cotacao = {
 
         const marginPerc = (this.state.margin !== undefined && this.state.margin !== null) 
             ? Number(this.state.margin) 
-            : 90;
+            : this.getDefaultMargin();
         const multiplier = 1 + (marginPerc / 100);
 
         let finalPrice = custo * multiplier;
@@ -300,7 +319,7 @@ const Cotacao = {
 
         const currentMargin = (this.state.margin !== undefined && this.state.margin !== null) 
             ? this.state.margin 
-            : 90;
+            : this.getDefaultMargin();
 
         let html = `<tr>
             <th class="th-qty">QTD</th>
@@ -1392,7 +1411,7 @@ const Cotacao = {
         const idInput = document.getElementById('cot-quoteId');
         if (idInput) idInput.value = '';
 
-        const currentMargin = this.state.margin || 90;
+        const currentMargin = this.getDefaultMargin();
         this.state = {
             vendedores: [],
             pecas: [],
@@ -1683,7 +1702,7 @@ const Cotacao = {
 
             if (item) {
                 this.state = JSON.parse(JSON.stringify(item.state));
-                if (this.state.margin === undefined) this.state.margin = 90;
+                if (this.state.margin === undefined) this.state.margin = this.getDefaultMargin();
                 this.state.pecas.forEach(p => { 
                     if (!p.qty) p.qty = 1; 
                     if (p.vencedor === 'ESTOQUE') p.emEstoque = true;
