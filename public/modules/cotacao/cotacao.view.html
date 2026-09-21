@@ -5,6 +5,8 @@
         <!-- Linha 1: Identificação do Veículo (Esq) + Botões de Ação (Dir) -->
         <div class="cot-top-primary-row">
             <div class="cot-vehicle-inputs">
+                <!-- ID Oculto do Orçamento Atual (Garante atualização in-place sem duplicações) -->
+                <input type="hidden" id="cot-quoteId" value="">
                 <span id="cot-statusBadge" class="cot-status-badge cot-badge-new" title="Cotação nova criada do zero">
                     <i class="ph ph-sparkle"></i> Nova Cotação
                 </span>

@@ -31,7 +31,9 @@ const Cotacao = {
             try {
                 const saved = JSON.parse(draft);
                 if (saved.currentId) {
-                    this.currentId = saved.currentId;
+                    this.currentId = String(saved.currentId);
+                    const idInput = document.getElementById('cot-quoteId');
+                    if (idInput) idInput.value = String(saved.currentId);
                 }
                 if (saved.state) {
                     this.state = saved.state;
@@ -62,19 +64,6 @@ const Cotacao = {
         let val = input.value.toUpperCase();
         val = val.replace(/[^A-Z0-9]/g, '');
         input.value = val;
-
-        // Se currentId não estiver setado e o usuário digitou uma placa válida, verifica se já existe no histórico
-        if (!this.currentId && val.length >= 7) {
-            let h = [];
-            try { h = JSON.parse(localStorage.getItem('cotador_history') || '[]'); } catch (e) {}
-            const existing = h.find(x => {
-                const itemPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-                return itemPlate === val;
-            });
-            if (existing) {
-                this.currentId = existing.id;
-            }
-        }
         this.updateStatusBadge();
     },
 
@@ -82,25 +71,14 @@ const Cotacao = {
         const badge = document.getElementById('cot-statusBadge');
         const btnText = document.getElementById('cot-btnSaveText');
         const btn = document.getElementById('cot-btnSave');
-        const plate = document.getElementById('cot-carPlate')?.value?.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const quoteIdEl = document.getElementById('cot-quoteId');
+        const effectiveId = (quoteIdEl && quoteIdEl.value) ? quoteIdEl.value.trim() : (this.currentId || '');
 
-        let isExisting = false;
-        let h = [];
-        try {
-            h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
-        } catch (e) {}
-
-        if (this.currentId && h.some(x => String(x.id) === String(this.currentId))) {
-            isExisting = true;
-        } else if (plate && h.some(x => (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '') === plate)) {
-            isExisting = true;
-        }
-
-        if (isExisting) {
+        if (effectiveId) {
             if (badge) {
                 badge.className = 'cot-status-badge cot-badge-editing';
                 badge.innerHTML = `<i class="ph ph-note-pencil"></i> Editando Salvo`;
-                badge.title = 'Editando cotação salva existente (atualiza sem duplicar)';
+                badge.title = 'Editando cotação existente (atualiza sem duplicar)';
             }
             if (btnText) btnText.textContent = 'ATUALIZAR';
             if (btn) btn.title = 'Atualizar cotação existente (não cria duplicada)';
@@ -118,8 +96,10 @@ const Cotacao = {
     saveDraft() {
         const modelEl = document.getElementById('cot-carModel');
         const plateEl = document.getElementById('cot-carPlate');
+        const quoteIdEl = document.getElementById('cot-quoteId');
+        const effectiveId = (quoteIdEl && quoteIdEl.value) ? quoteIdEl.value.trim() : (this.currentId || null);
         const data = {
-            currentId: this.currentId || null,
+            currentId: effectiveId,
             state: this.state,
             model: modelEl ? modelEl.value : '',
             plate: plateEl ? plateEl.value : ''
@@ -1315,6 +1295,9 @@ const Cotacao = {
 
     clearScreen() {
         this.currentId = null;
+        const idInput = document.getElementById('cot-quoteId');
+        if (idInput) idInput.value = '';
+
         const currentMargin = this.state.margin || 90;
         this.state = {
             vendedores: [],
@@ -1336,28 +1319,14 @@ const Cotacao = {
         if (UI) UI.toast('Tela limpa para nova cotação do zero.', 'info');
     },
 
-    /**
-     * Deduplica o histórico garantindo estritamente 1 registro atualizado por veículo/placa
-     */
-    deduplicateHistory(list) {
-        if (!Array.isArray(list)) return [];
-        const map = new Map();
-        list.sort((a, b) => (Number(a.id) || 0) - (Number(b.id) || 0));
-        list.forEach(item => {
-            if (!item.id) item.id = Date.now() + Math.floor(Math.random() * 1000);
-            const plateKey = (item.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-            const key = plateKey !== '' ? plateKey : (item.model || String(item.id));
-            map.set(key, item);
-        });
-        return Array.from(map.values()).sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0));
-    },
-
     // =========================================================
-    // SALVAR & HISTÓRICO COM ATUALIZAÇÃO IN-PLACE GARANTIDA
+    // SALVAR & HISTÓRICO COM ID ÚNICO OCULTO POR ORÇAMENTO
     // =========================================================
     saveCurrent(showMessage = true) {
         const m = document.getElementById('cot-carModel')?.value?.trim();
         const p = document.getElementById('cot-carPlate')?.value?.trim();
+        const quoteIdEl = document.getElementById('cot-quoteId');
+        const currentId = (quoteIdEl && quoteIdEl.value) ? quoteIdEl.value.trim() : (this.currentId || '');
 
         if (!m) {
             if (UI) UI.toast('Informe o modelo do veículo para salvar!', 'warning');
@@ -1383,22 +1352,12 @@ const Cotacao = {
             h = [];
         }
 
-        // 1. Procura primeiro pelo ID ativo da cotação
-        let existingIndex = -1;
-        if (this.currentId) {
-            existingIndex = h.findIndex(x => String(x.id) === String(this.currentId));
-        }
-
-        // 2. Se não encontrou por ID, busca se já existe orçamento para a mesma placa
-        if (existingIndex < 0 && cleanPlate) {
-            existingIndex = h.findIndex(x => {
-                const itemPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-                return itemPlate === cleanPlate;
-            });
-        }
-
+        // Busca se já existe este orçamento específico pelo ID oculto
+        const existingIndex = currentId ? h.findIndex(x => String(x.id) === String(currentId)) : -1;
         const isUpdate = existingIndex >= 0;
-        const targetId = isUpdate ? (h[existingIndex].id || this.currentId || Date.now()) : Date.now();
+
+        // Se estiver atualizando, mantém o ID original. Se for novo (criado no "Novo Limpo"), gera um ID único oculto
+        const targetId = isUpdate ? currentId : ('cot_' + Date.now() + '_' + Math.random().toString(36).substr(2, 7));
 
         const r = {
             id: targetId,
@@ -1414,19 +1373,17 @@ const Cotacao = {
             h.unshift(r);
         }
 
-        // Limpa duplicatas para que cada veículo tenha somente 1 cotação salva
-        h = this.deduplicateHistory(h);
-
         localStorage.setItem('cotador_history', JSON.stringify(h));
         this.currentId = targetId;
+        if (quoteIdEl) quoteIdEl.value = targetId;
         this.saveDraft();
         this.updateStatusBadge();
 
         if (showMessage) {
             if (isUpdate) {
-                if (UI) UI.toast(`Cotação de ${cleanPlate} atualizada com sucesso!`, 'success');
+                if (UI) UI.toast(`Cotação atualizada com sucesso!`, 'success');
             } else {
-                if (UI) UI.toast(`Nova cotação de ${cleanPlate} salva no histórico!`, 'success');
+                if (UI) UI.toast(`Novo orçamento de ${cleanPlate} salvo no histórico!`, 'success');
             }
         }
         return true;
@@ -1455,9 +1412,17 @@ const Cotacao = {
             h = [];
         }
 
-        // Deduplica e higieniza automaticamente o histórico existente
-        h = this.deduplicateHistory(h);
-        localStorage.setItem('cotador_history', JSON.stringify(h));
+        // Garante que todo item possua um ID único oculto
+        let migrated = false;
+        h.forEach((item, idx) => {
+            if (!item.id) {
+                item.id = 'cot_' + (Date.now() + idx) + '_' + Math.random().toString(36).substr(2, 6);
+                migrated = true;
+            }
+        });
+        if (migrated) {
+            localStorage.setItem('cotador_history', JSON.stringify(h));
+        }
 
         const term = (document.getElementById('cot-searchHistory')?.value || '').trim().toUpperCase();
         const container = document.getElementById('cot-historyList');
@@ -1475,11 +1440,28 @@ const Cotacao = {
 
         container.innerHTML = filtered.map(x => {
             const cleanPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+            // Calcula total aproximado de peças vencedoras + serviços
+            let total = 0;
+            if (x.state && Array.isArray(x.state.pecas)) {
+                x.state.pecas.forEach(p => {
+                    if (p.vencedor && p.precos && p.precos[p.vencedor]) {
+                        total += (Number(p.precos[p.vencedor].venda) || 0) * (Number(p.qty) || 1);
+                    }
+                });
+            }
+            if (x.state && x.state.labor && Array.isArray(x.state.labor.items)) {
+                x.state.labor.items.forEach(l => {
+                    total += Number(l.total) || 0;
+                });
+            }
+            const totalStr = total > 0 ? `R$ ${total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '';
+
             return `
                 <div class="history-item" onclick="Cotacao.loadItem('${x.id}')" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#1e293b; border:1px solid var(--border); border-radius:6px; margin-bottom:8px; cursor:pointer;">
                     <div style="flex:1;">
                         <span style="color:var(--gold); font-weight:800; font-size:1.05rem; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
-                        <strong style="color:#ffffff; margin-left:8px; font-size:0.95rem;">${x.model || 'Sem Modelo'}</strong><br>
+                        <strong style="color:#ffffff; margin-left:8px; font-size:0.95rem;">${x.model || 'Sem Modelo'}</strong>
+                        ${totalStr ? `<span style="display:inline-block; font-size:0.75rem; color:#38bdf8; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); padding:2px 6px; border-radius:4px; margin-left:8px; font-weight:700;">${totalStr}</span>` : ''}<br>
                         <small style="color:var(--text-secondary);"><i class="ph ph-calendar"></i> ${x.date}</small>
                     </div>
                     <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
@@ -1512,8 +1494,7 @@ const Cotacao = {
             } catch (e) {
                 h = [];
             }
-            const item = h.find(x => String(x.id) === String(id)) || 
-                         h.find(x => (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '') === String(id).toUpperCase().replace(/[^A-Z0-9]/g, ''));
+            const item = h.find(x => String(x.id) === String(id));
 
             if (item) {
                 this.state = JSON.parse(JSON.stringify(item.state));
@@ -1523,7 +1504,10 @@ const Cotacao = {
                 if (!this.state.frete) this.state.frete = {};
                 if (this.state.lavagem === undefined) this.state.lavagem = false;
 
-                this.currentId = item.id;
+                this.currentId = String(item.id);
+                const quoteIdEl = document.getElementById('cot-quoteId');
+                if (quoteIdEl) quoteIdEl.value = String(item.id);
+
                 const modelEl = document.getElementById('cot-carModel');
                 const plateEl = document.getElementById('cot-carPlate');
                 if (modelEl) modelEl.value = item.model || '';
