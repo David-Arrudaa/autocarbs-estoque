@@ -668,23 +668,255 @@
     transform: scale(1.15);
 }
 
-/* Destaques de Vencedor nas Linhas */
-#cot-mainTable tr.has-winner td {
-    background-color: rgba(220, 38, 38, 0.08) !important;
-}
-#cot-mainTable tr.has-winner td.td-qty {
-    border-left: 4px solid #dc2626 !important;
+/* =========================================================
+   JOGO DE CORES DINÂMICO PARA VENDEDORES (COLUNAS E LINHAS)
+   ========================================================= */
+
+/* Sub-cabeçalhos de Vendedor (✔, MARCA, CUSTO, VENDA) */
+#cot-mainTable th.th-sub-vendor {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    padding: 5px 4px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-#cot-mainTable tr.winner-is-stock td {
-    background-color: rgba(2, 132, 199, 0.12) !important;
+/* Células de dados de Vendedor */
+#cot-mainTable td.td-vendor-cell {
+    padding: 3px 2px;
 }
+
+/* --- TEMA 0: ROXO / VIOLETA (#a855f7) --- */
+#cot-mainTable th.th-vendor.vtheme-0 {
+    background: linear-gradient(180deg, #3b1859 0%, #200d33 100%) !important;
+    border-left: 3px solid #a855f7 !important;
+    color: #e9d5ff !important;
+}
+#cot-mainTable th.th-sub-vendor.vtheme-0 {
+    background: #200d33 !important;
+    color: #c084fc !important;
+}
+#cot-mainTable th.th-sub-vendor.th-check.vtheme-0 {
+    border-left: 3px solid #a855f7 !important;
+}
+#cot-mainTable td.td-check.vtheme-0 {
+    border-left: 3px solid #a855f7 !important;
+    background-color: rgba(168, 85, 247, 0.05);
+}
+#cot-mainTable td.td-vendor-cell.vtheme-0 {
+    background-color: rgba(168, 85, 247, 0.04);
+}
+#cot-mainTable td.vtheme-0.is-vendor-winner {
+    background-color: rgba(168, 85, 247, 0.22) !important;
+}
+.cot-vendor-tag.vtheme-0 {
+    background: rgba(168, 85, 247, 0.2) !important;
+    border-color: #a855f7 !important;
+    color: #f3e8ff !important;
+}
+#cot-mainTable tr.winner-vtheme-0 td.td-qty {
+    border-left: 4px solid #a855f7 !important;
+}
+#cot-mainTable tr.winner-vtheme-0 {
+    background-color: rgba(168, 85, 247, 0.04);
+}
+
+/* --- TEMA 1: LARANJA / ÂMBAR (#f59e0b) --- */
+#cot-mainTable th.th-vendor.vtheme-1 {
+    background: linear-gradient(180deg, #4d2b05 0%, #2d1902 100%) !important;
+    border-left: 3px solid #f59e0b !important;
+    color: #fef3c7 !important;
+}
+#cot-mainTable th.th-sub-vendor.vtheme-1 {
+    background: #2d1902 !important;
+    color: #fbbf24 !important;
+}
+#cot-mainTable th.th-sub-vendor.th-check.vtheme-1 {
+    border-left: 3px solid #f59e0b !important;
+}
+#cot-mainTable td.td-check.vtheme-1 {
+    border-left: 3px solid #f59e0b !important;
+    background-color: rgba(245, 158, 11, 0.05);
+}
+#cot-mainTable td.td-vendor-cell.vtheme-1 {
+    background-color: rgba(245, 158, 11, 0.04);
+}
+#cot-mainTable td.vtheme-1.is-vendor-winner {
+    background-color: rgba(245, 158, 11, 0.22) !important;
+}
+.cot-vendor-tag.vtheme-1 {
+    background: rgba(245, 158, 11, 0.2) !important;
+    border-color: #f59e0b !important;
+    color: #fffbeb !important;
+}
+#cot-mainTable tr.winner-vtheme-1 td.td-qty {
+    border-left: 4px solid #f59e0b !important;
+}
+#cot-mainTable tr.winner-vtheme-1 {
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+/* --- TEMA 2: VERDE ESMERALDA (#10b981) --- */
+#cot-mainTable th.th-vendor.vtheme-2 {
+    background: linear-gradient(180deg, #064e3b 0%, #032a20 100%) !important;
+    border-left: 3px solid #10b981 !important;
+    color: #d1fae5 !important;
+}
+#cot-mainTable th.th-sub-vendor.vtheme-2 {
+    background: #032a20 !important;
+    color: #34d399 !important;
+}
+#cot-mainTable th.th-sub-vendor.th-check.vtheme-2 {
+    border-left: 3px solid #10b981 !important;
+}
+#cot-mainTable td.td-check.vtheme-2 {
+    border-left: 3px solid #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.05);
+}
+#cot-mainTable td.td-vendor-cell.vtheme-2 {
+    background-color: rgba(16, 185, 129, 0.04);
+}
+#cot-mainTable td.vtheme-2.is-vendor-winner {
+    background-color: rgba(16, 185, 129, 0.22) !important;
+}
+.cot-vendor-tag.vtheme-2 {
+    background: rgba(16, 185, 129, 0.2) !important;
+    border-color: #10b981 !important;
+    color: #ecfdf5 !important;
+}
+#cot-mainTable tr.winner-vtheme-2 td.td-qty {
+    border-left: 4px solid #10b981 !important;
+}
+#cot-mainTable tr.winner-vtheme-2 {
+    background-color: rgba(16, 185, 129, 0.04);
+}
+
+/* --- TEMA 3: ROSA CARMIM (#f43f5e) --- */
+#cot-mainTable th.th-vendor.vtheme-3 {
+    background: linear-gradient(180deg, #500f24 0%, #2d0814 100%) !important;
+    border-left: 3px solid #f43f5e !important;
+    color: #ffe4e6 !important;
+}
+#cot-mainTable th.th-sub-vendor.vtheme-3 {
+    background: #2d0814 !important;
+    color: #fb7185 !important;
+}
+#cot-mainTable th.th-sub-vendor.th-check.vtheme-3 {
+    border-left: 3px solid #f43f5e !important;
+}
+#cot-mainTable td.td-check.vtheme-3 {
+    border-left: 3px solid #f43f5e !important;
+    background-color: rgba(244, 63, 94, 0.05);
+}
+#cot-mainTable td.td-vendor-cell.vtheme-3 {
+    background-color: rgba(244, 63, 94, 0.04);
+}
+#cot-mainTable td.vtheme-3.is-vendor-winner {
+    background-color: rgba(244, 63, 94, 0.22) !important;
+}
+.cot-vendor-tag.vtheme-3 {
+    background: rgba(244, 63, 94, 0.2) !important;
+    border-color: #f43f5e !important;
+    color: #fff1f2 !important;
+}
+#cot-mainTable tr.winner-vtheme-3 td.td-qty {
+    border-left: 4px solid #f43f5e !important;
+}
+#cot-mainTable tr.winner-vtheme-3 {
+    background-color: rgba(244, 63, 94, 0.04);
+}
+
+/* --- TEMA 4: AZUL TURQUESA / CIANO (#06b6d4) --- */
+#cot-mainTable th.th-vendor.vtheme-4 {
+    background: linear-gradient(180deg, #0b4550 0%, #06282e 100%) !important;
+    border-left: 3px solid #06b6d4 !important;
+    color: #cffafe !important;
+}
+#cot-mainTable th.th-sub-vendor.vtheme-4 {
+    background: #06282e !important;
+    color: #22d3ee !important;
+}
+#cot-mainTable th.th-sub-vendor.th-check.vtheme-4 {
+    border-left: 3px solid #06b6d4 !important;
+}
+#cot-mainTable td.td-check.vtheme-4 {
+    border-left: 3px solid #06b6d4 !important;
+    background-color: rgba(6, 182, 212, 0.05);
+}
+#cot-mainTable td.td-vendor-cell.vtheme-4 {
+    background-color: rgba(6, 182, 212, 0.04);
+}
+#cot-mainTable td.vtheme-4.is-vendor-winner {
+    background-color: rgba(6, 182, 212, 0.22) !important;
+}
+.cot-vendor-tag.vtheme-4 {
+    background: rgba(6, 182, 212, 0.2) !important;
+    border-color: #06b6d4 !important;
+    color: #ecfeff !important;
+}
+#cot-mainTable tr.winner-vtheme-4 td.td-qty {
+    border-left: 4px solid #06b6d4 !important;
+}
+#cot-mainTable tr.winner-vtheme-4 {
+    background-color: rgba(6, 182, 212, 0.04);
+}
+
+/* --- TEMA 5: AZUL ÍNDIGO (#6366f1) --- */
+#cot-mainTable th.th-vendor.vtheme-5 {
+    background: linear-gradient(180deg, #28246e 0%, #171542 100%) !important;
+    border-left: 3px solid #6366f1 !important;
+    color: #e0e7ff !important;
+}
+#cot-mainTable th.th-sub-vendor.vtheme-5 {
+    background: #171542 !important;
+    color: #818cf8 !important;
+}
+#cot-mainTable th.th-sub-vendor.th-check.vtheme-5 {
+    border-left: 3px solid #6366f1 !important;
+}
+#cot-mainTable td.td-check.vtheme-5 {
+    border-left: 3px solid #6366f1 !important;
+    background-color: rgba(99, 102, 241, 0.05);
+}
+#cot-mainTable td.td-vendor-cell.vtheme-5 {
+    background-color: rgba(99, 102, 241, 0.04);
+}
+#cot-mainTable td.vtheme-5.is-vendor-winner {
+    background-color: rgba(99, 102, 241, 0.22) !important;
+}
+.cot-vendor-tag.vtheme-5 {
+    background: rgba(99, 102, 241, 0.2) !important;
+    border-color: #6366f1 !important;
+    color: #eef2ff !important;
+}
+#cot-mainTable tr.winner-vtheme-5 td.td-qty {
+    border-left: 4px solid #6366f1 !important;
+}
+#cot-mainTable tr.winner-vtheme-5 {
+    background-color: rgba(99, 102, 241, 0.04);
+}
+
+/* Destaque para Estoque Vencedor */
 #cot-mainTable tr.winner-is-stock td.td-qty {
     border-left: 4px solid #0284c7 !important;
 }
+#cot-mainTable tr.winner-is-stock td.td-stock-section {
+    background-color: rgba(2, 132, 199, 0.25) !important;
+}
 
+/* Linhas sem vencedor */
 #cot-mainTable tr.no-winner td.td-qty {
     border-left: 4px solid #f59e0b !important;
+}
+
+/* Destaque do Input de Venda Vencedor */
+#cot-mainTable input.inp-sale.inp-winner-venda {
+    background: #0f172a !important;
+    color: #38bdf8 !important;
+    font-weight: 800 !important;
+    border: 2px solid #38bdf8 !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
 }
 
 /* Rodapé da Tabela */

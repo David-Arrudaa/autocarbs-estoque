@@ -308,12 +308,13 @@ const Cotacao = {
             <th colspan="4" class="th-stock">ESTOQUE OFICINA</th>`;
 
         if (this.state.vendedores.length > 0) {
-            html += this.state.vendedores.map(v => {
+            html += this.state.vendedores.map((v, vIndex) => {
                 const freteVal = this.state.frete[v] || '';
                 const vEsc = UI ? UI.escapeHtml(v) : v;
                 const vParam = v.replace(/'/g, "\\'");
-                return `<th colspan="4" class="th-vendor">
-                            <div style="font-size: 13px; margin-bottom: 3px; color:#fff; font-weight:800;">${vEsc}</div>
+                const c = `vtheme-${vIndex % 6}`;
+                return `<th colspan="4" class="th-vendor ${c}">
+                            <div style="font-size: 13px; margin-bottom: 3px; font-weight:800; letter-spacing:0.4px;">${vEsc}</div>
                             <div class="freight-container">
                                 <span class="freight-label">FRETE R$</span>
                                 <input type="number" class="inp-freight-small" placeholder="0,00" value="${freteVal}" oninput="Cotacao.updateFreight('${vParam}', this.value)">
@@ -340,7 +341,15 @@ const Cotacao = {
                     <th class="th-stock">VENDA</th>`;
 
         if (this.state.vendedores.length > 0) {
-            html += this.state.vendedores.map(() => `<th style="width:30px; border-left: 3px solid #64748b; background:#1e293b;">✔</th><th>MARCA</th><th>CUSTO</th><th>VENDA</th>`).join('');
+            html += this.state.vendedores.map((v, vIndex) => {
+                const c = `vtheme-${vIndex % 6}`;
+                return `
+                    <th class="th-sub-vendor th-check ${c}" style="width:30px;">✔</th>
+                    <th class="th-sub-vendor ${c}">MARCA</th>
+                    <th class="th-sub-vendor ${c}">CUSTO</th>
+                    <th class="th-sub-vendor ${c}">VENDA</th>
+                `;
+            }).join('');
         } else {
             html += `<th></th>`;
         }
@@ -355,17 +364,27 @@ const Cotacao = {
 
         tbody.innerHTML = this.state.pecas.map(p => {
             const isStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
-            const rowClass = (p.vencedor || isStock) ? (isStock ? 'winner-is-stock' : 'has-winner') : 'no-winner';
+            
+            // Determina a cor do indicador na linha de acordo com o vendedor vencedor
+            let rowClass = 'no-winner';
+            if (isStock) {
+                rowClass = 'winner-is-stock';
+            } else if (p.vencedor) {
+                const vIdx = this.state.vendedores.indexOf(p.vencedor);
+                rowClass = (vIdx >= 0) ? `has-winner winner-vtheme-${vIdx % 6}` : 'has-winner';
+            }
 
             const stockData = p.precos['ESTOQUE'] || {};
+            const stockWinClass = isStock ? 'is-vendor-winner' : '';
+
             let stockCols = `
-                <td class="td-stock-section" style="text-align:center">
+                <td class="td-stock-section td-check ${stockWinClass}" style="text-align:center">
                     <input type="radio" name="win_${p.id}" class="radio-win radio-stock" ${isStock ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, 'ESTOQUE')" title="Marcar como item do estoque">
                 </td>
-                <td class="td-stock-section"><input type="text" class="inp-brand" placeholder="Marca" value="${stockData.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, 'ESTOQUE', this.value)"></td>
-                <td class="td-stock-section"><input type="number" class="inp-sm bg-custo" placeholder="0" value="${stockData.custo !== null && stockData.custo !== undefined ? stockData.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, 'ESTOQUE', this)"></td>
-                <td class="td-stock-section">
-                    <input class="inp-sale inp-stock-venda" 
+                <td class="td-stock-section ${stockWinClass}"><input type="text" class="inp-brand" placeholder="Marca" value="${stockData.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, 'ESTOQUE', this.value)"></td>
+                <td class="td-stock-section ${stockWinClass}"><input type="number" class="inp-sm bg-custo" placeholder="0" value="${stockData.custo !== null && stockData.custo !== undefined ? stockData.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, 'ESTOQUE', this)"></td>
+                <td class="td-stock-section ${stockWinClass}">
+                    <input class="inp-sale inp-stock-venda ${isStock ? 'inp-winner-venda' : ''}" 
                            value="${stockData.venda ? stockData.venda.toFixed(2) : ''}"
                            onchange="Cotacao.updateManualSellPrice(${p.id}, 'ESTOQUE', this.value)"
                            onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
@@ -374,18 +393,30 @@ const Cotacao = {
 
             let vendorCols = '';
             if (this.state.vendedores.length > 0) {
-                vendorCols = this.state.vendedores.map(v => {
+                vendorCols = this.state.vendedores.map((v, vIndex) => {
                     const pr = p.precos[v] || {};
-                    return `<td class="td-check"><input type="radio" name="win_${p.id}" class="radio-win" ${p.vencedor === v ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, '${v}')"></td>
-                            <td><input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, '${v}', this.value)"></td>
-                            <td><input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, '${v}', this)"></td>
-                            <td>
-                                <input class="inp-sale" 
-                                       data-vendor-venda="${v}" 
-                                       value="${pr.venda ? pr.venda.toFixed(2) : ''}"
-                                       onchange="Cotacao.updateManualSellPrice(${p.id}, '${v}', this.value)"
-                                       onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
-                            </td>`;
+                    const isWinner = (p.vencedor === v);
+                    const c = `vtheme-${vIndex % 6}`;
+                    const winClass = isWinner ? 'is-vendor-winner' : '';
+
+                    return `
+                        <td class="td-check ${c} ${winClass}">
+                            <input type="radio" name="win_${p.id}" class="radio-win" ${isWinner ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, '${v}')" title="Marcar ${v} como vencedor">
+                        </td>
+                        <td class="td-vendor-cell ${c} ${winClass}">
+                            <input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, '${v}', this.value)">
+                        </td>
+                        <td class="td-vendor-cell ${c} ${winClass}">
+                            <input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, '${v}', this)">
+                        </td>
+                        <td class="td-vendor-cell ${c} ${winClass}">
+                            <input class="inp-sale ${isWinner ? 'inp-winner-venda' : ''}" 
+                                   data-vendor-venda="${v}" 
+                                   value="${pr.venda ? pr.venda.toFixed(2) : ''}"
+                                   onchange="Cotacao.updateManualSellPrice(${p.id}, '${v}', this.value)"
+                                   onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
+                        </td>
+                    `;
                 }).join('');
             } else {
                 vendorCols = `<td style="background:#111a24;"></td>`;
@@ -420,10 +451,11 @@ const Cotacao = {
     renderTags() {
         const el = document.getElementById('cot-vendorTags');
         if (!el) return;
-        el.innerHTML = this.state.vendedores.map(v => {
+        el.innerHTML = this.state.vendedores.map((v, vIndex) => {
             const vEsc = UI ? UI.escapeHtml(v) : v;
             const vParam = v.replace(/'/g, "\\'");
-            return `<span class="cot-vendor-tag">${vEsc} <span class="remove-tag" onclick="Cotacao.removeVendor('${vParam}')">&times;</span></span>`;
+            const c = `vtheme-${vIndex % 6}`;
+            return `<span class="cot-vendor-tag ${c}">${vEsc} <span class="remove-tag" onclick="Cotacao.removeVendor('${vParam}')">&times;</span></span>`;
         }).join('');
     },
 
