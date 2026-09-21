@@ -373,7 +373,8 @@
     left: 48px;
     background: #0f1620;
     z-index: 10;
-    width: 250px;
+    width: 320px;
+    min-width: 320px;
     border-right: 2px solid var(--border);
 }
 
@@ -443,8 +444,63 @@
     z-index: 5;
     border-right: 2px solid var(--border);
     background: #111a24;
-    width: 250px;
-    padding: 3px;
+    width: 320px;
+    min-width: 320px;
+    padding: 3px 6px;
+}
+
+/* Container da Célula da Peça: Botão Toggle de Estoque + Input do Nome */
+.cot-part-cell-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.cot-part-cell-wrapper input.inp-name {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Botão Toggle de Peça em Estoque (Não Cotar) */
+.btn-stock-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 4px;
+    border: 1px solid #475569;
+    background: #1e293b;
+    color: #94a3b8;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    flex-shrink: 0;
+    height: 31px;
+}
+
+.btn-stock-toggle:hover {
+    border-color: #38bdf8;
+    color: #f8fafc;
+    background: #334155;
+}
+
+.btn-stock-toggle.is-stock {
+    border-color: #10b981;
+    background: #064e3b;
+    color: #34d399;
+    font-weight: 800;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+}
+
+.btn-stock-toggle.is-stock:hover {
+    background: #047857;
+    color: #ffffff;
+    border-color: #34d399;
 }
 
 #cot-mainTable td.td-stock-section {

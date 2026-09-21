@@ -53,6 +53,10 @@ const Cotacao = {
         if (!this.state.pecas || this.state.pecas.length === 0) {
             this.state.pecas = [];
             this.addPartRow();
+        } else {
+            this.state.pecas.forEach(p => {
+                if (p.vencedor === 'ESTOQUE') p.emEstoque = true;
+            });
         }
 
         this.updateLavagemButton();
@@ -348,13 +352,13 @@ const Cotacao = {
         if (!tbody) return;
 
         tbody.innerHTML = this.state.pecas.map(p => {
-            const isStockWinner = p.vencedor === 'ESTOQUE';
-            const rowClass = p.vencedor ? (isStockWinner ? 'winner-is-stock' : 'has-winner') : 'no-winner';
+            const isStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
+            const rowClass = (p.vencedor || isStock) ? (isStock ? 'winner-is-stock' : 'has-winner') : 'no-winner';
 
             const stockData = p.precos['ESTOQUE'] || {};
             let stockCols = `
                 <td class="td-stock-section" style="text-align:center">
-                    <input type="radio" name="win_${p.id}" class="radio-win radio-stock" ${isStockWinner ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, 'ESTOQUE')">
+                    <input type="radio" name="win_${p.id}" class="radio-win radio-stock" ${isStock ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, 'ESTOQUE')" title="Marcar como item do estoque">
                 </td>
                 <td class="td-stock-section"><input type="text" class="inp-brand" placeholder="Marca" value="${stockData.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, 'ESTOQUE', this.value)"></td>
                 <td class="td-stock-section"><input type="number" class="inp-sm bg-custo" placeholder="0" value="${stockData.custo !== null && stockData.custo !== undefined ? stockData.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, 'ESTOQUE', this)"></td>
@@ -385,14 +389,25 @@ const Cotacao = {
                 vendorCols = `<td style="background:#111a24;"></td>`;
             }
 
-            const warningIcon = !p.vencedor ? '<span style="color:#eab308; font-weight:bold; margin-left:3px; font-size:14px;" title="Selecione o vencedor">⚠</span>' : '';
+            const warningIcon = (!p.vencedor && !isStock) ? '<span style="color:#eab308; font-weight:bold; margin-left:3px; font-size:14px;" title="Selecione o vencedor ou marque Estoque">⚠</span>' : '';
 
             return `<tr class="${rowClass}" data-cot-id="${p.id}">
                         <td class="td-qty" style="display:flex; align-items:center; justify-content:center;">
                             <input type="number" class="inp-qty" value="${p.qty}" min="1" oninput="Cotacao.updateQty(${p.id}, this.value)">
                             ${warningIcon}
                         </td>
-                        <td class="td-part"><input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)" onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})"></td>
+                        <td class="td-part">
+                            <div class="cot-part-cell-wrapper">
+                                <button type="button" 
+                                        class="btn-stock-toggle ${isStock ? 'is-stock' : ''}" 
+                                        onclick="Cotacao.toggleStockOnly(${p.id})" 
+                                        title="${isStock ? 'Peça do Estoque Oficina:\n• NÃO será enviada na cotação para fornecedores (WhatsApp)\n• APARECERÁ no orçamento final do cliente (PDF/WhatsApp)' : 'Clique se já possui essa peça em estoque (não cotar no WhatsApp)'}">
+                                    <i class="ph ${isStock ? 'ph-package' : 'ph-storefront'}"></i>
+                                    <span>${isStock ? 'EM ESTOQUE' : 'COTAR'}</span>
+                                </button>
+                                <input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)" onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
+                            </div>
+                        </td>
                         ${stockCols}
                         ${vendorCols}
                         <td><button type="button" class="btn-remove-part" title="Remover Peça" onclick="Cotacao.removePart(${p.id})">&times;</button></td>
@@ -466,6 +481,35 @@ const Cotacao = {
     },
 
     /**
+     * Alterna se a peça é exclusiva do estoque físico (não vai para cotação)
+     */
+    toggleStockOnly(id) {
+        const p = this.state.pecas.find(x => x.id === id);
+        if (!p) return;
+
+        const isCurrentlyStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
+
+        if (!isCurrentlyStock) {
+            p.emEstoque = true;
+            p.vencedor = 'ESTOQUE';
+            if (!p.precos['ESTOQUE']) {
+                p.precos['ESTOQUE'] = { custo: null, venda: null, marca: 'ESTOQUE' };
+            }
+            if (UI) UI.toast(`"${(p.nome || 'Peça').toUpperCase()}" marcada no estoque! Não irá para o WhatsApp de cotação.`, 'info');
+        } else {
+            p.emEstoque = false;
+            if (p.vencedor === 'ESTOQUE') {
+                p.vencedor = null;
+            }
+            if (UI) UI.toast(`"${(p.nome || 'Peça').toUpperCase()}" desmarcada. Entrará na lista de cotação.`, 'info');
+        }
+
+        this.renderBody();
+        this.recalcAllPricesAndRefresh();
+        this.saveDraft();
+    },
+
+    /**
      * Define vencedor ou desmarca se clicar novamente no mesmo
      */
     setWinner(id, vendor) {
@@ -473,8 +517,10 @@ const Cotacao = {
         if (!p) return;
         if (p.vencedor === vendor) {
             p.vencedor = null; // Toggle off
+            if (vendor === 'ESTOQUE') p.emEstoque = false;
         } else {
             p.vencedor = vendor;
+            p.emEstoque = (vendor === 'ESTOQUE');
         }
         this.renderBody();
         this.recalcAllPricesAndRefresh();
@@ -482,7 +528,7 @@ const Cotacao = {
     },
 
     addPartRow() {
-        this.state.pecas.push({ id: Date.now(), qty: 1, nome: '', precos: {}, vencedor: null });
+        this.state.pecas.push({ id: Date.now(), qty: 1, nome: '', precos: {}, vencedor: null, emEstoque: false });
         this.renderAll();
         this.recalcAllPricesAndRefresh();
     },
@@ -686,22 +732,28 @@ const Cotacao = {
             let partsRowsHtml = '';
 
             this.state.pecas.forEach(p => {
-                if (p.vencedor && p.nome.trim()) {
+                const isStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
+                if ((p.vencedor || isStock) && p.nome && p.nome.trim()) {
                     hasParts = true;
+                    const win = isStock ? 'ESTOQUE' : p.vencedor;
+                    if (!p.precos[win]) p.precos[win] = {};
 
-                    let vendaFinal = p.precos[p.vencedor].venda;
+                    let vendaFinal = p.precos[win].venda;
                     if (vendaFinal === null || vendaFinal === undefined) {
-                        vendaFinal = this.calculateSellPrice(p.precos[p.vencedor].custo, p.vencedor, true);
+                        vendaFinal = this.calculateSellPrice(p.precos[win].custo, win, true);
+                    }
+                    if (vendaFinal === null || vendaFinal === undefined) {
+                        vendaFinal = 0;
                     }
 
-                    const unitVal = vendaFinal || 0;
-                    const qtyVal = p.qty || 1;
+                    const unitVal = Number(vendaFinal) || 0;
+                    const qtyVal = Number(p.qty) || 1;
                     const totalVal = unitVal * qtyVal;
                     totalPartsSum += totalVal;
 
                     const unitFmt = unitVal.toFixed(2);
                     const totalFmt = totalVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    const brandFmt = p.precos[p.vencedor].marca ? ` ${p.precos[p.vencedor].marca.toUpperCase()}` : '';
+                    const brandFmt = p.precos[win].marca ? ` ${p.precos[win].marca.toUpperCase()}` : '';
                     const fullDesc = `${p.nome.toUpperCase()}${brandFmt}`;
 
                     text += `${qtyVal}x ${fullDesc} - R$ ${unitFmt} un. = R$ ${totalFmt}\n`;
@@ -1053,8 +1105,10 @@ const Cotacao = {
             text = `COTAÇÃO - ${model || 'VEÍCULO'}\n`;
             if (plate) text += `PLACA: ${plate}\n`;
             text += `\n`;
-            const partsToQuote = this.state.pecas.filter(p => p.vencedor !== 'ESTOQUE' && p.nome && p.nome.trim() !== '');
-            if (partsToQuote.length === 0) text += "(Nenhuma peça para cotar)";
+            const partsToQuote = this.state.pecas.filter(p => !p.emEstoque && p.vencedor !== 'ESTOQUE' && p.nome && p.nome.trim() !== '');
+            const stockPartsCount = this.state.pecas.filter(p => (p.emEstoque || p.vencedor === 'ESTOQUE') && p.nome && p.nome.trim() !== '').length;
+
+            if (partsToQuote.length === 0) text += "(Nenhuma peça para cotar com fornecedores - itens já em estoque da oficina)\n";
             else partsToQuote.forEach(p => { text += `- ${p.nome.toUpperCase()}\n`; });
 
             if (area && panel) {
@@ -1062,13 +1116,17 @@ const Cotacao = {
                 panel.style.display = 'block';
                 area.select();
                 navigator.clipboard.writeText(text).catch(() => {});
-                if (UI) UI.toast('Lista de cotação copiada com sucesso!', 'success');
-                else await Modal.alert('Lista copiada com sucesso!', { title: 'Copiado', type: 'success' });
+                let msg = 'Lista de cotação copiada com sucesso!';
+                if (stockPartsCount > 0) {
+                    msg = `Cotação copiada! (${stockPartsCount} peça(s) em estoque não foram para a lista do Zap)`;
+                }
+                if (UI) UI.toast(msg, 'success');
+                else await Modal.alert(msg, { title: 'Copiado', type: 'success' });
             }
         } else if (type === 'order') {
             text = `PEDIDOS DE COMPRA - ${model || 'VEÍCULO'}\n`;
             if (plate) text += `PLACA: ${plate}\n`;
-            const buyItems = this.state.pecas.filter(p => p.vencedor && p.vencedor !== 'ESTOQUE');
+            const buyItems = this.state.pecas.filter(p => p.vencedor && p.vencedor !== 'ESTOQUE' && !p.emEstoque);
 
             this.state.vendedores.forEach(v => {
                 const items = buyItems.filter(p => p.vencedor === v);
@@ -1084,12 +1142,12 @@ const Cotacao = {
                 }
             });
 
-            const stockItems = this.state.pecas.filter(p => p.vencedor === 'ESTOQUE');
+            const stockItems = this.state.pecas.filter(p => (p.vencedor === 'ESTOQUE' || p.emEstoque) && p.nome && p.nome.trim());
             if (stockItems.length > 0) {
                 text += `\n📦 SEPARAR DO ESTOQUE FÍSICO:\n`;
                 stockItems.forEach(i => {
-                    const m = i.precos['ESTOQUE']?.marca ? `(${i.precos['ESTOQUE'].marca.toUpperCase()})` : '';
-                    text += ` [ ] ${i.qty}x ${i.nome} ${m}\n`;
+                    const m = (i.precos && i.precos['ESTOQUE'] && i.precos['ESTOQUE'].marca) ? `(${i.precos['ESTOQUE'].marca.toUpperCase()})` : '';
+                    text += ` [ ] ${i.qty}x ${i.nome.toUpperCase()} ${m}\n`;
                 });
             }
 
@@ -1138,12 +1196,14 @@ const Cotacao = {
             let totalInternalSale = 0;
 
             this.state.pecas.forEach(p => {
-                if (p.vencedor && p.precos[p.vencedor]) {
-                    const d = p.precos[p.vencedor];
+                const isStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
+                if ((p.vencedor || isStock) && p.nome && p.nome.trim()) {
+                    const win = isStock ? 'ESTOQUE' : p.vencedor;
+                    const d = (p.precos && p.precos[win]) ? p.precos[win] : {};
                     let custoFinal = d.custo || 0;
                     let vendaFinal = d.venda;
                     if (vendaFinal === null || vendaFinal === undefined) {
-                        vendaFinal = this.calculateSellPrice(d.custo, p.vencedor, true);
+                        vendaFinal = this.calculateSellPrice(d.custo, win, true);
                     }
                     vendaFinal = vendaFinal || 0;
 
@@ -1151,7 +1211,7 @@ const Cotacao = {
                     totalInternalCost += custoFinal * qtyVal;
                     totalInternalSale += vendaFinal * qtyVal;
 
-                    text += `${qtyVal}x ${p.nome.toUpperCase()} / R$ ${custoFinal.toFixed(2)} / R$ ${vendaFinal.toFixed(2)} / ${d.marca ? d.marca.toUpperCase() : 'S/ MARCA'} / ${p.vencedor}\n`;
+                    text += `${qtyVal}x ${p.nome.toUpperCase()} / R$ ${custoFinal.toFixed(2)} / R$ ${vendaFinal.toFixed(2)} / ${d.marca ? d.marca.toUpperCase() : 'S/ MARCA'} / ${win}\n`;
                     text += "--------------------------------------------------\n";
 
                     rowsHtml += `
@@ -1161,7 +1221,7 @@ const Cotacao = {
                             <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:right;">R$ ${custoFinal.toFixed(2)}</td>
                             <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:right;">R$ ${vendaFinal.toFixed(2)}</td>
                             <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:center;">${d.marca ? d.marca.toUpperCase() : '-'}</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:center; font-weight: 600;">${p.vencedor}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:center; font-weight: 600;">${win}</td>
                         </tr>
                     `;
                 }
@@ -1444,8 +1504,10 @@ const Cotacao = {
             let total = 0;
             if (x.state && Array.isArray(x.state.pecas)) {
                 x.state.pecas.forEach(p => {
-                    if (p.vencedor && p.precos && p.precos[p.vencedor]) {
-                        total += (Number(p.precos[p.vencedor].venda) || 0) * (Number(p.qty) || 1);
+                    const isStock = Boolean(p.emEstoque || p.vencedor === 'ESTOQUE');
+                    const win = isStock ? 'ESTOQUE' : p.vencedor;
+                    if (win && p.precos && p.precos[win]) {
+                        total += (Number(p.precos[win].venda) || 0) * (Number(p.qty) || 1);
                     }
                 });
             }
@@ -1499,7 +1561,10 @@ const Cotacao = {
             if (item) {
                 this.state = JSON.parse(JSON.stringify(item.state));
                 if (this.state.margin === undefined) this.state.margin = 90;
-                this.state.pecas.forEach(p => { if (!p.qty) p.qty = 1; });
+                this.state.pecas.forEach(p => { 
+                    if (!p.qty) p.qty = 1; 
+                    if (p.vencedor === 'ESTOQUE') p.emEstoque = true;
+                });
                 if (!this.state.labor) this.state.labor = { type: 'popular', rate: 200, items: [] };
                 if (!this.state.frete) this.state.frete = {};
                 if (this.state.lavagem === undefined) this.state.lavagem = false;
