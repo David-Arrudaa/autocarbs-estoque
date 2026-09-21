@@ -62,18 +62,45 @@ const Cotacao = {
         let val = input.value.toUpperCase();
         val = val.replace(/[^A-Z0-9]/g, '');
         input.value = val;
+
+        // Se currentId não estiver setado e o usuário digitou uma placa válida, verifica se já existe no histórico
+        if (!this.currentId && val.length >= 7) {
+            let h = [];
+            try { h = JSON.parse(localStorage.getItem('cotador_history') || '[]'); } catch (e) {}
+            const existing = h.find(x => {
+                const itemPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+                return itemPlate === val;
+            });
+            if (existing) {
+                this.currentId = existing.id;
+            }
+        }
+        this.updateStatusBadge();
     },
 
     updateStatusBadge() {
         const badge = document.getElementById('cot-statusBadge');
         const btnText = document.getElementById('cot-btnSaveText');
         const btn = document.getElementById('cot-btnSave');
+        const plate = document.getElementById('cot-carPlate')?.value?.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-        if (this.currentId) {
+        let isExisting = false;
+        let h = [];
+        try {
+            h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+        } catch (e) {}
+
+        if (this.currentId && h.some(x => String(x.id) === String(this.currentId))) {
+            isExisting = true;
+        } else if (plate && h.some(x => (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '') === plate)) {
+            isExisting = true;
+        }
+
+        if (isExisting) {
             if (badge) {
                 badge.className = 'cot-status-badge cot-badge-editing';
                 badge.innerHTML = `<i class="ph ph-note-pencil"></i> Editando Salvo`;
-                badge.title = `Editando cotação salva existente (ID: ${this.currentId})`;
+                badge.title = 'Editando cotação salva existente (atualiza sem duplicar)';
             }
             if (btnText) btnText.textContent = 'ATUALIZAR';
             if (btn) btn.title = 'Atualizar cotação existente (não cria duplicada)';
@@ -1341,16 +1368,30 @@ const Cotacao = {
         const cleanPlate = p.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
         let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
-        const existingIndex = this.currentId ? h.findIndex(x => String(x.id) === String(this.currentId)) : -1;
-        const isUpdate = existingIndex >= 0;
 
-        const targetId = isUpdate ? this.currentId : Date.now();
+        // 1. Procura primeiro pelo ID ativo da cotação
+        let existingIndex = -1;
+        if (this.currentId) {
+            existingIndex = h.findIndex(x => String(x.id) === String(this.currentId));
+        }
+
+        // 2. Se não encontrou por ID (ou se currentId era nulo), busca se já existe orçamento para a mesma placa!
+        if (existingIndex < 0 && cleanPlate) {
+            existingIndex = h.findIndex(x => {
+                const itemPlate = (x.plate || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+                return itemPlate === cleanPlate;
+            });
+        }
+
+        const isUpdate = existingIndex >= 0;
+        const targetId = isUpdate ? (h[existingIndex].id || this.currentId || Date.now()) : Date.now();
+
         const r = {
             id: targetId,
             date: new Date().toLocaleString('pt-BR'),
             model: m,
             plate: cleanPlate,
-            state: this.state
+            state: JSON.parse(JSON.stringify(this.state))
         };
 
         if (isUpdate) {
@@ -1391,6 +1432,19 @@ const Cotacao = {
 
     loadHistoryItems() {
         let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+
+        // Garante que todo item legado do histórico possua um id válido único
+        let migrated = false;
+        h.forEach((item, idx) => {
+            if (!item.id) {
+                item.id = Date.now() + idx;
+                migrated = true;
+            }
+        });
+        if (migrated) {
+            localStorage.setItem('cotador_history', JSON.stringify(h));
+        }
+
         const term = (document.getElementById('cot-searchHistory')?.value || '').toUpperCase();
         const container = document.getElementById('cot-historyList');
         if (!container) return;
@@ -1423,12 +1477,12 @@ const Cotacao = {
                 html += '<p style="text-align:center; color:var(--text-secondary);">Nenhum orçamento encontrado nesta pasta.</p>';
             } else {
                 html += carQuotes.map(x => `
-                    <div class="history-item" onclick="Cotacao.loadItem(${x.id})">
+                    <div class="history-item" onclick="Cotacao.loadItem('${x.id}')">
                         <div>
                             <strong style="color:#ffffff;">${x.date}</strong><br>
                             <small style="color:var(--text-secondary)">${x.model || 'Sem Modelo'}</small>
                         </div>
-                        <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem(${x.id}, event)" title="Excluir este orçamento">
+                        <button type="button" class="btn-red-cot" style="padding:6px 10px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
                             <i class="ph ph-trash"></i>
                         </button>
                     </div>
@@ -1503,9 +1557,10 @@ const Cotacao = {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
 
         const performLoad = () => {
-            const item = JSON.parse(localStorage.getItem('cotador_history') || '[]').find(x => String(x.id) === String(id));
+            let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
+            const item = h.find(x => String(x.id) === String(id));
             if (item) {
-                this.state = item.state;
+                this.state = JSON.parse(JSON.stringify(item.state));
                 if (this.state.margin === undefined) this.state.margin = 90;
                 this.state.pecas.forEach(p => { if (!p.qty) p.qty = 1; });
                 if (!this.state.labor) this.state.labor = { type: 'popular', rate: 200, items: [] };
@@ -1529,23 +1584,16 @@ const Cotacao = {
         };
 
         if (hasData) {
-            const salvar = await Modal.confirm("Deseja salvar a cotação atual antes de abrir este orçamento?", {
-                title: 'Salvar Atual',
+            const salvar = await Modal.confirm("Deseja salvar a cotação atual antes de abrir a outra?", {
+                title: 'Trocar de Cotação',
                 type: 'question',
                 confirmText: 'Salvar e Abrir',
-                cancelText: 'Não Salvar'
+                cancelText: 'Abrir sem Salvar'
             });
             if (salvar) {
-                if (this.saveCurrent(false)) performLoad();
-            } else {
-                const trocar = await Modal.confirm("Deseja trocar sem salvar a cotação atual?", {
-                    title: 'Descartar Atual',
-                    type: 'danger',
-                    confirmText: 'Sim, Abrir',
-                    cancelText: 'Cancelar'
-                });
-                if (trocar) performLoad();
+                this.saveCurrent(false);
             }
+            performLoad();
         } else {
             performLoad();
         }
