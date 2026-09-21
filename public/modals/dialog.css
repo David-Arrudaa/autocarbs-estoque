@@ -1,0 +1,204 @@
+/**
+ * =========================================================
+ * AUTOCAR BS - ESTILOS DO MODAL DE DIÁLOGO GLOBAL
+ * Localização: public/modals/dialog.css
+ * =========================================================
+ */
+
+.app-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(4, 8, 14, 0.78);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+    box-sizing: border-box;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.app-dialog-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.app-dialog-card {
+    background: #0e1724;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 440px;
+    padding: 24px 22px 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transform: scale(0.92) translateY(10px);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+
+.app-dialog-overlay.active .app-dialog-card {
+    transform: scale(1) translateY(0);
+}
+
+/* Ícone central */
+.app-dialog-icon-wrapper {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.85rem;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Título e Mensagem */
+.app-dialog-content {
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.app-dialog-title {
+    margin: 0 0 8px 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.2px;
+}
+
+.app-dialog-message {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: #94a3b8;
+    white-space: pre-line;
+    word-break: break-word;
+}
+
+/* Ações / Botões */
+.app-dialog-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.app-dialog-actions button {
+    flex: 1;
+    min-height: 42px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.15s, background-color 0.15s, box-shadow 0.15s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-dialog-actions button:hover {
+    transform: translateY(-1px);
+}
+
+.app-dialog-actions button:active {
+    transform: translateY(0);
+}
+
+.app-dialog-btn-cancel {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #334155 !important;
+}
+
+.app-dialog-btn-cancel:hover {
+    background: #334155 !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   VARIAÇÕES SEMÂNTICAS (WARNING, DANGER, SUCCESS, INFO)
+   ========================================================= */
+
+/* AVISO / WARNING */
+.app-dialog-card.dialog-warning .app-dialog-icon-wrapper {
+    background: rgba(234, 179, 8, 0.15);
+    color: #facc15;
+    border: 2px solid rgba(234, 179, 8, 0.3);
+}
+.app-dialog-card.dialog-warning .app-dialog-btn-confirm {
+    background: #eab308;
+    color: #0f172a;
+}
+.app-dialog-card.dialog-warning .app-dialog-btn-confirm:hover {
+    background: #facc15;
+}
+
+/* PERIGO / DANGER */
+.app-dialog-card.dialog-danger .app-dialog-icon-wrapper {
+    background: rgba(220, 38, 38, 0.15);
+    color: #f87171;
+    border: 2px solid rgba(220, 38, 38, 0.35);
+}
+.app-dialog-card.dialog-danger .app-dialog-btn-confirm {
+    background: #dc2626;
+    color: #ffffff;
+}
+.app-dialog-card.dialog-danger .app-dialog-btn-confirm:hover {
+    background: #ef4444;
+}
+
+/* SUCESSO / SUCCESS */
+.app-dialog-card.dialog-success .app-dialog-icon-wrapper {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 2px solid rgba(34, 197, 94, 0.3);
+}
+.app-dialog-card.dialog-success .app-dialog-btn-confirm {
+    background: #16a34a;
+    color: #ffffff;
+}
+.app-dialog-card.dialog-success .app-dialog-btn-confirm:hover {
+    background: #22c55e;
+}
+
+/* INFORMAÇÃO / INFO */
+.app-dialog-card.dialog-info .app-dialog-icon-wrapper {
+    background: rgba(14, 165, 233, 0.15);
+    color: #38bdf8;
+    border: 2px solid rgba(14, 165, 233, 0.3);
+}
+.app-dialog-card.dialog-info .app-dialog-btn-confirm {
+    background: #0284c7;
+    color: #ffffff;
+}
+.app-dialog-card.dialog-info .app-dialog-btn-confirm:hover {
+    background: #0ea5e9;
+}
+
+/* PERGUNTA / QUESTION */
+.app-dialog-card.dialog-question .app-dialog-icon-wrapper {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 2px solid rgba(168, 85, 247, 0.3);
+}
+.app-dialog-card.dialog-question .app-dialog-btn-confirm {
+    background: #9333ea;
+    color: #ffffff;
+}
+.app-dialog-card.dialog-question .app-dialog-btn-confirm:hover {
+    background: #a855f7;
+}

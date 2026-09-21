@@ -470,7 +470,12 @@ const Usuarios = {
      * Exclui um colaborador após confirmação
      */
     async excluir(id, nome) {
-        const confirmou = confirm(`Tem certeza que deseja excluir o colaborador "${nome}"?\n\nEsta ação não poderá ser desfeita.`);
+        const confirmou = await Modal.confirm(`Tem certeza que deseja excluir o colaborador "${nome}"?\n\nEsta ação não poderá ser desfeita.`, {
+            title: 'Excluir Colaborador',
+            type: 'danger',
+            confirmText: 'Excluir',
+            cancelText: 'Cancelar'
+        });
         if (!confirmou) return;
 
         try {

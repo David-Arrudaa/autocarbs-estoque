@@ -486,8 +486,13 @@ const Cotacao = {
         }
     },
 
-    removeVendor(name) {
-        if (confirm(`Remover coluna do vendedor "${name}"?`)) {
+    async removeVendor(name) {
+        const confirmou = await Modal.confirm(`Deseja realmente remover a coluna do vendedor "${name}"?`, {
+            title: 'Remover Vendedor',
+            confirmText: 'Remover',
+            danger: true
+        });
+        if (confirmou) {
             this.state.vendedores = this.state.vendedores.filter(v => v !== name);
             delete this.state.frete[name];
             this.renderAll();
@@ -611,7 +616,7 @@ const Cotacao = {
     // =========================================================
     // GERAÇÃO DE ORÇAMENTO WHATSAPP & IMPRESSÃO PDF (JOGO RÁPIDO)
     // =========================================================
-    generateBudgetWithLabor(mode = 'text') {
+    async generateBudgetWithLabor(mode = 'text') {
         try {
             this.recalcAllPricesAndRefresh();
 
@@ -624,7 +629,10 @@ const Cotacao = {
 
             for (const vendor of usedVendors) {
                 if (this.state.frete[vendor] === undefined || this.state.frete[vendor] === null) {
-                    alert(`⚠️ ATENÇÃO: O vendedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete (coloque 0 se for grátis) antes de gerar o orçamento.`);
+                    await Modal.alert(`O vendedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete (digite 0 se for grátis) antes de gerar o orçamento.`, {
+                        title: 'Frete Não Informado',
+                        type: 'warning'
+                    });
                     return;
                 }
             }
@@ -733,7 +741,7 @@ const Cotacao = {
                     area.select();
                     navigator.clipboard.writeText(text).catch(() => {});
                     if (UI) UI.toast('Orçamento copiado para a área de transferência!', 'success');
-                    else alert('Orçamento Copiado para o WhatsApp!');
+                    else await Modal.alert('Orçamento copiado para a área de transferência!', { title: 'Copiado', type: 'success' });
                 }
             } else if (mode === 'pdf') {
                 const now = new Date();
@@ -741,7 +749,10 @@ const Cotacao = {
 
                 const printWindow = window.open('', '', 'width=950,height=750');
                 if (!printWindow) {
-                    alert("O navegador bloqueou a abertura da impressão. Por favor, permita pop-ups para este site.");
+                    await Modal.alert("O navegador bloqueou a abertura da impressão. Por favor, permita pop-ups para este site e tente novamente.", {
+                        title: 'Impressão Bloqueada',
+                        type: 'warning'
+                    });
                     return;
                 }
 
@@ -969,7 +980,7 @@ const Cotacao = {
                 printWindow.document.close();
             }
         } catch (error) {
-            alert("Erro ao gerar orçamento: " + error.message);
+            await Modal.alert("Erro ao gerar orçamento: " + error.message, { title: "Erro no Orçamento", type: "danger" });
             console.error(error);
         }
     },
@@ -977,7 +988,7 @@ const Cotacao = {
     // =========================================================
     // AÇÕES RÁPIDAS (COPIAR COTAÇÃO, PEDIDOS, LISTA INTERNA)
     // =========================================================
-    generateText(type) {
+    async generateText(type) {
         const usedVendors = new Set();
         this.state.pecas.forEach(p => {
             if (p.vencedor && p.vencedor !== 'ESTOQUE') {
@@ -987,7 +998,10 @@ const Cotacao = {
 
         for (const vendor of usedVendors) {
             if (this.state.frete[vendor] === undefined || this.state.frete[vendor] === null) {
-                alert(`⚠️ ATENÇÃO: O vendedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete (coloque 0 se for grátis) antes de gerar a lista.`);
+                await Modal.alert(`O vendedor "${vendor}" tem peças selecionadas mas está sem valor de FRETE.\n\nPor favor, preencha o frete no cabeçalho (coloque 0 se for grátis) antes de gerar a lista.`, {
+                    title: 'Frete Não Informado',
+                    type: 'warning'
+                });
                 return;
             }
         }
@@ -1012,7 +1026,7 @@ const Cotacao = {
                 area.select();
                 navigator.clipboard.writeText(text).catch(() => {});
                 if (UI) UI.toast('Lista de cotação copiada com sucesso!', 'success');
-                else alert('Lista Copiada!');
+                else await Modal.alert('Lista copiada com sucesso!', { title: 'Copiado', type: 'success' });
             }
         } else if (type === 'order') {
             text = `PEDIDOS DE COMPRA - ${model || 'VEÍCULO'}\n`;
@@ -1049,7 +1063,13 @@ const Cotacao = {
                 navigator.clipboard.writeText(text).catch(() => {});
 
                 if (buyItems.length > 0) {
-                    if (confirm("Texto dos pedidos copiado!\n\nDeseja sincronizar essas peças no controle de pedidos?")) {
+                    const sincronizar = await Modal.confirm("Texto dos pedidos copiado para a área de transferência!\n\nDeseja sincronizar essas peças no controle de pedidos?", {
+                        title: 'Sincronizar Pedidos',
+                        type: 'question',
+                        confirmText: 'Sincronizar',
+                        cancelText: 'Apenas Copiar'
+                    });
+                    if (sincronizar) {
                         const today = new Date().toLocaleDateString('pt-BR');
                         const orderData = {
                             id: Date.now(),
@@ -1127,7 +1147,10 @@ const Cotacao = {
             const dateStr = new Date().toLocaleDateString('pt-BR');
             const printWindow = window.open('', '', 'width=950,height=750');
             if (!printWindow) {
-                alert("Seu navegador bloqueou o PDF. Por favor, permita pop-ups para este site e tente novamente.");
+                await Modal.alert("Seu navegador bloqueou a abertura do PDF. Por favor, permita pop-ups para este site e tente novamente.", {
+                    title: 'Impressão Bloqueada',
+                    type: 'warning'
+                });
                 return;
             }
             printWindow.document.write(`
@@ -1215,13 +1238,25 @@ const Cotacao = {
     // =========================================================
     // LIMPAR TELA & NOVO LIMPO INTELIGENTE
     // =========================================================
-    smartNewQuote() {
+    async smartNewQuote() {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
         if (hasData) {
-            if (confirm("Deseja salvar a cotação atual antes de limpar?")) {
+            const salvar = await Modal.confirm("Deseja salvar a cotação atual antes de limpar a tela?", {
+                title: 'Nova Cotação',
+                type: 'question',
+                confirmText: 'Salvar e Limpar',
+                cancelText: 'Não Salvar'
+            });
+            if (salvar) {
                 if (this.saveCurrent(false)) this.clearScreen();
             } else {
-                if (confirm("Deseja apagar a tela sem salvar?")) this.clearScreen();
+                const descartar = await Modal.confirm("Tem certeza que deseja apagar a tela sem salvar os dados?", {
+                    title: 'Descartar Cotação',
+                    type: 'danger',
+                    confirmText: 'Sim, Limpar',
+                    cancelText: 'Cancelar'
+                });
+                if (descartar) this.clearScreen();
             }
         } else {
             this.clearScreen();
@@ -1259,14 +1294,14 @@ const Cotacao = {
 
         if (!m) {
             if (UI) UI.toast('Informe o modelo do veículo para salvar!', 'warning');
-            else alert('Digite o modelo do veículo!');
+            else Modal.alert('Digite o modelo do veículo!', { title: 'Modelo Obrigatório', type: 'warning' });
             document.getElementById('cot-carModel')?.focus();
             return false;
         }
         if (!p) {
             if (showMessage) {
                 if (UI) UI.toast('Informe a PLACA para salvar no histórico!', 'warning');
-                else alert('Digite a PLACA para salvar no histórico!');
+                else Modal.alert('Digite a PLACA para salvar no histórico!', { title: 'Placa Obrigatória', type: 'warning' });
                 document.getElementById('cot-carPlate')?.focus();
             }
             return false;
@@ -1291,7 +1326,6 @@ const Cotacao = {
         this.currentId = r.id;
         if (showMessage) {
             if (UI) UI.toast(`Orçamento de ${cleanPlate} salvo no histórico!`, 'success');
-            else alert('Orçamento salvo no histórico!');
         }
         return true;
     },
@@ -1421,7 +1455,7 @@ const Cotacao = {
         this.loadHistoryItems();
     },
 
-    loadItem(id) {
+    async loadItem(id) {
         const hasData = this.state.pecas.length > 0 && (this.state.pecas[0].nome !== '' || (document.getElementById('cot-carModel')?.value || '') !== '');
 
         const performLoad = () => {
@@ -1449,19 +1483,37 @@ const Cotacao = {
         };
 
         if (hasData) {
-            if (confirm("Deseja salvar a cotação atual antes de abrir este orçamento?")) {
+            const salvar = await Modal.confirm("Deseja salvar a cotação atual antes de abrir este orçamento?", {
+                title: 'Salvar Atual',
+                type: 'question',
+                confirmText: 'Salvar e Abrir',
+                cancelText: 'Não Salvar'
+            });
+            if (salvar) {
                 if (this.saveCurrent(false)) performLoad();
             } else {
-                if (confirm("Trocar sem salvar o atual?")) performLoad();
+                const trocar = await Modal.confirm("Deseja trocar sem salvar a cotação atual?", {
+                    title: 'Descartar Atual',
+                    type: 'danger',
+                    confirmText: 'Sim, Abrir',
+                    cancelText: 'Cancelar'
+                });
+                if (trocar) performLoad();
             }
         } else {
             performLoad();
         }
     },
 
-    deleteItem(id, ev) {
+    async deleteItem(id, ev) {
         if (ev) ev.stopPropagation();
-        if (confirm('Tem certeza que deseja apagar este orçamento permanentemente?')) {
+        const confirmou = await Modal.confirm('Tem certeza que deseja apagar este orçamento permanentemente?', {
+            title: 'Excluir Orçamento',
+            type: 'danger',
+            confirmText: 'Excluir',
+            cancelText: 'Cancelar'
+        });
+        if (confirmou) {
             let h = JSON.parse(localStorage.getItem('cotador_history') || '[]');
             const newH = h.filter(x => x.id !== id);
             localStorage.setItem('cotador_history', JSON.stringify(newH));
@@ -1486,7 +1538,7 @@ const Cotacao = {
         const historyData = localStorage.getItem('cotador_history');
         if (!historyData || historyData === '[]') {
             if (UI) UI.toast('Seu histórico está vazio. Não há nada para exportar.', 'warning');
-            else alert('Seu histórico está vazio.');
+            else Modal.alert('Seu histórico está vazio. Não há nada para exportar.', { title: 'Histórico Vazio', type: 'info' });
             return;
         }
         const blob = new Blob([historyData], { type: 'application/json' });
@@ -1507,12 +1559,19 @@ const Cotacao = {
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = async (e) => {
             try {
                 const importedData = JSON.parse(e.target.result);
                 if (!Array.isArray(importedData)) throw new Error("Formato inválido.");
 
-                if (confirm(`Deseja importar ${importedData.length} orçamentos ao seu histórico atual?`)) {
+                const importar = await Modal.confirm(`Deseja importar ${importedData.length} orçamentos ao seu histórico atual?`, {
+                    title: 'Importar Orçamentos',
+                    type: 'question',
+                    confirmText: 'Importar',
+                    cancelText: 'Cancelar'
+                });
+
+                if (importar) {
                     let currentHistory = JSON.parse(localStorage.getItem('cotador_history') || '[]');
                     const existingIds = new Set(currentHistory.map(item => item.id));
                     let addedCount = 0;
@@ -1525,12 +1584,14 @@ const Cotacao = {
                     });
 
                     localStorage.setItem('cotador_history', JSON.stringify(currentHistory));
-                    if (UI) UI.toast(`Importação concluída! ${addedCount} novos orçamentos foram adicionados.`, 'success');
-                    else alert(`Importação concluída! ${addedCount} novos orçamentos adicionados.`);
+                    if (UI) UI.toast(`Importação concluída! ${addedCount} novos orçamentos adicionados.`, 'success');
                     this.loadHistoryItems();
                 }
             } catch (error) {
-                alert("Erro: O arquivo não é um backup JSON válido do sistema.");
+                await Modal.alert("O arquivo selecionado não é um backup JSON válido do sistema.", {
+                    title: 'Erro na Importação',
+                    type: 'danger'
+                });
                 console.error(error);
             }
             event.target.value = '';
