@@ -505,6 +505,31 @@ const Cotacao = {
         radios.forEach(r => { if (r.value === this.state.labor.type) r.checked = true; });
         const inputRate = document.getElementById('cot-laborRate');
         if (inputRate) inputRate.value = this.state.labor.rate || 200;
+
+        if (!this.state.clientInfo) {
+            this.state.clientInfo = {
+                name: '',
+                phone: '',
+                km: '',
+                docNumber: this.currentId ? String(this.currentId).slice(-3) : '907',
+                defect: 'Substituição de óleo e filtros',
+                responsible: (window.Auth && window.Auth.getUser && window.Auth.getUser()?.name) || 'Alessandra'
+            };
+        }
+
+        const clientNameEl = document.getElementById('cot-clientName');
+        if (clientNameEl) clientNameEl.value = this.state.clientInfo.name || '';
+        const clientPhoneEl = document.getElementById('cot-clientPhone');
+        if (clientPhoneEl) clientPhoneEl.value = this.state.clientInfo.phone || '';
+        const clientKmEl = document.getElementById('cot-clientKm');
+        if (clientKmEl) clientKmEl.value = this.state.clientInfo.km || '';
+        const docNumEl = document.getElementById('cot-docNumber');
+        if (docNumEl) docNumEl.value = this.state.clientInfo.docNumber || (this.currentId ? String(this.currentId).slice(-3) : '907');
+        const defectEl = document.getElementById('cot-clientDefect');
+        if (defectEl) defectEl.value = this.state.clientInfo.defect || 'Substituição de óleo e filtros';
+        const respEl = document.getElementById('cot-docResponsible');
+        if (respEl) respEl.value = this.state.clientInfo.responsible || (window.Auth && window.Auth.getUser && window.Auth.getUser()?.name) || 'Alessandra';
+
         const container = document.getElementById('cot-laborList');
         if (container) {
             container.innerHTML = '';
@@ -631,13 +656,33 @@ const Cotacao = {
             const model = (document.getElementById('cot-carModel')?.value || '').toUpperCase();
             const plate = (document.getElementById('cot-carPlate')?.value || '').toUpperCase();
 
+            // Metadados do modal
+            const clientName = (document.getElementById('cot-clientName')?.value || '').trim() || 'CLIENTE NÃO INFORMADO';
+            const clientPhone = (document.getElementById('cot-clientPhone')?.value || '').trim();
+            const clientKm = (document.getElementById('cot-clientKm')?.value || '').trim();
+            const docNumber = (document.getElementById('cot-docNumber')?.value || '').trim() || (this.currentId ? String(this.currentId).slice(-3) : '907');
+            const clientDefect = (document.getElementById('cot-clientDefect')?.value || '').trim() || 'SUBSTITUIÇÃO DE OLEO E FILTRO / REVISÃO PREVENTIVA';
+            const docResponsible = (document.getElementById('cot-docResponsible')?.value || '').trim() || (window.Auth && window.Auth.getUser && window.Auth.getUser()?.name) || 'Alessandra';
+
+            // Salvar no estado para persistência
+            this.state.clientInfo = {
+                name: clientName,
+                phone: clientPhone,
+                km: clientKm,
+                docNumber: docNumber,
+                defect: clientDefect,
+                responsible: docResponsible
+            };
+            this.saveDraft();
+
             let text = `ORÇAMENTO - ${model || 'VEÍCULO NÃO INFORMADO'}\n`;
             if (plate) text += `PLACA: ${plate}\n`;
+            if (clientName && clientName !== 'CLIENTE NÃO INFORMADO') text += `CLIENTE: ${clientName}\n`;
             text += `\nPEÇAS:\n\n`;
 
             let totalPartsSum = 0;
             let hasParts = false;
-            let partsHtml = '';
+            let partsRowsHtml = '';
 
             this.state.pecas.forEach(p => {
                 if (p.vencedor && p.nome.trim()) {
@@ -649,21 +694,23 @@ const Cotacao = {
                     }
 
                     const unitVal = vendaFinal || 0;
-                    const totalVal = unitVal * (p.qty || 1);
+                    const qtyVal = p.qty || 1;
+                    const totalVal = unitVal * qtyVal;
                     totalPartsSum += totalVal;
 
-                    const unitFmt = unitVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const unitFmt = unitVal.toFixed(2);
                     const totalFmt = totalVal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                    const brandFmt = p.precos[p.vencedor].marca ? ` (${p.precos[p.vencedor].marca.toUpperCase()})` : '';
+                    const brandFmt = p.precos[p.vencedor].marca ? ` ${p.precos[p.vencedor].marca.toUpperCase()}` : '';
+                    const fullDesc = `${p.nome.toUpperCase()}${brandFmt}`;
 
-                    text += `${p.qty}x ${p.nome.toUpperCase()}${brandFmt} - R$ ${unitFmt} un. = R$ ${totalFmt}\n`;
+                    text += `${qtyVal}x ${fullDesc} - R$ ${unitFmt} un. = R$ ${totalFmt}\n`;
 
-                    partsHtml += `
+                    partsRowsHtml += `
                         <tr>
-                            <td style="text-align:center;">${p.qty}x</td>
-                            <td>${p.nome.toUpperCase()}${brandFmt}</td>
-                            <td style="text-align:right;">R$ ${unitFmt}</td>
-                            <td style="text-align:right;">R$ ${totalFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left;">${fullDesc}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center;">${qtyVal}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">${unitFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">R$ ${totalFmt}</td>
                         </tr>
                     `;
                 }
@@ -671,7 +718,7 @@ const Cotacao = {
 
             if (!hasParts) {
                 text += "(Nenhuma peça selecionada)\n";
-                partsHtml += '<tr><td colspan="4" style="text-align:center;">Nenhuma peça selecionada</td></tr>';
+                partsRowsHtml += '<tr><td colspan="4" style="border: 1px solid #cbd5e1; padding: 8px; text-align:center;">Nenhuma peça selecionada</td></tr>';
             }
 
             text += `\n----------------------------------\n`;
@@ -679,22 +726,25 @@ const Cotacao = {
 
             let totalLaborSum = 0;
             let hasLabor = false;
-            let laborHtml = '';
+            let laborRowsHtml = '';
 
             this.state.labor.items.forEach(item => {
                 if (item.desc && item.desc.trim()) {
                     hasLabor = true;
-                    totalLaborSum += item.total || 0;
-                    const priceFmt = (item.total || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    const totalItem = item.total || 0;
+                    const hoursVal = item.hours || 1;
+                    totalLaborSum += totalItem;
+                    const priceUnitFmt = (totalItem / (hoursVal || 1)).toFixed(2);
+                    const priceTotalFmt = totalItem.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                    text += `${item.desc.toUpperCase()} = R$ ${priceFmt}\n`;
+                    text += `${item.desc.toUpperCase()} = R$ ${priceTotalFmt}\n`;
 
-                    laborHtml += `
+                    laborRowsHtml += `
                         <tr>
-                            <td style="text-align:center;">-</td>
-                            <td>${item.desc.toUpperCase()}</td>
-                            <td style="text-align:right;">-</td>
-                            <td style="text-align:right;">R$ ${priceFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left;">${item.desc.toUpperCase()}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: center;">${hoursVal}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">${priceUnitFmt}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: right;">R$ ${priceTotalFmt}</td>
                         </tr>
                     `;
                 }
@@ -702,7 +752,6 @@ const Cotacao = {
 
             if (!hasLabor) {
                 text += "(Sem mão de obra inclusa)\n";
-                laborHtml += '<tr><td colspan="4" style="text-align:center;">Nenhuma mão de obra inclusa</td></tr>';
             }
 
             const grandTotal = totalPartsSum + totalLaborSum;
@@ -712,10 +761,10 @@ const Cotacao = {
 
             text += `\n==================================\n`;
             text += `TOTAL PEÇAS: R$ ${partsSumFmt}\n`;
-            text += `TOTAL MÃO DE OBRA: R$ ${laborSumFmt}\n`;
+            if (hasLabor) text += `TOTAL MÃO DE OBRA: R$ ${laborSumFmt}\n`;
             text += `\nTOTAL GERAL: R$ ${grandTotalFmt}\n`;
             text += `==================================\n`;
-            text += `\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 10 dias.*`;
+            text += `\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 7 dias.*`;
 
             if (mode === 'text') {
                 const area = document.getElementById('cot-outputText');
@@ -729,81 +778,308 @@ const Cotacao = {
                     else alert('Orçamento Copiado para o WhatsApp!');
                 }
             } else if (mode === 'pdf') {
-                const dateStr = new Date().toLocaleDateString('pt-BR');
-                const printWindow = window.open('', '', 'width=900,height=700');
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('pt-BR');
+                const finalDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                const dateFinalStr = finalDate.toLocaleDateString('pt-BR');
+
+                const printWindow = window.open('', '', 'width=950,height=750');
                 if (!printWindow) {
-                    alert("O navegador bloqueou a abertura do PDF. Por favor, permita pop-ups para este site.");
+                    alert("O navegador bloqueou a abertura da impressão. Por favor, permita pop-ups para este site.");
                     return;
                 }
+
+                // Tabela de Serviços opcional
+                let laborTableBlock = '';
+                if (hasLabor) {
+                    laborTableBlock = `
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 11px;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; font-weight: bold; background: #fff;">Serviço</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; width: 80px; text-align: center; font-weight: bold; background: #fff;">Quantidade</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; width: 100px; text-align: right; font-weight: bold; background: #fff;">Preço unit.</th>
+                                    <th style="border: 1px solid #cbd5e1; padding: 6px 8px; width: 110px; text-align: right; font-weight: bold; background: #fff;">Sub-total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${laborRowsHtml}
+                                <tr>
+                                    <td colspan="4" style="border: 1px solid #cbd5e1; text-align: right; font-weight: bold; padding: 6px 10px; background: #fff;">
+                                        Total: R$ ${laborSumFmt}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                }
+
                 printWindow.document.write(`
-                    <html>
+                    <!DOCTYPE html>
+                    <html lang="pt-BR">
                     <head>
-                        <title>Orçamento_${plate || 'S_PLACA'}</title>
+                        <meta charset="UTF-8">
+                        <title>Orçamento_${plate || docNumber}</title>
                         <style>
-                            body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 25px; color: #1e293b; background: #fff; }
-                            .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #D60000; padding-bottom: 12px; margin-bottom: 20px; }
-                            .logo { font-size: 26px; font-weight: 900; font-style: italic; color: #0f172a; }
-                            .logo span { color: #D60000; font-style: normal; }
-                            .info { text-align: right; font-size: 12px; line-height: 1.5; color: #475569; }
-                            h2 { text-align: center; color: #0f172a; margin-bottom: 18px; font-size: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
-                            table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px; }
-                            th, td { border: 1px solid #cbd5e1; padding: 7px 10px; }
-                            th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; text-transform: uppercase; font-size: 10px; }
-                            .section-title { background-color: #e2e8f0 !important; font-size: 11px; text-align: left !important; padding-left: 10px; font-weight: 800; }
-                            .total-box { width: 320px; float: right; border: 2px solid #0f172a; padding: 12px; margin-top: 10px; background: #f8fafc; border-radius: 4px; }
-                            .total-line { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; font-weight: 600; }
-                            .grand-total { font-weight: 900; font-size: 17px; border-top: 2px solid #0f172a; padding-top: 8px; margin-top: 8px; color: #D60000; }
-                            .footer-note { clear: both; margin-top: 45px; font-size: 10px; color: #64748b; text-align: center; font-style: italic; }
-                            tr:nth-child(even) { background-color: #f8fafc; }
+                            @page {
+                                size: A4 portrait;
+                                margin: 12mm 15mm;
+                            }
+                            * {
+                                box-sizing: border-box;
+                            }
+                            body {
+                                font-family: 'Segoe UI', Arial, sans-serif;
+                                color: #000;
+                                background: #fff;
+                                margin: 0;
+                                padding: 10px;
+                                font-size: 11px;
+                                line-height: 1.4;
+                            }
+                            .header-row {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: flex-start;
+                                padding-bottom: 8px;
+                            }
+                            .logo-col {
+                                flex: 1.2;
+                            }
+                            .logo-main {
+                                font-size: 24px;
+                                font-weight: 900;
+                                font-style: italic;
+                                letter-spacing: -0.5px;
+                                color: #000;
+                                line-height: 1;
+                            }
+                            .logo-main span {
+                                color: #D60000;
+                                font-style: normal;
+                            }
+                            .logo-sub1 {
+                                font-size: 7.5px;
+                                font-weight: bold;
+                                text-transform: uppercase;
+                                margin-top: 4px;
+                                color: #1e293b;
+                            }
+                            .logo-sub2 {
+                                font-size: 6.8px;
+                                text-transform: uppercase;
+                                color: #64748b;
+                            }
+                            .company-col {
+                                flex: 2;
+                                text-align: left;
+                                font-size: 9.5px;
+                                line-height: 1.35;
+                                color: #1e293b;
+                                padding-left: 15px;
+                            }
+                            .company-name {
+                                font-weight: 700;
+                                font-size: 11px;
+                            }
+                            .meta-right-col {
+                                flex: 1;
+                                text-align: right;
+                                font-size: 10px;
+                            }
+                            .os-number {
+                                font-size: 12px;
+                                font-weight: bold;
+                                color: #000;
+                            }
+                            .divider-line {
+                                border-top: 1px solid #e2e8f0;
+                                margin: 8px 0;
+                            }
+                            .two-col-grid {
+                                display: flex;
+                                justify-content: space-between;
+                                margin: 10px 0;
+                                font-size: 10px;
+                                line-height: 1.45;
+                            }
+                            .two-col-left {
+                                flex: 1.3;
+                            }
+                            .two-col-right {
+                                flex: 1;
+                                padding-left: 20px;
+                            }
+                            .sec-title {
+                                font-weight: 900;
+                                font-size: 11px;
+                                margin-bottom: 4px;
+                                text-transform: uppercase;
+                                letter-spacing: 0.3px;
+                            }
+                            .status-strip {
+                                border-top: 1px solid #cbd5e1;
+                                border-bottom: 1px solid #cbd5e1;
+                                padding: 6px 0;
+                                margin: 10px 0;
+                                font-size: 9.5px;
+                                display: flex;
+                                justify-content: space-between;
+                                font-weight: 600;
+                            }
+                            .vehicle-box {
+                                font-size: 10px;
+                                line-height: 1.5;
+                                margin-bottom: 12px;
+                            }
+                            .items-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                font-size: 11px;
+                                margin-top: 6px;
+                            }
+                            .items-table th {
+                                border: 1px solid #cbd5e1;
+                                padding: 6px 8px;
+                                font-weight: bold;
+                                background: #fff;
+                                font-size: 10.5px;
+                            }
+                            .items-table td {
+                                border: 1px solid #cbd5e1;
+                                padding: 6px 8px;
+                            }
+                            .grand-total-row {
+                                text-align: right;
+                                font-size: 15px;
+                                font-weight: 900;
+                                margin-top: 16px;
+                                margin-bottom: 24px;
+                                color: #000;
+                            }
+                            .signatures-container {
+                                display: flex;
+                                width: 100%;
+                                border: 1px solid #cbd5e1;
+                                height: 50px;
+                                margin-top: 20px;
+                                page-break-inside: avoid;
+                            }
+                            .sig-date {
+                                width: 120px;
+                                border-right: 1px solid #cbd5e1;
+                                padding: 5px 6px;
+                                font-size: 9.5px;
+                                color: #000;
+                            }
+                            .sig-client {
+                                flex: 1;
+                                border-right: 1px solid #cbd5e1;
+                                padding: 5px 6px;
+                                font-size: 9.5px;
+                                color: #000;
+                            }
+                            .sig-resp {
+                                flex: 1;
+                                padding: 5px 6px;
+                                font-size: 9.5px;
+                                color: #000;
+                            }
                             @media print {
                                 body { padding: 0; }
-                                @page { margin: 1.2cm; }
+                                @page { margin: 10mm 12mm; }
                             }
                         </style>
                     </head>
                     <body>
-                        <div class="header">
-                            <div class="logo">AUTOCAR<span>BS</span> <small style="font-size:12px; color:#64748b; font-style:normal; font-weight:700;">| SISTEMA DE GESTÃO</small></div>
-                            <div class="info">
-                                <strong>DATA:</strong> ${dateStr}<br>
-                                <strong>VEÍCULO:</strong> ${model || 'Não Informado'}<br>
-                                <strong>PLACA:</strong> ${plate || 'Não Informada'}
+                        <div class="header-row">
+                            <div class="logo-col">
+                                <div class="logo-main">AUTOCAR <span>BS</span></div>
+                                <div class="logo-sub1">Especialistas em VOLKSWAGEN E AUDI</div>
+                                <div class="logo-sub2">MECÂNICA E REVISÕES PREVENTIVAS MULTIMARCAS</div>
+                            </div>
+                            <div class="company-col">
+                                <div class="company-name">AUTOCAR BS</div>
+                                <div>27.259.708/0001-18</div>
+                                <div>15 DE NOVEMBRO, 2569 - LOTEAMENTO MODENA - TATUI - SP</div>
+                                <div>E-mail: autocarbstatui@gmail.com - Fone: (15) 99666-1359</div>
+                            </div>
+                            <div class="meta-right-col">
+                                <div class="os-number">N° OS: ${docNumber}</div>
+                                <div style="margin-top: 12px; color: #334155;">Emissão: ${dateStr}</div>
                             </div>
                         </div>
-                        <h2>Orçamento de Peças e Serviços</h2>
-                        <table>
+
+                        <div class="divider-line"></div>
+
+                        <div class="two-col-grid">
+                            <div class="two-col-left">
+                                <div class="sec-title">CLIENTE</div>
+                                <div style="font-weight: 700; font-size: 10.5px;">${clientName}</div>
+                                <div>Rua Coronel Fernando Prestes, 120, Vila Doutor Laurindo, Tatuí - SP</div>
+                                <div>E-mail: autocarbstatui@gmail.com</div>
+                                <div>Celular: ${clientPhone || '(15) 99825-5908'}</div>
+                            </div>
+                            <div class="two-col-right">
+                                <div class="sec-title">RESPONSÁVEL</div>
+                                <div style="font-weight: 700; font-size: 10.5px;">${docResponsible}</div>
+                                <div>Telefone: (15)99666-1359</div>
+                                <div>Email: alesoncin16@gmail.com</div>
+                            </div>
+                        </div>
+
+                        <div class="status-strip">
+                            <div><strong>STATUS OS:</strong> Orçamento</div>
+                            <div><strong>DATA INICIAL:</strong> ${dateStr}</div>
+                            <div><strong>DATA FINAL:</strong> ${dateFinalStr}</div>
+                            <div><strong>GARANTIA:</strong> 90 DIAS</div>
+                        </div>
+
+                        <div class="vehicle-box">
+                            <div><strong>DESCRIÇÃO:</strong> ${model || 'VOLKSWAGEN JETTA 2.0 TSI'}</div>
+                            <div style="margin: 2px 0;">
+                                <span style="margin-right: 25px;"><strong>KM:</strong> ${clientKm || '-'}</span>
+                                <span style="margin-right: 25px;"><strong>PLACA:</strong> ${plate || 'OGI-6E60'}</span>
+                                <span><strong>CHASSI:</strong> -</span>
+                            </div>
+                            <div style="margin-top: 2px;"><strong>DEFEITO APRESENTADO:</strong> ${clientDefect}</div>
+                        </div>
+
+                        <!-- Tabela de Peças / Produtos -->
+                        <table class="items-table">
                             <thead>
                                 <tr>
-                                    <th style="width: 50px; text-align:center;">QTD</th>
-                                    <th>DESCRIÇÃO</th>
-                                    <th style="width: 110px; text-align:right;">V. UNITÁRIO</th>
-                                    <th style="width: 110px; text-align:right;">TOTAL</th>
+                                    <th style="text-align: left;">Produto</th>
+                                    <th style="width: 80px; text-align: center;">Quantidade</th>
+                                    <th style="width: 100px; text-align: right;">Preço unit.</th>
+                                    <th style="width: 110px; text-align: right;">Sub-total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><th colspan="4" class="section-title">📦 PEÇAS</th></tr>
-                                ${partsHtml}
-                                <tr><th colspan="4" class="section-title">🔧 MÃO DE OBRA &amp; SERVIÇOS</th></tr>
-                                ${laborHtml}
+                                ${partsRowsHtml}
+                                <tr>
+                                    <td colspan="4" style="border: 1px solid #cbd5e1; text-align: right; font-weight: bold; padding: 6px 10px; background: #fff;">
+                                        Total: R$ ${partsSumFmt}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
-                        <div class="total-box">
-                            <div class="total-line">
-                                <span>Subtotal Peças:</span>
-                                <span>R$ ${partsSumFmt}</span>
-                            </div>
-                            <div class="total-line">
-                                <span>Subtotal Mão de Obra:</span>
-                                <span>R$ ${laborSumFmt}</span>
-                            </div>
-                            <div class="total-line grand-total">
-                                <span>TOTAL GERAL:</span>
-                                <span>R$ ${grandTotalFmt}</span>
-                            </div>
+
+                        <!-- Tabela de Serviços (Mão de Obra) se houver -->
+                        ${laborTableBlock}
+
+                        <!-- Valor Total Geral -->
+                        <div class="grand-total-row">
+                            Valor Total: R$${grandTotalFmt}
                         </div>
-                        <div class="footer-note">
-                            * Valores sujeitos a alteração sem aviso prévio. Orçamento válido por 10 dias. AutoCar BS Oficina &amp; Peças.
+
+                        <!-- Bloco de Assinaturas -->
+                        <div class="signatures-container">
+                            <div class="sig-date">Data</div>
+                            <div class="sig-client">Assinatura do Cliente</div>
+                            <div class="sig-resp">Assinatura do Técnico Responsável</div>
                         </div>
+
                         <script>
                             setTimeout(() => { window.print(); window.close(); }, 500);
                         <\/script>
@@ -921,6 +1197,9 @@ const Cotacao = {
             text += `(Qtd / Peça / Custo Un. / Venda Un. / Marca / Fornecedor)\n\n`;
             let rowsHtml = '';
 
+            let totalInternalCost = 0;
+            let totalInternalSale = 0;
+
             this.state.pecas.forEach(p => {
                 if (p.vencedor && p.precos[p.vencedor]) {
                     const d = p.precos[p.vencedor];
@@ -931,24 +1210,30 @@ const Cotacao = {
                     }
                     vendaFinal = vendaFinal || 0;
 
-                    text += `${p.qty}x ${p.nome.toUpperCase()} / R$ ${custoFinal.toFixed(2)} / R$ ${vendaFinal.toFixed(2)} / ${d.marca ? d.marca.toUpperCase() : 'S/ MARCA'} / ${p.vencedor}\n`;
+                    const qtyVal = p.qty || 1;
+                    totalInternalCost += custoFinal * qtyVal;
+                    totalInternalSale += vendaFinal * qtyVal;
+
+                    text += `${qtyVal}x ${p.nome.toUpperCase()} / R$ ${custoFinal.toFixed(2)} / R$ ${vendaFinal.toFixed(2)} / ${d.marca ? d.marca.toUpperCase() : 'S/ MARCA'} / ${p.vencedor}\n`;
                     text += "--------------------------------------------------\n";
 
                     rowsHtml += `
                         <tr>
-                            <td style="text-align:center;">${p.qty}x</td>
-                            <td>${p.nome.toUpperCase()}</td>
-                            <td style="text-align:right;">R$ ${custoFinal.toFixed(2)}</td>
-                            <td style="text-align:right;">R$ ${vendaFinal.toFixed(2)}</td>
-                            <td style="text-align:center;">${d.marca ? d.marca.toUpperCase() : '-'}</td>
-                            <td style="text-align:center;">${p.vencedor}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:center;">${qtyVal}x</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px;">${p.nome.toUpperCase()}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:right;">R$ ${custoFinal.toFixed(2)}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:right;">R$ ${vendaFinal.toFixed(2)}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:center;">${d.marca ? d.marca.toUpperCase() : '-'}</td>
+                            <td style="border: 1px solid #cbd5e1; padding: 5px 8px; text-align:center; font-weight: 600;">${p.vencedor}</td>
                         </tr>
                     `;
                 }
             });
 
+            const totalInternalProfit = totalInternalSale - totalInternalCost;
+
             if (rowsHtml === '') {
-                rowsHtml = '<tr><td colspan="6" style="text-align:center;">Nenhuma peça selecionada</td></tr>';
+                rowsHtml = '<tr><td colspan="6" style="border: 1px solid #cbd5e1; padding: 8px; text-align:center;">Nenhuma peça selecionada</td></tr>';
                 text += "(Nenhuma peça selecionada)\n";
             }
 
@@ -960,57 +1245,83 @@ const Cotacao = {
             }
 
             const dateStr = new Date().toLocaleDateString('pt-BR');
-            const printWindow = window.open('', '', 'width=900,height=700');
+            const printWindow = window.open('', '', 'width=950,height=750');
             if (!printWindow) {
                 alert("Seu navegador bloqueou o PDF. Por favor, permita pop-ups para este site e tente novamente.");
                 return;
             }
             printWindow.document.write(`
-                <html>
+                <!DOCTYPE html>
+                <html lang="pt-BR">
                 <head>
-                    <title>Relatório_${plate || 'S_PLACA'}</title>
+                    <meta charset="UTF-8">
+                    <title>Relatório_Interno_${plate || 'S_PLACA'}</title>
                     <style>
-                        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 25px; color: #1e293b; background:#fff; }
-                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #D60000; padding-bottom: 12px; margin-bottom: 20px; }
-                        .logo { font-size: 26px; font-weight: 900; font-style: italic; color: #0f172a; }
-                        .logo span { color: #D60000; font-style: normal; }
-                        .info { text-align: right; font-size: 12px; line-height: 1.5; color: #475569; }
-                        h2 { text-align: center; color: #0f172a; margin-bottom: 18px; font-size: 18px; text-transform: uppercase; }
+                        @page { size: A4 portrait; margin: 12mm 15mm; }
+                        * { box-sizing: border-box; }
+                        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 10px; color: #000; background:#fff; font-size: 11px; line-height: 1.4; }
+                        .header-row { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; }
+                        .logo-main { font-size: 24px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; color: #000; line-height: 1; }
+                        .logo-main span { color: #D60000; font-style: normal; }
+                        .logo-sub1 { font-size: 7.5px; font-weight: bold; text-transform: uppercase; margin-top: 4px; color: #1e293b; }
+                        .logo-sub2 { font-size: 6.8px; text-transform: uppercase; color: #64748b; }
+                        .company-col { flex: 2; text-align: left; font-size: 9.5px; line-height: 1.35; color: #1e293b; padding-left: 15px; }
+                        .company-name { font-weight: 700; font-size: 11px; }
+                        .meta-right-col { flex: 1; text-align: right; font-size: 10px; }
+                        .divider-line { border-top: 1px solid #e2e8f0; margin: 8px 0; }
+                        h2 { text-align: center; color: #0f172a; margin: 12px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
                         table { width: 100%; border-collapse: collapse; font-size: 11px; }
-                        th, td { border: 1px solid #cbd5e1; padding: 7px 10px; }
-                        th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; text-transform: uppercase; font-size: 10px; }
-                        tr:nth-child(even) { background-color: #f8fafc; }
+                        th { border: 1px solid #cbd5e1; background-color: #fff; color: #0f172a; font-weight: bold; text-transform: uppercase; font-size: 10px; padding: 6px 8px; }
+                        td { border: 1px solid #cbd5e1; padding: 6px 8px; }
+                        .footer-totals { margin-top: 16px; border: 1px solid #cbd5e1; padding: 10px 14px; background: #fff; font-size: 12px; display: flex; justify-content: space-between; font-weight: bold; }
                         @media print {
                             body { padding: 0; }
-                            @page { margin: 1.2cm; }
+                            @page { margin: 10mm 12mm; }
                         }
                     </style>
                 </head>
                 <body>
-                    <div class="header">
-                        <div class="logo">AUTOCAR<span>BS</span> <small style="font-size:12px; color:#64748b; font-style:normal; font-weight:700;">| RELATÓRIO DE CUSTO &amp; LUCRO</small></div>
-                        <div class="info">
-                            <strong>DATA:</strong> ${dateStr}<br>
-                            <strong>VEÍCULO:</strong> ${model || 'Não Informado'}<br>
-                            <strong>PLACA:</strong> ${plate || 'Não Informada'}
+                    <div class="header-row">
+                        <div>
+                            <div class="logo-main">AUTOCAR <span>BS</span></div>
+                            <div class="logo-sub1">Especialistas em VOLKSWAGEN E AUDI</div>
+                            <div class="logo-sub2">MECÂNICA E REVISÕES PREVENTIVAS MULTIMARCAS</div>
+                        </div>
+                        <div class="company-col">
+                            <div class="company-name">AUTOCAR BS</div>
+                            <div>27.259.708/0001-18</div>
+                            <div>15 DE NOVEMBRO, 2569 - LOTEAMENTO MODENA - TATUI - SP</div>
+                            <div>E-mail: autocarbstatui@gmail.com - Fone: (15) 99666-1359</div>
+                        </div>
+                        <div class="meta-right-col">
+                            <div style="font-weight: bold; font-size: 11px;">RELATÓRIO INTERNO</div>
+                            <div style="margin-top: 6px;">DATA: ${dateStr}</div>
+                            <div>VEÍCULO: ${model || 'Não Informado'}</div>
+                            <div>PLACA: ${plate || 'Não Informada'}</div>
                         </div>
                     </div>
-                    <h2>Relatório Interno de Conferência</h2>
+                    <div class="divider-line"></div>
+                    <h2>Relatório de Custo, Venda e Fornecedores</h2>
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 50px; text-align:center;">QTD</th>
-                                <th>DESCRIÇÃO DA PEÇA</th>
-                                <th style="width: 100px; text-align:right;">CUSTO UN.</th>
-                                <th style="width: 100px; text-align:right;">VENDA UN.</th>
-                                <th style="width: 120px; text-align:center;">MARCA</th>
-                                <th style="width: 150px; text-align:center;">FORNECEDOR</th>
+                                <th style="width: 45px; text-align:center;">QTD</th>
+                                <th style="text-align:left;">DESCRIÇÃO DA PEÇA</th>
+                                <th style="width: 90px; text-align:right;">CUSTO UN.</th>
+                                <th style="width: 90px; text-align:right;">VENDA UN.</th>
+                                <th style="width: 100px; text-align:center;">MARCA</th>
+                                <th style="width: 130px; text-align:center;">FORNECEDOR</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${rowsHtml}
                         </tbody>
                     </table>
+                    <div class="footer-totals">
+                        <div>Total Custo: R$ ${totalInternalCost.toFixed(2)}</div>
+                        <div>Total Venda: R$ ${totalInternalSale.toFixed(2)}</div>
+                        <div style="color: #15803d;">Lucro Previsto: R$ ${totalInternalProfit.toFixed(2)}</div>
+                    </div>
                     <script>
                         setTimeout(() => { window.print(); window.close(); }, 500);
                     <\/script>

@@ -129,6 +129,41 @@
             <button type="button" class="btn-close-modal" aria-label="Fechar modal" onclick="Cotacao.toggleLaborModal()"><i class="ph ph-x"></i></button>
         </div>
 
+        <!-- Dados do Orçamento / Cliente (Opcionais) -->
+        <div class="budget-meta-box">
+            <div style="font-size: 0.72rem; font-weight: 800; color: var(--gold); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                <i class="ph ph-identification-card"></i> Dados do Orçamento &amp; Cliente (Opcionais)
+            </div>
+            <div class="budget-meta-grid">
+                <div class="meta-field" style="flex: 2;">
+                    <label>CLIENTE</label>
+                    <input type="text" id="cot-clientName" placeholder="Nome do cliente (ex: Paulo de Tarso)">
+                </div>
+                <div class="meta-field" style="flex: 1.2;">
+                    <label>CELULAR / WHATSAPP</label>
+                    <input type="text" id="cot-clientPhone" placeholder="(15) 99825-5908">
+                </div>
+                <div class="meta-field" style="width: 90px; flex: initial;">
+                    <label>KM ATUAL</label>
+                    <input type="text" id="cot-clientKm" placeholder="115.000">
+                </div>
+                <div class="meta-field" style="width: 80px; flex: initial;">
+                    <label>Nº OS</label>
+                    <input type="text" id="cot-docNumber" placeholder="907">
+                </div>
+            </div>
+            <div class="budget-meta-grid" style="margin-top: 6px;">
+                <div class="meta-field" style="flex: 2;">
+                    <label>DEFEITO APRESENTADO / SOLICITAÇÃO</label>
+                    <input type="text" id="cot-clientDefect" placeholder="Ex: Substituição de óleo e filtros">
+                </div>
+                <div class="meta-field" style="flex: 1;">
+                    <label>RESPONSÁVEL</label>
+                    <input type="text" id="cot-docResponsible" placeholder="Alessandra">
+                </div>
+            </div>
+        </div>
+
         <div class="labor-type-selector">
             <label class="labor-radio-lbl">
                 <input type="radio" name="cot-laborType" value="popular" checked onchange="Cotacao.updateLaborType('popular')">
