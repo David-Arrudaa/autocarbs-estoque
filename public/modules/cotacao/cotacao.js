@@ -722,7 +722,7 @@ const Cotacao = {
             if (hasLabor) text += `TOTAL MÃO DE OBRA: R$ ${laborSumFmt}\n`;
             text += `\nTOTAL GERAL: R$ ${grandTotalFmt}\n`;
             text += `==================================\n`;
-            text += `\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 7 dias.*`;
+            text += `\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 10 dias.*`;
 
             if (mode === 'text') {
                 const area = document.getElementById('cot-outputText');
@@ -952,7 +952,7 @@ const Cotacao = {
                         </div>
 
                         <div class="footer-note">
-                            * Valores sujeitos a alteração sem aviso prévio. Orçamento de peças válido por 7 dias. AutoCar BS.
+                            * Valores sujeitos a alteração sem aviso prévio. Orçamento de peças válido por 10 dias. AutoCar BS.
                         </div>
 
                         <script>
