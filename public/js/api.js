@@ -48,8 +48,8 @@ const API = {
                 credentials: 'include' // OBRIGATÓRIO: envia o cookie HttpOnly em cada request
             });
 
-            // Se a sessão expirou no servidor
-            if (response.status === 401 && !endpoint.includes('/auth/login')) {
+            // Se a sessão expirou no servidor (exceto tentativa de login e verificação de sessão inicial)
+            if (response.status === 401 && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/me')) {
                 this.setToken(null);
                 window.dispatchEvent(new CustomEvent('auth:expired'));
                 throw new Error('Sessão expirada. Faça login novamente.');

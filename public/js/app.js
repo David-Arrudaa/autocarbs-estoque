@@ -59,11 +59,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Checa se já existe token válido armazenado
-    const token = API.getToken();
-    if (token) {
-        try {
-            const sessao = await API.verificarSessao();
+    // Checa se já existe sessão ativa no servidor (via cookie HttpOnly autocar_session)
+    try {
+        const sessao = await API.verificarSessao();
+        if (sessao && sessao.usuario) {
             atualizarPerfilUsuario(sessao.usuario);
             if (window.AuthModule) {
                 AuthModule.ocultarTelaLogin();
@@ -73,9 +72,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             await Estoque.carregarTudo();
             return;
-        } catch {
-            API.setToken(null);
         }
+    } catch {
+        API.setToken(null);
     }
 
     if (window.AuthModule) {
