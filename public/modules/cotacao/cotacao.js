@@ -1332,7 +1332,6 @@ const Cotacao = {
                         table { width: 100%; border-collapse: collapse; font-size: 11px; }
                         th { border: 1px solid #cbd5e1; background-color: #fff; color: #0f172a; font-weight: bold; text-transform: uppercase; font-size: 10px; padding: 6px 8px; }
                         td { border: 1px solid #cbd5e1; padding: 6px 8px; }
-                        .footer-totals { margin-top: 16px; border: 1px solid #cbd5e1; padding: 10px 14px; background: #fff; font-size: 12px; display: flex; justify-content: space-between; font-weight: bold; }
                         @media print {
                             @page { margin: 0; }
                             body { margin: 0; padding: 12mm 15mm; }
@@ -1376,11 +1375,6 @@ const Cotacao = {
                             ${rowsHtml}
                         </tbody>
                     </table>
-                    <div class="footer-totals">
-                        <div>Total Custo: R$ ${totalInternalCost.toFixed(2)}</div>
-                        <div>Total Venda: R$ ${totalInternalSale.toFixed(2)}</div>
-                        <div style="color: #15803d;">Lucro Previsto: R$ ${totalInternalProfit.toFixed(2)}</div>
-                    </div>
                     <script>
                         setTimeout(() => { window.print(); window.close(); }, 500);
                     <\/script>
