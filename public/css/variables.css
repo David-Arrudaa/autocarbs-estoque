@@ -6,38 +6,80 @@
  */
 
 :root {
-    /* Paleta Oficial AutoCar BS */
-    --bg-body: #10181E;         /* Fundo escuro azul-petróleo */
-    --bg-card: #18232C;         /* Superfície de cards e painéis */
-    --bg-input: #0B1116;        /* Fundo de inputs e caixas de texto */
-    --border: #263645;          /* Linhas e bordas sutis */
-    --border-hover: #384F63;    /* Bordas com foco ou hover */
-    
-    --text-primary: #F6F6F6;    /* Branco off-white principal */
-    --text-secondary: #98A7B5;  /* Texto secundário e legendas */
-    --text-muted: #64748b;      /* Texto suavizado / placeholders */
-    
-    --primary: #93272C;         /* Vermelho carmim / bordô principal */
-    --primary-hover: #A82E34;   /* Hover para botões e ações primárias */
-    
-    --gold: #CAA151;            /* Dourado / bronze metálico para destaques */
-    --gold-hover: #D8B266;      /* Hover do tom dourado */
-    --gold-bg: rgba(202, 161, 81, 0.12); /* Fundo sutil dourado */
-    
-    --accent: #CAA151;          /* Destaque secundário padrão */
-    --danger: #93272C;          /* Alertas críticos alinhados ao vermelho carmim */
-    --danger-bg: rgba(147, 39, 44, 0.15);
-    --success: #0FB665;         /* Sucesso e entradas no estoque */
-    --success-bg: rgba(15, 182, 101, 0.15);
-    --warning: #eab308;
-    --warning-bg: rgba(234, 179, 8, 0.15);
-    --info: #38bdf8;
+    /* =========================================================
+       SUPERFÍCIES E FUNDOS (DARK THEME PADRÃO)
+       ========================================================= */
+    --bg-body: #10181E;                   /* Fundo principal da aplicação */
+    --bg-card: #18232C;                   /* Superfície de cards, painéis e tabelas */
+    --bg-sidebar: #0D1219;                /* Fundo escuro da barra lateral */
+    --bg-sidebar-footer: #080C12;         /* Rodapé da sidebar */
+    --bg-header: #0F141C;                 /* Cabeçalho superior (topbar) */
+    --bg-input: #0B1116;                  /* Fundo de caixas de entrada de texto */
+    --bg-surface-elevated: #141C28;       /* Modais, menus flutuantes e tooltips */
+    --bg-surface-active: #182332;         /* Abas e itens de menu ativos */
+    --bg-hover: rgba(255, 255, 255, 0.05); /* Efeito hover em linhas e itens */
+    --bg-table-hover: rgba(255, 255, 255, 0.035);
 
-    /* Tipografia e Raio */
+    /* =========================================================
+       BORDAS E DIVISÓRIAS
+       ========================================================= */
+    --border: #263645;                    /* Bordas principais de painéis e inputs */
+    --border-hover: #384F63;              /* Bordas com foco ou mouse sobre */
+    --border-subtle: rgba(255, 255, 255, 0.08); /* Linhas divisórias internas discretas */
+
+    /* =========================================================
+       TIPOGRAFIA E TEXTOS
+       ========================================================= */
+    --text-primary: #F6F6F6;              /* Texto principal de alto contraste */
+    --text-heading: #FFFFFF;              /* Cabeçalhos, títulos e marcas */
+    --text-secondary: #98A7B5;            /* Textos secundários, legendas e rótulos */
+    --text-muted: #64748B;                /* Textos suavizados e placeholders */
+    --text-inverse: #0F172A;              /* Texto escuro para botões de fundo claro */
+
+    /* =========================================================
+       CORES DA MARCA & AÇÕES PRINCIPAIS
+       ========================================================= */
+    --primary: #93272C;                   /* Vermelho oficial AutoCar BS */
+    --primary-hover: #A82E34;             /* Hover de botões primários */
+    --primary-bg: rgba(147, 39, 44, 0.15);/* Fundo translúcido do vermelho */
+
+    --gold: #CAA151;                      /* Dourado / bronze metálico para destaques */
+    --gold-hover: #D8B266;                /* Hover do tom dourado */
+    --gold-bg: rgba(202, 161, 81, 0.12);  /* Fundo translúcido dourado */
+    --gold-border: rgba(202, 161, 81, 0.35);
+
+    --accent: #CAA151;                    /* Acento principal padrão */
+
+    /* =========================================================
+       CORES DE STATUS E FEEDBACK DO SISTEMA
+       ========================================================= */
+    --success: #0FB665;                   /* Verde para entradas e estoques em dia */
+    --success-hover: #10B981;
+    --success-bg: rgba(15, 182, 101, 0.15);
+    --success-border: rgba(15, 182, 101, 0.35);
+
+    --danger: #93272C;                    /* Vermelho para exclusões e alertas críticos */
+    --danger-hover: #B91C1C;
+    --danger-bg: rgba(147, 39, 44, 0.15);
+    --danger-border: rgba(147, 39, 44, 0.40);
+
+    --warning: #EAB308;                   /* Âmbar / amarelo para saídas e avisos de reposição */
+    --warning-hover: #F59E0B;
+    --warning-bg: rgba(234, 179, 8, 0.15);
+    --warning-border: rgba(234, 179, 8, 0.35);
+
+    --info: #38BDF8;                      /* Azul claro para dados informativos e supervisão */
+    --info-hover: #60A5FA;
+    --info-bg: rgba(56, 189, 248, 0.15);
+    --info-border: rgba(56, 189, 248, 0.35);
+
+    /* =========================================================
+       TIPOGRAFIA, BORDAS E SOMBRAS
+       ========================================================= */
     --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
     --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+    --shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.65);
 }
-

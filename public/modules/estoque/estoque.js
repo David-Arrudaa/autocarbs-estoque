@@ -545,17 +545,17 @@ const Estoque = {
                     <td style="width:40%;">
                         <span class="mobile-label">PRODUTO:</span>
                         <div style="padding: 1px 0;">
-                            <strong style="font-size:0.86rem; color:#f8fafc; display:inline-block; margin-bottom:2px; letter-spacing:0.2px;">${tipo} ${modelo}</strong><br>
+                            <strong style="font-size:0.86rem; color:var(--text-primary); display:inline-block; margin-bottom:2px; letter-spacing:0.2px;">${tipo} ${modelo}</strong><br>
                             <span style="font-size:0.73rem; color:var(--text-secondary); font-family:monospace;">${marca} ${codigo}</span>
                         </div>
                     </td>
                     <td style="width:14%;">
                         <span class="mobile-label">CUSTO:</span>
-                        <span style="color:#cbd5e1; font-size:0.82rem; font-weight:600;">R$ ${compra}</span>
+                        <span style="color:var(--text-secondary); font-size:0.82rem; font-weight:600;">R$ ${compra}</span>
                     </td>
                     <td style="width:14%;">
                         <span class="mobile-label">VENDA:</span>
-                        <span style="color:#f8fafc; font-size:0.85rem; font-weight:700;">R$ ${venda}</span>
+                        <span style="color:var(--text-primary); font-size:0.85rem; font-weight:700;">R$ ${venda}</span>
                     </td>
                     <td style="width:16%;">
                         <span class="mobile-label">ESTOQUE:</span>
@@ -695,7 +695,7 @@ const Estoque = {
                     <td style="width:40%;">
                         <span class="mobile-label">PRODUTO:</span>
                         <div style="padding: 1px 0;">
-                            <strong style="font-size:0.86rem; color:#f8fafc; display:inline-block; margin-bottom:2px;">${tipo} ${modelo}</strong><br>
+                            <strong style="font-size:0.86rem; color:var(--text-primary); display:inline-block; margin-bottom:2px;">${tipo} ${modelo}</strong><br>
                             <span style="font-size:0.73rem; color:var(--text-secondary); font-family:monospace;">${marca} ${codigo}</span>
                         </div>
                     </td>
@@ -709,7 +709,7 @@ const Estoque = {
                     </td>
                     <td style="width:15%;">
                         <span class="mobile-label">MÍNIMO:</span>
-                        <span style="color:#cbd5e1; font-weight:600; font-size:0.84rem;">${minimo} un</span>
+                        <span style="color:var(--text-secondary); font-weight:600; font-size:0.84rem;">${minimo} un</span>
                     </td>
                     <td style="width:15%;">
                         <span class="mobile-label">DÉFICIT:</span>

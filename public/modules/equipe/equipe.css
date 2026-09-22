@@ -11,10 +11,10 @@
 #modal-editar-usuario select#edit-usr-status {
     width: 100%;
     padding: 12px 38px 12px 14px;
-    background-color: var(--bg-input, #111723);
+    background-color: var(--bg-input);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    color: #f8fafc;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
     font-size: 0.88rem;
     font-weight: 600;
     outline: none;
@@ -22,7 +22,7 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%23d4af37'%3e%3cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3e%3c/path%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%23CAA151'%3e%3cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3e%3c/path%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 14px center;
     background-size: 14px;
@@ -32,15 +32,15 @@
 #modal-usuario select#usr-role:focus,
 #modal-editar-usuario select#edit-usr-role:focus,
 #modal-editar-usuario select#edit-usr-status:focus {
-    border-color: var(--gold, #d4af37);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-bg);
 }
 
 #modal-usuario select#usr-role option,
 #modal-editar-usuario select#edit-usr-role option,
 #modal-editar-usuario select#edit-usr-status option {
-    background-color: #0d131d;
-    color: #f8fafc;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
     padding: 12px;
     font-size: 0.9rem;
 }
@@ -63,26 +63,26 @@
     font-size: 0.85rem;
     flex-shrink: 0;
     border: 1px solid var(--border);
-    background: #1a2332;
-    color: #f8fafc;
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
 }
 
 .usr-avatar.admin {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(212, 175, 55, 0.08));
-    border-color: rgba(212, 175, 55, 0.5);
+    background: linear-gradient(135deg, var(--gold-bg), transparent);
+    border-color: var(--gold-border);
     color: var(--gold);
 }
 
 .usr-avatar.supervisor {
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(56, 189, 248, 0.08));
-    border-color: rgba(56, 189, 248, 0.5);
-    color: #38bdf8;
+    background: linear-gradient(135deg, var(--info-bg), transparent);
+    border-color: var(--info-border);
+    color: var(--info);
 }
 
 .usr-avatar.operador {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.08));
-    border-color: rgba(16, 185, 129, 0.5);
-    color: #34d399;
+    background: linear-gradient(135deg, var(--success-bg), transparent);
+    border-color: var(--success-border);
+    color: var(--success);
 }
 
 .usr-profile-details {
@@ -96,7 +96,8 @@
     align-items: center;
     gap: 6px;
     font-size: 0.92rem;
-    color: #f8fafc;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 .usr-date {
@@ -106,7 +107,7 @@
 
 .usr-self-pill {
     font-size: 0.68rem;
-    background: rgba(212, 175, 55, 0.2);
+    background: var(--gold-bg);
     color: var(--gold);
     padding: 1px 6px;
     border-radius: 10px;
@@ -119,28 +120,28 @@
     align-items: center;
     gap: 5px;
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.76rem;
     font-weight: 700;
     letter-spacing: 0.3px;
 }
 
 .badge-role-admin {
-    background: rgba(212, 175, 55, 0.15);
+    background: var(--gold-bg);
     color: var(--gold);
-    border: 1px solid rgba(212, 175, 55, 0.4);
+    border: 1px solid var(--gold-border);
 }
 
 .badge-role-supervisor {
-    background: rgba(56, 189, 248, 0.15);
-    color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.4);
+    background: var(--info-bg);
+    color: var(--info);
+    border: 1px solid var(--info-border);
 }
 
 .badge-role-operador {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.4);
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid var(--success-border);
 }
 
 /* Status do Usuário */
@@ -171,15 +172,15 @@
 }
 
 .badge-status-usr.ativo {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(16, 185, 129, 0.35);
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid var(--success-border);
 }
 
 .badge-status-usr.inativo {
-    background: rgba(148, 163, 184, 0.12);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: var(--border-subtle);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
 }
 
 /* Segurança e Senha */
@@ -213,32 +214,32 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    background: #182333;
+    background: var(--bg-surface-elevated);
     border: 1px solid var(--border);
-    color: #f8fafc;
+    color: var(--text-primary);
     transition: all 0.2s ease;
     height: 34px;
 }
 
 .btn-action-usr:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    background: #1e2c40;
+    border-color: var(--border-hover);
+    background: var(--bg-hover);
 }
 
 .btn-action-usr.btn-action-edit {
     padding: 6px 12px;
-    color: var(--gold, #d4af37);
-    border-color: rgba(212, 175, 55, 0.35);
+    color: var(--gold);
+    border-color: var(--gold-border);
 }
 
 .btn-action-usr.btn-action-edit:hover {
-    border-color: var(--gold, #d4af37);
-    background: rgba(212, 175, 55, 0.15);
-    color: #facc15;
+    border-color: var(--gold);
+    background: var(--gold-bg);
+    color: var(--gold-hover);
 }
 
 .btn-action-usr.btn-action-pin:hover {
@@ -248,12 +249,12 @@
 
 .btn-action-usr.btn-action-delete {
     padding: 6px 10px;
-    color: #f87171;
+    color: #F87171;
 }
 
 .btn-action-usr.btn-action-delete:hover {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: #ef4444;
+    background: var(--danger-bg);
+    border-color: var(--danger);
 }
 
 @media (max-width: 768px) {
@@ -270,4 +271,3 @@
         justify-content: center;
     }
 }
-

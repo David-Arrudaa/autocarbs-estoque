@@ -25,9 +25,9 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: #0b1118;
+    background: var(--bg-input);
     padding: 10px 14px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     border-left: 4px solid var(--primary);
 }
@@ -353,8 +353,8 @@
 
 /* Cabeçalho de Vendedores */
 #cot-mainTable th.th-vendor {
-    background: #1e293b;
-    border-left: 3px solid #64748b;
+    background: var(--bg-surface-elevated);
+    border-left: 3px solid var(--text-muted);
     padding: 4px 8px;
 }
 
@@ -362,7 +362,7 @@
 #cot-mainTable th.th-qty {
     position: sticky;
     left: 0;
-    background: #0f1620;
+    background: var(--bg-card);
     z-index: 11;
     width: 48px;
     text-align: center;
@@ -371,7 +371,7 @@
 #cot-mainTable th.th-part {
     position: sticky;
     left: 48px;
-    background: #0f1620;
+    background: var(--bg-card);
     z-index: 10;
     width: 320px;
     min-width: 320px;
@@ -398,9 +398,9 @@
     padding: 2px 3px;
     text-align: center;
     border-radius: 3px;
-    border: 1px solid #475569;
-    background: #1e293b;
-    color: #ffffff;
+    border: 1px solid var(--border-hover);
+    background: var(--bg-surface-elevated);
+    color: var(--text-heading);
     font-weight: 800;
     font-size: 0.78rem;
 }
@@ -408,7 +408,7 @@
 .cot-margin-control input.inp-margem:focus {
     border-color: var(--gold);
     outline: none;
-    background: #0f172a;
+    background: var(--bg-input);
 }
 
 .cot-margin-control .margin-suffix {
@@ -778,17 +778,17 @@
 
 /* Destaque do Input de Venda Vencedor */
 #cot-mainTable input.inp-sale.inp-winner-venda {
-    background: #0f172a !important;
-    color: #38bdf8 !important;
+    background: var(--bg-body) !important;
+    color: var(--info) !important;
     font-weight: 800 !important;
-    border: 2px solid #38bdf8 !important;
-    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+    border: 2px solid var(--info) !important;
+    box-shadow: 0 0 8px var(--info-border) !important;
 }
 
 /* Rodapé da Tabela */
 .cot-table-footer {
     padding: 6px 14px;
-    background: #0b1118;
+    background: var(--bg-input);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -907,9 +907,9 @@
 
 /* Painel de Texto Copiado */
 .cot-result-panel {
-    background: #0b1118;
+    background: var(--bg-input);
     padding: 12px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     border-bottom: 3px solid var(--gold);
 }
@@ -920,8 +920,8 @@
     font-size: 0.82rem;
     border: 1px solid var(--border);
     border-radius: 5px;
-    background: #111a24;
-    color: #f8fafc;
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
     padding: 10px;
     outline: none;
     resize: vertical;
@@ -934,7 +934,7 @@
     display: flex;
     gap: 14px;
     margin-bottom: 14px;
-    background: #111a24;
+    background: var(--bg-surface-elevated);
     border: 1px solid var(--border);
     padding: 10px 14px;
     border-radius: 5px;
@@ -963,51 +963,53 @@
 .rate-input-box input {
     width: 75px;
     padding: 4px 6px;
-    background: #1e293b;
+    background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: 4px;
-    color: white;
+    color: var(--text-heading);
     font-weight: 800;
     text-align: center;
 }
 
 .labor-table-header {
     display: flex;
-    gap: 8px;
-    margin-bottom: 5px;
-    font-size: 0.7rem;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
     font-weight: 800;
     color: var(--text-secondary);
-    letter-spacing: 0.4px;
-    padding: 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .labor-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 6px;
     align-items: center;
+    margin-bottom: 6px;
 }
 
-.labor-row .labor-desc {
-    flex: 2;
-    padding: 7px 8px;
+.labor-row input.labor-desc {
+    flex: 1;
+    padding: 7px 10px;
+    background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: 4px;
-    background: #111a24;
-    color: #ffffff;
-    text-transform: uppercase;
-    font-weight: 700;
-    font-size: 0.8rem;
+    color: var(--text-primary);
+    font-size: 0.82rem;
 }
 
-.labor-row .labor-hours {
-    width: 75px;
-    padding: 7px;
+.labor-row input.labor-hours {
+    width: 65px;
+    padding: 7px 4px;
+    background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: 4px;
-    background: #111a24;
-    color: #ffffff;
+    color: var(--text-heading);
     text-align: center;
     font-weight: 800;
 }
@@ -1015,7 +1017,7 @@
 .labor-row .labor-total {
     width: 105px;
     padding: 7px 8px;
-    background: #1e293b;
+    background: var(--bg-surface-elevated);
     border: 1px solid var(--border);
     border-radius: 4px;
     text-align: right;
@@ -1030,7 +1032,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #111a24;
+    background: var(--bg-surface-elevated);
     margin-bottom: 6px;
     border-left: 4px solid var(--primary);
     border-radius: 5px;
@@ -1038,7 +1040,7 @@
 }
 
 .history-group:hover {
-    background: #172330;
+    background: var(--bg-hover);
     transform: translateX(3px);
 }
 
@@ -1049,16 +1051,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #1e293b;
+    background: var(--bg-surface-elevated);
     margin-bottom: 8px;
-    border-left: 4px solid #475569;
+    border-left: 4px solid var(--border-hover);
     border-radius: 6px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .history-item:hover {
     border-left-color: var(--gold);
-    background: #28374d;
+    background: var(--bg-surface-active);
     transform: translateX(3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
