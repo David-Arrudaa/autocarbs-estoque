@@ -3,6 +3,7 @@ const cors       = require('cors');
 const helmet     = require('helmet');
 const morgan     = require('morgan');
 const path       = require('path');
+const cookieParser = require('cookie-parser');
 const config     = require('./src/config/env');
 const errorHandler = require('./src/middlewares/errorHandler');
 
@@ -58,6 +59,7 @@ app.use(cors({
 // ─── 3. Parsers com limites ────────────────────────────────────────────────────
 app.use(express.json({ limit: '50kb' }));
 app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+app.use(cookieParser()); // Necessário para req.cookies funcionar no middleware de auth
 
 // ─── 4. Arquivos estáticos do Frontend ───────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));

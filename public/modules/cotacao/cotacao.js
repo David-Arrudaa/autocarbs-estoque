@@ -330,13 +330,14 @@ const Cotacao = {
             html += this.state.vendedores.map((v, vIndex) => {
                 const freteVal = this.state.frete[v] || '';
                 const vEsc = UI ? UI.escapeHtml(v) : v;
-                const vParam = v.replace(/'/g, "\\'");
+                // Escapa atributos HTML: substitui aspas duplas para não quebrar o atributo
+                const vAttr = vEsc.replace(/"/g, '&quot;');
                 const c = `vtheme-${vIndex % 2}`;
                 return `<th colspan="4" class="th-vendor ${c}">
                             <div style="font-size: 13px; margin-bottom: 3px; font-weight:800; letter-spacing:0.4px;">${vEsc}</div>
                             <div class="freight-container">
                                 <span class="freight-label">FRETE R$</span>
-                                <input type="number" class="inp-freight-small" placeholder="0,00" value="${freteVal}" oninput="Cotacao.updateFreight('${vParam}', this.value)">
+                                <input type="number" class="inp-freight-small" placeholder="0,00" value="${freteVal}" data-freight-vendor="${vAttr}" oninput="Cotacao.updateFreight(this.dataset.freightVendor, this.value)">
                             </div>
                         </th>`;
             }).join('');
@@ -417,22 +418,27 @@ const Cotacao = {
                     const isWinner = (p.vencedor === v);
                     const c = `vtheme-${vIndex % 2}`;
                     const winClass = isWinner ? 'is-vendor-winner' : '';
+                    // Escapa o nome do vendedor para uso seguro em atributos HTML
+                    const vEsc = UI ? UI.escapeHtml(v) : v;
+                    const vAttr = vEsc.replace(/"/g, '&quot;');
 
                     return `
                         <td class="td-check ${c} ${winClass}">
-                            <input type="radio" name="win_${p.id}" class="radio-win" ${isWinner ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, '${v}')" title="Marcar ${v} como vencedor">
+                            <input type="radio" name="win_${p.id}" class="radio-win" ${isWinner ? 'checked' : ''} data-part-id="${p.id}" data-vendor="${vAttr}" onclick="Cotacao.setWinner(this.dataset.partId|0, this.dataset.vendor)" title="Marcar ${vEsc} como vencedor">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
-                            <input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, '${v}', this.value)">
+                            <input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updateBrand(this.dataset.partId|0, this.dataset.vendor, this.value)">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
-                            <input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, '${v}', this)">
+                            <input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updatePrice(this.dataset.partId|0, this.dataset.vendor, this)">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
-                            <input class="inp-sale ${isWinner ? 'inp-winner-venda' : ''}" 
-                                   data-vendor-venda="${v}" 
+                            <input class="inp-sale ${isWinner ? 'inp-winner-venda' : ''}"
+                                   data-vendor-venda="${vAttr}"
+                                   data-part-id="${p.id}"
+                                   data-vendor="${vAttr}"
                                    value="${pr.venda ? pr.venda.toFixed(2) : ''}"
-                                   onchange="Cotacao.updateManualSellPrice(${p.id}, '${v}', this.value)"
+                                   onchange="Cotacao.updateManualSellPrice(this.dataset.partId|0, this.dataset.vendor, this.value)"
                                    onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
                         </td>
                     `;
@@ -472,9 +478,9 @@ const Cotacao = {
         if (!el) return;
         el.innerHTML = this.state.vendedores.map((v, vIndex) => {
             const vEsc = UI ? UI.escapeHtml(v) : v;
-            const vParam = v.replace(/'/g, "\\'");
+            const vAttr = vEsc.replace(/"/g, '&quot;');
             const c = `vtheme-${vIndex % 2}`;
-            return `<span class="cot-vendor-tag ${c}">${vEsc} <span class="remove-tag" onclick="Cotacao.removeVendor('${vParam}')">&times;</span></span>`;
+            return `<span class="cot-vendor-tag ${c}">${vEsc} <span class="remove-tag" data-vendor="${vAttr}" onclick="Cotacao.removeVendor(this.dataset.vendor)">&times;</span></span>`;
         }).join('');
     },
 

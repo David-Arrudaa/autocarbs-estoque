@@ -8,14 +8,22 @@
 const API = {
     BASE_URL: '/api',
 
+    /**
+     * O token de sessão agora viaja em cookie HttpOnly definido pelo servidor.
+     * O browser envia o cookie automaticamente em cada requisição (credentials: 'include').
+     * getToken() retorna null — mantido apenas para compatibilidade com código legado.
+     */
     getToken() {
-        return localStorage.getItem('autocar_token');
+        return null;
     },
 
+    /**
+     * setToken(null) é chamado no logout para limpar qualquer token legado do localStorage.
+     * O cookie HttpOnly é limpo pelo endpoint POST /api/auth/logout no servidor.
+     */
     setToken(token) {
-        if (token) {
-            localStorage.setItem('autocar_token', token);
-        } else {
+        if (!token) {
+            // Remove token legado caso ainda exista no localStorage de sessões antigas
             localStorage.removeItem('autocar_token');
         }
     },
@@ -27,15 +35,17 @@ const API = {
             ...(options.headers || {})
         };
 
-        const token = this.getToken();
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
+        // Bearer header como fallback para compatibilidade com tokens legados
+        const legacyToken = localStorage.getItem('autocar_token');
+        if (legacyToken) {
+            headers['Authorization'] = `Bearer ${legacyToken}`;
         }
 
         try {
             const response = await fetch(url, {
                 ...options,
-                headers
+                headers,
+                credentials: 'include' // OBRIGATÓRIO: envia o cookie HttpOnly em cada request
             });
 
             // Se a sessão expirou no servidor

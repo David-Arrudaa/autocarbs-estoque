@@ -89,13 +89,20 @@ function validarTokenSessao(token) {
 }
 
 /**
- * Middleware para proteger rotas da API
+ * Middleware para proteger rotas da API.
+ * Aceita token via cookie HttpOnly (prioridade) ou Bearer header (compatibilidade).
  */
 function autenticarRequisicao(req, res, next) {
+    // Cookie HttpOnly é a forma segura — enviado automaticamente pelo browser
+    const cookieToken = req.cookies?.autocar_session;
+
+    // Bearer header como fallback (para clients que ainda usam localStorage)
     const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') 
-        ? authHeader.substring(7) 
+    const bearerToken = authHeader && authHeader.startsWith('Bearer ')
+        ? authHeader.substring(7)
         : req.headers['x-auth-token'];
+
+    const token = cookieToken || bearerToken;
 
     const sessaoValida = validarTokenSessao(token);
     if (!sessaoValida) {

@@ -156,8 +156,8 @@ const AuthModule = {
 
             const res = await API.login(email, senha);
 
-            // Salva token e atualiza perfil no ERP
-            API.setToken(res.token);
+            // O token chegou via cookie HttpOnly — não precisa mais do setToken()
+            // API.setToken(res.token) ← REMOVIDO (token não está mais no body)
             if (window.atualizarPerfilUsuario) {
                 window.atualizarPerfilUsuario(res.usuario);
             }
@@ -189,9 +189,19 @@ const AuthModule = {
     },
 
     /**
-     * Encerra a sessão
+     * Encerra a sessão: limpa o cookie HttpOnly no servidor e recarrega a página
      */
-    fazerLogout() {
+    async fazerLogout() {
+        try {
+            // Pede ao servidor para limpar o cookie HttpOnly
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (_) {
+            // Mesmo que falhe, continua com o logout local
+        }
+        // Remove token legado do localStorage (sessões antigas)
         API.setToken(null);
         location.reload();
     }
