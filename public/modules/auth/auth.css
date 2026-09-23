@@ -1,8 +1,8 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos Visuais da Tela de Login
- * Padrão: Executivo Premium (Fundo Claro Suave & Card Centralizado)
+ * Módulo de Autenticação: Estilos da Tela de Login Automotiva
+ * Tema: Garagem & Oficina Mecânica (Criativo, Moderno e Suave)
  * =========================================================
  */
 
@@ -17,31 +17,33 @@
     justify-content: center;
     padding: 24px;
     background: 
-        radial-gradient(800px circle at 50% 12%, rgba(224, 46, 52, 0.05), transparent 70%),
-        radial-gradient(600px circle at 80% 88%, rgba(15, 23, 42, 0.04), transparent 60%),
+        radial-gradient(900px circle at 50% 10%, rgba(224, 46, 52, 0.08) 0%, transparent 65%),
+        radial-gradient(700px circle at 80% 90%, rgba(30, 58, 138, 0.05) 0%, transparent 60%),
+        linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
         linear-gradient(135deg, #EEF2F8 0%, #E6EDF6 50%, #DCE5F2 100%);
+    background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px, 100% 100%;
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Card Central Executivo */
-.auth-card {
+/* Card Automotivo Central */
+.auth-card-auto {
     width: 100%;
-    max-width: 430px;
+    max-width: 440px;
     background: #FFFFFF;
-    border: 1px solid #D0D8E4;
-    border-top: 4px solid #E02E34;
-    border-radius: 18px;
-    padding: 42px 38px 32px;
+    border: 1.5px solid #CBD5E1;
+    border-radius: 20px;
     box-shadow: 
-        0 4px 6px -1px rgba(15, 23, 42, 0.04),
-        0 20px 45px -10px rgba(15, 23, 42, 0.11),
+        0 10px 30px -5px rgba(15, 23, 42, 0.08),
+        0 25px 50px -10px rgba(15, 23, 42, 0.12),
         0 0 0 1px rgba(15, 23, 42, 0.02);
     box-sizing: border-box;
     animation: authCardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+    overflow: hidden;
 }
 
 @keyframes authCardFadeIn {
@@ -55,13 +57,73 @@
     }
 }
 
-/* Cabeçalho da Marca */
+/* Faixa Carbon Fiber Superior com Pinstripe Vermelho */
+.auth-carbon-header {
+    height: 8px;
+    width: 100%;
+    background: repeating-linear-gradient(45deg, #1E293B 0, #1E293B 3px, #0F172A 3px, #0F172A 6px);
+    position: relative;
+}
+
+.auth-racing-stripe {
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, #E02E34 0%, #FF4D52 50%, #E02E34 100%);
+    box-shadow: 0 0 8px rgba(224, 46, 52, 0.4);
+}
+
+.auth-card-body {
+    padding: 34px 34px 28px;
+}
+
+/* Cabeçalho da Oficina & Emblema */
 .auth-header {
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.auth-garage-badge {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #FFF1F2 0%, #FFFFFF 100%);
+    border: 1.5px solid rgba(224, 46, 52, 0.35);
+    color: #E02E34;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.85rem;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 16px rgba(224, 46, 52, 0.16), inset 0 1px 0 #FFFFFF;
+    position: relative;
+}
+
+.auth-badge-dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #22C55E;
+    border: 2px solid #FFFFFF;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+    animation: authLedPulse 2s infinite;
+}
+
+@keyframes authLedPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
 }
 
 .auth-brand-logo {
@@ -87,30 +149,49 @@
     margin-left: 2px;
 }
 
-.auth-brand-subtitle {
-    font-size: 0.74rem;
-    font-weight: 700;
-    color: #64748B;
-    letter-spacing: 1.3px;
+.auth-workshop-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    color: #475569;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
     text-transform: uppercase;
-    margin: 0;
+    margin-top: 4px;
+}
+
+.auth-workshop-pill i {
+    color: #E02E34;
+    font-size: 0.85rem;
 }
 
 /* Formulário e Campos */
 .auth-form-group {
-    margin-bottom: 19px;
+    margin-bottom: 18px;
     text-align: left;
     position: relative;
 }
 
 .auth-label {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.74rem;
     font-weight: 700;
     color: #334155;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
     margin-bottom: 7px;
+}
+
+.auth-label i {
+    color: #E02E34;
+    font-size: 0.90rem;
 }
 
 .auth-input-wrapper {
@@ -162,7 +243,7 @@
 .auth-input:focus {
     border-color: #E02E34 !important;
     background: #FFFFFF !important;
-    box-shadow: 0 0 0 3.5px rgba(224, 46, 52, 0.12) !important;
+    box-shadow: 0 0 0 3.5px rgba(224, 46, 52, 0.14) !important;
 }
 
 .auth-input-wrapper:focus-within .auth-input-icon {
@@ -303,39 +384,62 @@
     background: #F1F5F9;
 }
 
-/* Botão de Envio (Entrar no Sistema) */
-.auth-btn-submit {
+/* Botão de Envio Estilo Partida / Engine Ignition Start */
+.auth-btn-ignition {
     width: 100%;
-    height: 50px;
+    height: 52px;
     margin-top: 10px;
-    background: linear-gradient(135deg, #E02E34 0%, #C5221F 100%);
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #B91C1C 100%);
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     color: #FFFFFF;
     font-weight: 800;
-    font-size: 0.92rem;
-    letter-spacing: 0.7px;
+    font-size: 0.94rem;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 14px rgba(224, 46, 52, 0.32);
+    gap: 10px;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.auth-btn-submit:hover:not(:disabled) {
-    background: linear-gradient(135deg, #C5221F 0%, #AB1C19 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(224, 46, 52, 0.42);
+.auth-ignition-ring {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    background: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
 }
 
-.auth-btn-submit:active:not(:disabled) {
+.auth-btn-arrow {
+    font-size: 1.1rem;
+    margin-left: 2px;
+    transition: transform 0.2s ease;
+}
+
+.auth-btn-ignition:hover:not(:disabled) {
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #991B1B 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(220, 38, 38, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.auth-btn-ignition:hover:not(:disabled) .auth-btn-arrow {
+    transform: translateX(3px);
+}
+
+.auth-btn-ignition:active:not(:disabled) {
     transform: translateY(0);
 }
 
-.auth-btn-submit:disabled {
+.auth-btn-ignition:disabled {
     opacity: 0.65;
     cursor: not-allowed;
     filter: grayscale(0.4);
@@ -363,7 +467,7 @@
     40%, 80% { transform: translateX(6px); }
 }
 
-/* Rodapé do Card */
+/* Rodapé Telemetria & Box */
 .auth-card-footer {
     margin-top: 24px;
     padding-top: 16px;
@@ -371,25 +475,47 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 10px;
     font-size: 0.72rem;
-    font-weight: 600;
-    color: #94A3B8;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.5px;
 }
 
-.auth-card-footer i {
+.auth-telemetry-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.auth-pit-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22C55E;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+}
+
+.auth-telemetry-tag i {
     font-size: 0.95rem;
-    color: #16A34A;
+    color: #2563EB;
+}
+
+.auth-footer-divider {
+    color: #CBD5E1;
 }
 
 @media (max-width: 480px) {
-    .auth-card {
-        padding: 32px 22px 24px;
-        border-radius: 14px;
+    .auth-card-body {
+        padding: 28px 20px 22px;
     }
     
     .auth-brand-main,
     .auth-brand-accent {
         font-size: 2rem;
+    }
+    
+    .auth-btn-ignition {
+        font-size: 0.88rem;
     }
 }
