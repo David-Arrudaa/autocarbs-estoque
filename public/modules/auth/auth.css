@@ -2,7 +2,11 @@
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
  * Módulo de Autenticação: Estilos Modern Wave
- * Identidade Visual: AutoCar BS (Carbon Dark & Racing Red)
+ * Identidade Visual Oficial:
+ * - PANTONE 7407 C: #CAA151 (Gold Nobre / Dourado Acetinado)
+ * - PANTONE 7622 C: #93272C (Carmim / Vinho Esportivo Rubro)
+ * - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Preto Petróleo)
+ * - HEX F6F6F6: #F6F6F6 (Branco Gelo Off-White)
  * =========================================================
  */
 
@@ -16,27 +20,28 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: #090B10;
+    background: radial-gradient(circle at 50% 30%, #151F27 0%, #0B1015 100%);
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Card Principal com Cantos Arredondados e Fundo Carbon */
+/* Card Principal com Cantos Arredondados e Fundo Pantone Black 6 C */
 .auth-wave-card {
     width: 100%;
     max-width: 960px;
     min-height: 560px;
-    background: #0F121B;
+    background: #10181E;
     border-radius: 28px;
+    border: 1px solid rgba(202, 161, 81, 0.28);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: row;
     box-shadow: 
-        0 25px 70px -10px rgba(0, 0, 0, 0.85),
-        0 0 0 1px rgba(255, 255, 255, 0.08);
+        0 25px 70px -10px rgba(0, 0, 0, 0.95),
+        0 0 35px rgba(202, 161, 81, 0.08);
     box-sizing: border-box;
     animation: authWavePop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -85,13 +90,13 @@
     align-items: center;
     gap: 12px;
     padding: 7px 18px 7px 8px;
-    background: rgba(0, 0, 0, 0.32);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(16, 24, 30, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(202, 161, 81, 0.45);
     border-radius: 999px;
     align-self: flex-start;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
     margin-bottom: 24px;
 }
 
@@ -99,13 +104,14 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #E02E34;
-    color: #FFFFFF;
+    background: #93272C;
+    border: 1px solid rgba(202, 161, 81, 0.5);
+    color: #CAA151;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.15rem;
-    box-shadow: 0 0 14px rgba(224, 46, 52, 0.6);
+    box-shadow: 0 0 14px rgba(202, 161, 81, 0.35);
 }
 
 .auth-brand-info {
@@ -119,19 +125,19 @@
     font-weight: 900;
     font-style: italic;
     letter-spacing: 0.6px;
-    color: #FFFFFF;
+    color: #F6F6F6;
 }
 
 .auth-brand-name span {
-    color: #FECDD3;
+    color: #CAA151;
     font-style: normal;
 }
 
 .auth-brand-sub {
     font-size: 0.62rem;
     font-weight: 700;
-    letter-spacing: 0.8px;
-    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 1px;
+    color: #CAA151;
     text-transform: uppercase;
     margin-top: 2px;
 }
@@ -142,17 +148,18 @@
 
 .auth-wave-greeting {
     font-size: 0.95rem;
-    color: #FECDD3;
+    color: #CAA151;
     font-weight: 600;
     margin-bottom: 8px;
     display: block;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
 }
 
 .auth-wave-title {
     font-size: 2.35rem;
     font-weight: 800;
-    color: #FFFFFF;
+    color: #F6F6F6;
     line-height: 1.15;
     letter-spacing: -0.5px;
     margin: 0;
@@ -176,20 +183,27 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #FFFFFF;
+    background: rgba(202, 161, 81, 0.12);
+    border: 1px solid rgba(202, 161, 81, 0.32);
+    color: #CAA151;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
     backdrop-filter: blur(8px);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-wave-feat-item:hover .auth-wave-feat-icon {
+    transform: scale(1.06);
+    border-color: #CAA151;
+    background: rgba(202, 161, 81, 0.2);
 }
 
 .auth-wave-feat-text strong {
     display: block;
-    color: #FFFFFF;
+    color: #F6F6F6;
     font-size: 0.88rem;
     font-weight: 700;
     margin-bottom: 2px;
@@ -197,10 +211,9 @@
 
 .auth-wave-feat-text span {
     display: block;
-    color: #F1F5F9;
+    color: rgba(246, 246, 246, 0.8);
     font-size: 0.74rem;
     line-height: 1.35;
-    opacity: 0.9;
 }
 
 /* =========================================================
@@ -217,26 +230,32 @@
     box-sizing: border-box;
 }
 
-/* Badge Circular com Cadeado Neon Vermelho */
+/* Badge Circular com Cadeado Neon (Pantone 7407 C + 7622 C) */
 .auth-neon-lock-badge {
-    width: 60px;
-    height: 60px;
+    width: 62px;
+    height: 62px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(224, 46, 52, 0.28) 0%, rgba(185, 28, 28, 0.16) 100%);
-    border: 1.5px solid rgba(224, 46, 52, 0.65);
-    color: #F87171;
+    background: linear-gradient(135deg, rgba(147, 39, 44, 0.35) 0%, rgba(202, 161, 81, 0.2) 100%);
+    border: 1.5px solid rgba(202, 161, 81, 0.6);
+    color: #CAA151;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.85rem;
     margin: 0 auto 16px;
-    box-shadow: 0 0 25px rgba(224, 46, 52, 0.35);
+    box-shadow: 0 0 25px rgba(202, 161, 81, 0.25);
+    transition: transform 0.3s ease;
+}
+
+.auth-neon-lock-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(202, 161, 81, 0.4);
 }
 
 .auth-form-headline {
     font-size: 1.85rem;
     font-weight: 800;
-    color: #FFFFFF;
+    color: #F6F6F6;
     text-align: center;
     margin: 0 0 6px;
     letter-spacing: -0.4px;
@@ -279,18 +298,19 @@
     color: #64748B;
     pointer-events: none;
     z-index: 2;
+    transition: color 0.2s ease;
 }
 
 .auth-wave-input {
     width: 100% !important;
     height: 46px !important;
     border-radius: 10px !important;
-    background: #FFFFFF !important;
+    background: #F6F6F6 !important;
     border: 1.5px solid transparent !important;
     padding: 0 42px 0 42px !important;
     font-size: 0.94rem !important;
     font-weight: 600 !important;
-    color: #0F172A !important;
+    color: #10181E !important;
     outline: none !important;
     letter-spacing: normal !important;
     box-sizing: border-box !important;
@@ -304,8 +324,13 @@
 }
 
 .auth-wave-input:focus {
-    border-color: #E02E34 !important;
-    box-shadow: 0 0 0 3px rgba(224, 46, 52, 0.22) !important;
+    border-color: #CAA151 !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(202, 161, 81, 0.25) !important;
+}
+
+.auth-wave-input-box:focus-within .auth-wave-icon {
+    color: #93272C;
 }
 
 /* Botão Olhinho */
@@ -327,7 +352,7 @@
 }
 
 .auth-wave-eye:hover {
-    color: #0F172A;
+    color: #10181E;
 }
 
 /* Opções (Lembrar de mim / Esqueceu a senha) */
@@ -351,28 +376,29 @@
 
 .auth-remember-me input {
     cursor: pointer;
-    accent-color: #E02E34;
+    accent-color: #93272C;
 }
 
 .auth-contact-link {
-    color: #94A3B8;
+    color: #CAA151;
     cursor: pointer;
     transition: color 0.2s ease;
+    font-weight: 500;
 }
 
 .auth-contact-link:hover {
-    color: #E02E34;
+    color: #F6F6F6;
     text-decoration: underline;
 }
 
-/* Botão de Envio (Continuar) */
+/* Botão de Envio (Continuar) — Pantone 7622 C + 7407 C */
 .auth-wave-btn-submit {
     width: 100%;
     height: 48px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #E02E34 0%, #C5221F 100%);
-    border: none;
-    color: #FFFFFF;
+    background: linear-gradient(135deg, #93272C 0%, #761C20 100%);
+    border: 1px solid rgba(202, 161, 81, 0.45);
+    color: #F6F6F6;
     font-weight: 800;
     font-size: 0.94rem;
     letter-spacing: 0.6px;
@@ -382,14 +408,25 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 18px rgba(224, 46, 52, 0.38);
+    box-shadow: 0 4px 18px rgba(147, 39, 44, 0.45);
     transition: all 0.2s ease;
 }
 
+.auth-wave-btn-submit i {
+    color: #CAA151;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
 .auth-wave-btn-submit:hover:not(:disabled) {
-    background: linear-gradient(135deg, #C5221F 0%, #AB1C19 100%);
+    background: linear-gradient(135deg, #A82D33 0%, #852126 100%);
+    border-color: #CAA151;
     transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(224, 46, 52, 0.52);
+    box-shadow: 0 6px 24px rgba(147, 39, 44, 0.6), 0 0 16px rgba(202, 161, 81, 0.35);
+}
+
+.auth-wave-btn-submit:hover:not(:disabled) i {
+    transform: translateX(3px);
 }
 
 .auth-wave-btn-submit:active:not(:disabled) {
@@ -409,10 +446,10 @@
     top: calc(100% + 6px);
     left: 0;
     width: 100%;
-    background: #FFFFFF;
-    border: 1.5px solid #CBD5E1;
+    background: #F6F6F6;
+    border: 1.5px solid rgba(202, 161, 81, 0.4);
     border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
     z-index: 100;
     overflow: hidden;
     animation: authDropdownSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -438,14 +475,14 @@
     font-weight: 700;
     letter-spacing: 0.8px;
     text-transform: uppercase;
-    color: #475569;
-    background: #F8FAFC;
-    border-bottom: 1px solid #E2E8F0;
+    color: #10181E;
+    background: #ECECEC;
+    border-bottom: 1px solid rgba(202, 161, 81, 0.25);
 }
 
 .auth-autocomplete-header i {
     font-size: 0.85rem;
-    color: #E02E34;
+    color: #CAA151;
 }
 
 .auth-autocomplete-item {
@@ -455,7 +492,7 @@
     padding: 10px 14px;
     cursor: pointer;
     transition: all 0.15s ease;
-    border-bottom: 1px solid #F1F5F9;
+    border-bottom: 1px solid #E5E7EB;
 }
 
 .auth-autocomplete-item:last-child {
@@ -463,7 +500,7 @@
 }
 
 .auth-autocomplete-item:hover {
-    background: #FEF2F2;
+    background: #FFF9EE;
 }
 
 .auth-ac-icon {
@@ -473,13 +510,13 @@
 }
 
 .auth-autocomplete-item:hover .auth-ac-icon {
-    color: #E02E34;
+    color: #CAA151;
 }
 
 .auth-autocomplete-text {
     flex: 1;
     font-size: 0.86rem;
-    color: #1E293B;
+    color: #10181E;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -487,7 +524,7 @@
 }
 
 .auth-autocomplete-text strong {
-    color: #E02E34;
+    color: #93272C;
     font-weight: 800;
 }
 
@@ -507,7 +544,7 @@
 }
 
 .auth-autocomplete-del:hover {
-    color: #DC2626;
+    color: #93272C;
     background: #FEE2E2;
     opacity: 1;
 }
@@ -516,8 +553,8 @@
 .auth-error-box {
     margin-top: 14px;
     padding: 10px 14px;
-    background: rgba(220, 38, 38, 0.2);
-    border: 1px solid rgba(220, 38, 38, 0.4);
+    background: rgba(147, 39, 44, 0.2);
+    border: 1px solid rgba(147, 39, 44, 0.5);
     border-radius: 10px;
     color: #FECACA;
     font-size: 0.82rem;
@@ -550,7 +587,7 @@
 
     .auth-wave-left {
         padding: 32px 24px 24px;
-        background: linear-gradient(135deg, #991B1B 0%, #1F1012 100%);
+        background: linear-gradient(135deg, #701C20 0%, #10181E 100%);
     }
 
     .auth-wave-features {
