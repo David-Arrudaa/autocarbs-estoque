@@ -195,7 +195,7 @@
         <input type="file" id="cot-importFile" accept=".json" style="display:none" onchange="Cotacao.handleImport(event)">
 
         <div style="margin-bottom: 12px; position:relative; flex-shrink: 0;">
-            <input type="text" id="cot-searchHistory" placeholder="🔍 Pesquisar por placa ou modelo de veículo..." style="width:100%; padding:10px 14px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border); color:white; font-size:0.92rem;" oninput="Cotacao.historyPage=1; Cotacao.loadHistoryItems()">
+            <input type="text" id="cot-searchHistory" placeholder="🔍 Pesquisar por placa ou modelo de veículo..." style="width:100%; padding:10px 14px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); font-size:0.92rem;" oninput="Cotacao.historyPage=1; Cotacao.loadHistoryItems()">
         </div>
 
         <div id="cot-historyList" class="history-list-container" style="flex: 1; min-height: 180px; overflow-y: auto; padding-right: 4px;"></div>

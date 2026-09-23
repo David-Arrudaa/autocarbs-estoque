@@ -347,7 +347,7 @@ const Cotacao = {
 
         html += `<th style="width:36px"></th></tr>
                   <tr>
-                    <th class="th-qty" style="background:#0f1620;"></th>
+                    <th class="th-qty"></th>
                     <th class="th-part" style="text-align:right; padding-right:10px; vertical-align:middle;">
                         <div class="cot-margin-control">
                             <span class="margin-label">MARGEM</span>
@@ -444,7 +444,7 @@ const Cotacao = {
                     `;
                 }).join('');
             } else {
-                vendorCols = `<td style="background:#111a24;"></td>`;
+                vendorCols = `<td></td>`;
             }
 
             const warningIcon = (!p.vencedor && !isStock) ? '<span style="color:#eab308; font-weight:bold; margin-left:3px; font-size:14px;" title="Selecione o vencedor ou marque Estoque">⚠</span>' : '';
@@ -1642,8 +1642,8 @@ const Cotacao = {
                 <div class="history-item" onclick="Cotacao.loadItem('${x.id}')">
                     <div style="flex:1;">
                         <span style="color:var(--gold); font-weight:800; font-size:1.08rem; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
-                        <strong style="color:#ffffff; margin-left:10px; font-size:0.98rem;">${x.model || 'Sem Modelo'}</strong>
-                        ${totalStr ? `<span style="display:inline-block; font-size:0.8rem; color:#38bdf8; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.3); padding:2px 8px; border-radius:4px; margin-left:10px; font-weight:700;">${totalStr}</span>` : ''}<br>
+                        <strong style="color:var(--text-heading); margin-left:10px; font-size:0.98rem;">${x.model || 'Sem Modelo'}</strong>
+                        ${totalStr ? `<span style="display:inline-block; font-size:0.8rem; color:#0369a1; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 8px; border-radius:4px; margin-left:10px; font-weight:700;">${totalStr}</span>` : ''}<br>
                         <small style="color:var(--text-secondary); font-size:0.82rem; margin-top:4px; display:inline-block;"><i class="ph ph-calendar"></i> Criado em: ${x.date || '-'}</small>
                     </div>
                     <button type="button" class="btn-red-cot" style="padding:8px 12px; border-radius:4px;" onclick="Cotacao.deleteItem('${x.id}', event)" title="Excluir este orçamento">
