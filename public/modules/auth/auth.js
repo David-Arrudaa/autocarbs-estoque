@@ -344,7 +344,7 @@ const AuthModule = {
         } finally {
             if (btnLogin) {
                 btnLogin.disabled = false;
-                btnLogin.innerHTML = `<span>ENTRAR NO SISTEMA</span> <i class="ph ph-arrow-right"></i>`;
+                btnLogin.innerHTML = `<span>CONTINUAR</span> <i class="ph-bold ph-arrow-right"></i>`;
             }
             UI.setLoading(false);
         }

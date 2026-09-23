@@ -12,15 +12,15 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=73.0">
-    <link rel="stylesheet" href="css/style.css?v=73.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=73.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=73.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=73.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=73.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=73.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=73.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=73.0">
+    <link rel="stylesheet" href="css/variables.css?v=74.0">
+    <link rel="stylesheet" href="css/style.css?v=74.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=74.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=74.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=74.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=74.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=74.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=74.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=74.0">
 </head>
 <body>
 
@@ -29,88 +29,119 @@
         <div class="loading-bar" id="load-bar"></div>
     </div>
 
-    <!-- TELA DE LOGIN EXECUTIVA AUTOMOTIVA (Dual Stage Realista) -->
-    <div id="login-screen" class="auth-tablet-wrapper">
-        <div class="auth-tablet-frame">
+    <!-- TELA DE LOGIN ESTILO MODERNO NAVY WAVE (Inspirado na Referência do Usuário) -->
+    <div id="login-screen" class="auth-wave-wrapper">
+        <div class="auth-wave-card">
             
-            <!-- LADO ESQUERDO: Fotografia Cinemática da Oficina e Supercarro -->
-            <div class="auth-3d-scene">
-                <img src="modules/auth/workshop_hero.jpg" alt="Centro Automotivo AutoCar BS" class="auth-3d-img">
-                <div class="auth-hero-caption">
-                    <div class="auth-caption-pill">
-                        <span class="auth-pulse-dot"></span>
-                        <span>BOX 01 &bull; DIAGNÓSTICO ATIVO</span>
+            <!-- SVG da Onda Gradiente Fluida -->
+            <svg class="auth-wave-svg" viewBox="0 0 500 700" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#4F46E5"/>
+                        <stop offset="45%" stop-color="#3B82F6"/>
+                        <stop offset="85%" stop-color="#1E1B4B"/>
+                        <stop offset="100%" stop-color="#0F172A"/>
+                    </linearGradient>
+                </defs>
+                <path d="M0,0 L330,0 C390,130 460,210 390,350 C330,470 400,570 350,700 L0,700 Z" fill="url(#waveGradient)"/>
+            </svg>
+
+            <!-- LADO ESQUERDO: Conteúdo sobre a Onda -->
+            <div class="auth-wave-left">
+                <div class="auth-wave-header">
+                    <span class="auth-wave-greeting">Bem-vindo de volta!</span>
+                    <h1 class="auth-wave-title">Bom ver você<br>novamente!</h1>
+                </div>
+
+                <div class="auth-wave-features">
+                    <div class="auth-wave-feat-item">
+                        <div class="auth-wave-feat-icon">
+                            <i class="ph-bold ph-chart-bar"></i>
+                        </div>
+                        <div class="auth-wave-feat-text">
+                            <strong>Estoque & Curva ABC</strong>
+                            <span>Giro de peças e controle em tempo real</span>
+                        </div>
                     </div>
-                    <strong class="auth-caption-title">ALTA PERFORMANCE &bull; GESTÃO PRECISA</strong>
-                    <span class="auth-caption-sub">Oficina mecânica especializada, controle de estoque e telemetria</span>
+
+                    <div class="auth-wave-feat-item">
+                        <div class="auth-wave-feat-icon">
+                            <i class="ph-bold ph-shield-check"></i>
+                        </div>
+                        <div class="auth-wave-feat-text">
+                            <strong>Segurança Blindada</strong>
+                            <span>Proteção com autenticação HttpOnly</span>
+                        </div>
+                    </div>
+
+                    <div class="auth-wave-feat-item">
+                        <div class="auth-wave-feat-icon">
+                            <i class="ph-bold ph-lightning"></i>
+                        </div>
+                        <div class="auth-wave-feat-text">
+                            <strong>Agilidade na Oficina</strong>
+                            <span>Scanner óptico e conferência rápida</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- LADO DIREITO: Card Executivo de Acesso -->
-            <div class="auth-floating-card">
-                <div class="auth-card-content">
-                    
-                    <!-- Marca & Logo -->
-                    <div class="auth-brand-badge-row">
-                        <div class="auth-badge-icon">
-                            <i class="ph-bold ph-gauge"></i>
-                        </div>
-                        <span class="auth-brand-text">AUTOCAR<b>BS</b></span>
-                    </div>
-
-                    <!-- Título -->
-                    <h1 class="auth-screen-title">Acesso ao Sistema</h1>
-                    <p class="auth-screen-subtitle">Informe suas credenciais para gerenciar a oficina</p>
-
-                    <!-- Formulário de Acesso -->
-                    <form id="form-login">
-                        <div class="auth-form-group">
-                            <label class="auth-pill-label" for="login-email">
-                                <i class="ph-bold ph-user"></i>
-                                <span>E-mail Corporativo</span>
-                            </label>
-                            <div class="auth-pill-wrapper">
-                                <input type="email" class="auth-pill-input" id="login-email" name="email" placeholder="seu.email@autocarbs.com.br" required autocomplete="email" spellcheck="false" autofocus>
-                                <i class="ph ph-envelope-simple auth-pill-icon"></i>
-                                <!-- Dropdown de Histórico Inteligente / Autocomplete -->
-                                <div id="email-autocomplete-list" class="auth-autocomplete-dropdown" style="display:none;"></div>
-                            </div>
-                        </div>
-
-                        <div class="auth-form-group">
-                            <label class="auth-pill-label" for="login-senha">
-                                <i class="ph-bold ph-lock-key"></i>
-                                <span>Senha de Acesso</span>
-                            </label>
-                            <div class="auth-pill-wrapper">
-                                <input type="password" class="auth-pill-input" id="login-senha" placeholder="Sua senha de segurança" required autocomplete="new-password" data-lpignore="true">
-                                <i class="ph ph-lock-key auth-pill-icon"></i>
-                                <button type="button" class="auth-pill-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
-                                    <i class="ph ph-eye" id="icon-toggle-pwd"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Botão Acessar -->
-                        <button id="btn-login" type="submit" class="auth-pill-submit">
-                            <span>ENTRAR NO SISTEMA</span>
-                            <i class="ph-bold ph-arrow-right"></i>
-                        </button>
-                    </form>
-
-                    <!-- Mensagem de Erro -->
-                    <div id="auth-msg-erro" class="auth-error-box" style="display:none;">
-                        <i class="ph-bold ph-warning-circle" style="font-size:1.2rem; flex-shrink:0;"></i>
-                        <span id="auth-msg-erro-texto"></span>
-                    </div>
-
-                    <!-- Rodapé Seguro -->
-                    <div class="auth-safe-footer">
-                        <i class="ph-fill ph-shield-check"></i>
-                        <span>Ambiente Protegido &bull; AutoCar BS ERP</span>
-                    </div>
-
+            <!-- LADO DIREITO: Formulário de Acesso -->
+            <div class="auth-wave-right">
+                
+                <!-- Badge Circular com Cadeado Neon -->
+                <div class="auth-neon-lock-badge">
+                    <i class="ph-bold ph-lock-key"></i>
                 </div>
+
+                <h2 class="auth-form-headline">Entrar na sua conta</h2>
+                <p class="auth-form-subline">Informe suas credenciais para continuar</p>
+
+                <form id="form-login">
+                    <div class="auth-wave-group">
+                        <label class="auth-wave-label" for="login-email">E-mail de Acesso</label>
+                        <div class="auth-wave-input-box">
+                            <input type="email" class="auth-wave-input" id="login-email" name="email" placeholder="seu.email@autocarbs.com.br" required autocomplete="email" spellcheck="false" autofocus>
+                            <i class="ph ph-envelope-simple auth-wave-icon"></i>
+                            <!-- Dropdown de Histórico Inteligente / Autocomplete -->
+                            <div id="email-autocomplete-list" class="auth-autocomplete-dropdown" style="display:none;"></div>
+                        </div>
+                    </div>
+
+                    <div class="auth-wave-group">
+                        <label class="auth-wave-label" for="login-senha">Senha</label>
+                        <div class="auth-wave-input-box">
+                            <input type="password" class="auth-wave-input" id="login-senha" placeholder="Digite sua senha" required autocomplete="new-password" data-lpignore="true">
+                            <i class="ph ph-lock-key auth-wave-icon"></i>
+                            <button type="button" class="auth-wave-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
+                                <i class="ph ph-eye" id="icon-toggle-pwd"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="auth-wave-options">
+                        <label class="auth-remember-me">
+                            <input type="checkbox" id="auth-remember-check" checked>
+                            <span>Lembrar de mim</span>
+                        </label>
+                        <span class="auth-contact-link" onclick="AuthModule.mostrarErro('Contate o administrador para redefinir a sua senha.')">Esqueceu a senha?</span>
+                    </div>
+
+                    <button id="btn-login" type="submit" class="auth-wave-btn-submit">
+                        <span>CONTINUAR</span>
+                        <i class="ph-bold ph-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div id="auth-msg-erro" class="auth-error-box" style="display:none;">
+                    <i class="ph-bold ph-warning-circle" style="font-size:1.2rem; flex-shrink:0;"></i>
+                    <span id="auth-msg-erro-texto"></span>
+                </div>
+
+                <div class="auth-wave-footer">
+                    <span>Precisa de ajuda? <strong onclick="AuthModule.mostrarErro('Suporte AutoCar BS: suporte@autocarbs.com.br')">Fale com o administrador</strong></span>
+                </div>
+
             </div>
 
         </div>
@@ -273,16 +304,16 @@
     <div id="container-modulo-scanner" data-module="scanner"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=73.0"></script>
-    <script src="js/ui.js?v=73.0"></script>
-    <script src="modals/dialog.js?v=73.0"></script>
-    <script src="js/sidebar.js?v=73.0"></script>
-    <script src="js/api.js?v=73.0"></script>
-    <script src="modules/auth/auth.js?v=73.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=73.0"></script>
-    <script src="modules/equipe/equipe.js?v=73.0"></script>
-    <script src="modules/scanner/scanner.js?v=73.0"></script>
-    <script src="modules/estoque/estoque.js?v=73.0"></script>
-    <script src="js/app.js?v=73.0"></script>
+    <script src="js/core/view-loader.js?v=74.0"></script>
+    <script src="js/ui.js?v=74.0"></script>
+    <script src="modals/dialog.js?v=74.0"></script>
+    <script src="js/sidebar.js?v=74.0"></script>
+    <script src="js/api.js?v=74.0"></script>
+    <script src="modules/auth/auth.js?v=74.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=74.0"></script>
+    <script src="modules/equipe/equipe.js?v=74.0"></script>
+    <script src="modules/scanner/scanner.js?v=74.0"></script>
+    <script src="modules/estoque/estoque.js?v=74.0"></script>
+    <script src="js/app.js?v=74.0"></script>
 </body>
 </html>

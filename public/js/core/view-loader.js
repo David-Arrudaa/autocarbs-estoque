@@ -32,7 +32,7 @@ const ViewLoader = {
         }
 
         const fileName = customFileName || `${moduleName}.view.html`;
-        const path = `modules/${moduleName}/${fileName}?v=73.0`;
+        const path = `modules/${moduleName}/${fileName}?v=74.0`;
 
         try {
             let html = this._cache.get(path);

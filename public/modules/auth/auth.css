@@ -1,12 +1,12 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos Executivos Automotivos
- * Padrão: Dual Stage Realista (Oficina & Supercarro Cinemático)
+ * Módulo de Autenticação: Estilos Modern Navy Wave
+ * Layout: Idêntico à Referência do Usuário (Midnight Navy com Onda Gradiente)
  * =========================================================
  */
 
-.auth-tablet-wrapper {
+.auth-wave-wrapper {
     position: fixed;
     inset: 0;
     width: 100vw;
@@ -16,40 +16,35 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: 
-        radial-gradient(900px circle at 50% 15%, rgba(224, 46, 52, 0.05), transparent 70%),
-        radial-gradient(700px circle at 80% 85%, rgba(15, 23, 42, 0.04), transparent 60%),
-        linear-gradient(135deg, #EEF2F8 0%, #E6EDF6 50%, #DCE5F2 100%);
+    background: #050711;
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Moldura Executiva Dual Stage */
-.auth-tablet-frame {
+/* Card Principal com Cantos Arredondados e Fundo Midnight */
+.auth-wave-card {
     width: 100%;
-    max-width: 1020px;
-    min-height: 590px;
-    background: #FFFFFF;
-    border: 1px solid #CBD5E1;
-    border-radius: 24px;
-    box-shadow: 
-        0 20px 60px -10px rgba(15, 23, 42, 0.16),
-        0 10px 25px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(15, 23, 42, 0.03);
-    display: flex;
-    flex-direction: row;
+    max-width: 960px;
+    min-height: 560px;
+    background: #0A0D22;
+    border-radius: 28px;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 
+        0 25px 70px -10px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
     box-sizing: border-box;
-    animation: authFrameFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: authWavePop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes authFrameFadeIn {
+@keyframes authWavePop {
     from {
         opacity: 0;
-        transform: translateY(16px) scale(0.985);
+        transform: translateY(18px) scale(0.98);
     }
     to {
         opacity: 1;
@@ -57,251 +52,201 @@
     }
 }
 
-/* =========================================================
-   LADO ESQUERDO: FOTOGRAFIA CINEMÁTICA DE ALTA PERFORMANCE
-   ========================================================= */
-.auth-3d-scene {
-    flex: 1.15;
-    position: relative;
-    overflow: hidden;
-    background: #080B10;
-    display: flex;
-    align-items: flex-end;
-}
-
-.auth-3d-img {
+/* SVG da Onda Fluida de Fundo */
+.auth-wave-svg {
     position: absolute;
-    inset: 0;
-    width: 100%;
+    top: 0;
+    left: 0;
+    width: 54%;
     height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-    user-select: none;
     pointer-events: none;
-}
-
-/* Legenda Translúcida sobre a Foto */
-.auth-hero-caption {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    padding: 36px 36px 32px;
-    background: linear-gradient(180deg, transparent 0%, rgba(8, 11, 16, 0.75) 30%, rgba(8, 11, 16, 0.95) 100%);
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.auth-caption-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    align-self: flex-start;
-    background: rgba(0, 0, 0, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #4ADE80;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    backdrop-filter: blur(8px);
-    margin-bottom: 4px;
-}
-
-.auth-pulse-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22C55E;
-    box-shadow: 0 0 8px rgba(34, 197, 94, 0.9);
-    animation: authLedPulse 2s infinite;
-}
-
-@keyframes authLedPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8);
-    }
-    70% {
-        box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-    }
-}
-
-.auth-caption-title {
-    color: #FFFFFF;
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-}
-
-.auth-caption-sub {
-    color: #CBD5E1;
-    font-size: 0.80rem;
-    line-height: 1.4;
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    display: block;
 }
 
 /* =========================================================
-   LADO DIREITO: CARD EXECUTIVO DE ACESSO
+   LADO ESQUERDO: TEXTOS & FEATURES SOBRE A ONDA
    ========================================================= */
-.auth-floating-card {
+.auth-wave-left {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 36px;
-    background: #FFFFFF;
-    box-sizing: border-box;
     position: relative;
     z-index: 2;
-}
-
-.auth-card-content {
-    width: 100%;
-    max-width: 380px;
+    padding: 48px 44px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     box-sizing: border-box;
+    user-select: none;
 }
 
-/* Marca no Topo */
-.auth-brand-badge-row {
+.auth-wave-greeting {
+    font-size: 0.95rem;
+    color: #E0E7FF;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.auth-wave-title {
+    font-size: 2.35rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+/* Lista de Features */
+.auth-wave-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 30px;
+}
+
+.auth-wave-feat-item {
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin-bottom: 20px;
+    gap: 14px;
 }
 
-.auth-badge-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: #FEE2E2;
-    color: #E02E34;
+.auth-wave-feat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    backdrop-filter: blur(8px);
 }
 
-.auth-brand-text {
-    font-size: 1.4rem;
-    font-weight: 900;
-    font-style: italic;
-    letter-spacing: 0.5px;
-    color: #0F172A;
+.auth-wave-feat-text strong {
+    display: block;
+    color: #FFFFFF;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 2px;
 }
 
-.auth-brand-text b {
-    color: #E02E34;
-    font-style: normal;
+.auth-wave-feat-text span {
+    display: block;
+    color: #CBD5E1;
+    font-size: 0.74rem;
+    line-height: 1.35;
 }
 
-/* Título e Subtítulo */
-.auth-screen-title {
-    font-size: 1.8rem;
+/* =========================================================
+   LADO DIREITO: FORMULÁRIO DE ACESSO
+   ========================================================= */
+.auth-wave-right {
+    flex: 1.1;
+    position: relative;
+    z-index: 2;
+    padding: 44px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Badge Circular com Cadeado Neon */
+.auth-neon-lock-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.35) 0%, rgba(59, 130, 246, 0.25) 100%);
+    border: 1.5px solid rgba(99, 102, 241, 0.65);
+    color: #818CF8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.85rem;
+    margin: 0 auto 16px;
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
+}
+
+.auth-form-headline {
+    font-size: 1.85rem;
     font-weight: 800;
-    color: #0F172A;
-    margin: 0 0 6px 0;
+    color: #FFFFFF;
+    text-align: center;
+    margin: 0 0 6px;
     letter-spacing: -0.4px;
 }
 
-.auth-screen-subtitle {
-    font-size: 0.83rem;
-    color: #64748B;
-    margin: 0 0 24px 0;
+.auth-form-subline {
+    font-size: 0.85rem;
+    color: #94A3B8;
+    text-align: center;
+    margin: 0 0 24px;
     line-height: 1.4;
 }
 
-/* Formulário e Campos */
-.auth-form-group {
-    margin-bottom: 18px;
+/* Campos de Entrada */
+.auth-wave-group {
+    margin-bottom: 16px;
     position: relative;
     text-align: left;
 }
 
-.auth-pill-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.74rem;
+.auth-wave-label {
+    display: block;
+    font-size: 0.78rem;
     font-weight: 700;
-    color: #334155;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
+    color: #CBD5E1;
     margin-bottom: 7px;
 }
 
-.auth-pill-label i {
-    color: #E02E34;
-    font-size: 0.88rem;
-}
-
-.auth-pill-wrapper {
+.auth-wave-input-box {
     position: relative;
     width: 100%;
     display: flex;
     align-items: center;
 }
 
-.auth-pill-icon {
+.auth-wave-icon {
     position: absolute;
-    left: 15px;
+    left: 14px;
     font-size: 1.2rem;
     color: #64748B;
     pointer-events: none;
     z-index: 2;
-    transition: color 0.2s ease;
 }
 
-.auth-pill-input {
+.auth-wave-input {
     width: 100% !important;
-    height: 48px !important;
-    border-radius: 12px !important;
-    background: #F8FAFD !important;
-    border: 1.5px solid #CBD5E1 !important;
-    padding: 0 44px 0 44px !important;
+    height: 46px !important;
+    border-radius: 10px !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid transparent !important;
+    padding: 0 42px 0 42px !important;
     font-size: 0.94rem !important;
     font-weight: 600 !important;
     color: #0F172A !important;
     outline: none !important;
-    text-transform: none !important;
     letter-spacing: normal !important;
     box-sizing: border-box !important;
     transition: all 0.2s ease !important;
 }
 
-.auth-pill-input::placeholder {
+.auth-wave-input::placeholder {
     color: #94A3B8 !important;
     font-size: 0.88rem !important;
     font-weight: 400 !important;
-    text-transform: none !important;
 }
 
-.auth-pill-input:hover {
-    border-color: #94A3B8 !important;
-    background: #FFFFFF !important;
-}
-
-.auth-pill-input:focus {
-    border-color: #E02E34 !important;
-    background: #FFFFFF !important;
-    box-shadow: 0 0 0 3.5px rgba(224, 46, 52, 0.12) !important;
-}
-
-.auth-pill-wrapper:focus-within .auth-pill-icon {
-    color: #E02E34 !important;
+.auth-wave-input:focus {
+    border-color: #3B82F6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
 }
 
 /* Botão Olhinho */
-.auth-pill-eye {
+.auth-wave-eye {
     position: absolute;
     right: 10px;
     background: transparent;
@@ -314,13 +259,83 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
     z-index: 2;
 }
 
-.auth-pill-eye:hover {
+.auth-wave-eye:hover {
     color: #0F172A;
-    background: #F1F5F9;
+}
+
+/* Opções (Lembrar de mim / Esqueceu a senha) */
+.auth-wave-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    margin-bottom: 20px;
+    font-size: 0.78rem;
+}
+
+.auth-remember-me {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #CBD5E1;
+    cursor: pointer;
+    user-select: none;
+}
+
+.auth-remember-me input {
+    cursor: pointer;
+    accent-color: #2563EB;
+}
+
+.auth-contact-link {
+    color: #94A3B8;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.auth-contact-link:hover {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+/* Botão de Envio (Continuar) */
+.auth-wave-btn-submit {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    background: #2563EB;
+    border: none;
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 0.94rem;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.40);
+    transition: all 0.2s ease;
+}
+
+.auth-wave-btn-submit:hover:not(:disabled) {
+    background: #1D4ED8;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+}
+
+.auth-wave-btn-submit:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.auth-wave-btn-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 /* =========================================================
@@ -333,8 +348,8 @@
     width: 100%;
     background: #FFFFFF;
     border: 1.5px solid #CBD5E1;
-    border-radius: 14px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
     z-index: 100;
     overflow: hidden;
     animation: authDropdownSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -367,7 +382,7 @@
 
 .auth-autocomplete-header i {
     font-size: 0.85rem;
-    color: #E02E34;
+    color: #2563EB;
 }
 
 .auth-autocomplete-item {
@@ -385,7 +400,7 @@
 }
 
 .auth-autocomplete-item:hover {
-    background: #FEF2F2;
+    background: #EFF6FF;
 }
 
 .auth-ac-icon {
@@ -395,7 +410,7 @@
 }
 
 .auth-autocomplete-item:hover .auth-ac-icon {
-    color: #E02E34;
+    color: #2563EB;
 }
 
 .auth-autocomplete-text {
@@ -409,7 +424,7 @@
 }
 
 .auth-autocomplete-text strong {
-    color: #E02E34;
+    color: #2563EB;
     font-weight: 800;
 }
 
@@ -434,52 +449,14 @@
     opacity: 1;
 }
 
-/* Botão de Submissão Executivo */
-.auth-pill-submit {
-    width: 100%;
-    height: 50px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #E02E34 0%, #C5221F 100%);
-    border: none;
-    color: #FFFFFF;
-    font-weight: 800;
-    font-size: 0.92rem;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-    box-shadow: 0 4px 16px rgba(224, 46, 52, 0.32);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.auth-pill-submit:hover:not(:disabled) {
-    background: linear-gradient(135deg, #C5221F 0%, #AB1C19 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(224, 46, 52, 0.42);
-}
-
-.auth-pill-submit:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.auth-pill-submit:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    filter: grayscale(0.4);
-}
-
 /* Alerta de Erro de Autenticação */
 .auth-error-box {
     margin-top: 14px;
     padding: 10px 14px;
-    background: #FEF2F2;
-    border: 1px solid #FECACA;
+    background: rgba(220, 38, 38, 0.2);
+    border: 1px solid rgba(220, 38, 38, 0.4);
     border-radius: 10px;
-    color: #B91C1C;
+    color: #FECACA;
     font-size: 0.82rem;
     font-weight: 600;
     display: flex;
@@ -494,55 +471,49 @@
     40%, 80% { transform: translateX(6px); }
 }
 
-/* Rodapé Seguro */
-.auth-safe-footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+/* Rodapé do Form */
+.auth-wave-footer {
     margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid #EEF2F6;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #94A3B8;
+    text-align: center;
+    font-size: 0.78rem;
+    color: #64748B;
 }
 
-.auth-safe-footer i {
-    font-size: 0.95rem;
-    color: #16A34A;
+.auth-wave-footer strong {
+    color: #3B82F6;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.auth-wave-footer strong:hover {
+    color: #60A5FA;
+    text-decoration: underline;
 }
 
 /* =========================================================
    RESPONSIVIDADE (MOBILE & TABLET)
    ========================================================= */
-@media (max-width: 900px) {
-    .auth-tablet-frame {
+@media (max-width: 860px) {
+    .auth-wave-card {
         flex-direction: column;
         max-width: 440px;
         min-height: auto;
-        border-radius: 20px;
     }
 
-    .auth-3d-scene {
-        height: 220px;
-        flex: none;
+    .auth-wave-svg {
+        display: none;
     }
 
-    .auth-hero-caption {
-        padding: 16px;
+    .auth-wave-left {
+        padding: 32px 24px 20px;
+        background: linear-gradient(135deg, #1E1B4B 0%, #172554 100%);
     }
 
-    .auth-caption-title {
-        font-size: 1rem;
+    .auth-wave-features {
+        display: none;
     }
 
-    .auth-floating-card {
-        padding: 30px 24px 26px;
-        flex: none;
-    }
-
-    .auth-screen-title {
-        font-size: 1.6rem;
+    .auth-wave-right {
+        padding: 28px 24px 32px;
     }
 }
