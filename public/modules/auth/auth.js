@@ -1,11 +1,14 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Lógica de Login & Sessão
+ * Módulo de Autenticação: Lógica de Login & Sessão Premium
+ * Com Autocomplete Dinâmico de E-mails e Histórico Inteligente
  * =========================================================
  */
 
 const AuthModule = {
+    EMAIL_HISTORY_KEY: 'autocar_email_history',
+
     /**
      * Inicializa os eventos da tela de login
      */
@@ -20,15 +23,50 @@ const AuthModule = {
 
         const inputEmail = document.getElementById('login-email');
         const inputSenha = document.getElementById('login-senha');
+        const dropdown = document.getElementById('email-autocomplete-list');
 
         if (inputEmail) {
+            // Navegação e submissão
             inputEmail.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
+                    if (dropdown && dropdown.style.display !== 'none') {
+                        const firstItem = dropdown.querySelector('.auth-autocomplete-item');
+                        if (firstItem && inputEmail.value !== firstItem.getAttribute('data-email')) {
+                            // Se dropdown está aberto e o usuário aperta enter sem valor completo
+                            const email = firstItem.getAttribute('data-email');
+                            if (email) {
+                                inputEmail.value = email;
+                                dropdown.style.display = 'none';
+                                if (inputSenha) inputSenha.focus();
+                                e.preventDefault();
+                                return;
+                            }
+                        }
+                    }
                     if (inputSenha && !inputSenha.value) {
                         e.preventDefault();
                         inputSenha.focus();
                     }
+                } else if (e.key === 'Escape' && dropdown) {
+                    dropdown.style.display = 'none';
                 }
+            });
+
+            // Autocomplete em tempo real ao digitar
+            inputEmail.addEventListener('input', () => {
+                this.atualizarAutocomplete();
+            });
+
+            // Exibir opções recentes ao focar
+            inputEmail.addEventListener('focus', () => {
+                this.atualizarAutocomplete();
+            });
+
+            // Fechar ao clicar fora (com pequeno delay para capturar o clique do mouse)
+            inputEmail.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (dropdown) dropdown.style.display = 'none';
+                }, 220);
             });
         }
 
@@ -36,6 +74,125 @@ const AuthModule = {
         window.addEventListener('auth:expired', () => {
             this.mostrarTelaLogin();
         });
+    },
+
+    /**
+     * Retorna a lista de e-mails gravados no histórico local
+     */
+    obterHistoricoEmails() {
+        try {
+            const raw = localStorage.getItem(this.EMAIL_HISTORY_KEY);
+            if (raw) {
+                const list = JSON.parse(raw);
+                if (Array.isArray(list)) return list;
+            }
+        } catch (_) {}
+        return [];
+    },
+
+    /**
+     * Salva um e-mail no histórico (sem duplicatas, mantendo até 6)
+     */
+    salvarEmailHistorico(email) {
+        if (!email || !email.includes('@')) return;
+        try {
+            let history = this.obterHistoricoEmails();
+            history = history.filter(e => e.toLowerCase() !== email.toLowerCase());
+            history.unshift(email.trim());
+            if (history.length > 6) history = history.slice(0, 6);
+            localStorage.setItem(this.EMAIL_HISTORY_KEY, JSON.stringify(history));
+        } catch (_) {}
+    },
+
+    /**
+     * Remove um item específico do histórico
+     */
+    removerEmailHistorico(emailRemover, ev) {
+        if (ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+        }
+        try {
+            let history = this.obterHistoricoEmails();
+            history = history.filter(e => e.toLowerCase() !== emailRemover.toLowerCase());
+            localStorage.setItem(this.EMAIL_HISTORY_KEY, JSON.stringify(history));
+            this.atualizarAutocomplete();
+        } catch (_) {}
+    },
+
+    /**
+     * Renderiza o dropdown flutuante de sugestões de e-mail
+     */
+    atualizarAutocomplete() {
+        const input = document.getElementById('login-email');
+        const dropdown = document.getElementById('email-autocomplete-list');
+        if (!input || !dropdown) return;
+
+        const val = input.value.trim().toLowerCase();
+        const history = this.obterHistoricoEmails();
+
+        if (!history || history.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+
+        // Se o usuário digitou, filtra por correspondência. Se está vazio, mostra os recentes.
+        const matches = val 
+            ? history.filter(item => item.toLowerCase().includes(val))
+            : history;
+
+        if (matches.length === 0) {
+            dropdown.style.display = 'none';
+            return;
+        }
+
+        dropdown.innerHTML = `
+            <div class="auth-autocomplete-header">
+                <span>E-mails Recentes</span>
+                <i class="ph ph-clock-counter-clockwise"></i>
+            </div>
+            ${matches.map(email => `
+                <div class="auth-autocomplete-item" data-email="${email}">
+                    <i class="ph ph-user-circle auth-ac-icon"></i>
+                    <span class="auth-autocomplete-text">${this.destacarMatch(email, val)}</span>
+                    <button type="button" class="auth-autocomplete-del" title="Remover este e-mail do histórico" onclick="AuthModule.removerEmailHistorico('${email}', event)">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+            `).join('')}
+        `;
+
+        dropdown.style.display = 'block';
+
+        // Vincula evento de seleção em cada item
+        dropdown.querySelectorAll('.auth-autocomplete-item').forEach(item => {
+            item.addEventListener('mousedown', (ev) => {
+                ev.preventDefault(); // Evita perder o foco antes do clique
+            });
+            item.addEventListener('click', (ev) => {
+                if (ev.target.closest('.auth-autocomplete-del')) return;
+                const email = item.getAttribute('data-email');
+                if (email) {
+                    input.value = email;
+                    dropdown.style.display = 'none';
+                    const pwd = document.getElementById('login-senha');
+                    if (pwd) pwd.focus();
+                }
+            });
+        });
+    },
+
+    /**
+     * Destaca em negrito as letras que o usuário já digitou
+     */
+    destacarMatch(email, query) {
+        if (!query) return email;
+        const idx = email.toLowerCase().indexOf(query.toLowerCase());
+        if (idx === -1) return email;
+        const before = email.slice(0, idx);
+        const match = email.slice(idx, idx + query.length);
+        const after = email.slice(idx + query.length);
+        return `${before}<strong>${match}</strong>${after}`;
     },
 
     /**
@@ -55,6 +212,11 @@ const AuthModule = {
         if (inputSenha) inputSenha.value = '';
 
         if (inputEmail) {
+            // Se o histórico tiver algum e-mail e o input estiver vazio, pré-sugere o último
+            const history = this.obterHistoricoEmails();
+            if (!inputEmail.value && history.length > 0) {
+                inputEmail.value = history[0];
+            }
             if (!inputEmail.value) {
                 inputEmail.focus();
             } else if (inputSenha) {
@@ -156,8 +318,9 @@ const AuthModule = {
 
             const res = await API.login(email, senha);
 
-            // O token chegou via cookie HttpOnly — não precisa mais do setToken()
-            // API.setToken(res.token) ← REMOVIDO (token não está mais no body)
+            // Salva e-mail com sucesso no histórico local para autocompletar na próxima vez
+            this.salvarEmailHistorico(email);
+
             if (window.atualizarPerfilUsuario) {
                 window.atualizarPerfilUsuario(res.usuario);
             }
@@ -170,7 +333,6 @@ const AuthModule = {
             }
         } catch (err) {
             let msg = err.message || 'E-mail ou senha incorretos!';
-            // Limpa mensagens antigas que mencionavam PIN
             if (msg.toLowerCase().includes('pin')) {
                 msg = 'E-mail ou senha incorretos!';
             }
@@ -220,4 +382,3 @@ window.toggleVisibilidadeSenha = (id, btn) => AuthModule.toggleVisibilidadeSenha
 document.addEventListener('DOMContentLoaded', () => {
     AuthModule.init();
 });
-
