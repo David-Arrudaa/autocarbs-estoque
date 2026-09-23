@@ -17,7 +17,7 @@
     --bg-header: #FFFFFF;                 /* Topbar limpo e integrado */
     --bg-input: #FFFFFF;                  /* Fundo branco de caixas de entrada de texto */
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
-    --bg-surface-active: #E02E34;         /* Destaque ativo em vermelho marca */
+    --bg-surface-active: #FFFFFF;         /* Superfície ativa limpa elevada (cards, abas) */
     --bg-hover: #F1F5F9;                  /* Hover suave e limpo */
     --bg-table-th: #F1F5F9;               /* Cabeçalho contrastado das tabelas */
     --bg-table-hover: #F8FAFC;            /* Hover em linhas da tabela */

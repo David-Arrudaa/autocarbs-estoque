@@ -25,7 +25,7 @@
 .report-subtabs-segmented {
     display: flex;
     gap: 6px;
-    background: var(--bg-input);
+    background: #F1F5F9;
     padding: 4px;
     border-radius: 8px;
     border: 1px solid var(--border);
@@ -37,9 +37,9 @@
     gap: 6px;
     padding: 7px 14px;
     border-radius: 6px;
-    border: none;
+    border: 1px solid transparent;
     background: transparent;
-    color: var(--text-secondary);
+    color: #64748B;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -47,14 +47,20 @@
 }
 
 .subtab-btn:hover {
-    color: var(--text-heading);
-    background: var(--bg-hover);
+    color: #0F172A;
+    background: #E2E8F0;
 }
 
 .subtab-btn.active {
-    background: var(--bg-surface-active);
-    color: var(--gold);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    background: #FFFFFF;
+    color: #0F172A;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.subtab-btn.active i {
+    color: #DC2626;
 }
 
 .report-actions-group {
