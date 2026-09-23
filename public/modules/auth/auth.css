@@ -20,31 +20,104 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: #EEF2F7;
-    background-image: 
-        radial-gradient(at 0% 0%, rgba(202, 161, 81, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(147, 39, 44, 0.06) 0px, transparent 50%);
+    background: linear-gradient(135deg, #F6F8FB 0%, #E8EEF5 50%, #F1F4F9 100%);
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
 }
 
-/* Card Principal: Clean Light com Onda Esquerda e Lado Direito Branco Puro */
+/* =========================================================
+   ILUMINAÇÃO AMBIENTAL DE ESTÚDIO & LINHAS AERODINÂMICAS
+   ========================================================= */
+.auth-bg-ambient {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.auth-ambient-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.85;
+    animation: authOrbFloat 14s ease-in-out infinite alternate;
+}
+
+/* Orbe Dourado Superior (Pantone 7407 C) */
+.auth-orb-gold {
+    width: 520px;
+    height: 520px;
+    top: -140px;
+    left: -100px;
+    background: radial-gradient(circle, rgba(202, 161, 81, 0.30) 0%, rgba(202, 161, 81, 0) 70%);
+}
+
+/* Orbe Carmim Inferior (Pantone 7622 C) */
+.auth-orb-carmine {
+    width: 560px;
+    height: 560px;
+    bottom: -150px;
+    right: -120px;
+    background: radial-gradient(circle, rgba(147, 39, 44, 0.22) 0%, rgba(147, 39, 44, 0) 70%);
+    animation-delay: -6s;
+}
+
+/* Orbe Central de Luz Difusa */
+.auth-orb-center {
+    width: 420px;
+    height: 420px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(202, 161, 81, 0.08) 50%, transparent 70%);
+}
+
+@keyframes authOrbFloat {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(30px, -25px) scale(1.06);
+    }
+    100% {
+        transform: translate(-25px, 20px) scale(0.96);
+    }
+}
+
+/* Linhas de Fluxo de Vento em Túnel Aerodinâmico */
+.auth-ambient-wind {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Card Principal: Clean Light com Destaque no Fundo Ambiental */
 .auth-wave-card {
     width: 100%;
     max-width: 960px;
     min-height: 560px;
     background: #FFFFFF;
     border-radius: 28px;
-    border: 1px solid rgba(202, 161, 81, 0.30);
+    border: 1px solid rgba(202, 161, 81, 0.35);
     position: relative;
+    z-index: 2;
     overflow: hidden;
     display: flex;
     flex-direction: row;
     box-shadow: 
-        0 25px 65px -12px rgba(16, 24, 30, 0.12),
-        0 4px 20px -2px rgba(16, 24, 30, 0.05);
+        0 25px 70px -12px rgba(16, 24, 30, 0.15),
+        0 0 45px -10px rgba(202, 161, 81, 0.22),
+        0 0 50px -15px rgba(147, 39, 44, 0.16);
     box-sizing: border-box;
     animation: authWavePop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
