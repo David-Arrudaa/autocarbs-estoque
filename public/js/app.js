@@ -214,9 +214,29 @@ function toggleVisibilidadeSenha(inputId, btn) {
     }
 }
 
-function fazerLogout() {
-    API.setToken(null);
-    location.reload();
+async function fazerLogout() {
+    if (window.AuthModule && typeof window.AuthModule.fazerLogout === 'function') {
+        return window.AuthModule.fazerLogout();
+    }
+    try {
+        if (window.UI) UI.setLoading(true);
+        if (window.API && typeof window.API.logout === 'function') {
+            await API.logout();
+        } else {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+        }
+    } catch (_) {}
+    if (window.API) API.setToken(null);
+    window.usuarioLogado = null;
+    try {
+        localStorage.removeItem('autocar_token');
+        sessionStorage.clear();
+    } catch (_) {}
+    window.location.href = '/';
 }
 
 window.fazerLogin = fazerLogin;

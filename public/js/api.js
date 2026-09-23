@@ -85,6 +85,15 @@ const API = {
         });
     },
 
+    async logout() {
+        try {
+            await this.request('/auth/logout', { method: 'POST' });
+        } catch (e) {
+            console.warn('Falha na requisição de logout:', e);
+        }
+        this.setToken(null);
+    },
+
     // --- ESTOQUE ---
     async listarProdutos(page = 1, limit = 20, busca = '') {
         const query = new URLSearchParams({

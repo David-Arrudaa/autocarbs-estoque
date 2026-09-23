@@ -71,6 +71,7 @@ class AuthController {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
+                path: '/',
                 maxAge: 12 * 60 * 60 * 1000 // 12 horas
             });
 
@@ -100,7 +101,8 @@ class AuthController {
         res.clearCookie('autocar_session', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict'
+            sameSite: 'strict',
+            path: '/'
         });
         return res.json({ success: true, message: 'Sessão encerrada com sucesso.' });
     }

@@ -193,17 +193,19 @@ const AuthModule = {
      */
     async fazerLogout() {
         try {
-            // Pede ao servidor para limpar o cookie HttpOnly
-            await fetch('/api/auth/logout', {
-                method: 'POST',
-                credentials: 'include'
-            });
-        } catch (_) {
-            // Mesmo que falhe, continua com o logout local
+            if (window.UI) UI.setLoading(true);
+            await API.logout();
+        } catch (err) {
+            console.warn('Erro durante logout:', err);
+        } finally {
+            API.setToken(null);
+            window.usuarioLogado = null;
+            try {
+                localStorage.removeItem('autocar_token');
+                sessionStorage.clear();
+            } catch (_) {}
+            window.location.href = '/';
         }
-        // Remove token legado do localStorage (sessões antigas)
-        API.setToken(null);
-        location.reload();
     }
 };
 
