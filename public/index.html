@@ -12,15 +12,15 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=72.0">
-    <link rel="stylesheet" href="css/style.css?v=72.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=72.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=72.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=72.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=72.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=72.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=72.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=72.0">
+    <link rel="stylesheet" href="css/variables.css?v=73.0">
+    <link rel="stylesheet" href="css/style.css?v=73.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=73.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=73.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=73.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=73.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=73.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=73.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=73.0">
 </head>
 <body>
 
@@ -29,35 +29,46 @@
         <div class="loading-bar" id="load-bar"></div>
     </div>
 
-    <!-- TELA DE LOGIN 3D AUTOMOTIVA (Estilo Tablet & Ilustração 3D Oficina) -->
+    <!-- TELA DE LOGIN EXECUTIVA AUTOMOTIVA (Dual Stage Realista) -->
     <div id="login-screen" class="auth-tablet-wrapper">
         <div class="auth-tablet-frame">
             
-            <!-- LADO ESQUERDO: Ilustração 3D da Oficina Mecânica -->
+            <!-- LADO ESQUERDO: Fotografia Cinemática da Oficina e Supercarro -->
             <div class="auth-3d-scene">
-                <img src="modules/auth/mechanic_3d.jpg" alt="Oficina Mecânica AutoCar BS" class="auth-3d-img">
+                <img src="modules/auth/workshop_hero.jpg" alt="Centro Automotivo AutoCar BS" class="auth-3d-img">
+                <div class="auth-hero-caption">
+                    <div class="auth-caption-pill">
+                        <span class="auth-pulse-dot"></span>
+                        <span>BOX 01 &bull; DIAGNÓSTICO ATIVO</span>
+                    </div>
+                    <strong class="auth-caption-title">ALTA PERFORMANCE &bull; GESTÃO PRECISA</strong>
+                    <span class="auth-caption-sub">Oficina mecânica especializada, controle de estoque e telemetria</span>
+                </div>
             </div>
 
-            <!-- LADO DIREITO: Card Flutuante Branco Arredondado -->
+            <!-- LADO DIREITO: Card Executivo de Acesso -->
             <div class="auth-floating-card">
                 <div class="auth-card-content">
                     
                     <!-- Marca & Logo -->
                     <div class="auth-brand-badge-row">
                         <div class="auth-badge-icon">
-                            <i class="ph-fill ph-wrench"></i>
+                            <i class="ph-bold ph-gauge"></i>
                         </div>
                         <span class="auth-brand-text">AUTOCAR<b>BS</b></span>
                     </div>
 
                     <!-- Título -->
-                    <h1 class="auth-screen-title">Entrar na Oficina</h1>
-                    <p class="auth-screen-subtitle">Acesse o sistema de gestão e controle de estoque</p>
+                    <h1 class="auth-screen-title">Acesso ao Sistema</h1>
+                    <p class="auth-screen-subtitle">Informe suas credenciais para gerenciar a oficina</p>
 
                     <!-- Formulário de Acesso -->
                     <form id="form-login">
                         <div class="auth-form-group">
-                            <label class="auth-pill-label" for="login-email">E-mail de Acesso</label>
+                            <label class="auth-pill-label" for="login-email">
+                                <i class="ph-bold ph-user"></i>
+                                <span>E-mail Corporativo</span>
+                            </label>
                             <div class="auth-pill-wrapper">
                                 <input type="email" class="auth-pill-input" id="login-email" name="email" placeholder="seu.email@autocarbs.com.br" required autocomplete="email" spellcheck="false" autofocus>
                                 <i class="ph ph-envelope-simple auth-pill-icon"></i>
@@ -67,9 +78,12 @@
                         </div>
 
                         <div class="auth-form-group">
-                            <label class="auth-pill-label" for="login-senha">Senha de Segurança</label>
+                            <label class="auth-pill-label" for="login-senha">
+                                <i class="ph-bold ph-lock-key"></i>
+                                <span>Senha de Acesso</span>
+                            </label>
                             <div class="auth-pill-wrapper">
-                                <input type="password" class="auth-pill-input" id="login-senha" placeholder="Sua senha de acesso" required autocomplete="new-password" data-lpignore="true">
+                                <input type="password" class="auth-pill-input" id="login-senha" placeholder="Sua senha de segurança" required autocomplete="new-password" data-lpignore="true">
                                 <i class="ph ph-lock-key auth-pill-icon"></i>
                                 <button type="button" class="auth-pill-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
                                     <i class="ph ph-eye" id="icon-toggle-pwd"></i>
@@ -77,7 +91,7 @@
                             </div>
                         </div>
 
-                        <!-- Botão Pill Acessar -->
+                        <!-- Botão Acessar -->
                         <button id="btn-login" type="submit" class="auth-pill-submit">
                             <span>ENTRAR NO SISTEMA</span>
                             <i class="ph-bold ph-arrow-right"></i>
@@ -93,7 +107,7 @@
                     <!-- Rodapé Seguro -->
                     <div class="auth-safe-footer">
                         <i class="ph-fill ph-shield-check"></i>
-                        <span>Ambiente Criptografado &bull; AutoCar BS ERP</span>
+                        <span>Ambiente Protegido &bull; AutoCar BS ERP</span>
                     </div>
 
                 </div>
@@ -259,16 +273,16 @@
     <div id="container-modulo-scanner" data-module="scanner"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=72.0"></script>
-    <script src="js/ui.js?v=72.0"></script>
-    <script src="modals/dialog.js?v=72.0"></script>
-    <script src="js/sidebar.js?v=72.0"></script>
-    <script src="js/api.js?v=72.0"></script>
-    <script src="modules/auth/auth.js?v=72.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=72.0"></script>
-    <script src="modules/equipe/equipe.js?v=72.0"></script>
-    <script src="modules/scanner/scanner.js?v=72.0"></script>
-    <script src="modules/estoque/estoque.js?v=72.0"></script>
-    <script src="js/app.js?v=72.0"></script>
+    <script src="js/core/view-loader.js?v=73.0"></script>
+    <script src="js/ui.js?v=73.0"></script>
+    <script src="modals/dialog.js?v=73.0"></script>
+    <script src="js/sidebar.js?v=73.0"></script>
+    <script src="js/api.js?v=73.0"></script>
+    <script src="modules/auth/auth.js?v=73.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=73.0"></script>
+    <script src="modules/equipe/equipe.js?v=73.0"></script>
+    <script src="modules/scanner/scanner.js?v=73.0"></script>
+    <script src="modules/estoque/estoque.js?v=73.0"></script>
+    <script src="js/app.js?v=73.0"></script>
 </body>
 </html>
