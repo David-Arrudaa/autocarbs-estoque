@@ -2,32 +2,35 @@
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
  * Sistema de Design: Tokens, Cores e Variáveis Globais
- * Tema: Soft Gray Cloud ERP (#EAEEF4) - Leve, Moderno & Atrativo
+ * Tema: Soft Gray Cloud ERP — Claro com Profundidade v64.0
  * =========================================================
  */
 
 :root {
     /* =========================================================
-       SUPERFÍCIES E FUNDOS (TEMA CLARO CINZA SUAVE)
+       SUPERFÍCIES E FUNDOS — 3 NÍVEIS DE HIERARQUIA VISUAL
+       Nível 0 (body):    #E8EDF5  ← cinza-azulado frio, caráter
+       Nível 1 (cards):   #FFFFFF  ← branco puro, contrasta com body
+       Nível 2 (th/chips):#EEF1F6  ← cinza claro, distinto do branco
        ========================================================= */
-    --bg-body: #EAEEF4;                   /* Cinza claro descansado, neutro e elegante */
-    --bg-card: #FFFFFF;                   /* Superfície branca pura para tabelas, cards e painéis */
-    --bg-sidebar: #FFFFFF;                /* Barra lateral limpa e moderna */
-    --bg-sidebar-footer: #F8FAFC;         /* Rodapé suave da sidebar */
-    --bg-header: #FFFFFF;                 /* Topbar limpo e integrado */
+    --bg-body: #E8EDF5;                   /* Nível 0 — fundo global com caráter azulado */
+    --bg-card: #FFFFFF;                   /* Nível 1 — cards e painéis brancos puros */
+    --bg-sidebar: #FAFBFC;                /* Off-white frio — distingue sidebar do conteúdo */
+    --bg-sidebar-footer: #F2F5F9;         /* Rodapé da sidebar levemente mais escuro */
+    --bg-header: #FFFFFF;                 /* Topbar branca com sombra presente */
     --bg-input: #FFFFFF;                  /* Fundo branco de caixas de entrada de texto */
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
     --bg-surface-active: #FFFFFF;         /* Superfície ativa limpa elevada (cards, abas) */
-    --bg-hover: #F1F5F9;                  /* Hover suave e limpo */
-    --bg-table-th: #F1F5F9;               /* Cabeçalho contrastado das tabelas */
-    --bg-table-hover: #F8FAFC;            /* Hover em linhas da tabela */
+    --bg-hover: #EEF2F7;                  /* Hover suave azulado */
+    --bg-table-th: #EEF1F6;              /* Nível 2 — TH claramente distinto das células brancas */
+    --bg-table-hover: #EFF4FB;            /* Hover de linha com leve tom azulado */
 
     /* =========================================================
-       BORDAS E DIVISÓRIAS
+       BORDAS E DIVISÓRIAS — MAIS PRESENTES
        ========================================================= */
-    --border: #CBD5E1;                    /* Linhas nítidas e limpas */
+    --border: #C8D2DE;                    /* Bordas ligeiramente mais visíveis */
     --border-hover: #94A3B8;              /* Foco interativo */
-    --border-subtle: #E2E8F0;             /* Linhas divisórias internas discretas */
+    --border-subtle: #DDE3EC;             /* Linhas divisórias internas mais presentes */
 
     /* =========================================================
        TIPOGRAFIA E TEXTOS (MÁXIMA LEGIBILIDADE)
@@ -76,14 +79,14 @@
     --info-border: #7DD3FC;
 
     /* =========================================================
-       TIPOGRAFIA, BORDAS E SOMBRAS
+       SOMBRAS — MAIS LIFT E PROFUNDIDADE
        ========================================================= */
     --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
-    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.10), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 1px 4px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.04);
+    --shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
 }
 
 /* =========================================================
@@ -92,12 +95,13 @@
 
 /* --- SIDEBAR & IDENTIDADE DA MARCA --- */
 .sidebar {
-    background: #FFFFFF !important;
-    border-right: 1px solid #CBD5E1 !important;
+    background: #FAFBFC !important;
+    border-right: 1px solid #C8D2DE !important;
+    box-shadow: 2px 0 8px rgba(15, 23, 42, 0.06) !important;
 }
 
 .sidebar-header {
-    border-bottom: 1px solid #E2E8F0 !important;
+    border-bottom: 1px solid #DDE3EC !important;
 }
 
 .sidebar-brand .brand {
@@ -120,7 +124,7 @@
 }
 
 .sidebar-module-btn:hover {
-    background: #F1F5F9 !important;
+    background: #EEF2F7 !important;
     color: #0F172A !important;
 }
 
@@ -139,30 +143,30 @@
 }
 
 .sub-tab-btn:hover {
-    background: #F1F5F9 !important;
+    background: #EEF2F7 !important;
     color: #0F172A !important;
 }
 
 .sub-tab-btn.active {
-    background: #E02E34 !important;
-    color: #FFFFFF !important;
-    font-weight: 800 !important;
-    border-color: #E02E34 !important;
-    box-shadow: 0 2px 8px rgba(224, 46, 52, 0.35) !important;
+    background: #FEF2F2 !important;
+    color: #C41C1C !important;
+    font-weight: 700 !important;
+    border-color: #FECACA !important;
+    box-shadow: 0 1px 4px rgba(220, 38, 38, 0.12) !important;
 }
 
 .sub-tab-btn.active i {
-    color: #FFFFFF !important;
+    color: #C41C1C !important;
 }
 
 .sidebar-footer {
-    background: #F8FAFC !important;
-    border-top: 1px solid #CBD5E1 !important;
+    background: #F2F5F9 !important;
+    border-top: 1px solid #C8D2DE !important;
 }
 
 .user-avatar {
-    background: rgba(224, 46, 52, 0.12) !important;
-    border-color: rgba(224, 46, 52, 0.30) !important;
+    background: rgba(224, 46, 52, 0.10) !important;
+    border-color: rgba(224, 46, 52, 0.25) !important;
     color: #E02E34 !important;
     font-weight: 800 !important;
 }
@@ -178,7 +182,7 @@
 }
 
 .sidebar-logout-btn {
-    border-color: #CBD5E1 !important;
+    border-color: #C8D2DE !important;
     color: #475569 !important;
     background: #FFFFFF !important;
 }
@@ -192,8 +196,8 @@
 /* --- TOPBAR & CABEÇALHO --- */
 .top-header {
     background: #FFFFFF !important;
-    border-bottom: 1px solid #CBD5E1 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    border-bottom: 1px solid #C8D2DE !important;
+    box-shadow: 0 1px 0 #DDE3EC, 0 2px 8px rgba(15, 23, 42, 0.05) !important;
 }
 
 .page-title {
@@ -225,33 +229,33 @@
 .estoque-table-container,
 .cot-table-container {
     background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03) !important;
-    border-radius: 8px !important;
+    border: 1px solid #C8D2DE !important;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.07), 0 4px 14px rgba(15, 23, 42, 0.04) !important;
+    border-radius: 10px !important;
 }
 
 table th {
-    background: #F1F5F9 !important;
+    background: #EEF1F6 !important;
     color: #1E293B !important;
-    border-bottom: 2px solid #CBD5E1 !important;
+    border-bottom: 2px solid #C8D2DE !important;
     font-weight: 800 !important;
 }
 
 table td {
     background: #FFFFFF !important;
     color: #0F172A !important;
-    border-bottom: 1px solid #E2E8F0 !important;
+    border-bottom: 1px solid #DDE3EC !important;
 }
 
 table tbody tr:hover td {
-    background-color: #F8FAFC !important;
+    background-color: #EFF4FB !important;
 }
 
 /* --- BARRA DE PESQUISA DO ESTOQUE --- */
 .search-box-erp {
     background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid #C8D2DE !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
 }
 
 .search-box-erp input {
@@ -268,8 +272,8 @@ table tbody tr:hover td {
 }
 
 .btn-search-barcode {
-    background: #F1F5F9 !important;
-    border: 1px solid #CBD5E1 !important;
+    background: #F4F7FC !important;
+    border: 1px solid #C8D2DE !important;
     color: #334155 !important;
 }
 
@@ -280,23 +284,23 @@ table tbody tr:hover td {
 
 /* --- CHIPS / BOTÕES DE FILTRO (Todos, Reposição, Zerados) --- */
 .chip-pill {
-    background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
+    background: #F4F7FC !important;
+    border: 1px solid #C8D2DE !important;
     color: #334155 !important;
     font-weight: 700 !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
 }
 
 .chip-pill:hover {
-    background: #F1F5F9 !important;
+    background: #EBF0F9 !important;
     color: #0F172A !important;
     border-color: #94A3B8 !important;
 }
 
 .chip-pill .chip-count {
-    background: #F1F5F9 !important;
-    color: #475569 !important;
-    border: 1px solid #CBD5E1 !important;
+    background: #DDE3EC !important;
+    color: #334155 !important;
+    border: 1px solid #C8D2DE !important;
 }
 
 .chip-pill.active {
@@ -315,12 +319,12 @@ table tbody tr:hover td {
 /* --- BOTÕES DE AÇÕES RÁPIDAS DA TABELA (+, -, Editar, Excluir) --- */
 .action-btn {
     background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
+    border: 1px solid #C8D2DE !important;
     padding: 5px 8px !important;
     border-radius: 6px !important;
     font-size: 0.95rem !important;
     cursor: pointer !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
 }
 
 .btn-action-in {
@@ -433,14 +437,14 @@ table tbody tr:hover td {
 .modal-list,
 .app-dialog-card {
     background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
+    border: 1px solid #C8D2DE !important;
     color: #0F172A !important;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(15, 23, 42, 0.08) !important;
 }
 
 .modal-overlay,
 .app-dialog-overlay {
-    background: rgba(15, 23, 42, 0.45) !important;
+    background: rgba(15, 23, 42, 0.50) !important;
     backdrop-filter: blur(4px) !important;
 }
 
@@ -449,7 +453,7 @@ select,
 textarea {
     background: #FFFFFF !important;
     color: #0F172A !important;
-    border-color: #CBD5E1 !important;
+    border-color: #C8D2DE !important;
 }
 
 input:focus,
