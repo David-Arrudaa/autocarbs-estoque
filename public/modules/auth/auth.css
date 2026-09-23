@@ -1,7 +1,8 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos Isolados da Tela de Login
+ * Módulo de Autenticação: Estilos Visuais Modernos da Tela de Login
+ * Tema: Claro com Profundidade (Soft Gray Cloud ERP)
  * =========================================================
  */
 
@@ -14,31 +15,36 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
-    background: radial-gradient(circle at 50% 25%, #182333 0%, var(--bg-input) 75%, #070B0F 100%);
+    padding: 20px;
+    background: 
+        radial-gradient(800px circle at 50% 15%, rgba(224, 46, 52, 0.06), transparent 75%),
+        radial-gradient(600px circle at 80% 85%, rgba(15, 23, 42, 0.04), transparent 70%),
+        linear-gradient(145deg, #EEF2F8 0%, #E6EDF6 50%, #DCE4F0 100%);
     box-sizing: border-box;
     overflow-y: auto;
 }
 
 .auth-card {
     width: 100%;
-    max-width: 410px;
-    background: rgba(18, 25, 36, 0.94);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border-subtle);
-    border-top: 3px solid var(--gold);
-    border-radius: var(--radius-lg);
-    padding: 38px 32px 32px;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px var(--gold-bg);
+    max-width: 420px;
+    background: #FFFFFF;
+    border: 1px solid #D1D9E6;
+    border-top: 4px solid #E02E34;
+    border-radius: 16px;
+    padding: 36px 32px 28px;
+    box-shadow: 
+        0 4px 6px -1px rgba(15, 23, 42, 0.05),
+        0 20px 40px -10px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(15, 23, 42, 0.02);
     box-sizing: border-box;
-    animation: authFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: authFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
 }
 
 @keyframes authFadeIn {
     from {
         opacity: 0;
-        transform: translateY(12px) scale(0.98);
+        transform: translateY(14px) scale(0.98);
     }
     to {
         opacity: 1;
@@ -46,17 +52,36 @@
     }
 }
 
-/* Identidade da Marca AutoCar BS */
+/* Cabeçalho & Marca */
 .auth-header {
     text-align: center;
     margin-bottom: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth-icon-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(224, 46, 52, 0.08);
+    border: 1px solid rgba(224, 46, 52, 0.20);
+    color: #E02E34;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(224, 46, 52, 0.12);
 }
 
 .auth-brand {
-    font-size: 2.35rem;
+    font-size: 2.2rem;
     font-weight: 900;
-    letter-spacing: 1px;
-    color: var(--text-heading);
+    font-style: italic;
+    letter-spacing: 0.5px;
+    color: #0F172A;
     margin: 0 0 4px 0;
     line-height: 1.1;
     display: flex;
@@ -65,15 +90,16 @@
 }
 
 .auth-brand span {
-    color: var(--primary);
+    color: #E02E34;
+    font-style: normal;
     margin-left: 2px;
 }
 
 .auth-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    color: var(--gold);
-    letter-spacing: 1.4px;
+    color: #64748B;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     margin: 0;
 }
@@ -88,10 +114,10 @@
     display: block;
     font-size: 0.74rem;
     font-weight: 700;
-    color: var(--text-secondary);
-    letter-spacing: 0.5px;
+    color: #334155;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
 }
 
 .auth-input-wrapper {
@@ -105,7 +131,7 @@
     position: absolute;
     left: 14px;
     font-size: 1.2rem;
-    color: var(--text-muted);
+    color: #64748B;
     pointer-events: none;
     z-index: 2;
     transition: color 0.2s ease;
@@ -113,14 +139,14 @@
 
 .auth-input {
     width: 100% !important;
-    height: 48px !important;
-    background: var(--bg-input) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius-sm) !important;
+    height: 46px !important;
+    background: #F8FAFD !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
     padding: 0 42px 0 42px !important;
-    color: var(--text-primary) !important;
+    color: #0F172A !important;
     font-size: 0.94rem !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     outline: none !important;
     text-transform: none !important;
     letter-spacing: normal !important;
@@ -129,29 +155,34 @@
 }
 
 .auth-input::placeholder {
-    color: var(--text-muted) !important;
+    color: #94A3B8 !important;
     font-size: 0.88rem !important;
+    font-weight: 400 !important;
     text-transform: none !important;
 }
 
-.auth-input:focus {
-    border-color: var(--gold) !important;
-    background: #111A27 !important;
-    box-shadow: 0 0 0 3px var(--gold-bg) !important;
+.auth-input:hover {
+    border-color: #94A3B8 !important;
+    background: #FFFFFF !important;
 }
 
-.auth-input:focus ~ .auth-input-icon,
+.auth-input:focus {
+    border-color: #E02E34 !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(224, 46, 52, 0.12) !important;
+}
+
 .auth-input-wrapper:focus-within .auth-input-icon {
-    color: var(--gold);
+    color: #E02E34 !important;
 }
 
 /* Botão Olhinho (Mostrar/Ocultar Senha) */
 .auth-btn-eye {
     position: absolute;
-    right: 10px;
-    background: none;
+    right: 8px;
+    background: transparent;
     border: none;
-    color: var(--text-muted);
+    color: #64748B;
     font-size: 1.25rem;
     cursor: pointer;
     padding: 6px;
@@ -159,23 +190,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
     z-index: 2;
 }
 
 .auth-btn-eye:hover {
-    color: var(--text-heading);
+    color: #0F172A;
+    background: #F1F5F9;
 }
 
-/* Botão de Envio */
+/* Botão de Envio (Entrar no Sistema) */
 .auth-btn-submit {
     width: 100%;
     height: 48px;
-    margin-top: 8px;
-    background: linear-gradient(135deg, #B8860B 0%, var(--gold) 50%, #A67910 100%);
+    margin-top: 10px;
+    background: linear-gradient(135deg, #E02E34 0%, #C5221F 100%);
     border: none;
-    border-radius: var(--radius-sm);
-    color: var(--text-inverse);
+    border-radius: 8px;
+    color: #FFFFFF;
     font-weight: 800;
     font-size: 0.92rem;
     letter-spacing: 0.6px;
@@ -185,14 +217,14 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 16px var(--gold-bg);
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(224, 46, 52, 0.32);
+    transition: all 0.2s ease;
 }
 
 .auth-btn-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #C5221F 0%, #AB1C19 100%);
     transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(202, 161, 81, 0.38);
-    filter: brightness(1.06);
+    box-shadow: 0 6px 20px rgba(224, 46, 52, 0.42);
 }
 
 .auth-btn-submit:active:not(:disabled) {
@@ -200,20 +232,21 @@
 }
 
 .auth-btn-submit:disabled {
-    opacity: 0.6;
+    opacity: 0.65;
     cursor: not-allowed;
-    filter: grayscale(0.5);
+    filter: grayscale(0.4);
 }
 
 /* Alerta de Erro de Autenticação */
 .auth-error-box {
     margin-top: 16px;
     padding: 10px 14px;
-    background: var(--danger-bg);
-    border: 1px solid var(--danger-border);
-    border-radius: var(--radius-sm);
-    color: #F87171;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 8px;
+    color: #B91C1C;
     font-size: 0.84rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -226,12 +259,32 @@
     40%, 80% { transform: translateX(6px); }
 }
 
+/* Rodapé do Cartão */
+.auth-card-footer {
+    margin-top: 22px;
+    padding-top: 14px;
+    border-top: 1px solid #EEF2F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #94A3B8;
+}
+
+.auth-card-footer i {
+    font-size: 0.95rem;
+    color: #16A34A;
+}
+
 @media (max-width: 480px) {
     .auth-card {
-        padding: 30px 20px 24px;
+        padding: 28px 20px 22px;
+        border-radius: 12px;
     }
     
     .auth-brand {
-        font-size: 2rem;
+        font-size: 1.9rem;
     }
 }
