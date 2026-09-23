@@ -12,15 +12,15 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=74.0">
-    <link rel="stylesheet" href="css/style.css?v=74.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=74.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=74.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=74.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=74.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=74.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=74.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=74.0">
+    <link rel="stylesheet" href="css/variables.css?v=75.0">
+    <link rel="stylesheet" href="css/style.css?v=75.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=75.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=75.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=75.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=75.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=75.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=75.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=75.0">
 </head>
 <body>
 
@@ -29,25 +29,37 @@
         <div class="loading-bar" id="load-bar"></div>
     </div>
 
-    <!-- TELA DE LOGIN ESTILO MODERNO NAVY WAVE (Inspirado na Referência do Usuário) -->
+    <!-- TELA DE LOGIN ESTILO MODERNO WAVE - AUTOCAR BS OFICINA -->
     <div id="login-screen" class="auth-wave-wrapper">
         <div class="auth-wave-card">
             
-            <!-- SVG da Onda Gradiente Fluida -->
+            <!-- SVG da Onda Fluida nas Cores Oficiais AutoCar BS -->
             <svg class="auth-wave-svg" viewBox="0 0 500 700" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#4F46E5"/>
-                        <stop offset="45%" stop-color="#3B82F6"/>
-                        <stop offset="85%" stop-color="#1E1B4B"/>
-                        <stop offset="100%" stop-color="#0F172A"/>
+                        <stop offset="0%" stop-color="#E02E34"/>
+                        <stop offset="40%" stop-color="#B91C1C"/>
+                        <stop offset="78%" stop-color="#450A0A"/>
+                        <stop offset="100%" stop-color="#140608"/>
                     </linearGradient>
                 </defs>
                 <path d="M0,0 L330,0 C390,130 460,210 390,350 C330,470 400,570 350,700 L0,700 Z" fill="url(#waveGradient)"/>
             </svg>
 
-            <!-- LADO ESQUERDO: Conteúdo sobre a Onda -->
+            <!-- LADO ESQUERDO: Conteúdo sobre a Onda com Marca Oficial -->
             <div class="auth-wave-left">
+                
+                <!-- Marca da Oficina AutoCar BS -->
+                <div class="auth-brand-badge">
+                    <div class="auth-brand-icon">
+                        <i class="ph-bold ph-wrench"></i>
+                    </div>
+                    <div class="auth-brand-info">
+                        <span class="auth-brand-name">AUTOCAR<span>BS</span></span>
+                        <span class="auth-brand-sub">OFICINA & CENTRO AUTOMOTIVO</span>
+                    </div>
+                </div>
+
                 <div class="auth-wave-header">
                     <span class="auth-wave-greeting">Bem-vindo de volta!</span>
                     <h1 class="auth-wave-title">Bom ver você<br>novamente!</h1>
@@ -89,7 +101,7 @@
             <!-- LADO DIREITO: Formulário de Acesso -->
             <div class="auth-wave-right">
                 
-                <!-- Badge Circular com Cadeado Neon -->
+                <!-- Badge Circular com Cadeado Neon Vermelho -->
                 <div class="auth-neon-lock-badge">
                     <i class="ph-bold ph-lock-key"></i>
                 </div>
@@ -136,10 +148,6 @@
                 <div id="auth-msg-erro" class="auth-error-box" style="display:none;">
                     <i class="ph-bold ph-warning-circle" style="font-size:1.2rem; flex-shrink:0;"></i>
                     <span id="auth-msg-erro-texto"></span>
-                </div>
-
-                <div class="auth-wave-footer">
-                    <span>Precisa de ajuda? <strong onclick="AuthModule.mostrarErro('Suporte AutoCar BS: suporte@autocarbs.com.br')">Fale com o administrador</strong></span>
                 </div>
 
             </div>
@@ -304,16 +312,16 @@
     <div id="container-modulo-scanner" data-module="scanner"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=74.0"></script>
-    <script src="js/ui.js?v=74.0"></script>
-    <script src="modals/dialog.js?v=74.0"></script>
-    <script src="js/sidebar.js?v=74.0"></script>
-    <script src="js/api.js?v=74.0"></script>
-    <script src="modules/auth/auth.js?v=74.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=74.0"></script>
-    <script src="modules/equipe/equipe.js?v=74.0"></script>
-    <script src="modules/scanner/scanner.js?v=74.0"></script>
-    <script src="modules/estoque/estoque.js?v=74.0"></script>
-    <script src="js/app.js?v=74.0"></script>
+    <script src="js/core/view-loader.js?v=75.0"></script>
+    <script src="js/ui.js?v=75.0"></script>
+    <script src="modals/dialog.js?v=75.0"></script>
+    <script src="js/sidebar.js?v=75.0"></script>
+    <script src="js/api.js?v=75.0"></script>
+    <script src="modules/auth/auth.js?v=75.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=75.0"></script>
+    <script src="modules/equipe/equipe.js?v=75.0"></script>
+    <script src="modules/scanner/scanner.js?v=75.0"></script>
+    <script src="modules/estoque/estoque.js?v=75.0"></script>
+    <script src="js/app.js?v=75.0"></script>
 </body>
 </html>

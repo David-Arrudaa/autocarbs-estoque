@@ -1,8 +1,8 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos Modern Navy Wave
- * Layout: Idêntico à Referência do Usuário (Midnight Navy com Onda Gradiente)
+ * Módulo de Autenticação: Estilos Modern Wave
+ * Identidade Visual: AutoCar BS (Carbon Dark & Racing Red)
  * =========================================================
  */
 
@@ -16,19 +16,19 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: #050711;
+    background: #090B10;
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Card Principal com Cantos Arredondados e Fundo Midnight */
+/* Card Principal com Cantos Arredondados e Fundo Carbon */
 .auth-wave-card {
     width: 100%;
     max-width: 960px;
     min-height: 560px;
-    background: #0A0D22;
+    background: #0F121B;
     border-radius: 28px;
     position: relative;
     overflow: hidden;
@@ -65,13 +65,13 @@
 }
 
 /* =========================================================
-   LADO ESQUERDO: TEXTOS & FEATURES SOBRE A ONDA
+   LADO ESQUERDO: TEXTOS, MARCA & FEATURES SOBRE A ONDA
    ========================================================= */
 .auth-wave-left {
     flex: 1;
     position: relative;
     z-index: 2;
-    padding: 48px 44px;
+    padding: 44px 44px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -79,12 +79,74 @@
     user-select: none;
 }
 
+/* Marca Oficial da Oficina AutoCar BS */
+.auth-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 18px 7px 8px;
+    background: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    align-self: flex-start;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    margin-bottom: 24px;
+}
+
+.auth-brand-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #E02E34;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    box-shadow: 0 0 14px rgba(224, 46, 52, 0.6);
+}
+
+.auth-brand-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.auth-brand-name {
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.6px;
+    color: #FFFFFF;
+}
+
+.auth-brand-name span {
+    color: #FECDD3;
+    font-style: normal;
+}
+
+.auth-brand-sub {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.auth-wave-header {
+    margin-bottom: auto;
+}
+
 .auth-wave-greeting {
     font-size: 0.95rem;
-    color: #E0E7FF;
-    font-weight: 500;
+    color: #FECDD3;
+    font-weight: 600;
     margin-bottom: 8px;
     display: block;
+    letter-spacing: 0.3px;
 }
 
 .auth-wave-title {
@@ -101,7 +163,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    margin-top: 30px;
+    margin-top: 32px;
 }
 
 .auth-wave-feat-item {
@@ -114,8 +176,8 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     color: #FFFFFF;
     display: flex;
     align-items: center;
@@ -135,9 +197,10 @@
 
 .auth-wave-feat-text span {
     display: block;
-    color: #CBD5E1;
+    color: #F1F5F9;
     font-size: 0.74rem;
     line-height: 1.35;
+    opacity: 0.9;
 }
 
 /* =========================================================
@@ -147,27 +210,27 @@
     flex: 1.1;
     position: relative;
     z-index: 2;
-    padding: 44px 48px;
+    padding: 48px 48px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
 }
 
-/* Badge Circular com Cadeado Neon */
+/* Badge Circular com Cadeado Neon Vermelho */
 .auth-neon-lock-badge {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.35) 0%, rgba(59, 130, 246, 0.25) 100%);
-    border: 1.5px solid rgba(99, 102, 241, 0.65);
-    color: #818CF8;
+    background: linear-gradient(135deg, rgba(224, 46, 52, 0.28) 0%, rgba(185, 28, 28, 0.16) 100%);
+    border: 1.5px solid rgba(224, 46, 52, 0.65);
+    color: #F87171;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.85rem;
     margin: 0 auto 16px;
-    box-shadow: 0 0 25px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 0 25px rgba(224, 46, 52, 0.35);
 }
 
 .auth-form-headline {
@@ -241,8 +304,8 @@
 }
 
 .auth-wave-input:focus {
-    border-color: #3B82F6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+    border-color: #E02E34 !important;
+    box-shadow: 0 0 0 3px rgba(224, 46, 52, 0.22) !important;
 }
 
 /* Botão Olhinho */
@@ -273,7 +336,7 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 14px;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     font-size: 0.78rem;
 }
 
@@ -288,7 +351,7 @@
 
 .auth-remember-me input {
     cursor: pointer;
-    accent-color: #2563EB;
+    accent-color: #E02E34;
 }
 
 .auth-contact-link {
@@ -298,7 +361,7 @@
 }
 
 .auth-contact-link:hover {
-    color: #FFFFFF;
+    color: #E02E34;
     text-decoration: underline;
 }
 
@@ -307,7 +370,7 @@
     width: 100%;
     height: 48px;
     border-radius: 10px;
-    background: #2563EB;
+    background: linear-gradient(135deg, #E02E34 0%, #C5221F 100%);
     border: none;
     color: #FFFFFF;
     font-weight: 800;
@@ -319,14 +382,14 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.40);
+    box-shadow: 0 4px 18px rgba(224, 46, 52, 0.38);
     transition: all 0.2s ease;
 }
 
 .auth-wave-btn-submit:hover:not(:disabled) {
-    background: #1D4ED8;
+    background: linear-gradient(135deg, #C5221F 0%, #AB1C19 100%);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.55);
+    box-shadow: 0 6px 22px rgba(224, 46, 52, 0.52);
 }
 
 .auth-wave-btn-submit:active:not(:disabled) {
@@ -382,7 +445,7 @@
 
 .auth-autocomplete-header i {
     font-size: 0.85rem;
-    color: #2563EB;
+    color: #E02E34;
 }
 
 .auth-autocomplete-item {
@@ -400,7 +463,7 @@
 }
 
 .auth-autocomplete-item:hover {
-    background: #EFF6FF;
+    background: #FEF2F2;
 }
 
 .auth-ac-icon {
@@ -410,7 +473,7 @@
 }
 
 .auth-autocomplete-item:hover .auth-ac-icon {
-    color: #2563EB;
+    color: #E02E34;
 }
 
 .auth-autocomplete-text {
@@ -424,7 +487,7 @@
 }
 
 .auth-autocomplete-text strong {
-    color: #2563EB;
+    color: #E02E34;
     font-weight: 800;
 }
 
@@ -471,25 +534,6 @@
     40%, 80% { transform: translateX(6px); }
 }
 
-/* Rodapé do Form */
-.auth-wave-footer {
-    margin-top: 24px;
-    text-align: center;
-    font-size: 0.78rem;
-    color: #64748B;
-}
-
-.auth-wave-footer strong {
-    color: #3B82F6;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.auth-wave-footer strong:hover {
-    color: #60A5FA;
-    text-decoration: underline;
-}
-
 /* =========================================================
    RESPONSIVIDADE (MOBILE & TABLET)
    ========================================================= */
@@ -505,8 +549,8 @@
     }
 
     .auth-wave-left {
-        padding: 32px 24px 20px;
-        background: linear-gradient(135deg, #1E1B4B 0%, #172554 100%);
+        padding: 32px 24px 24px;
+        background: linear-gradient(135deg, #991B1B 0%, #1F1012 100%);
     }
 
     .auth-wave-features {
