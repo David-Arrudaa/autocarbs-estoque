@@ -1,8 +1,8 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos Visuais Modernos da Tela de Login
- * Tema: Claro com Profundidade (Soft Gray Cloud ERP)
+ * Módulo de Autenticação: Estilos Visuais Premium (Dual-Stage Suite)
+ * Padrão: Executive Automotive ERP Suite
  * =========================================================
  */
 
@@ -15,36 +15,38 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 24px;
     background: 
-        radial-gradient(800px circle at 50% 15%, rgba(224, 46, 52, 0.06), transparent 75%),
-        radial-gradient(600px circle at 80% 85%, rgba(15, 23, 42, 0.04), transparent 70%),
-        linear-gradient(145deg, #EEF2F8 0%, #E6EDF6 50%, #DCE4F0 100%);
+        radial-gradient(1000px circle at 15% 15%, rgba(224, 46, 52, 0.06), transparent 70%),
+        radial-gradient(800px circle at 85% 85%, rgba(15, 23, 42, 0.05), transparent 60%),
+        linear-gradient(135deg, #EEF2F8 0%, #E6EDF6 50%, #DCE5F2 100%);
     box-sizing: border-box;
     overflow-y: auto;
 }
 
-.auth-card {
+/* Container Panorâmico Dual-Stage */
+.auth-stage-container {
     width: 100%;
-    max-width: 420px;
+    max-width: 980px;
+    min-height: 590px;
+    display: flex;
+    flex-direction: row;
+    border-radius: 22px;
+    overflow: hidden;
     background: #FFFFFF;
-    border: 1px solid #D1D9E6;
-    border-top: 4px solid #E02E34;
-    border-radius: 16px;
-    padding: 36px 32px 28px;
+    border: 1px solid #CBD5E1;
     box-shadow: 
-        0 4px 6px -1px rgba(15, 23, 42, 0.05),
-        0 20px 40px -10px rgba(15, 23, 42, 0.12),
-        0 0 0 1px rgba(15, 23, 42, 0.02);
+        0 10px 30px -5px rgba(15, 23, 42, 0.08),
+        0 25px 60px -15px rgba(15, 23, 42, 0.16),
+        0 0 0 1px rgba(15, 23, 42, 0.03);
     box-sizing: border-box;
-    animation: authFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
+    animation: authStageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes authFadeIn {
+@keyframes authStageFadeIn {
     from {
         opacity: 0;
-        transform: translateY(14px) scale(0.98);
+        transform: translateY(18px) scale(0.985);
     }
     to {
         opacity: 1;
@@ -52,59 +54,233 @@
     }
 }
 
-/* Cabeçalho & Marca */
-.auth-header {
-    text-align: center;
-    margin-bottom: 26px;
+/* =========================================================
+   LADO ESQUERDO: PAINEL SHOWCASE (SHOWROOM AUTOMOTIVO)
+   ========================================================= */
+.auth-showcase-panel {
+    flex: 1.15;
+    background: 
+        radial-gradient(circle at 100% 0%, rgba(224, 46, 52, 0.24) 0%, transparent 60%),
+        radial-gradient(circle at 0% 100%, rgba(37, 99, 235, 0.14) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        #0D131C;
+    background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 44px 40px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    position: relative;
+    user-select: none;
 }
 
-.auth-icon-badge {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    background: rgba(224, 46, 52, 0.08);
-    border: 1px solid rgba(224, 46, 52, 0.20);
-    color: #E02E34;
+.auth-showcase-content {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 8px rgba(224, 46, 52, 0.12);
+    flex-direction: column;
 }
 
-.auth-brand {
-    font-size: 2.2rem;
+.auth-brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    background: rgba(224, 46, 52, 0.14);
+    border: 1px solid rgba(224, 46, 52, 0.35);
+    color: #FF5A5F;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(224, 46, 52, 0.18);
+}
+
+.auth-showcase-hero {
+    margin-top: 18px;
+    margin-bottom: 24px;
+}
+
+.auth-showcase-title {
+    font-size: 2.6rem;
     font-weight: 900;
     font-style: italic;
     letter-spacing: 0.5px;
-    color: #0F172A;
-    margin: 0 0 4px 0;
+    color: #FFFFFF;
+    margin: 0 0 8px 0;
     line-height: 1.1;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
-.auth-brand span {
+.auth-accent-text {
     color: #E02E34;
     font-style: normal;
-    margin-left: 2px;
+    margin-left: 3px;
+    text-shadow: 0 0 25px rgba(224, 46, 52, 0.45);
 }
 
-.auth-subtitle {
-    font-size: 0.74rem;
-    font-weight: 700;
-    color: #64748B;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
+.auth-showcase-tagline {
+    color: #94A3B8;
+    font-size: 0.88rem;
+    line-height: 1.5;
     margin: 0;
+    max-width: 380px;
 }
 
-/* Campos de Formulário */
+/* Feature Cards Translúcidos */
+.auth-feature-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.auth-feature-card {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.25s ease;
+}
+
+.auth-feature-card:hover {
+    background: rgba(255, 255, 255, 0.065);
+    border-color: rgba(224, 46, 52, 0.35);
+    transform: translateX(4px);
+}
+
+.auth-feature-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(224, 46, 52, 0.15);
+    border: 1px solid rgba(224, 46, 52, 0.28);
+    color: #FF5A5F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.auth-feature-info strong {
+    display: block;
+    color: #FFFFFF;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.auth-feature-info span {
+    display: block;
+    color: #94A3B8;
+    font-size: 0.70rem;
+    line-height: 1.35;
+}
+
+/* Rodapé do Painel Showcase */
+.auth-showcase-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.auth-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #CBD5E1;
+    font-size: 0.73rem;
+    font-weight: 600;
+}
+
+.status-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22C55E;
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    animation: authPulseDot 2s infinite;
+}
+
+@keyframes authPulseDot {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+
+.auth-showcase-copy {
+    color: #64748B;
+    font-size: 0.70rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   LADO DIREITO: PORTAL DE ACESSO EXECUTIVO
+   ========================================================= */
+.auth-form-panel {
+    flex: 1;
+    background: #FFFFFF;
+    padding: 48px 44px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.auth-form-container {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.auth-mobile-brand {
+    display: none;
+    font-size: 2rem;
+    font-weight: 900;
+    font-style: italic;
+    color: #0F172A;
+    margin-bottom: 12px;
+}
+
+.auth-mobile-brand span {
+    color: #E02E34;
+    font-style: normal;
+}
+
+.auth-form-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.4px;
+    margin: 0 0 4px 0;
+}
+
+.auth-form-subtitle {
+    font-size: 0.82rem;
+    color: #64748B;
+    margin: 0 0 28px 0;
+    line-height: 1.4;
+}
+
+/* Formulário e Inputs */
 .auth-form-group {
     margin-bottom: 18px;
     text-align: left;
@@ -115,9 +291,9 @@
     font-size: 0.74rem;
     font-weight: 700;
     color: #334155;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 }
 
 .auth-input-wrapper {
@@ -129,8 +305,8 @@
 
 .auth-input-icon {
     position: absolute;
-    left: 14px;
-    font-size: 1.2rem;
+    left: 15px;
+    font-size: 1.25rem;
     color: #64748B;
     pointer-events: none;
     z-index: 2;
@@ -139,11 +315,11 @@
 
 .auth-input {
     width: 100% !important;
-    height: 46px !important;
+    height: 48px !important;
     background: #F8FAFD !important;
-    border: 1px solid #CBD5E1 !important;
-    border-radius: 8px !important;
-    padding: 0 42px 0 42px !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 10px !important;
+    padding: 0 44px 0 44px !important;
     color: #0F172A !important;
     font-size: 0.94rem !important;
     font-weight: 600 !important;
@@ -169,14 +345,14 @@
 .auth-input:focus {
     border-color: #E02E34 !important;
     background: #FFFFFF !important;
-    box-shadow: 0 0 0 3px rgba(224, 46, 52, 0.12) !important;
+    box-shadow: 0 0 0 3.5px rgba(224, 46, 52, 0.14) !important;
 }
 
 .auth-input-wrapper:focus-within .auth-input-icon {
     color: #E02E34 !important;
 }
 
-/* Botão Olhinho (Mostrar/Ocultar Senha) */
+/* Botão Olhinho */
 .auth-btn-eye {
     position: absolute;
     right: 8px;
@@ -199,32 +375,32 @@
     background: #F1F5F9;
 }
 
-/* Botão de Envio (Entrar no Sistema) */
+/* Botão de Envio (Entrar) */
 .auth-btn-submit {
     width: 100%;
-    height: 48px;
+    height: 50px;
     margin-top: 10px;
     background: linear-gradient(135deg, #E02E34 0%, #C5221F 100%);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     color: #FFFFFF;
     font-weight: 800;
     font-size: 0.92rem;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 14px rgba(224, 46, 52, 0.32);
-    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(224, 46, 52, 0.35);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-btn-submit:hover:not(:disabled) {
     background: linear-gradient(135deg, #C5221F 0%, #AB1C19 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(224, 46, 52, 0.42);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(224, 46, 52, 0.45);
 }
 
 .auth-btn-submit:active:not(:disabled) {
@@ -240,16 +416,16 @@
 /* Alerta de Erro de Autenticação */
 .auth-error-box {
     margin-top: 16px;
-    padding: 10px 14px;
+    padding: 12px 14px;
     background: #FEF2F2;
     border: 1px solid #FECACA;
-    border-radius: 8px;
+    border-radius: 10px;
     color: #B91C1C;
     font-size: 0.84rem;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     animation: authShake 0.35s ease;
 }
 
@@ -259,32 +435,50 @@
     40%, 80% { transform: translateX(6px); }
 }
 
-/* Rodapé do Cartão */
-.auth-card-footer {
-    margin-top: 22px;
-    padding-top: 14px;
+/* Rodapé de Segurança */
+.auth-form-footer {
+    margin-top: 24px;
+    padding-top: 16px;
     border-top: 1px solid #EEF2F6;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.auth-security-tag {
+    display: inline-flex;
+    align-items: center;
     gap: 6px;
     font-size: 0.72rem;
     font-weight: 600;
     color: #94A3B8;
 }
 
-.auth-card-footer i {
+.auth-security-tag i {
     font-size: 0.95rem;
     color: #16A34A;
 }
 
-@media (max-width: 480px) {
-    .auth-card {
-        padding: 28px 20px 22px;
-        border-radius: 12px;
+/* =========================================================
+   RESPONSIVIDADE (MOBILE & TABLET)
+   ========================================================= */
+@media (max-width: 880px) {
+    .auth-stage-container {
+        flex-direction: column;
+        max-width: 440px;
+        min-height: auto;
+        border-radius: 18px;
     }
-    
-    .auth-brand {
-        font-size: 1.9rem;
+
+    .auth-showcase-panel {
+        display: none;
+    }
+
+    .auth-mobile-brand {
+        display: block;
+    }
+
+    .auth-form-panel {
+        padding: 38px 28px 32px;
     }
 }

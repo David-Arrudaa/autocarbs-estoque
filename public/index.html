@@ -12,15 +12,15 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=66.0">
-    <link rel="stylesheet" href="css/style.css?v=66.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=66.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=66.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=66.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=66.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=66.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=66.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=66.0">
+    <link rel="stylesheet" href="css/variables.css?v=67.0">
+    <link rel="stylesheet" href="css/style.css?v=67.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=67.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=67.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=67.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=67.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=67.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=67.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=67.0">
 </head>
 <body>
 
@@ -29,52 +29,124 @@
         <div class="loading-bar" id="load-bar"></div>
     </div>
 
-    <!-- TELA DE LOGIN MODULAR (E-mail & Senha) -->
+    <!-- TELA DE LOGIN MODULAR PREMIUM (Dual-Stage Automotive Suite) -->
     <div id="login-screen" class="auth-screen-wrapper">
-        <div class="auth-card">
-            <div class="auth-header">
-                <div class="auth-icon-badge">
-                    <i class="ph-bold ph-shield-check"></i>
-                </div>
-                <h1 class="auth-brand">AUTOCAR<span>BS</span></h1>
-                <p class="auth-subtitle">Oficina &bull; Gestão &bull; Estoque</p>
-            </div>
+        <div class="auth-stage-container">
             
-            <form id="form-login" autocomplete="off">
-                <div class="auth-form-group">
-                    <label class="auth-label" for="login-email">E-mail de Acesso</label>
-                    <div class="auth-input-wrapper">
-                        <input type="email" class="auth-input" id="login-email" placeholder="seu.email@autocarbs.com.br" required autocomplete="off" spellcheck="false" autofocus>
-                        <i class="ph ph-envelope-simple auth-input-icon"></i>
+            <!-- LADO ESQUERDO: Painel Showcase & Identidade da Marca -->
+            <div class="auth-showcase-panel">
+                <div class="auth-showcase-content">
+                    <div class="auth-brand-badge">
+                        <i class="ph-fill ph-gear-six"></i>
+                        <span>ENTERPRISE WORKSHOP SUITE</span>
+                    </div>
+
+                    <div class="auth-showcase-hero">
+                        <h1 class="auth-showcase-title">
+                            AUTOCAR<span class="auth-accent-text">BS</span>
+                        </h1>
+                        <p class="auth-showcase-tagline">
+                            Plataforma de alta precisão para controle de estoque, curva ABC e gestão especializada de oficinas automotivas.
+                        </p>
+                    </div>
+
+                    <div class="auth-feature-cards">
+                        <div class="auth-feature-card">
+                            <div class="auth-feature-icon">
+                                <i class="ph ph-chart-line-up"></i>
+                            </div>
+                            <div class="auth-feature-info">
+                                <strong>Curva ABC & Giro Estratégico</strong>
+                                <span>Classificação dinâmica em tempo real para prevenção de rupturas</span>
+                            </div>
+                        </div>
+
+                        <div class="auth-feature-card">
+                            <div class="auth-feature-icon">
+                                <i class="ph ph-barcode"></i>
+                            </div>
+                            <div class="auth-feature-info">
+                                <strong>Scanner Óptico & Câmera</strong>
+                                <span>Conferência de entradas e saídas de peças com leitor nativo</span>
+                            </div>
+                        </div>
+
+                        <div class="auth-feature-card">
+                            <div class="auth-feature-icon">
+                                <i class="ph ph-shield-checkered"></i>
+                            </div>
+                            <div class="auth-feature-info">
+                                <strong>Controle de Acessos & Auditoria</strong>
+                                <span>Trilha completa de ações com autenticação criptografada</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="auth-form-group">
-                    <label class="auth-label" for="login-senha">Senha</label>
-                    <div class="auth-input-wrapper">
-                        <input type="password" class="auth-input" id="login-senha" placeholder="Sua senha de acesso" required autocomplete="new-password" data-lpignore="true">
-                        <i class="ph ph-lock-key auth-input-icon"></i>
-                        <button type="button" class="auth-btn-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
-                            <i class="ph ph-eye" id="icon-toggle-pwd"></i>
+                <div class="auth-showcase-footer">
+                    <div class="auth-status-pill">
+                        <span class="status-pulse-dot"></span>
+                        <span>Sistemas Operacionais &bull; v2026</span>
+                    </div>
+                    <span class="auth-showcase-copy">&copy; AutoCar BS</span>
+                </div>
+            </div>
+
+            <!-- LADO DIREITO: Portal de Acesso Executivo -->
+            <div class="auth-form-panel">
+                <div class="auth-form-container">
+                    
+                    <div class="auth-form-header">
+                        <div class="auth-mobile-brand">
+                            AUTOCAR<span>BS</span>
+                        </div>
+                        <h2 class="auth-form-title">Portal de Acesso</h2>
+                        <p class="auth-form-subtitle">Informe suas credenciais corporativas para entrar</p>
+                    </div>
+
+                    <form id="form-login" autocomplete="off">
+                        <div class="auth-form-group">
+                            <label class="auth-label" for="login-email">E-mail Corporativo</label>
+                            <div class="auth-input-wrapper">
+                                <input type="email" class="auth-input" id="login-email" placeholder="seu.email@autocarbs.com.br" required autocomplete="off" spellcheck="false" autofocus>
+                                <i class="ph ph-envelope-simple auth-input-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="auth-form-group">
+                            <div class="auth-label-row">
+                                <label class="auth-label" for="login-senha">Senha de Acesso</label>
+                            </div>
+                            <div class="auth-input-wrapper">
+                                <input type="password" class="auth-input" id="login-senha" placeholder="Sua senha de segurança" required autocomplete="new-password" data-lpignore="true">
+                                <i class="ph ph-lock-key auth-input-icon"></i>
+                                <button type="button" class="auth-btn-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
+                                    <i class="ph ph-eye" id="icon-toggle-pwd"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button id="btn-login" type="submit" class="auth-btn-submit">
+                            <span>ENTRAR NO SISTEMA</span>
+                            <i class="ph ph-arrow-right"></i>
                         </button>
+                    </form>
+
+                    <div id="auth-msg-erro" class="auth-error-box" style="display:none;">
+                        <i class="ph ph-warning-circle" style="font-size:1.25rem; flex-shrink:0;"></i>
+                        <span id="auth-msg-erro-texto"></span>
                     </div>
+
+                    <div class="auth-form-footer">
+                        <div class="auth-security-tag">
+                            <i class="ph-fill ph-lock-simple"></i>
+                            <span>Autenticação Criptografada SSL &bull; Sessão HttpOnly</span>
+                        </div>
+                    </div>
+
                 </div>
-
-                <button id="btn-login" type="submit" class="auth-btn-submit">
-                    <span>ENTRAR NO SISTEMA</span>
-                    <i class="ph ph-arrow-right"></i>
-                </button>
-            </form>
-
-            <div id="auth-msg-erro" class="auth-error-box" style="display:none;">
-                <i class="ph ph-warning-circle" style="font-size:1.2rem; flex-shrink:0;"></i>
-                <span id="auth-msg-erro-texto"></span>
             </div>
 
-            <div class="auth-card-footer">
-                <i class="ph ph-lock-simple"></i>
-                <span>Ambiente Seguro &bull; AutoCar BS ERP</span>
-            </div>
         </div>
     </div>
 
@@ -235,16 +307,16 @@
     <div id="container-modulo-scanner" data-module="scanner"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=66.0"></script>
-    <script src="js/ui.js?v=66.0"></script>
-    <script src="modals/dialog.js?v=66.0"></script>
-    <script src="js/sidebar.js?v=66.0"></script>
-    <script src="js/api.js?v=66.0"></script>
-    <script src="modules/auth/auth.js?v=66.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=66.0"></script>
-    <script src="modules/equipe/equipe.js?v=66.0"></script>
-    <script src="modules/scanner/scanner.js?v=66.0"></script>
-    <script src="modules/estoque/estoque.js?v=66.0"></script>
-    <script src="js/app.js?v=66.0"></script>
+    <script src="js/core/view-loader.js?v=67.0"></script>
+    <script src="js/ui.js?v=67.0"></script>
+    <script src="modals/dialog.js?v=67.0"></script>
+    <script src="js/sidebar.js?v=67.0"></script>
+    <script src="js/api.js?v=67.0"></script>
+    <script src="modules/auth/auth.js?v=67.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=67.0"></script>
+    <script src="modules/equipe/equipe.js?v=67.0"></script>
+    <script src="modules/scanner/scanner.js?v=67.0"></script>
+    <script src="modules/estoque/estoque.js?v=67.0"></script>
+    <script src="js/app.js?v=67.0"></script>
 </body>
 </html>
