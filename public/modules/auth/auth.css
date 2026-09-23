@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: linear-gradient(135deg, #F6F8FB 0%, #E8EEF5 50%, #F1F4F9 100%);
+    background: linear-gradient(135deg, #DEE5ED 0%, #CDD7E2 40%, #D8E0EA 70%, #C4CFDC 100%);
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
@@ -45,38 +45,37 @@
 .auth-ambient-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.85;
+    filter: blur(55px);
+    opacity: 0.95;
     animation: authOrbFloat 14s ease-in-out infinite alternate;
 }
 
-/* Orbe Dourado Superior (Pantone 7407 C) */
+/* Orbe Dourado Superior (Pantone 7407 C - Bem Marcante e Visível) */
 .auth-orb-gold {
-    width: 520px;
-    height: 520px;
-    top: -140px;
-    left: -100px;
-    background: radial-gradient(circle, rgba(202, 161, 81, 0.30) 0%, rgba(202, 161, 81, 0) 70%);
+    width: 720px;
+    height: 720px;
+    top: -200px;
+    left: -120px;
+    background: radial-gradient(circle, rgba(202, 161, 81, 0.70) 0%, rgba(202, 161, 81, 0.32) 42%, transparent 72%);
 }
 
-/* Orbe Carmim Inferior (Pantone 7622 C) */
+/* Orbe Carmim Inferior (Pantone 7622 C - Bem Marcante e Visível) */
 .auth-orb-carmine {
-    width: 560px;
-    height: 560px;
-    bottom: -150px;
-    right: -120px;
-    background: radial-gradient(circle, rgba(147, 39, 44, 0.22) 0%, rgba(147, 39, 44, 0) 70%);
+    width: 780px;
+    height: 780px;
+    bottom: -220px;
+    right: -150px;
+    background: radial-gradient(circle, rgba(147, 39, 44, 0.62) 0%, rgba(147, 39, 44, 0.26) 42%, transparent 72%);
     animation-delay: -6s;
 }
 
-/* Orbe Central de Luz Difusa */
+/* Orbe Champagne Superior Direito */
 .auth-orb-center {
-    width: 420px;
-    height: 420px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(202, 161, 81, 0.08) 50%, transparent 70%);
+    width: 580px;
+    height: 580px;
+    top: -120px;
+    right: 5%;
+    background: radial-gradient(circle, rgba(202, 161, 81, 0.42) 0%, rgba(202, 161, 81, 0.16) 45%, transparent 70%);
 }
 
 @keyframes authOrbFloat {
@@ -84,10 +83,10 @@
         transform: translate(0, 0) scale(1);
     }
     50% {
-        transform: translate(30px, -25px) scale(1.06);
+        transform: translate(35px, -28px) scale(1.06);
     }
     100% {
-        transform: translate(-25px, 20px) scale(0.96);
+        transform: translate(-28px, 22px) scale(0.96);
     }
 }
 
@@ -108,16 +107,16 @@
     min-height: 560px;
     background: #FFFFFF;
     border-radius: 28px;
-    border: 1px solid rgba(202, 161, 81, 0.35);
+    border: 1.5px solid rgba(202, 161, 81, 0.40);
     position: relative;
     z-index: 2;
     overflow: hidden;
     display: flex;
     flex-direction: row;
     box-shadow: 
-        0 25px 70px -12px rgba(16, 24, 30, 0.15),
-        0 0 45px -10px rgba(202, 161, 81, 0.22),
-        0 0 50px -15px rgba(147, 39, 44, 0.16);
+        0 30px 80px -10px rgba(16, 24, 30, 0.22),
+        0 0 50px -5px rgba(202, 161, 81, 0.28),
+        0 0 60px -10px rgba(147, 39, 44, 0.22);
     box-sizing: border-box;
     animation: authWavePop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
