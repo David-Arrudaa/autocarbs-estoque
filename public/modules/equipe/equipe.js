@@ -49,7 +49,7 @@ const Usuarios = {
                     <tr>
                         <td colspan="5" class="empty-state-card" style="text-align:center; padding:40px 20px;">
                             <i class="ph ph-shield-warning" style="font-size:2.5rem; color:var(--gold); margin-bottom:12px;"></i>
-                            <h3 style="color:#f8fafc; font-size:1.05rem; margin-bottom:6px;">Acesso Restrito ao Administrador</h3>
+                            <h3 style="color:var(--text-heading); font-size:1.05rem; margin-bottom:6px;">Acesso Restrito ao Administrador</h3>
                             <p style="color:var(--text-secondary); font-size:0.85rem;">
                                 O gerenciamento da equipe e senhas de acesso é exclusivo para o perfil Administrador.
                             </p>
@@ -81,11 +81,11 @@ const Usuarios = {
                         <tr>
                             <td colspan="5" class="empty-state-card" style="text-align:center; padding:35px 20px;">
                                 <i class="ph ph-database" style="font-size:2.5rem; color:#f59e0b; margin-bottom:12px;"></i>
-                                <h3 style="color:#f8fafc; font-size:1.05rem; margin-bottom:6px;">Tabela de Usuários Não Inicializada</h3>
+                                <h3 style="color:var(--text-heading); font-size:1.05rem; margin-bottom:6px;">Tabela de Usuários Não Inicializada</h3>
                                 <p style="color:var(--text-secondary); max-width:480px; margin:0 auto 16px auto; font-size:0.85rem; line-height:1.5;">
                                     ${UI.escapeHtml(res.aviso)}
                                 </p>
-                                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px 18px; display:inline-block; font-size:0.8rem; color:#fde68a;">
+                                <div style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:8px; padding:12px 18px; display:inline-block; font-size:0.8rem; color:#b45309;">
                                     💡 O sistema continua funcionando normalmente pelos PINs mestres configurados no <code>.env</code>.
                                 </div>
                             </td>
@@ -106,7 +106,7 @@ const Usuarios = {
                     <tr>
                         <td colspan="5" class="empty-state-card" style="text-align:center; padding:30px 20px;">
                             <i class="ph ph-warning-circle" style="font-size:2.2rem; color:var(--danger); margin-bottom:10px;"></i>
-                            <div style="color:#f8fafc; font-weight:600;">Erro ao carregar colaboradores</div>
+                            <div style="color:var(--text-heading); font-weight:600;">Erro ao carregar colaboradores</div>
                             <div style="color:var(--text-secondary); font-size:0.85rem; margin-top:4px;">${UI.escapeHtml(err.message)}</div>
                             <button class="btn btn-secondary btn-sm" onclick="Usuarios.carregarLista()" style="margin-top:14px;">
                                 <i class="ph ph-arrows-clockwise"></i> Tentar Novamente
@@ -167,7 +167,7 @@ const Usuarios = {
                 <tr>
                     <td colspan="5" class="empty-state-card" style="text-align:center; padding:40px 20px;">
                         <i class="ph ph-users" style="font-size:2.5rem; color:var(--text-secondary); margin-bottom:12px;"></i>
-                        <h3 style="color:#f8fafc; font-size:1.05rem; margin-bottom:6px;">Nenhum colaborador encontrado</h3>
+                        <h3 style="color:var(--text-heading); font-size:1.05rem; margin-bottom:6px;">Nenhum colaborador encontrado</h3>
                         <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:16px;">
                             ${this.termoBusca ? 'Tente buscar com outro termo ou limpe o campo de pesquisa.' : 'Cadastre os membros da sua equipe para liberar acesso individual.'}
                         </p>

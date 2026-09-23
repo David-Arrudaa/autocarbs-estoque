@@ -374,7 +374,7 @@
             <h3 id="modal-senha-titulo" style="color:var(--danger); margin:10px 0;">ÁREA RESTRITA</h3>
             <p style="font-size:0.85rem; color:var(--text-secondary)">Digite a senha da gerência para excluir o item do banco.</p>
         </div>
-        <input type="password" id="senha-supervisor" style="width:100%; padding:12px; margin-bottom:20px; background:var(--bg-input); border:1px solid var(--danger); border-radius:6px; color:white; text-align:center;" placeholder="SENHA DA GERÊNCIA" inputmode="numeric">
+        <input type="password" id="senha-supervisor" style="width:100%; padding:12px; margin-bottom:20px; background:var(--bg-input); border:1px solid var(--danger); border-radius:6px; color:var(--text-primary); text-align:center;" placeholder="SENHA DA GERÊNCIA" inputmode="numeric">
         <div style="display:flex; gap:10px;">
             <button class="btn btn-secondary" style="flex:1;" onclick="Estoque.fecharModal('modal-senha-exclusao')">CANCELAR</button>
             <button class="btn btn-danger" style="flex:1;" onclick="Estoque.confirmarExclusao()">EXCLUIR</button>
