@@ -37,7 +37,7 @@
     min-height: 560px;
     background: #FFFFFF;
     border-radius: 28px;
-    border: 1px solid rgba(202, 161, 81, 0.25);
+    border: 1px solid rgba(202, 161, 81, 0.30);
     position: relative;
     overflow: hidden;
     display: flex;
@@ -46,13 +46,13 @@
         0 25px 65px -12px rgba(16, 24, 30, 0.12),
         0 4px 20px -2px rgba(16, 24, 30, 0.05);
     box-sizing: border-box;
-    animation: authWavePop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: authWavePop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes authWavePop {
     from {
         opacity: 0;
-        transform: translateY(18px) scale(0.98);
+        transform: translateY(18px) scale(0.985);
     }
     to {
         opacity: 1;
@@ -87,20 +87,23 @@
     user-select: none;
 }
 
-/* Marca Oficial da Oficina AutoCar BS */
+/* Marca Oficial da Oficina AutoCar BS com Acabamento Metálico */
 .auth-brand-badge {
     display: inline-flex;
     align-items: center;
     gap: 12px;
     padding: 7px 18px 7px 8px;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.30);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(202, 161, 81, 0.45);
+    border: 1px solid rgba(202, 161, 81, 0.55);
     border-radius: 999px;
     align-self: flex-start;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 4px 18px rgba(0, 0, 0, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
     margin-bottom: 24px;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s backwards;
 }
 
 .auth-brand-icon {
@@ -108,13 +111,20 @@
     height: 32px;
     border-radius: 50%;
     background: #CAA151;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
     color: #93272C;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.15rem;
-    box-shadow: 0 0 12px rgba(202, 161, 81, 0.5);
+    box-shadow: 
+        0 0 12px rgba(202, 161, 81, 0.6),
+        inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    transition: transform 0.25s ease;
+}
+
+.auth-brand-badge:hover .auth-brand-icon {
+    transform: rotate(-15deg) scale(1.06);
 }
 
 .auth-brand-info {
@@ -134,7 +144,7 @@
 .auth-brand-name span {
     color: #E02E34;
     font-style: normal;
-    text-shadow: 0 0 10px rgba(224, 46, 52, 0.4);
+    text-shadow: 0 0 10px rgba(224, 46, 52, 0.45);
 }
 
 .auth-brand-sub {
@@ -148,6 +158,7 @@
 
 .auth-wave-header {
     margin-bottom: auto;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s backwards;
 }
 
 .auth-wave-greeting {
@@ -175,6 +186,7 @@
     flex-direction: column;
     gap: 14px;
     margin-top: 32px;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.24s backwards;
 }
 
 .auth-wave-feat-item {
@@ -188,7 +200,7 @@
     height: 40px;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.16);
-    border: 1px solid rgba(202, 161, 81, 0.35);
+    border: 1px solid rgba(202, 161, 81, 0.40);
     color: #CAA151;
     display: flex;
     align-items: center;
@@ -196,13 +208,15 @@
     font-size: 1.25rem;
     flex-shrink: 0;
     backdrop-filter: blur(8px);
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
 .auth-wave-feat-item:hover .auth-wave-feat-icon {
-    transform: scale(1.06);
+    transform: scale(1.08) translateY(-1px);
     border-color: #CAA151;
-    background: rgba(202, 161, 81, 0.22);
+    background: rgba(202, 161, 81, 0.25);
+    box-shadow: 0 4px 12px rgba(202, 161, 81, 0.25);
 }
 
 .auth-wave-feat-text strong {
@@ -222,7 +236,7 @@
 }
 
 /* =========================================================
-   LADO DIREITO: FORMULÁRIO DE ACESSO (LIGHT & PREMIUM)
+   LADO DIREITO: FORMULÁRIO DE ACESSO (LIGHT & LUXURY)
    ========================================================= */
 .auth-wave-right {
     flex: 1.1;
@@ -236,26 +250,31 @@
     background: #FFFFFF;
 }
 
-/* Badge Circular com Cadeado (Carmim 7622 C + Dourado 7407 C em Fundo Suave) */
+/* Badge Circular com Cadeado (Carmim 7622 C + Dourado 7407 C com Acabamento Nobre) */
 .auth-neon-lock-badge {
     width: 62px;
     height: 62px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(202, 161, 81, 0.14) 0%, rgba(147, 39, 44, 0.08) 100%);
-    border: 1.5px solid rgba(202, 161, 81, 0.55);
+    background: linear-gradient(135deg, rgba(202, 161, 81, 0.16) 0%, rgba(147, 39, 44, 0.09) 100%);
+    border: 1.5px solid rgba(202, 161, 81, 0.65);
     color: #93272C;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.85rem;
     margin: 0 auto 16px;
-    box-shadow: 0 4px 18px rgba(202, 161, 81, 0.18);
-    transition: transform 0.3s ease;
+    box-shadow: 
+        0 6px 20px rgba(202, 161, 81, 0.22),
+        inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s backwards;
 }
 
 .auth-neon-lock-badge:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 22px rgba(202, 161, 81, 0.28);
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 
+        0 8px 24px rgba(202, 161, 81, 0.32),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 .auth-form-headline {
@@ -265,6 +284,7 @@
     text-align: center;
     margin: 0 0 6px;
     letter-spacing: -0.4px;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.14s backwards;
 }
 
 .auth-form-subline {
@@ -273,13 +293,22 @@
     text-align: center;
     margin: 0 0 24px;
     line-height: 1.4;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.18s backwards;
 }
 
-/* Campos de Entrada */
+/* Campos de Entrada com Entrada Escalonada */
 .auth-wave-group {
     margin-bottom: 16px;
     position: relative;
     text-align: left;
+}
+
+.auth-wave-group:nth-of-type(1) {
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.22s backwards;
+}
+
+.auth-wave-group:nth-of-type(2) {
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.26s backwards;
 }
 
 .auth-wave-label {
@@ -337,7 +366,7 @@
 .auth-wave-input:focus {
     border-color: #93272C !important;
     background: #FFFFFF !important;
-    box-shadow: 0 0 0 3px rgba(147, 39, 44, 0.12) !important;
+    box-shadow: 0 0 0 3.5px rgba(147, 39, 44, 0.12) !important;
 }
 
 .auth-wave-input-box:focus-within .auth-wave-icon {
@@ -374,6 +403,7 @@
     margin-top: 14px;
     margin-bottom: 22px;
     font-size: 0.78rem;
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.30s backwards;
 }
 
 .auth-remember-me {
@@ -403,7 +433,7 @@
     text-decoration: underline;
 }
 
-/* Botão de Envio (Continuar) — Carmim 7622 C com Dourado 7407 C */
+/* Botão de Envio (Continuar) com Shimmer Metálico Deslizante */
 .auth-wave-btn-submit {
     width: 100%;
     height: 48px;
@@ -421,24 +451,52 @@
     justify-content: center;
     gap: 8px;
     box-shadow: 0 4px 16px rgba(147, 39, 44, 0.32);
-    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.34s backwards;
+}
+
+/* Feixe de Luz Deslizante (Shimmer) */
+.auth-wave-btn-submit::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.22), 
+        rgba(202, 161, 81, 0.35), 
+        transparent
+    );
+    transform: skewX(-22deg);
+    transition: none;
+    pointer-events: none;
+}
+
+.auth-wave-btn-submit:hover:not(:disabled)::after {
+    left: 140%;
+    transition: left 0.75s ease-in-out;
 }
 
 .auth-wave-btn-submit i {
     color: #CAA151;
     font-size: 1.1rem;
-    transition: transform 0.2s ease;
+    transition: transform 0.25s ease;
 }
 
 .auth-wave-btn-submit:hover:not(:disabled) {
     background: linear-gradient(135deg, #A82D33 0%, #852126 100%);
     border-color: #CAA151;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(147, 39, 44, 0.45);
+    box-shadow: 0 6px 20px rgba(147, 39, 44, 0.45), 0 0 14px rgba(202, 161, 81, 0.25);
 }
 
 .auth-wave-btn-submit:hover:not(:disabled) i {
-    transform: translateX(3px);
+    transform: translateX(4px);
 }
 
 .auth-wave-btn-submit:active:not(:disabled) {
@@ -581,6 +639,18 @@
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-6px); }
     40%, 80% { transform: translateX(6px); }
+}
+
+/* Keyframe para Entrada Escalonada Suave */
+@keyframes authItemFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* =========================================================

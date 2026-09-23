@@ -12,15 +12,15 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=78.0">
-    <link rel="stylesheet" href="css/style.css?v=78.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=78.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=78.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=78.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=78.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=78.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=78.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=78.0">
+    <link rel="stylesheet" href="css/variables.css?v=79.0">
+    <link rel="stylesheet" href="css/style.css?v=79.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=79.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=79.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=79.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=79.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=79.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=79.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=79.0">
 </head>
 <body>
 
@@ -41,8 +41,14 @@
                         <stop offset="55%" stop-color="#7E1D21"/>
                         <stop offset="100%" stop-color="#591216"/>
                     </linearGradient>
+                    <!-- Textura Técnica em Marca d'Água Discreta -->
+                    <pattern id="technicalGrid" width="28" height="28" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="0.9" fill="#CAA151" opacity="0.25" />
+                        <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#FFFFFF" stroke-width="0.5" opacity="0.04"/>
+                    </pattern>
                 </defs>
                 <path d="M0,0 L330,0 C390,130 460,210 390,350 C330,470 400,570 350,700 L0,700 Z" fill="url(#waveGradient)"/>
+                <path d="M0,0 L330,0 C390,130 460,210 390,350 C330,470 400,570 350,700 L0,700 Z" fill="url(#technicalGrid)"/>
                 <!-- Linha Guia Dourada Refinada (Pantone 7407 C) -->
                 <path d="M330,0 C390,130 460,210 390,350 C330,470 400,570 350,700" fill="none" stroke="#CAA151" stroke-width="2.5" opacity="0.65"/>
             </svg>
@@ -313,16 +319,16 @@
     <div id="container-modulo-scanner" data-module="scanner"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=78.0"></script>
-    <script src="js/ui.js?v=78.0"></script>
-    <script src="modals/dialog.js?v=78.0"></script>
-    <script src="js/sidebar.js?v=78.0"></script>
-    <script src="js/api.js?v=78.0"></script>
-    <script src="modules/auth/auth.js?v=78.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=78.0"></script>
-    <script src="modules/equipe/equipe.js?v=78.0"></script>
-    <script src="modules/scanner/scanner.js?v=78.0"></script>
-    <script src="modules/estoque/estoque.js?v=78.0"></script>
-    <script src="js/app.js?v=78.0"></script>
+    <script src="js/core/view-loader.js?v=79.0"></script>
+    <script src="js/ui.js?v=79.0"></script>
+    <script src="modals/dialog.js?v=79.0"></script>
+    <script src="js/sidebar.js?v=79.0"></script>
+    <script src="js/api.js?v=79.0"></script>
+    <script src="modules/auth/auth.js?v=79.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=79.0"></script>
+    <script src="modules/equipe/equipe.js?v=79.0"></script>
+    <script src="modules/scanner/scanner.js?v=79.0"></script>
+    <script src="modules/estoque/estoque.js?v=79.0"></script>
+    <script src="js/app.js?v=79.0"></script>
 </body>
 </html>
