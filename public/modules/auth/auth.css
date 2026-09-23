@@ -124,7 +124,7 @@
 }
 
 .auth-brand-name {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 900;
     font-style: italic;
     letter-spacing: 0.6px;
@@ -132,14 +132,15 @@
 }
 
 .auth-brand-name span {
-    color: #CAA151;
+    color: #E02E34;
     font-style: normal;
+    text-shadow: 0 0 10px rgba(224, 46, 52, 0.4);
 }
 
 .auth-brand-sub {
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 1.6px;
     color: #CAA151;
     text-transform: uppercase;
     margin-top: 2px;
