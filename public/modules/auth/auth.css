@@ -1,68 +1,279 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos da Tela de Login Automotiva
- * Tema: Garagem & Oficina Mecânica (Criativo, Moderno e Suave)
+ * Módulo de Autenticação: Estilos Split-Screen Cinemático
+ * Tema: Garagem & Oficina de Alta Performance (Duas Telas)
  * =========================================================
  */
 
-.auth-screen-wrapper {
+.auth-split-wrapper {
     position: fixed;
     inset: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 9999;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: 
-        radial-gradient(900px circle at 50% 10%, rgba(224, 46, 52, 0.08) 0%, transparent 65%),
-        radial-gradient(700px circle at 80% 90%, rgba(30, 58, 138, 0.05) 0%, transparent 60%),
-        linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-        linear-gradient(135deg, #EEF2F8 0%, #E6EDF6 50%, #DCE5F2 100%);
-    background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px, 100% 100%;
+    flex-direction: row;
+    overflow: hidden;
+    background: #080B10;
     box-sizing: border-box;
-    overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Card Automotivo Central */
-.auth-card-auto {
+/* =========================================================
+   LADO ESQUERDO: SUPERCAR HERO & TELEMETRIA HUD
+   ========================================================= */
+.auth-split-hero {
+    flex: 1.15;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 52px;
+    background: 
+        linear-gradient(180deg, rgba(8, 11, 16, 0.45) 0%, rgba(8, 11, 16, 0.85) 100%),
+        url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1400&q=85') center center / cover no-repeat;
+    box-sizing: border-box;
+    overflow: hidden;
+    user-select: none;
+}
+
+.auth-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 10% 90%, rgba(224, 46, 52, 0.35) 0%, transparent 55%),
+        radial-gradient(circle at 90% 10%, rgba(30, 58, 138, 0.25) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(8, 11, 16, 0.6) 0%, transparent 60%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.auth-hero-header,
+.auth-hero-hud,
+.auth-hero-footer {
+    position: relative;
+    z-index: 2;
+}
+
+/* Marca no Topo do Hero */
+.auth-hero-brand {
+    font-size: 2.6rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+}
+
+.auth-brand-main {
+    color: #FFFFFF;
+}
+
+.auth-brand-accent {
+    color: #E02E34;
+    font-style: normal;
+    margin-left: 2px;
+    text-shadow: 0 0 25px rgba(224, 46, 52, 0.7);
+}
+
+.auth-hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(224, 46, 52, 0.20);
+    border: 1px solid rgba(224, 46, 52, 0.45);
+    color: #FF6B6F;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    backdrop-filter: blur(8px);
+}
+
+.auth-hero-tag i {
+    font-size: 0.85rem;
+}
+
+/* Centro do Hero: HUD & Frase de Impacto */
+.auth-hero-hud {
+    margin: auto 0;
+    padding: 30px 0;
+}
+
+.auth-hud-telemetry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.auth-hud-gauge-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 10px 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.auth-gauge-icon {
+    color: #FF4D52;
+    font-size: 1.45rem;
+    text-shadow: 0 0 12px rgba(255, 77, 82, 0.6);
+}
+
+.auth-hud-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: #94A3B8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.auth-hud-val {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: 0.5px;
+}
+
+.auth-hud-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(34, 197, 94, 0.18);
+    border: 1px solid rgba(34, 197, 94, 0.45);
+    color: #4ADE80;
+    font-size: 0.70rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 9px 14px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.auth-hud-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22C55E;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    animation: authLedPulse 2s infinite;
+}
+
+@keyframes authLedPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.8);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+
+.auth-hero-headline {
+    font-size: 2.85rem;
+    font-weight: 900;
+    color: #FFFFFF;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin: 0 0 14px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+}
+
+.auth-hero-subheadline {
+    color: #CBD5E1;
+    font-size: 0.96rem;
+    line-height: 1.55;
+    max-width: 490px;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+/* Rodapé do Hero */
+.auth-hero-footer {
+    display: flex;
+    align-items: center;
+}
+
+.auth-hero-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #94A3B8;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.auth-hero-status i {
+    color: #E02E34;
+    font-size: 1rem;
+}
+
+/* =========================================================
+   LADO DIREITO: PORTAL DE ACESSO & IGNIÇÃO
+   ========================================================= */
+.auth-split-portal {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 36px;
+    background: 
+        radial-gradient(700px circle at 50% 10%, rgba(224, 46, 52, 0.06), transparent 70%),
+        linear-gradient(145deg, #F8FAFD 0%, #EEF2F7 50%, #E6EDF6 100%);
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.auth-portal-card {
     width: 100%;
-    max-width: 440px;
+    max-width: 430px;
     background: #FFFFFF;
     border: 1.5px solid #CBD5E1;
     border-radius: 20px;
     box-shadow: 
         0 10px 30px -5px rgba(15, 23, 42, 0.08),
-        0 25px 50px -10px rgba(15, 23, 42, 0.12),
-        0 0 0 1px rgba(15, 23, 42, 0.02);
+        0 25px 50px -10px rgba(15, 23, 42, 0.12);
     box-sizing: border-box;
-    animation: authCardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
     overflow: hidden;
+    animation: authPortalSlide 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes authCardFadeIn {
+@keyframes authPortalSlide {
     from {
         opacity: 0;
-        transform: translateY(16px) scale(0.98);
+        transform: translateX(18px) scale(0.98);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateX(0) scale(1);
     }
 }
 
-/* Faixa Carbon Fiber Superior com Pinstripe Vermelho */
+/* Faixa Carbon Fiber com Pinstripe */
 .auth-carbon-header {
     height: 8px;
     width: 100%;
     background: repeating-linear-gradient(45deg, #1E293B 0, #1E293B 3px, #0F172A 3px, #0F172A 6px);
-    position: relative;
 }
 
 .auth-racing-stripe {
@@ -76,18 +287,18 @@
     padding: 34px 34px 28px;
 }
 
-/* Cabeçalho da Oficina & Emblema */
-.auth-header {
+/* Cabeçalho do Portal de Acesso */
+.auth-portal-header {
     text-align: center;
-    margin-bottom: 26px;
+    margin-bottom: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.auth-garage-badge {
-    width: 58px;
-    height: 58px;
+.auth-garage-icon-badge {
+    width: 54px;
+    height: 54px;
     border-radius: 16px;
     background: linear-gradient(145deg, #FFF1F2 0%, #FFFFFF 100%);
     border: 1.5px solid rgba(224, 46, 52, 0.35);
@@ -95,79 +306,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.85rem;
+    font-size: 1.75rem;
     margin-bottom: 12px;
-    box-shadow: 0 4px 16px rgba(224, 46, 52, 0.16), inset 0 1px 0 #FFFFFF;
-    position: relative;
+    box-shadow: 0 4px 14px rgba(224, 46, 52, 0.16);
 }
 
-.auth-badge-dot {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: #22C55E;
-    border: 2px solid #FFFFFF;
-    box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
-    animation: authLedPulse 2s infinite;
-}
-
-@keyframes authLedPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-    }
-}
-
-.auth-brand-logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    margin-bottom: 6px;
-}
-
-.auth-brand-main {
-    font-size: 2.35rem;
-    font-weight: 900;
-    font-style: italic;
-    letter-spacing: 0.5px;
-    color: #0F172A;
-}
-
-.auth-brand-accent {
-    font-size: 2.35rem;
-    font-weight: 900;
-    color: #E02E34;
-    margin-left: 2px;
-}
-
-.auth-workshop-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: #F1F5F9;
-    border: 1px solid #CBD5E1;
-    color: #475569;
-    font-size: 0.68rem;
+.auth-portal-title {
+    font-size: 1.6rem;
     font-weight: 800;
-    letter-spacing: 1px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    text-transform: uppercase;
-    margin-top: 4px;
+    color: #0F172A;
+    letter-spacing: -0.4px;
+    margin: 0 0 4px 0;
 }
 
-.auth-workshop-pill i {
-    color: #E02E34;
-    font-size: 0.85rem;
+.auth-portal-subtitle {
+    font-size: 0.82rem;
+    color: #64748B;
+    margin: 0;
+    line-height: 1.4;
 }
 
 /* Formulário e Campos */
@@ -505,17 +661,38 @@
     color: #CBD5E1;
 }
 
-@media (max-width: 480px) {
+/* =========================================================
+   RESPONSIVIDADE (MOBILE & TABLET)
+   ========================================================= */
+@media (max-width: 960px) {
+    .auth-split-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .auth-split-hero {
+        min-height: 240px;
+        padding: 28px 24px;
+        flex: none;
+    }
+
+    .auth-hud-telemetry,
+    .auth-hero-subheadline,
+    .auth-hero-footer {
+        display: none;
+    }
+
+    .auth-hero-headline {
+        font-size: 1.85rem;
+        margin: 0;
+    }
+
+    .auth-split-portal {
+        padding: 28px 18px;
+        flex: none;
+    }
+
     .auth-card-body {
         padding: 28px 20px 22px;
-    }
-    
-    .auth-brand-main,
-    .auth-brand-accent {
-        font-size: 2rem;
-    }
-    
-    .auth-btn-ignition {
-        font-size: 0.88rem;
     }
 }
