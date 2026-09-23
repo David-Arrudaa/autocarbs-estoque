@@ -1,12 +1,12 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo de Autenticação: Estilos Modern Wave
+ * Módulo de Autenticação: Estilos Modern Wave (Clean Light Edition)
  * Identidade Visual Oficial:
  * - PANTONE 7407 C: #CAA151 (Gold Nobre / Dourado Acetinado)
  * - PANTONE 7622 C: #93272C (Carmim / Vinho Esportivo Rubro)
- * - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Preto Petróleo)
- * - HEX F6F6F6: #F6F6F6 (Branco Gelo Off-White)
+ * - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Tipografia Executiva)
+ * - HEX F6F6F6: #F6F6F6 (Superfícies Claras & Off-White)
  * =========================================================
  */
 
@@ -20,28 +20,31 @@
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: radial-gradient(circle at 50% 30%, #151F27 0%, #0B1015 100%);
+    background: #EEF2F7;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(202, 161, 81, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(147, 39, 44, 0.06) 0px, transparent 50%);
     box-sizing: border-box;
     overflow-y: auto;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-/* Card Principal com Cantos Arredondados e Fundo Pantone Black 6 C */
+/* Card Principal: Clean Light com Onda Esquerda e Lado Direito Branco Puro */
 .auth-wave-card {
     width: 100%;
     max-width: 960px;
     min-height: 560px;
-    background: #10181E;
+    background: #FFFFFF;
     border-radius: 28px;
-    border: 1px solid rgba(202, 161, 81, 0.28);
+    border: 1px solid rgba(202, 161, 81, 0.25);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: row;
     box-shadow: 
-        0 25px 70px -10px rgba(0, 0, 0, 0.95),
-        0 0 35px rgba(202, 161, 81, 0.08);
+        0 25px 65px -12px rgba(16, 24, 30, 0.12),
+        0 4px 20px -2px rgba(16, 24, 30, 0.05);
     box-sizing: border-box;
     animation: authWavePop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -90,13 +93,13 @@
     align-items: center;
     gap: 12px;
     padding: 7px 18px 7px 8px;
-    background: rgba(16, 24, 30, 0.75);
+    background: rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(202, 161, 81, 0.45);
     border-radius: 999px;
     align-self: flex-start;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
     margin-bottom: 24px;
 }
 
@@ -104,14 +107,14 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #93272C;
-    border: 1px solid rgba(202, 161, 81, 0.5);
-    color: #CAA151;
+    background: #CAA151;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #93272C;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.15rem;
-    box-shadow: 0 0 14px rgba(202, 161, 81, 0.35);
+    box-shadow: 0 0 12px rgba(202, 161, 81, 0.5);
 }
 
 .auth-brand-info {
@@ -125,7 +128,7 @@
     font-weight: 900;
     font-style: italic;
     letter-spacing: 0.6px;
-    color: #F6F6F6;
+    color: #FFFFFF;
 }
 
 .auth-brand-name span {
@@ -159,7 +162,7 @@
 .auth-wave-title {
     font-size: 2.35rem;
     font-weight: 800;
-    color: #F6F6F6;
+    color: #FFFFFF;
     line-height: 1.15;
     letter-spacing: -0.5px;
     margin: 0;
@@ -183,8 +186,8 @@
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: rgba(202, 161, 81, 0.12);
-    border: 1px solid rgba(202, 161, 81, 0.32);
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(202, 161, 81, 0.35);
     color: #CAA151;
     display: flex;
     align-items: center;
@@ -198,12 +201,12 @@
 .auth-wave-feat-item:hover .auth-wave-feat-icon {
     transform: scale(1.06);
     border-color: #CAA151;
-    background: rgba(202, 161, 81, 0.2);
+    background: rgba(202, 161, 81, 0.22);
 }
 
 .auth-wave-feat-text strong {
     display: block;
-    color: #F6F6F6;
+    color: #FFFFFF;
     font-size: 0.88rem;
     font-weight: 700;
     margin-bottom: 2px;
@@ -211,13 +214,14 @@
 
 .auth-wave-feat-text span {
     display: block;
-    color: rgba(246, 246, 246, 0.8);
+    color: #F1F5F9;
     font-size: 0.74rem;
     line-height: 1.35;
+    opacity: 0.95;
 }
 
 /* =========================================================
-   LADO DIREITO: FORMULÁRIO DE ACESSO
+   LADO DIREITO: FORMULÁRIO DE ACESSO (LIGHT & PREMIUM)
    ========================================================= */
 .auth-wave-right {
     flex: 1.1;
@@ -228,34 +232,35 @@
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
+    background: #FFFFFF;
 }
 
-/* Badge Circular com Cadeado Neon (Pantone 7407 C + 7622 C) */
+/* Badge Circular com Cadeado (Carmim 7622 C + Dourado 7407 C em Fundo Suave) */
 .auth-neon-lock-badge {
     width: 62px;
     height: 62px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(147, 39, 44, 0.35) 0%, rgba(202, 161, 81, 0.2) 100%);
-    border: 1.5px solid rgba(202, 161, 81, 0.6);
-    color: #CAA151;
+    background: linear-gradient(135deg, rgba(202, 161, 81, 0.14) 0%, rgba(147, 39, 44, 0.08) 100%);
+    border: 1.5px solid rgba(202, 161, 81, 0.55);
+    color: #93272C;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.85rem;
     margin: 0 auto 16px;
-    box-shadow: 0 0 25px rgba(202, 161, 81, 0.25);
+    box-shadow: 0 4px 18px rgba(202, 161, 81, 0.18);
     transition: transform 0.3s ease;
 }
 
 .auth-neon-lock-badge:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(202, 161, 81, 0.4);
+    box-shadow: 0 6px 22px rgba(202, 161, 81, 0.28);
 }
 
 .auth-form-headline {
     font-size: 1.85rem;
     font-weight: 800;
-    color: #F6F6F6;
+    color: #10181E;
     text-align: center;
     margin: 0 0 6px;
     letter-spacing: -0.4px;
@@ -263,7 +268,7 @@
 
 .auth-form-subline {
     font-size: 0.85rem;
-    color: #94A3B8;
+    color: #64748B;
     text-align: center;
     margin: 0 0 24px;
     line-height: 1.4;
@@ -280,7 +285,7 @@
     display: block;
     font-size: 0.78rem;
     font-weight: 700;
-    color: #CBD5E1;
+    color: #334155;
     margin-bottom: 7px;
 }
 
@@ -295,7 +300,7 @@
     position: absolute;
     left: 14px;
     font-size: 1.2rem;
-    color: #64748B;
+    color: #94A3B8;
     pointer-events: none;
     z-index: 2;
     transition: color 0.2s ease;
@@ -303,10 +308,10 @@
 
 .auth-wave-input {
     width: 100% !important;
-    height: 46px !important;
+    height: 48px !important;
     border-radius: 10px !important;
-    background: #F6F6F6 !important;
-    border: 1.5px solid transparent !important;
+    background: #F8FAFD !important;
+    border: 1.5px solid #CBD5E1 !important;
     padding: 0 42px 0 42px !important;
     font-size: 0.94rem !important;
     font-weight: 600 !important;
@@ -323,10 +328,15 @@
     font-weight: 400 !important;
 }
 
-.auth-wave-input:focus {
-    border-color: #CAA151 !important;
+.auth-wave-input:hover {
+    border-color: #94A3B8 !important;
     background: #FFFFFF !important;
-    box-shadow: 0 0 0 3px rgba(202, 161, 81, 0.25) !important;
+}
+
+.auth-wave-input:focus {
+    border-color: #93272C !important;
+    background: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(147, 39, 44, 0.12) !important;
 }
 
 .auth-wave-input-box:focus-within .auth-wave-icon {
@@ -339,7 +349,7 @@
     right: 10px;
     background: transparent;
     border: none;
-    color: #64748B;
+    color: #94A3B8;
     font-size: 1.25rem;
     cursor: pointer;
     padding: 6px;
@@ -369,9 +379,10 @@
     display: flex;
     align-items: center;
     gap: 7px;
-    color: #CBD5E1;
+    color: #475569;
     cursor: pointer;
     user-select: none;
+    font-weight: 500;
 }
 
 .auth-remember-me input {
@@ -380,25 +391,25 @@
 }
 
 .auth-contact-link {
-    color: #CAA151;
+    color: #93272C;
     cursor: pointer;
     transition: color 0.2s ease;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .auth-contact-link:hover {
-    color: #F6F6F6;
+    color: #CAA151;
     text-decoration: underline;
 }
 
-/* Botão de Envio (Continuar) — Pantone 7622 C + 7407 C */
+/* Botão de Envio (Continuar) — Carmim 7622 C com Dourado 7407 C */
 .auth-wave-btn-submit {
     width: 100%;
     height: 48px;
     border-radius: 10px;
     background: linear-gradient(135deg, #93272C 0%, #761C20 100%);
     border: 1px solid rgba(202, 161, 81, 0.45);
-    color: #F6F6F6;
+    color: #FFFFFF;
     font-weight: 800;
     font-size: 0.94rem;
     letter-spacing: 0.6px;
@@ -408,7 +419,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 18px rgba(147, 39, 44, 0.45);
+    box-shadow: 0 4px 16px rgba(147, 39, 44, 0.32);
     transition: all 0.2s ease;
 }
 
@@ -422,7 +433,7 @@
     background: linear-gradient(135deg, #A82D33 0%, #852126 100%);
     border-color: #CAA151;
     transform: translateY(-1px);
-    box-shadow: 0 6px 24px rgba(147, 39, 44, 0.6), 0 0 16px rgba(202, 161, 81, 0.35);
+    box-shadow: 0 6px 20px rgba(147, 39, 44, 0.45);
 }
 
 .auth-wave-btn-submit:hover:not(:disabled) i {
@@ -446,10 +457,10 @@
     top: calc(100% + 6px);
     left: 0;
     width: 100%;
-    background: #F6F6F6;
-    border: 1.5px solid rgba(202, 161, 81, 0.4);
+    background: #FFFFFF;
+    border: 1.5px solid #CBD5E1;
     border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 12px 30px rgba(16, 24, 30, 0.12);
     z-index: 100;
     overflow: hidden;
     animation: authDropdownSlide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -475,9 +486,9 @@
     font-weight: 700;
     letter-spacing: 0.8px;
     text-transform: uppercase;
-    color: #10181E;
-    background: #ECECEC;
-    border-bottom: 1px solid rgba(202, 161, 81, 0.25);
+    color: #475569;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
 }
 
 .auth-autocomplete-header i {
@@ -492,7 +503,7 @@
     padding: 10px 14px;
     cursor: pointer;
     transition: all 0.15s ease;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid #F1F5F9;
 }
 
 .auth-autocomplete-item:last-child {
@@ -553,10 +564,10 @@
 .auth-error-box {
     margin-top: 14px;
     padding: 10px 14px;
-    background: rgba(147, 39, 44, 0.2);
-    border: 1px solid rgba(147, 39, 44, 0.5);
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
     border-radius: 10px;
-    color: #FECACA;
+    color: #93272C;
     font-size: 0.82rem;
     font-weight: 600;
     display: flex;
@@ -587,7 +598,7 @@
 
     .auth-wave-left {
         padding: 32px 24px 24px;
-        background: linear-gradient(135deg, #701C20 0%, #10181E 100%);
+        background: linear-gradient(135deg, #93272C 0%, #591216 100%);
     }
 
     .auth-wave-features {
