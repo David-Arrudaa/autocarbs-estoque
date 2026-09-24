@@ -257,6 +257,11 @@ const AuthModule = {
      * Exibe a tela de login
      */
     mostrarTelaLogin() {
+        try {
+            localStorage.removeItem('autocar_has_session');
+            document.documentElement.classList.remove('has-active-session');
+        } catch (_) {}
+
         const loginScreen = document.getElementById('login-screen');
         const appContainer = document.getElementById('app-container');
         if (loginScreen) loginScreen.style.display = 'flex';
@@ -298,6 +303,11 @@ const AuthModule = {
      * Oculta a tela de login
      */
     ocultarTelaLogin() {
+        try {
+            localStorage.setItem('autocar_has_session', 'true');
+            document.documentElement.classList.add('has-active-session');
+        } catch (_) {}
+
         const loginScreen = document.getElementById('login-screen');
         const appContainer = document.getElementById('app-container');
         if (loginScreen) loginScreen.style.display = 'none';
@@ -438,6 +448,8 @@ const AuthModule = {
             window.usuarioLogado = null;
             try {
                 localStorage.removeItem('autocar_token');
+                localStorage.removeItem('autocar_has_session');
+                document.documentElement.classList.remove('has-active-session');
                 sessionStorage.clear();
             } catch (_) {}
             window.location.href = '/';

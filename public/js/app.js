@@ -6,7 +6,10 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Pré-carrega as views estruturais essenciais (Estoque & Scanner)
+    // 1. Inicia verificação de sessão no servidor imediatamente em paralelo com o carregamento das views
+    const promessaSessao = API.verificarSessao().catch(() => null);
+
+    // 2. Pré-carrega as views estruturais essenciais (Estoque & Scanner)
     if (window.ViewLoader) {
         await ViewLoader.loadAll([
             { module: 'estoque', targetId: 'container-modulo-estoque' },
@@ -20,6 +23,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Listener para sessões expiradas
     window.addEventListener('auth:expired', () => {
+        try {
+            localStorage.removeItem('autocar_has_session');
+            document.documentElement.classList.remove('has-active-session');
+        } catch (_) {}
         mostrarTelaLogin();
     });
 
@@ -59,16 +66,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // Checa se já existe sessão ativa no servidor (via cookie HttpOnly autocar_session)
+    // Aguarda o resultado da checagem de sessão iniciada no início
     try {
-        const sessao = await API.verificarSessao();
+        const sessao = await promessaSessao;
         if (sessao && sessao.usuario) {
+            localStorage.setItem('autocar_has_session', 'true');
+            document.documentElement.classList.add('has-active-session');
             atualizarPerfilUsuario(sessao.usuario);
             if (window.AuthModule) {
                 AuthModule.ocultarTelaLogin();
             } else {
                 const ls = document.getElementById('login-screen');
                 if (ls) ls.style.display = 'none';
+                const ac = document.getElementById('app-container');
+                if (ac) ac.style.opacity = '1';
             }
             await Estoque.carregarTudo();
             return;
@@ -76,6 +87,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch {
         API.setToken(null);
     }
+
+    // Se não houver sessão ativa ou expirou, limpa flag e exibe login
+    try {
+        localStorage.removeItem('autocar_has_session');
+        document.documentElement.classList.remove('has-active-session');
+    } catch (_) {}
 
     if (window.AuthModule) {
         AuthModule.mostrarTelaLogin();
@@ -234,6 +251,8 @@ async function fazerLogout() {
     window.usuarioLogado = null;
     try {
         localStorage.removeItem('autocar_token');
+        localStorage.removeItem('autocar_has_session');
+        document.documentElement.classList.remove('has-active-session');
         sessionStorage.clear();
     } catch (_) {}
     window.location.href = '/';
