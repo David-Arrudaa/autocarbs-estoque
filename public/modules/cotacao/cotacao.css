@@ -67,17 +67,17 @@
 }
 
 .cot-status-badge.cot-badge-new {
-    background: rgba(56, 189, 248, 0.12);
-    color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.35);
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.1);
+    background: rgba(202, 161, 81, 0.12);
+    color: #8C6218;
+    border: 1px solid rgba(202, 161, 81, 0.40);
+    box-shadow: 0 0 8px rgba(202, 161, 81, 0.12);
 }
 
 .cot-status-badge.cot-badge-editing {
-    background: rgba(234, 179, 8, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(234, 179, 8, 0.45);
-    box-shadow: 0 0 10px rgba(234, 179, 8, 0.12);
+    background: rgba(147, 39, 44, 0.10);
+    color: #93272C;
+    border: 1px solid rgba(147, 39, 44, 0.35);
+    box-shadow: 0 0 8px rgba(147, 39, 44, 0.10);
 }
 
 .cot-input-group {
@@ -150,7 +150,7 @@
     border-radius: 5px;
 }
 
-/* Botões do Cotador com Cores Semânticas */
+/* Botões do Cotador — Paleta Oficial Pantone AutoCar BS */
 .btn-dark-cot {
     background: #f1f5f9;
     color: #1e293b;
@@ -159,36 +159,46 @@
 .btn-dark-cot:hover {
     background: #e2e8f0;
     color: #0f172a;
+    border-color: var(--border-hover);
 }
 
+/* SALVAR — Dourado Pantone 7407 C (ação principal de valor) */
 .btn-green-cot {
-    background: #16a34a !important;
-    color: #ffffff !important;
-    border: 1px solid #22c55e !important;
+    background: linear-gradient(135deg, #CAA151 0%, #B88E3E 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(202, 161, 81, 0.60) !important;
+    box-shadow: 0 2px 8px rgba(202, 161, 81, 0.30) !important;
 }
 .btn-green-cot:hover {
-    background: #15803d !important;
-    filter: brightness(1.1);
+    background: linear-gradient(135deg, #B88E3E 0%, #9A7530 100%) !important;
+    box-shadow: 0 3px 12px rgba(202, 161, 81, 0.45) !important;
+    filter: none;
 }
 
+/* NOVO LIMPO — Vermelho primário (ação destrutiva/reset) */
 .btn-red-cot {
-    background: #dc2626 !important;
+    background: #E02E34 !important;
     color: #ffffff !important;
-    border: 1px solid #ef4444 !important;
+    border: 1px solid rgba(224, 46, 52, 0.60) !important;
+    box-shadow: 0 2px 8px rgba(224, 46, 52, 0.25) !important;
 }
 .btn-red-cot:hover {
-    background: #b91c1c !important;
-    filter: brightness(1.1);
+    background: #C5221F !important;
+    box-shadow: 0 3px 12px rgba(224, 46, 52, 0.40) !important;
+    filter: none;
 }
 
+/* LAVAGEM — Carmim Pantone 7622 C (serviço especial diferenciado) */
 .btn-cyan-cot {
-    background: #0891b2 !important;
+    background: #93272C !important;
     color: #ffffff !important;
-    border: 1px solid #06b6d4 !important;
+    border: 1px solid rgba(147, 39, 44, 0.60) !important;
+    box-shadow: 0 2px 8px rgba(147, 39, 44, 0.25) !important;
 }
 .btn-cyan-cot:hover {
-    background: #0e7490 !important;
-    filter: brightness(1.1);
+    background: #7A1F24 !important;
+    box-shadow: 0 3px 12px rgba(147, 39, 44, 0.40) !important;
+    filter: none;
 }
 
 /* Efeito piscar da lavagem quando ativa */
@@ -311,7 +321,7 @@
 }
 
 .cot-live-summary .total-badge {
-    color: var(--gold);
+    color: var(--gold-dark, #8C6218);
     font-weight: 800;
 }
 
