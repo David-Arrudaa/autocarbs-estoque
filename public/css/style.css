@@ -3564,7 +3564,7 @@ input.no-uppercase {
 }
 
 #cot-mainTable td.td-stock-section {
-    border-left: 2px solid #3b82f6;
+    border-left: 1px solid var(--border);
     background-color: #f8fafc;
 }
 
@@ -3586,8 +3586,12 @@ input.no-uppercase {
 }
 
 #cot-mainTable input.inp-sm {
-    width: 72px;
-    padding: 6px 4px;
+    width: 100%;
+    max-width: 76px;
+    min-width: 64px;
+    height: 28px;
+    box-sizing: border-box;
+    padding: 3px 8px;
     text-align: right;
     border: 1px solid var(--border);
     border-radius: 4px;
@@ -3596,14 +3600,22 @@ input.no-uppercase {
 }
 
 #cot-mainTable input.inp-brand {
-    width: 82px;
-    padding: 6px 4px;
+    width: 100%;
+    max-width: 84px;
+    min-width: 68px;
+    height: 28px;
+    box-sizing: border-box;
+    padding: 3px 6px;
     text-align: center;
     border: 1px solid var(--border);
     border-radius: 4px;
     background: #ffffff;
-    color: #0f172a;
-    text-transform: uppercase;
+    color: #334155;
+    font-weight: 500;
+    text-transform: none;
+    font-size: 0.8rem;
+    display: block;
+    margin: 0 auto;
 }
 
 #cot-mainTable input.inp-name {
@@ -3618,19 +3630,25 @@ input.no-uppercase {
 }
 
 #cot-mainTable input.inp-sale {
-    width: 72px;
-    padding: 6px 4px;
+    width: 100%;
+    max-width: 76px;
+    min-width: 64px;
+    height: 28px;
+    box-sizing: border-box;
+    padding: 3px 8px;
     text-align: right;
     border: 1px solid var(--border);
     border-radius: 4px;
-    font-weight: bold;
-    color: #0369a1;
-    font-size: 0.85rem;
-    background: #e0f2fe;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.82rem;
+    background: #ffffff;
+    display: block;
+    margin: 0 auto;
 }
 
 #cot-mainTable input.inp-sale:focus {
-    border-color: var(--gold);
+    border-color: #2563eb;
     outline: none;
 }
 

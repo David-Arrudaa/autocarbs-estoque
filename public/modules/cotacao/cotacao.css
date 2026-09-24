@@ -510,14 +510,22 @@
 }
 
 #cot-mainTable td.td-stock-section {
-    border-left: 2px solid #3b82f6;
+    border-left: 1px solid var(--border);
     background-color: #f8fafc;
+    padding: 5px 8px !important;
+    min-width: 86px;
+    vertical-align: middle;
+    text-align: center;
 }
 
 #cot-mainTable td.td-check {
     border-left: 2px solid #cbd5e1;
     background-color: #ffffff;
-    width: 32px;
+    width: 34px;
+    min-width: 34px;
+    padding: 4px 2px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 /* Inputs da Grade: Alto Contraste & Preenchimento Total */
@@ -554,32 +562,48 @@
 
 #cot-mainTable input.inp-brand {
     width: 100%;
-    min-width: 76px;
+    max-width: 84px;
+    min-width: 68px;
+    height: 28px;
     box-sizing: border-box;
-    padding: 5px 6px;
+    padding: 3px 6px;
     text-align: center;
     border: 1px solid #cbd5e1;
     border-radius: 4px;
     background: #ffffff;
-    color: #0f172a;
-    font-weight: 600;
-    text-transform: uppercase;
+    color: #334155;
+    font-weight: 500;
+    text-transform: none;
     font-size: 0.8rem;
+    display: block;
+    margin: 0 auto;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* Custo em Amarelo Suave */
+#cot-mainTable input.inp-brand:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Custo em Amarelo Suave com Alívio de Espaço */
 #cot-mainTable input.inp-sm.bg-custo {
     width: 100%;
-    min-width: 72px;
+    max-width: 76px;
+    min-width: 64px;
+    height: 28px;
     box-sizing: border-box;
-    padding: 5px 6px;
+    padding: 3px 8px;
     text-align: right;
     border: 1px solid #fde047;
     border-radius: 4px;
     background: #fef9c3 !important;
     color: #713f12 !important;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.82rem;
+    display: block;
+    margin: 0 auto;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 #cot-mainTable input.inp-sm.bg-custo:focus {
@@ -588,26 +612,32 @@
     box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3);
 }
 
-/* Preço de Venda em Azul Suave */
+/* Preço de Venda com Alívio de Espaço */
 #cot-mainTable input.inp-sale {
     width: 100%;
-    min-width: 72px;
+    max-width: 76px;
+    min-width: 64px;
+    height: 28px;
     box-sizing: border-box;
-    padding: 5px 6px;
+    padding: 3px 8px;
     text-align: right;
-    border: 1px solid #93c5fd;
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
-    background: #e0f2fe;
-    color: #0369a1;
-    font-weight: 800;
-    font-size: 0.85rem;
+    background: #ffffff;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.82rem;
+    display: block;
+    margin: 0 auto;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 #cot-mainTable input.inp-sale:focus {
-    border-color: var(--primary);
+    border-color: #2563eb;
     background: #ffffff;
     color: #0f172a;
     outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 /* Frete em Amarelo no Cabeçalho */
@@ -691,7 +721,10 @@
 
 /* Células de dados de Vendedor */
 #cot-mainTable td.td-vendor-cell {
-    padding: 3px 2px;
+    padding: 5px 8px !important;
+    min-width: 86px;
+    vertical-align: middle;
+    text-align: center;
 }
 
 /* --- TEMA 0: AZUL CLARO / CIANO ARDÓSIA (#38bdf8) --- */
