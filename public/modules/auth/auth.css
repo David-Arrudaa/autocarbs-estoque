@@ -467,6 +467,48 @@
     color: #10181E;
 }
 
+/* Ícone de E-mail Válido Confirmado */
+.auth-valid-icon {
+    position: absolute;
+    right: 14px;
+    font-size: 1.25rem;
+    color: #16A34A;
+    pointer-events: none;
+    z-index: 2;
+    animation: authCheckPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes authCheckPop {
+    from {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Alerta de Caps Lock Ativado */
+.auth-caps-warning {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #B45309;
+    background: #FEF3C7;
+    border: 1px solid #FDE68A;
+    border-radius: 6px;
+    padding: 4px 10px;
+    animation: authShake 0.25s ease;
+}
+
+.auth-caps-warning i {
+    font-size: 0.85rem;
+}
+
 /* Opções (Lembrar de mim / Esqueceu a senha) */
 .auth-wave-options {
     display: flex;
@@ -733,6 +775,8 @@
         flex-direction: column;
         max-width: 440px;
         min-height: auto;
+        border-radius: 24px;
+        overflow: hidden;
     }
 
     .auth-wave-svg {
@@ -740,8 +784,12 @@
     }
 
     .auth-wave-left {
-        padding: 32px 24px 24px;
+        padding: 34px 26px 28px;
         background: linear-gradient(135deg, #93272C 0%, #591216 100%);
+        border-radius: 0 0 28px 28px;
+        box-shadow: 0 10px 25px -4px rgba(16, 24, 30, 0.16);
+        position: relative;
+        z-index: 3;
     }
 
     .auth-wave-features {
@@ -749,6 +797,7 @@
     }
 
     .auth-wave-right {
-        padding: 28px 24px 32px;
+        padding: 32px 24px 34px;
+        border-radius: 0 0 24px 24px;
     }
 }

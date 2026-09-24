@@ -8,6 +8,7 @@
 
 const AuthModule = {
     EMAIL_HISTORY_KEY: 'autocar_email_history',
+    REMEMBER_EMAIL_KEY: 'autocar_remember_email',
 
     /**
      * Inicializa os eventos da tela de login
@@ -37,6 +38,7 @@ const AuthModule = {
                             if (email) {
                                 inputEmail.value = email;
                                 dropdown.style.display = 'none';
+                                this.validarFormatoEmail();
                                 if (inputSenha) inputSenha.focus();
                                 e.preventDefault();
                                 return;
@@ -52,9 +54,10 @@ const AuthModule = {
                 }
             });
 
-            // Autocomplete em tempo real ao digitar
+            // Autocomplete em tempo real ao digitar e validação instantânea de e-mail
             inputEmail.addEventListener('input', () => {
                 this.atualizarAutocomplete();
+                this.validarFormatoEmail();
             });
 
             // Exibir opções recentes ao focar
@@ -67,6 +70,24 @@ const AuthModule = {
                 setTimeout(() => {
                     if (dropdown) dropdown.style.display = 'none';
                 }, 220);
+            });
+        }
+
+        if (inputSenha) {
+            // Detector instantâneo de Caps Lock
+            const capsWarning = document.getElementById('auth-capslock-warning');
+            const checarCapsLock = (e) => {
+                if (!capsWarning) return;
+                if (e.getModifierState && e.getModifierState('CapsLock')) {
+                    capsWarning.style.display = 'flex';
+                } else {
+                    capsWarning.style.display = 'none';
+                }
+            };
+            inputSenha.addEventListener('keydown', checarCapsLock);
+            inputSenha.addEventListener('keyup', checarCapsLock);
+            inputSenha.addEventListener('blur', () => {
+                if (capsWarning) capsWarning.style.display = 'none';
             });
         }
 
@@ -175,11 +196,48 @@ const AuthModule = {
                 if (email) {
                     input.value = email;
                     dropdown.style.display = 'none';
+                    this.validarFormatoEmail();
                     const pwd = document.getElementById('login-senha');
                     if (pwd) pwd.focus();
                 }
             });
         });
+    },
+
+    /**
+     * Valida formato do e-mail e exibe/oculta ícone de confirmação
+     */
+    validarFormatoEmail() {
+        const input = document.getElementById('login-email');
+        const icon = document.getElementById('email-valid-icon');
+        if (!input || !icon) return;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const valido = emailRegex.test(input.value.trim());
+        icon.style.display = valido ? 'block' : 'none';
+    },
+
+    /**
+     * Salva ou remove o e-mail lembrado
+     */
+    salvarLembrarEmail(email, deveLembrar) {
+        try {
+            if (deveLembrar && email && email.includes('@')) {
+                localStorage.setItem(this.REMEMBER_EMAIL_KEY, email.trim());
+            } else {
+                localStorage.removeItem(this.REMEMBER_EMAIL_KEY);
+            }
+        } catch (_) {}
+    },
+
+    /**
+     * Obtém o e-mail gravado no Lembrar de Mim
+     */
+    obterLembrarEmail() {
+        try {
+            return localStorage.getItem(this.REMEMBER_EMAIL_KEY) || '';
+        } catch (_) {
+            return '';
+        }
     },
 
     /**
@@ -208,20 +266,31 @@ const AuthModule = {
 
         const inputSenha = document.getElementById('login-senha');
         const inputEmail = document.getElementById('login-email');
+        const checkLembrar = document.getElementById('auth-remember-check');
+        const capsWarning = document.getElementById('auth-capslock-warning');
 
+        if (capsWarning) capsWarning.style.display = 'none';
         if (inputSenha) inputSenha.value = '';
 
         if (inputEmail) {
-            // Se o histórico tiver algum e-mail e o input estiver vazio, pré-sugere o último
-            const history = this.obterHistoricoEmails();
-            if (!inputEmail.value && history.length > 0) {
-                inputEmail.value = history[0];
+            const emailLembrado = this.obterLembrarEmail();
+            if (emailLembrado) {
+                inputEmail.value = emailLembrado;
+                if (checkLembrar) checkLembrar.checked = true;
+                if (inputSenha) inputSenha.focus();
+            } else {
+                if (checkLembrar) checkLembrar.checked = false;
+                const history = this.obterHistoricoEmails();
+                if (!inputEmail.value && history.length > 0) {
+                    inputEmail.value = history[0];
+                }
+                if (!inputEmail.value) {
+                    inputEmail.focus();
+                } else if (inputSenha) {
+                    inputSenha.focus();
+                }
             }
-            if (!inputEmail.value) {
-                inputEmail.focus();
-            } else if (inputSenha) {
-                inputSenha.focus();
-            }
+            this.validarFormatoEmail();
         }
     },
 
@@ -317,6 +386,11 @@ const AuthModule = {
             UI.setLoading(true);
 
             const res = await API.login(email, senha);
+
+            // Persiste na opção Lembrar de Mim
+            const checkLembrar = document.getElementById('auth-remember-check');
+            const deveLembrar = checkLembrar ? checkLembrar.checked : true;
+            this.salvarLembrarEmail(email, deveLembrar);
 
             // Salva e-mail com sucesso no histórico local para autocompletar na próxima vez
             this.salvarEmailHistorico(email);

@@ -12,15 +12,15 @@
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=81.0">
-    <link rel="stylesheet" href="css/style.css?v=81.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=81.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=81.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=81.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=81.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=81.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=81.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=81.0">
+    <link rel="stylesheet" href="css/variables.css?v=82.0">
+    <link rel="stylesheet" href="css/style.css?v=82.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=82.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=82.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=82.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=82.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=82.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=82.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=82.0">
 </head>
 <body>
 
@@ -142,6 +142,8 @@
                         <div class="auth-wave-input-box">
                             <input type="email" class="auth-wave-input" id="login-email" name="email" placeholder="seu.email@autocarbs.com.br" required autocomplete="email" spellcheck="false" autofocus>
                             <i class="ph ph-envelope-simple auth-wave-icon"></i>
+                            <!-- Checkmark de E-mail Válido -->
+                            <i id="email-valid-icon" class="ph-bold ph-check-circle auth-valid-icon" title="Formato de e-mail válido" style="display:none;"></i>
                             <!-- Dropdown de Histórico Inteligente / Autocomplete -->
                             <div id="email-autocomplete-list" class="auth-autocomplete-dropdown" style="display:none;"></div>
                         </div>
@@ -155,6 +157,11 @@
                             <button type="button" class="auth-wave-eye" onclick="AuthModule.toggleVisibilidadeSenha(this)" title="Mostrar / Ocultar Senha" tabindex="-1">
                                 <i class="ph ph-eye" id="icon-toggle-pwd"></i>
                             </button>
+                        </div>
+                        <!-- Alerta Dinâmico de Caps Lock Ativado -->
+                        <div id="auth-capslock-warning" class="auth-caps-warning" style="display:none;">
+                            <i class="ph-bold ph-arrow-fat-up"></i>
+                            <span>Caps Lock ativado</span>
                         </div>
                     </div>
 
@@ -339,16 +346,16 @@
     <div id="container-modulo-scanner" data-module="scanner"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=81.0"></script>
-    <script src="js/ui.js?v=81.0"></script>
-    <script src="modals/dialog.js?v=81.0"></script>
-    <script src="js/sidebar.js?v=81.0"></script>
-    <script src="js/api.js?v=81.0"></script>
-    <script src="modules/auth/auth.js?v=81.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=81.0"></script>
-    <script src="modules/equipe/equipe.js?v=81.0"></script>
-    <script src="modules/scanner/scanner.js?v=81.0"></script>
-    <script src="modules/estoque/estoque.js?v=81.0"></script>
-    <script src="js/app.js?v=81.0"></script>
+    <script src="js/core/view-loader.js?v=82.0"></script>
+    <script src="js/ui.js?v=82.0"></script>
+    <script src="modals/dialog.js?v=82.0"></script>
+    <script src="js/sidebar.js?v=82.0"></script>
+    <script src="js/api.js?v=82.0"></script>
+    <script src="modules/auth/auth.js?v=82.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=82.0"></script>
+    <script src="modules/equipe/equipe.js?v=82.0"></script>
+    <script src="modules/scanner/scanner.js?v=82.0"></script>
+    <script src="modules/estoque/estoque.js?v=82.0"></script>
+    <script src="js/app.js?v=82.0"></script>
 </body>
 </html>
