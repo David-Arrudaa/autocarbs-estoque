@@ -1776,9 +1776,9 @@ th {
 .abc-criteria-toggle select {
     padding: 6px 10px;
     border-radius: 6px;
-    background: #111721;
+    background: #FFFFFF;
     border: 1px solid var(--border);
-    color: #f8fafc;
+    color: var(--text-primary);
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
@@ -1786,7 +1786,7 @@ th {
 }
 
 .abc-criteria-toggle select:focus {
-    border-color: var(--gold);
+    border-color: var(--primary);
 }
 
 .abc-toolbar-controls {
@@ -1807,11 +1807,11 @@ th {
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    background: #0d131f;
+    background: #FFFFFF;
     padding: 8px 14px;
     border-radius: 8px;
-    border: 1px solid rgba(234, 179, 8, 0.35);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
 }
 
 .abc-date-label {
@@ -1839,9 +1839,9 @@ th {
 }
 
 .date-input-group input[type="date"] {
-    background: #161e2e;
+    background: #FFFFFF;
     border: 1px solid var(--border);
-    color: #f8fafc;
+    color: var(--text-primary);
     padding: 5px 10px;
     border-radius: 6px;
     font-size: 0.8rem;
@@ -1850,7 +1850,7 @@ th {
 }
 
 .date-input-group input[type="date"]:focus {
-    border-color: var(--gold);
+    border-color: var(--primary);
 }
 
 /* Badges da Curva ABC na Tabela */
@@ -2739,18 +2739,19 @@ input.no-uppercase {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
-        background: #111822 !important;
+        background: #FFFFFF !important;
         border: 1px solid var(--border) !important;
-        border-radius: 10px !important;
-        padding: 14px 12px !important;
+        border-radius: 12px !important;
+        padding: 12px 14px !important;
         margin-bottom: 12px !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+        box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.03) !important;
+        transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
     }
 
     #table-estoque-geral tbody tr:hover,
     #table-estoque-reposicao tbody tr:hover,
     #table-usuarios tbody tr:hover {
-        background: #141f2d !important;
+        background: #F8FAFC !important;
     }
 
     #table-estoque-geral tbody td,
@@ -2762,16 +2763,17 @@ input.no-uppercase {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
-        padding: 7px 0 !important;
+        padding: 8px 0 !important;
         border: none !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-bottom: 1px solid var(--border-subtle) !important;
+        background: transparent !important;
     }
 
     #table-usuarios tbody td::before {
         content: attr(data-label);
         font-size: 0.74rem;
         font-weight: 700;
-        color: #94a3b8;
+        color: var(--text-muted);
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
@@ -2816,14 +2818,14 @@ input.no-uppercase {
 
     .mobile-label {
         display: inline-block !important;
-        color: #94a3b8 !important;
+        color: var(--text-muted) !important;
         font-size: 0.74rem !important;
         font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.5px !important;
     }
 
-    /* Ações Rápidas no Card Mobile: 4 botões proporcionais e fáceis de tocar */
+    /* Ações Rápidas no Card Mobile: 4 botões ergonômicos e harmonizados */
     .actions-wrapper {
         display: grid !important;
         grid-template-columns: repeat(4, 1fr) !important;
@@ -2837,19 +2839,65 @@ input.no-uppercase {
     .actions-wrapper .action-btn,
     .actions-wrapper .icon-btn {
         width: 100% !important;
-        height: 44px !important;
-        font-size: 1.25rem !important;
-        border-radius: 6px !important;
-        background: #182333 !important;
-        border: 1px solid var(--border) !important;
-        color: #f8fafc !important;
+        height: 42px !important;
+        font-size: 1.15rem !important;
+        border-radius: 8px !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
+        cursor: pointer !important;
+        background: #F8FAFC !important;
+        border: 1px solid var(--border) !important;
+        color: var(--text-secondary) !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+        transition: all 0.15s ease !important;
     }
 
-    .actions-wrapper .action-btn:active,
-    .actions-wrapper .icon-btn:active {
+    .actions-wrapper .action-btn.btn-action-in {
+        background: #F0FDF4 !important;
+        border-color: #86EFAC !important;
+        color: #16A34A !important;
+    }
+    .actions-wrapper .action-btn.btn-action-in:active {
+        background: #DCFCE7 !important;
+        border-color: #4ADE80 !important;
+        color: #15803D !important;
+        transform: scale(0.96);
+    }
+
+    .actions-wrapper .action-btn.btn-action-out {
+        background: #FFFBEB !important;
+        border-color: #FDE68A !important;
+        color: #D97706 !important;
+    }
+    .actions-wrapper .action-btn.btn-action-out:active {
+        background: #FEF3C7 !important;
+        border-color: #FCD34D !important;
+        color: #B45309 !important;
+        transform: scale(0.96);
+    }
+
+    .actions-wrapper .action-btn.btn-action-edit {
+        background: #EFF6FF !important;
+        border-color: #BFDBFE !important;
+        color: #2563EB !important;
+    }
+    .actions-wrapper .action-btn.btn-action-edit:active {
+        background: #DBEAFE !important;
+        border-color: #93C5FD !important;
+        color: #1D4ED8 !important;
+        transform: scale(0.96);
+    }
+
+    .actions-wrapper .action-btn.btn-action-del {
+        background: #FEF2F2 !important;
+        border-color: #FECACA !important;
+        color: #DC2626 !important;
+    }
+    .actions-wrapper .action-btn.btn-action-del:active {
+        background: #FEE2E2 !important;
+        border-color: #F87171 !important;
+        color: #B91C1C !important;
         transform: scale(0.96);
     }
 
@@ -3822,7 +3870,7 @@ input.no-uppercase {
 
 .history-item:hover {
     border-left-color: var(--success);
-    background: #16222b;
+    background: #F1F5F9;
 }
 
 .history-group {
@@ -3840,7 +3888,7 @@ input.no-uppercase {
 }
 
 .history-group:hover {
-    background: #16222b;
+    background: #F1F5F9;
     transform: translateX(3px);
 }
 
@@ -4525,8 +4573,8 @@ input.no-uppercase {
     font-size: 0.85rem;
     flex-shrink: 0;
     border: 1px solid var(--border);
-    background: #1a2332;
-    color: #f8fafc;
+    background: #F1F5F9;
+    color: #334155;
 }
 
 .usr-avatar.admin {
@@ -4679,16 +4727,16 @@ input.no-uppercase {
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    background: #182333;
+    background: #FFFFFF;
     border: 1px solid var(--border);
-    color: #f8fafc;
+    color: var(--text-primary);
     transition: all 0.2s ease;
     height: 34px;
 }
 
 .btn-action-usr:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    background: #1e2c40;
+    border-color: #94A3B8;
+    background: #F1F5F9;
 }
 
 .btn-action-usr.btn-action-pin:hover {
