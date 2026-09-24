@@ -42,16 +42,25 @@
     --text-inverse: #FFFFFF;              /* Texto branco para botões coloridos */
 
     /* =========================================================
-       CORES DA MARCA & AÇÕES PRINCIPAIS
+       CORES DA MARCA & AÇÕES PRINCIPAIS (PALETA OFICIAL PANTONE)
+       - PANTONE 7407 C: #CAA151 (Gold Nobre / Dourado Acetinado)
+       - PANTONE 7622 C: #93272C (Carmim Esportivo / Vinho)
+       - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Tipografia Executiva)
        ========================================================= */
     --primary: #E02E34;                   /* Vermelho supercar AutoCar BS vibrante */
     --primary-hover: #C5221F;             /* Hover de botões primários */
     --primary-bg: rgba(224, 46, 52, 0.08);/* Fundo sutil do vermelho */
+    --carmim: #93272C;                    /* Pantone 7622 C Vinho / Carmim */
+    --carmim-bg: rgba(147, 39, 44, 0.10);
+    --black-pantone: #10181E;             /* Pantone Black 6 C */
 
-    --gold: #B45309;                      /* Dourado / bronze âmbar refinado para fundo claro */
-    --gold-hover: #92400E;                /* Hover do tom dourado */
-    --gold-bg: rgba(180, 83, 9, 0.08);    /* Fundo sutil dourado */
-    --gold-border: rgba(180, 83, 9, 0.35);
+    --gold: #CAA151;                      /* Pantone 7407 C Gold Nobre */
+    --gold-hover: #B88E3E;                /* Hover do tom dourado */
+    --gold-dark: #8C6218;                 /* Dourado escurecido para tipografia de alto contraste */
+    --gold-bg: rgba(202, 161, 81, 0.12);  /* Fundo sutil dourado */
+    --gold-bg-hover: rgba(202, 161, 81, 0.20);
+    --gold-border: rgba(202, 161, 81, 0.45);
+    --gold-gradient: linear-gradient(135deg, #FBF6EB 0%, #F5ECDA 100%);
 
     --accent: #E02E34;                    /* Acento principal vermelho */
 
