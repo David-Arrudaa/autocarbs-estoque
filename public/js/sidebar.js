@@ -384,6 +384,9 @@ const Sidebar = {
             if (paneAtivo.dataset.module && window.ViewLoader) {
                 await ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
             }
+            if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
+                Estoque.carregarRelatorio();
+            }
         }
 
         // Atualiza Header Superior / Topbar (Breadcrumbs e Títulos)

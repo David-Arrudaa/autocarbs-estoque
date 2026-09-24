@@ -2395,16 +2395,38 @@ const Estoque = {
         document.body.removeChild(link);
     },
 
-    imprimirRelatorio() {
+    obterAreaImpressao() {
+        let printArea = document.getElementById('relatorio-documento-impressao');
+        if (!printArea) {
+            printArea = document.createElement('div');
+            printArea.id = 'relatorio-documento-impressao';
+            printArea.className = 'print-document-only';
+            document.body.appendChild(printArea);
+        } else if (printArea.parentElement !== document.body) {
+            document.body.appendChild(printArea);
+        }
+        return printArea;
+    },
+
+    async imprimirRelatorio() {
+        if (!this.dadosRelatorio) {
+            UI.setLoading(true);
+            try {
+                await this.carregarRelatorio();
+            } catch (_) {}
+            UI.setLoading(false);
+        }
         if (!this.dadosRelatorio) {
             return UI.toast('Nenhum dado carregado para gerar o relatório.', 'warning');
         }
         this.gerarDocumentoImpressao();
-        window.print();
+        setTimeout(() => {
+            window.print();
+        }, 80);
     },
 
     gerarDocumentoImpressao() {
-        const printArea = document.getElementById('relatorio-documento-impressao');
+        const printArea = this.obterAreaImpressao();
         if (!printArea || !this.dadosRelatorio) return;
 
         const { geral, porTipo, produtos } = this.dadosRelatorio;
@@ -2707,12 +2729,12 @@ const Estoque = {
         printArea.innerHTML = html;
     },
 
-    imprimirCurvaABC() {
+    imprimirCurvaABC(chamarPrint = true) {
         if (!this.dadosCurvaABC || !this.dadosCurvaABC.itens || !this.dadosCurvaABC.itens.length) {
             this.calcularCurvaABC();
         }
 
-        const printArea = document.getElementById('relatorio-documento-impressao');
+        const printArea = this.obterAreaImpressao();
         if (!printArea) return;
 
         const { resumo, itens } = this.dadosCurvaABC;
@@ -2946,7 +2968,11 @@ const Estoque = {
         `;
 
         printArea.innerHTML = html;
-        window.print();
+        if (chamarPrint) {
+            setTimeout(() => {
+                window.print();
+            }, 80);
+        }
     },
 
     imprimirReposicao() {
@@ -2959,7 +2985,7 @@ const Estoque = {
             return UI.toast('Nenhum item necessitando de reposição no momento.', 'info');
         }
 
-        const printArea = document.getElementById('relatorio-documento-impressao');
+        const printArea = this.obterAreaImpressao();
         if (!printArea) return;
 
         const totalItensRepor = baixos.length;
@@ -3109,7 +3135,9 @@ const Estoque = {
         `;
 
         printArea.innerHTML = html;
-        window.print();
+        setTimeout(() => {
+            window.print();
+        }, 80);
     },
 
     // =========================================================
@@ -3654,6 +3682,19 @@ window.addEventListener('view:loaded', (e) => {
     if (e.detail && e.detail.module === 'relatorios') {
         if (typeof Estoque.carregarRelatorio === 'function') {
             Estoque.carregarRelatorio();
+        }
+    }
+});
+
+// Listener global para atalhos de impressão nativa (Ctrl+P / menu do navegador)
+window.addEventListener('beforeprint', () => {
+    if (window.Estoque) {
+        if (Estoque.abaAtiva === 'saidas' && Estoque.dadosCurvaABC) {
+            Estoque.imprimirCurvaABC(false);
+        } else if (Estoque.abaAtiva === 'reposicao' && Estoque.listaStats?.reposicao?.length) {
+            Estoque.imprimirReposicao();
+        } else if (Estoque.dadosRelatorio) {
+            Estoque.gerarDocumentoImpressao();
         }
     }
 });
