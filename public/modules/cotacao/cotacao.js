@@ -77,6 +77,13 @@ const Cotacao = {
         this.updateLavagemButton();
         this.renderAll();
         this.updateStatusBadge();
+
+        const area = document.getElementById('cot-outputText');
+        if (area) {
+            area.removeAttribute('readonly');
+            area.readOnly = false;
+            area.disabled = false;
+        }
     },
 
     formatPlate(input) {
@@ -881,16 +888,7 @@ const Cotacao = {
             text += `\n*Valores sujeitos a alteração sem aviso prévio.*\n*Orçamento válido por 10 dias.*`;
 
             if (mode === 'text') {
-                const area = document.getElementById('cot-outputText');
-                const panel = document.getElementById('cot-resultPanel');
-                if (area && panel) {
-                    area.value = text;
-                    panel.style.display = 'block';
-                    area.select();
-                    navigator.clipboard.writeText(text).catch(() => {});
-                    if (UI) UI.toast('Orçamento copiado para a área de transferência!', 'success');
-                    else await Modal.alert('Orçamento copiado para a área de transferência!', { title: 'Copiado', type: 'success' });
-                }
+                this.showOutputPanel(text, 'Orçamento copiado para a área de transferência!');
             } else if (mode === 'pdf') {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('pt-BR');
@@ -1170,18 +1168,11 @@ const Cotacao = {
             if (partsToQuote.length === 0) text += "(Nenhuma peça para cotar com fornecedores - itens já em estoque da oficina)\n";
             else partsToQuote.forEach(p => { text += `- ${p.nome.toUpperCase()}\n`; });
 
-            if (area && panel) {
-                area.value = text;
-                panel.style.display = 'block';
-                area.select();
-                navigator.clipboard.writeText(text).catch(() => {});
-                let msg = 'Lista de cotação copiada com sucesso!';
-                if (stockPartsCount > 0) {
-                    msg = `Cotação copiada! (${stockPartsCount} peça(s) em estoque não foram para a lista do Zap)`;
-                }
-                if (UI) UI.toast(msg, 'success');
-                else await Modal.alert(msg, { title: 'Copiado', type: 'success' });
+            let msg = 'Lista de cotação copiada com sucesso!';
+            if (stockPartsCount > 0) {
+                msg = `Cotação copiada! (${stockPartsCount} peça(s) em estoque não foram para a lista do Zap)`;
             }
+            this.showOutputPanel(text, msg);
         } else if (type === 'order') {
             text = `PEDIDOS DE COMPRA - ${model || 'VEÍCULO'}\n`;
             if (plate) text += `PLACA: ${plate}\n`;
@@ -1210,39 +1201,32 @@ const Cotacao = {
                 });
             }
 
-            if (area && panel) {
-                area.value = text;
-                panel.style.display = 'block';
-                area.select();
-                navigator.clipboard.writeText(text).catch(() => {});
+            this.showOutputPanel(text, 'Pedidos copiados com sucesso!');
 
-                if (buyItems.length > 0) {
-                    const sincronizar = await Modal.confirm("Texto dos pedidos copiado para a área de transferência!\n\nDeseja sincronizar essas peças no controle de pedidos?", {
-                        title: 'Sincronizar Pedidos',
-                        type: 'question',
-                        confirmText: 'Sincronizar',
-                        cancelText: 'Apenas Copiar'
-                    });
-                    if (sincronizar) {
-                        const today = new Date().toLocaleDateString('pt-BR');
-                        const orderData = {
-                            id: Date.now(),
-                            model: model || "MODELO NÃO INFORMADO",
-                            plate: plate,
-                            created_at: new Date().toLocaleString(),
-                            items: buyItems.map(p => ({
-                                qty: p.qty,
-                                name: p.nome.toUpperCase(),
-                                vendor: p.vencedor,
-                                date: today,
-                                arrived: false
-                            }))
-                        };
-                        localStorage.setItem('autocar_incoming_order', JSON.stringify(orderData));
-                        if (UI) UI.toast('Pedidos sincronizados com sucesso!', 'success');
-                    }
-                } else {
-                    if (UI) UI.toast('Pedidos copiados com sucesso!', 'success');
+            if (buyItems.length > 0) {
+                const sincronizar = await Modal.confirm("Texto dos pedidos copiado para a área de transferência!\n\nDeseja sincronizar essas peças no controle de pedidos?", {
+                    title: 'Sincronizar Pedidos',
+                    type: 'question',
+                    confirmText: 'Sincronizar',
+                    cancelText: 'Apenas Copiar'
+                });
+                if (sincronizar) {
+                    const today = new Date().toLocaleDateString('pt-BR');
+                    const orderData = {
+                        id: Date.now(),
+                        model: model || "MODELO NÃO INFORMADO",
+                        plate: plate,
+                        created_at: new Date().toLocaleString(),
+                        items: buyItems.map(p => ({
+                            qty: p.qty,
+                            name: p.nome.toUpperCase(),
+                            vendor: p.vencedor,
+                            date: today,
+                            arrived: false
+                        }))
+                    };
+                    localStorage.setItem('autocar_incoming_order', JSON.stringify(orderData));
+                    if (UI) UI.toast('Pedidos sincronizados com sucesso!', 'success');
                 }
             }
         } else if (type === 'internal') {
@@ -1293,12 +1277,7 @@ const Cotacao = {
                 text += "(Nenhuma peça selecionada)\n";
             }
 
-            if (area && panel) {
-                area.value = text;
-                panel.style.display = 'block';
-                area.select();
-                navigator.clipboard.writeText(text).catch(() => {});
-            }
+            this.showOutputPanel(text, 'Relatório interno copiado para a área de transferência!');
 
             const dateStr = new Date().toLocaleDateString('pt-BR');
             const printWindow = window.open('', '', 'width=950,height=750');
@@ -1834,6 +1813,57 @@ const Cotacao = {
             event.target.value = '';
         };
         reader.readAsText(file);
+    },
+
+    /**
+     * Exibe o painel de texto gerado, destravando a edição imediatamente
+     */
+    showOutputPanel(text, successMsg = 'Texto copiado para a área de transferência!') {
+        const area = document.getElementById('cot-outputText');
+        const panel = document.getElementById('cot-resultPanel');
+        if (area && panel) {
+            area.removeAttribute('readonly');
+            area.readOnly = false;
+            area.disabled = false;
+            area.value = text;
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            area.focus();
+            navigator.clipboard.writeText(text).catch(() => {});
+            if (window.UI && typeof UI.toast === 'function') {
+                UI.toast(successMsg, 'success');
+            } else if (window.Modal && typeof Modal.alert === 'function') {
+                Modal.alert(successMsg, { title: 'Copiado', type: 'success' });
+            }
+        }
+    },
+
+    /**
+     * Copia o conteúdo atual (editado pelo usuário) do painel de texto gerado
+     */
+    async copiarTextoEditado() {
+        const area = document.getElementById('cot-outputText');
+        if (!area) return;
+        const text = area.value;
+        const btn = document.getElementById('cot-btnCopyEdited');
+
+        try {
+            await navigator.clipboard.writeText(text);
+            if (window.UI && typeof UI.toast === 'function') {
+                UI.toast('Texto editado copiado para a área de transferência!', 'success');
+            }
+            if (btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="ph ph-check"></i> <span>Copiado!</span>`;
+                setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+            }
+        } catch (_) {
+            area.select();
+            document.execCommand('copy');
+            if (window.UI && typeof UI.toast === 'function') {
+                UI.toast('Texto copiado!', 'success');
+            }
+        }
     }
 };
 

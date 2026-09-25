@@ -2,24 +2,11 @@
 <div class="card cot-module-card">
     <!-- Barra Superior de Comando Integrada (Ribbon Executivo) -->
     <div class="cot-top-bar">
-        <!-- Linha 1: Identificação do Veículo (Esq) + Botões de Ação (Dir) -->
-        <div class="cot-top-primary-row">
-            <div class="cot-vehicle-inputs">
-                <!-- ID Oculto do Orçamento Atual (Garante atualização in-place sem duplicações) -->
-                <input type="hidden" id="cot-quoteId" value="">
-                <span id="cot-statusBadge" class="cot-status-badge cot-badge-new" title="Cotação nova criada do zero">
-                    <i class="ph ph-sparkle"></i> Nova Cotação
-                </span>
-                <div class="cot-input-group cot-group-model">
-                    <i class="ph ph-car cot-input-icon"></i>
-                    <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" oninput="Cotacao.saveDraft()">
-                </div>
-                <div class="cot-input-group cot-group-plate">
-                    <i class="ph ph-identification-card cot-input-icon"></i>
-                    <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
-                </div>
-            </div>
+        <!-- ID Oculto do Orçamento Atual (Garante atualização in-place sem duplicações) -->
+        <input type="hidden" id="cot-quoteId" value="">
 
+        <!-- Linha 1: Botões de Ação do Topo -->
+        <div class="cot-top-primary-row">
             <div class="cot-top-actions">
                 <button type="button" class="btn btn-dark-cot" onclick="Cotacao.toggleHistory()" title="Ver orçamentos salvos por veículo">
                     <i class="ph ph-folder-open"></i> <span>HISTÓRICO</span>
@@ -34,10 +21,29 @@
                     <i class="ph ph-drop"></i> <span>INCLUIR LAVAGEM</span>
                 </button>
             </div>
+
+            <!-- Elementos ocultos para manter integridade das chamadas JS sem poluir o visual -->
+            <span id="cot-statusBadge" style="display:none !important;"></span>
+            <div id="cot-liveSummary" style="display:none !important;">
+                <span id="cot-sum-count"></span>
+                <span id="cot-sum-winners"></span>
+                <span id="cot-sum-total"></span>
+            </div>
         </div>
 
-        <!-- Linha 2: Fornecedores Externos (Esq) + Métricas em Tempo Real (Dir) -->
+        <!-- Linha 2: Identificação do Veículo (Carro + Placa) + Adicionar Vendedor -->
         <div class="cot-top-secondary-row">
+            <div class="cot-vehicle-inputs">
+                <div class="cot-input-group cot-group-model">
+                    <i class="ph ph-car cot-input-icon"></i>
+                    <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" oninput="Cotacao.saveDraft()">
+                </div>
+                <div class="cot-input-group cot-group-plate">
+                    <i class="ph ph-identification-card cot-input-icon"></i>
+                    <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
+                </div>
+            </div>
+
             <div class="cot-vendor-box">
                 <div class="cot-add-vendor-inline">
                     <i class="ph ph-user-plus" style="margin-left:8px; color:var(--text-secondary);"></i>
@@ -45,15 +51,6 @@
                     <button type="button" class="btn-vendor-add" onclick="Cotacao.addVendor()" title="Adicionar Coluna de Vendedor">+</button>
                 </div>
                 <div id="cot-vendorTags" class="cot-vendor-tags"></div>
-            </div>
-
-            <!-- Mini Resumo ao Vivo -->
-            <div id="cot-liveSummary" class="cot-live-summary">
-                <span class="summary-badge"><i class="ph ph-package"></i> <strong id="cot-sum-count">0</strong> peças</span>
-                <span class="summary-divider">•</span>
-                <span class="summary-badge"><i class="ph ph-check-circle" style="color:var(--success);"></i> <strong id="cot-sum-winners">0</strong> selecionadas</span>
-                <span class="summary-divider">•</span>
-                <span class="summary-badge total-badge"><i class="ph ph-money"></i> Total Venda: <strong id="cot-sum-total">R$ 0,00</strong></span>
             </div>
         </div>
     </div>
@@ -112,15 +109,21 @@
         </div>
     </div>
 
-    <!-- Painel de Visualização do Texto Copiado -->
+    <!-- Painel de Visualização e Edição do Texto Gerado -->
     <div id="cot-resultPanel" class="cot-result-panel" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <strong style="color:var(--gold); font-size:0.85rem; display:flex; align-items:center; gap:6px;">
-                <i class="ph ph-check-circle" style="color:var(--success);"></i> Texto Gerado (Copiado para Área de Transferência)
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+            <strong style="color:var(--gold-dark); font-size:0.86rem; display:flex; align-items:center; gap:6px;">
+                <i class="ph ph-note-pencil" style="color:var(--success); font-size:1.1rem;"></i> 
+                <span>Texto Gerado — <span style="font-weight:normal; color:var(--text-secondary); font-size:0.8rem;">Você pode editar ou apagar antes de enviar</span></span>
             </strong>
-            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('cot-resultPanel').style.display='none'">Fechar</button>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" id="cot-btnCopyEdited" class="btn btn-green-cot btn-sm" onclick="Cotacao.copiarTextoEditado()" title="Copiar texto editado para a área de transferência" style="padding:6px 14px; font-size:0.78rem; display:inline-flex; align-items:center; gap:5px; border-radius:5px;">
+                    <i class="ph ph-copy"></i> <span>Copiar Novamente</span>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('cot-resultPanel').style.display='none'" style="padding:6px 14px; font-size:0.78rem; border-radius:5px;">Fechar</button>
+            </div>
         </div>
-        <textarea id="cot-outputText" class="cot-output-textarea" readonly rows="6"></textarea>
+        <textarea id="cot-outputText" class="cot-output-textarea" rows="8" placeholder="O texto gerado aparecerá aqui e você pode editar livremente..."></textarea>
     </div>
 </div>
 

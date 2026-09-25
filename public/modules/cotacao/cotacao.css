@@ -85,9 +85,12 @@
     align-items: center;
     background: #ffffff;
     border: 1px solid var(--border);
-    border-radius: 5px;
-    padding: 0 8px;
+    border-radius: 6px;
+    padding: 0 10px;
+    height: 38px;
+    box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cot-input-group:focus-within {
@@ -104,12 +107,13 @@
 
 .cot-group-model {
     flex: 3;
-    min-width: 220px;
+    min-width: 240px;
 }
 
 .cot-group-plate {
     flex: 1;
-    min-width: 105px;
+    min-width: 110px;
+    max-width: 150px;
 }
 
 .cot-vehicle-inputs input {
@@ -131,74 +135,76 @@
     letter-spacing: 1px;
 }
 
-/* Ações Rápidas do Topo */
+/* Ações Rápidas do Topo (Linha 1) */
 .cot-top-actions {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
 .cot-top-actions button {
-    padding: 7px 12px;
-    font-size: 0.76rem;
+    padding: 7px 14px;
+    font-size: 0.78rem;
     font-weight: 800;
     letter-spacing: 0.4px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    border-radius: 5px;
+    gap: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* Botões do Cotador — Paleta Oficial Pantone AutoCar BS */
+/* Botões do Cotador — Estilo e Cores da Referência (Imagem 2) */
 .btn-dark-cot {
-    background: #f1f5f9;
-    color: #1e293b;
-    border: 1px solid var(--border);
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.btn-dark-cot i {
+    color: #f59e0b; /* Pasta amarela conforme referência */
 }
 .btn-dark-cot:hover {
-    background: #e2e8f0;
-    color: #0f172a;
-    border-color: var(--border-hover);
+    background: #0f172a !important;
+    border-color: #475569 !important;
 }
 
-/* SALVAR — Dourado Pantone 7407 C (ação principal de valor) */
+/* SALVAR — Verde (Imagem 2) */
 .btn-green-cot {
-    background: linear-gradient(135deg, #CAA151 0%, #B88E3E 100%) !important;
-    color: #FFFFFF !important;
-    border: 1px solid rgba(202, 161, 81, 0.60) !important;
-    box-shadow: 0 2px 8px rgba(202, 161, 81, 0.30) !important;
+    background: #16a34a !important;
+    color: #ffffff !important;
+    border: 1px solid #22c55e !important;
+    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25) !important;
 }
 .btn-green-cot:hover {
-    background: linear-gradient(135deg, #B88E3E 0%, #9A7530 100%) !important;
-    box-shadow: 0 3px 12px rgba(202, 161, 81, 0.45) !important;
-    filter: none;
+    background: #15803d !important;
+    border-color: #16a34a !important;
 }
 
-/* NOVO LIMPO — Vermelho primário (ação destrutiva/reset) */
+/* NOVO LIMPO — Vermelho (Imagem 2) */
 .btn-red-cot {
-    background: #E02E34 !important;
+    background: #dc2626 !important;
     color: #ffffff !important;
-    border: 1px solid rgba(224, 46, 52, 0.60) !important;
-    box-shadow: 0 2px 8px rgba(224, 46, 52, 0.25) !important;
+    border: 1px solid #ef4444 !important;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25) !important;
 }
 .btn-red-cot:hover {
-    background: #C5221F !important;
-    box-shadow: 0 3px 12px rgba(224, 46, 52, 0.40) !important;
-    filter: none;
+    background: #b91c1c !important;
+    border-color: #dc2626 !important;
 }
 
-/* LAVAGEM — Carmim Pantone 7622 C (serviço especial diferenciado) */
+/* INCLUIR LAVAGEM — Azul Ciano / Turquesa (Imagem 2) */
 .btn-cyan-cot {
-    background: #93272C !important;
+    background: #0891b2 !important;
     color: #ffffff !important;
-    border: 1px solid rgba(147, 39, 44, 0.60) !important;
-    box-shadow: 0 2px 8px rgba(147, 39, 44, 0.25) !important;
+    border: 1px solid #06b6d4 !important;
+    box-shadow: 0 2px 6px rgba(8, 145, 178, 0.25) !important;
 }
 .btn-cyan-cot:hover {
-    background: #7A1F24 !important;
-    box-shadow: 0 3px 12px rgba(147, 39, 44, 0.40) !important;
-    filter: none;
+    background: #0e7490 !important;
+    border-color: #0891b2 !important;
 }
 
 /* Efeito piscar da lavagem quando ativa */
@@ -211,15 +217,22 @@
     font-weight: 800 !important;
 }
 
-/* Linha 2: Fornecedores (Esq) + Mini Resumo ao Vivo (Dir) */
+/* Linha 2: Veículo (Esq) + Add Vendedor (Dir/Inline) — Conforme Imagem 2 */
 .cot-top-secondary-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    border-top: 1px solid var(--border);
-    padding-top: 8px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 10px;
+}
+
+.cot-top-secondary-row .cot-vehicle-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 320px;
 }
 
 .cot-vendor-box {
@@ -234,14 +247,16 @@
     align-items: center;
     background: #ffffff;
     border: 1px solid var(--border);
-    border-radius: 5px;
+    border-radius: 6px;
     overflow: hidden;
+    height: 38px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .cot-add-vendor-inline input {
-    width: 105px;
-    padding: 5px 8px;
-    font-size: 0.78rem;
+    width: 115px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
     border: none;
     background: transparent;
     color: var(--text-primary);
@@ -253,18 +268,22 @@
 }
 
 .btn-vendor-add {
-    background: var(--primary);
+    background: #dc2626;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 0 14px;
+    height: 100%;
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-vendor-add:hover {
-    background: var(--primary-hover);
+    background: #b91c1c;
 }
 
 .cot-vendor-tags {
