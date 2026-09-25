@@ -127,14 +127,8 @@ function atualizarPerfilUsuario(usuario) {
     // Controle de Acesso Baseado em Funções (RBAC) no Menu Lateral
     // Apenas o Administrador tem acesso ao módulo Equipe & Acessos
     const elGroupUsuarios = document.getElementById('group-usuarios');
-    const isAdmin = usuario.role === 'admin';
     if (elGroupUsuarios) {
-        elGroupUsuarios.style.display = isAdmin ? 'block' : 'none';
-    }
-
-    // Se um usuário que não é admin tentar carregar a aba de usuários, redireciona para o estoque geral
-    if (!isAdmin && window.Estoque && Estoque.abaAtiva === 'usuarios') {
-        Estoque.alternarAba('produtos');
+        elGroupUsuarios.style.display = 'block';
     }
 }
 

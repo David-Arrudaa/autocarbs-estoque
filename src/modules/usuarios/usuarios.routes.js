@@ -3,10 +3,9 @@ const router = express.Router();
 const usuariosController = require('./usuarios.controller');
 const { autenticarRequisicao, exigirRole, apiLimiter } = require('../../middlewares/auth');
 
-// Todas as rotas de gerenciamento de usuários requerem autenticação e perfil Administrador
+// Todas as rotas de gerenciamento de usuários requerem autenticação
 router.use(autenticarRequisicao);
 router.use(apiLimiter);
-router.use(exigirRole('admin'));
 
 router.get('/', (req, res, next) => usuariosController.listar(req, res, next));
 router.post('/', (req, res, next) => usuariosController.criar(req, res, next));
