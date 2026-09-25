@@ -95,25 +95,19 @@ const Cotacao = {
 
     updateStatusBadge() {
         const badge = document.getElementById('cot-statusBadge');
+        if (badge) badge.remove();
+        const summary = document.getElementById('cot-liveSummary');
+        if (summary) summary.remove();
+
         const btnText = document.getElementById('cot-btnSaveText');
         const btn = document.getElementById('cot-btnSave');
         const quoteIdEl = document.getElementById('cot-quoteId');
         const effectiveId = (quoteIdEl && quoteIdEl.value) ? quoteIdEl.value.trim() : (this.currentId || '');
 
         if (effectiveId) {
-            if (badge) {
-                badge.className = 'cot-status-badge cot-badge-editing';
-                badge.innerHTML = `<i class="ph ph-note-pencil"></i> Editando Salvo`;
-                badge.title = 'Editando cotação existente (atualiza sem duplicar)';
-            }
             if (btnText) btnText.textContent = 'ATUALIZAR';
             if (btn) btn.title = 'Atualizar cotação existente (não cria duplicada)';
         } else {
-            if (badge) {
-                badge.className = 'cot-status-badge cot-badge-new';
-                badge.innerHTML = `<i class="ph ph-sparkle"></i> Nova Cotação`;
-                badge.title = 'Cotação nova criada do zero';
-            }
             if (btnText) btnText.textContent = 'SALVAR';
             if (btn) btn.title = 'Salvar como nova cotação no histórico';
         }
@@ -142,32 +136,10 @@ const Cotacao = {
     },
 
     updateLiveSummary() {
-        const elCount = document.getElementById('cot-sum-count');
-        const elWinners = document.getElementById('cot-sum-winners');
-        const elTotal = document.getElementById('cot-sum-total');
-        if (!elCount && !elWinners && !elTotal) return;
-
-        let totalParts = this.state.pecas.length;
-        let winnersCount = 0;
-        let totalVenda = 0;
-
-        this.state.pecas.forEach(p => {
-            if (p.vencedor) {
-                winnersCount++;
-                const pr = p.precos[p.vencedor];
-                if (pr) {
-                    let v = pr.venda;
-                    if (v === null || v === undefined) {
-                        v = this.calculateSellPrice(pr.custo, p.vencedor, true);
-                    }
-                    totalVenda += (Number(v) || 0) * (Number(p.qty) || 1);
-                }
-            }
-        });
-
-        if (elCount) elCount.innerText = totalParts;
-        if (elWinners) elWinners.innerText = winnersCount;
-        if (elTotal) elTotal.innerText = `R$ ${totalVenda.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const summary = document.getElementById('cot-liveSummary');
+        if (summary) summary.remove();
+        const badge = document.getElementById('cot-statusBadge');
+        if (badge) badge.remove();
     },
 
     // --- LÓGICA DE LAVAGEM ---

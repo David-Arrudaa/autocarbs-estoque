@@ -32,17 +32,16 @@ const ViewLoader = {
         }
 
         const fileName = customFileName || `${moduleName}.view.html`;
-        const path = `modules/${moduleName}/${fileName}?v=115.0`;
+        const path = `modules/${moduleName}/${fileName}?_t=${Date.now()}`;
 
         try {
-            let html = this._cache.get(path);
+            let html = null;
             if (!html) {
-                const res = await fetch(path);
+                const res = await fetch(path, { cache: 'no-store' });
                 if (!res.ok) {
                     throw new Error(`Falha HTTP ao carregar view [${res.status}]: ${path}`);
                 }
                 html = await res.text();
-                this._cache.set(path, html);
             }
 
             container.innerHTML = html;
