@@ -51,7 +51,7 @@
 
 /* Badge de Identificação: Nova Cotação vs Editando Existente */
 .cot-status-badge {
-    display: inline-flex;
+    display: none !important;
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
@@ -318,7 +318,7 @@
 
 /* Mini Resumo ao Vivo */
 .cot-live-summary {
-    display: inline-flex;
+    display: none !important;
     align-items: center;
     gap: 8px;
     font-size: 0.75rem;

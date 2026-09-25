@@ -77,6 +77,13 @@ const Cotacao = {
         this.updateLavagemButton();
         this.renderAll();
         this.updateStatusBadge();
+
+        const area = document.getElementById('cot-outputText');
+        if (area) {
+            area.removeAttribute('readonly');
+            area.readOnly = false;
+            area.disabled = false;
+        }
     },
 
     formatPlate(input) {
