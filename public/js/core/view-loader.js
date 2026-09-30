@@ -12,6 +12,27 @@ const ViewLoader = {
     _cache: new Map(),
     _loadedModules: new Set(),
 
+    /** Skeleton HTML exibido enquanto o módulo real carrega */
+    _skeletonHTML: `
+        <div class="vl-skeleton-wrapper">
+            <div class="vl-skeleton-toolbar">
+                <div class="vl-sk vl-sk-search"></div>
+                <div class="vl-sk vl-sk-btn"></div>
+                <div class="vl-sk vl-sk-btn vl-sk-btn-sm"></div>
+            </div>
+            <div class="vl-skeleton-table">
+                <div class="vl-sk vl-sk-header"></div>
+                <div class="vl-sk vl-sk-row"></div>
+                <div class="vl-sk vl-sk-row vl-sk-row-alt"></div>
+                <div class="vl-sk vl-sk-row"></div>
+                <div class="vl-sk vl-sk-row vl-sk-row-alt"></div>
+                <div class="vl-sk vl-sk-row"></div>
+                <div class="vl-sk vl-sk-row vl-sk-row-alt"></div>
+                <div class="vl-sk vl-sk-row"></div>
+            </div>
+        </div>
+    `,
+
     /**
      * Carrega o fragmento HTML de um módulo e injeta no container do DOM.
      * @param {string} moduleName Nome da pasta/módulo (ex: 'cotacao', 'equipe')
@@ -30,6 +51,9 @@ const ViewLoader = {
         if (this._loadedModules.has(`${moduleName}:${targetId}`) && container.children.length > 0) {
             return true;
         }
+
+        // Exibe skeleton enquanto carrega
+        container.innerHTML = this._skeletonHTML;
 
         const fileName = customFileName || `${moduleName}.view.html`;
         const path = `modules/${moduleName}/${fileName}?_t=${Date.now()}`;
@@ -55,6 +79,7 @@ const ViewLoader = {
             return true;
         } catch (err) {
             console.error(`[ViewLoader] Erro ao carregar view "${moduleName}":`, err);
+            container.innerHTML = '';
             return false;
         }
     },

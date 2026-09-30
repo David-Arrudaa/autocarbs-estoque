@@ -655,6 +655,9 @@ body {
     min-width: 0;
     min-height: 100vh;
     background: var(--bg-body);
+    /* Padrão de pontos sutil — paridade com a textura da tela de login */
+    background-image: radial-gradient(circle, rgba(15,23,42,0.055) 1px, transparent 1px);
+    background-size: 22px 22px;
 }
 
 .top-header {
@@ -5063,3 +5066,221 @@ tbody tr:nth-child(even):hover { background-color: var(--bg-table-hover); }
 
 /* --- HEADER ACTIONS --- */
 .header-actions { gap: 12px !important; }
+
+/* =========================================================
+   ONDA 4 — SKELETON LOADER (ViewLoader placeholder)
+   ========================================================= */
+@keyframes skeletonShimmer {
+    0%   { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+}
+
+.vl-skeleton-wrapper {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    animation: fadeInUp 0.2s ease;
+}
+
+.vl-skeleton-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.vl-sk {
+    border-radius: 6px;
+    background: linear-gradient(
+        90deg,
+        #EEF1F6 0px,
+        #E2E8F0 200px,
+        #EEF1F6 400px
+    );
+    background-size: 600px 100%;
+    animation: skeletonShimmer 1.5s infinite linear;
+}
+
+.vl-sk-search {
+    height: 36px;
+    flex: 1;
+    max-width: 440px;
+    border-radius: 8px;
+}
+
+.vl-sk-btn {
+    height: 36px;
+    width: 120px;
+    border-radius: 6px;
+}
+
+.vl-sk-btn-sm {
+    width: 80px;
+}
+
+.vl-skeleton-table {
+    background: var(--bg-card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+}
+
+.vl-sk-header {
+    height: 42px;
+    border-radius: 0;
+    background: linear-gradient(
+        90deg,
+        #E8EDF5 0px,
+        #DDE3EC 200px,
+        #E8EDF5 400px
+    );
+    background-size: 600px 100%;
+    animation: skeletonShimmer 1.5s infinite linear;
+    border-bottom: 2px solid var(--border);
+}
+
+.vl-sk-row {
+    height: 50px;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border-subtle);
+    background: linear-gradient(
+        90deg,
+        #FFFFFF 0px,
+        #F4F6FA 200px,
+        #FFFFFF 400px
+    );
+    background-size: 600px 100%;
+    animation: skeletonShimmer 1.5s infinite linear;
+}
+
+.vl-sk-row-alt {
+    background: linear-gradient(
+        90deg,
+        #FAFBFC 0px,
+        #EEF1F6 200px,
+        #FAFBFC 400px
+    );
+    background-size: 600px 100%;
+}
+
+.vl-sk-row:last-child {
+    border-bottom: none;
+}
+
+/* =========================================================
+   ONDA 4 — CONSISTÊNCIA DE ÍCONES
+   Padroniza tamanho e peso dos ícones nas áreas-chave
+   ========================================================= */
+
+/* Ícones da sidebar — tamanho e cor uniformes */
+.sidebar-nav .sub-tab-btn i,
+.sidebar-nav .tab-btn i {
+    font-size: 1.05rem !important;
+    width: 18px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Ícones dos botões de ação da tabela — tamanho fixo */
+.action-btn i,
+.icon-btn i {
+    font-size: 1.05rem !important;
+    line-height: 1;
+}
+
+/* Ícones de botões primários — levemente maiores */
+.btn i,
+.btn-primary i,
+.btn-secondary i {
+    font-size: 1rem !important;
+}
+
+/* Ícones no topbar — tamanho consistente */
+.top-header i {
+    font-size: 1.1rem;
+}
+
+/* Ícone do breadcrumb separator — menor */
+.breadcrumb-separator {
+    font-size: 0.65rem !important;
+    opacity: 0.6;
+}
+
+/* =========================================================
+   ONDA 4 — CARDS COM BORDA DE ACENTO À ESQUERDA
+   Adiciona profundidade visual aos cards de KPI e resumo
+   ========================================================= */
+
+/* Card com acento dourado (padrão neutro) */
+.card-accent-gold {
+    border-left: 3px solid var(--gold) !important;
+}
+
+/* Card com acento verde (sucesso / em dia) */
+.card-accent-success {
+    border-left: 3px solid var(--success) !important;
+}
+
+/* Card com acento vermelho (alerta / crítico) */
+.card-accent-danger {
+    border-left: 3px solid var(--primary) !important;
+}
+
+/* Card com acento âmbar (atenção / reposição) */
+.card-accent-warning {
+    border-left: 3px solid var(--warning) !important;
+}
+
+/* Card com acento azul (informação) */
+.card-accent-info {
+    border-left: 3px solid var(--info) !important;
+}
+
+/* =========================================================
+   ONDA 4 — TOPBAR: BREADCRUMB MAIS REFINADO
+   ========================================================= */
+.page-breadcrumb {
+    margin-bottom: 2px;
+}
+
+.breadcrumb-module {
+    font-size: 0.68rem !important;
+    padding: 2px 8px !important;
+    border-radius: 5px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.8px !important;
+}
+
+.breadcrumb-submodule {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary) !important;
+}
+
+/* Page title com borda esquerda mais fina e elegante */
+.page-title {
+    border-left-width: 3px !important;
+    border-left-color: var(--gold) !important;
+}
+
+/* =========================================================
+   ONDA 4 — CARDS BRANCO — SEM PADRÃO DE PONTOS
+   Cards e tabelas devem ter fundo limpo, sem o dot-grid
+   ========================================================= */
+.card,
+.table-container,
+.modal-form,
+.modal-list,
+.top-header,
+.sidebar,
+.cot-module-card {
+    background-image: none !important;
+}
+
+/* Content area sem o padrão — o padrão fica só no fundo externo */
+.content-area {
+    background-image: none;
+    background: transparent;
+}
