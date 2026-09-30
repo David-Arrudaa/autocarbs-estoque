@@ -2,7 +2,7 @@
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
  * Sistema de Design: Tokens, Cores e Variáveis Globais
- * Tema: Platina Ardósia ERP — Claro com Profundidade v89.0
+ * Tema: Platina Ardósia ERP — Claro com Profundidade v90.0
  * =========================================================
  * IMPORTANTE: Este arquivo contém APENAS tokens de design
  * (variáveis CSS em :root). Regras de componentes devem
@@ -19,8 +19,8 @@
        ========================================================= */
     --bg-body: #F4F6FA;                   /* Nível 0 — fundo global neutro, contrasta com sidebar */
     --bg-card: #FFFFFF;                   /* Nível 1 — cards e painéis brancos puros */
-    --bg-sidebar: #F7F4EE;                /* Marfim Quente — referencia o dourado da marca */
-    --bg-sidebar-footer: #E8E2D4;         /* Rodapé marfim mais encorpado */
+    --bg-sidebar: #F8FAFC;                /* Cinza-azulado frio — coerente com o body */
+    --bg-sidebar-footer: #EEF1F6;         /* Rodapé sidebar unificado com bg-table-th */
     --bg-header: #FFFFFF;                 /* Topbar branco limpo */
     --bg-input: #FFFFFF;                  /* Fundo branco de caixas de entrada de texto */
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
@@ -51,9 +51,9 @@
        - PANTONE 7622 C: #93272C (Carmim Esportivo / Vinho)
        - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Tipografia Executiva)
        ========================================================= */
-    --primary: #E02E34;                   /* Vermelho supercar AutoCar BS vibrante */
-    --primary-hover: #C5221F;             /* Hover de botões primários */
-    --primary-bg: rgba(224, 46, 52, 0.08);/* Fundo sutil do vermelho */
+    --primary: #C8202A;                   /* Carmim-esportivo profundo AutoCar BS — mais executivo */
+    --primary-hover: #A8181F;             /* Hover de botões primários */
+    --primary-bg: rgba(200, 32, 42, 0.08);/* Fundo sutil do vermelho */
     --carmim: #93272C;                    /* Pantone 7622 C Vinho / Carmim */
     --carmim-bg: rgba(147, 39, 44, 0.10);
     --black-pantone: #10181E;             /* Pantone Black 6 C */
@@ -66,7 +66,7 @@
     --gold-border: rgba(202, 161, 81, 0.45);
     --gold-gradient: linear-gradient(135deg, #FBF6EB 0%, #F5ECDA 100%);
 
-    --accent: #E02E34;                    /* Acento principal vermelho */
+    --accent: #C8202A;                    /* Acento principal — sincronizado com primary */
 
     /* =========================================================
        CORES DE STATUS E FEEDBACK DO SISTEMA
@@ -94,7 +94,7 @@
     /* =========================================================
        TIPOGRAFIA, BORDAS ARREDONDADAS E SOMBRAS
        ========================================================= */
-    --font-main: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     --radius-sm: 6px;
     --radius-md: 10px;
     --radius-lg: 14px;
