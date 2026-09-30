@@ -23,7 +23,7 @@
     background: linear-gradient(135deg, #DEE5ED 0%, #CDD7E2 40%, #D8E0EA 70%, #C4CFDC 100%);
     box-sizing: border-box;
     overflow-y: auto;
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    font-family: var(--font-main);
     -webkit-font-smoothing: antialiased;
     position: relative;
     overflow-x: hidden;
