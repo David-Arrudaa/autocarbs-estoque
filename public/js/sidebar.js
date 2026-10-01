@@ -11,15 +11,45 @@
 const Sidebar = {
     // Registro declarativo dos módulos do ERP
     modulos: {
+        dashboard: {
+            id: 'group-dashboard',
+            nome: 'Dashboard',
+            tipo: 'standalone',
+            submodulos: {
+                dashboard: {
+                    id: 'tab-btn-dashboard',
+                    titulo: 'Dashboard Principal',
+                    subtitulo: 'Indicadores operacionais, financeiros e fluxo de serviços da oficina',
+                    moduloBreadcrumb: 'VISÃO GERAL',
+                    submoduloBreadcrumb: 'DASHBOARD',
+                    mostrarBotaoCadastrar: false
+                }
+            }
+        },
+        clientes: {
+            id: 'group-clientes',
+            nome: 'Clientes',
+            tipo: 'standalone',
+            submodulos: {
+                clientes: {
+                    id: 'tab-btn-clientes',
+                    titulo: 'Gestão de Clientes & Veículos',
+                    subtitulo: 'Cadastro unificado de clientes, frotas e histórico automotivo',
+                    moduloBreadcrumb: 'CADASTROS',
+                    submoduloBreadcrumb: 'CLIENTES',
+                    mostrarBotaoCadastrar: false
+                }
+            }
+        },
         estoque: {
             id: 'group-estoque',
-            nome: 'Estoque',
-            tipo: 'grupo', // Acordeon com submódulos
+            nome: 'Produtos / Estoque',
+            tipo: 'grupo', // Acordeon com submódulos de peças
             submodulos: {
                 produtos: {
                     id: 'tab-btn-produtos',
                     titulo: 'Estoque Geral',
-                    subtitulo: '',
+                    subtitulo: 'Visão consolidada dos produtos e controle de estoque físico',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'GERAL',
                     mostrarBotaoCadastrar: true
@@ -27,25 +57,39 @@ const Sidebar = {
                 reposicao: {
                     id: 'tab-btn-reposicao',
                     titulo: 'Reposição de Estoque',
-                    subtitulo: '',
+                    subtitulo: 'Itens com saldo abaixo do estoque mínimo parametrizado',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'REPOSIÇÃO',
                     mostrarBotaoCadastrar: false
-                },
-                saidas: {
-                    id: 'tab-btn-saidas',
-                    titulo: 'Curva ABC (Giro)',
-                    subtitulo: '',
-                    moduloBreadcrumb: 'ESTOQUE',
-                    submoduloBreadcrumb: 'CURVA ABC',
+                }
+            }
+        },
+        servicos: {
+            id: 'group-servicos',
+            nome: 'Serviços',
+            tipo: 'standalone',
+            submodulos: {
+                servicos: {
+                    id: 'tab-btn-servicos',
+                    titulo: 'Catálogo de Serviços',
+                    subtitulo: 'Tabela de mão de obra, serviços tabelados e tempo padrão de execução',
+                    moduloBreadcrumb: 'OFICINA',
+                    submoduloBreadcrumb: 'SERVIÇOS',
                     mostrarBotaoCadastrar: false
-                },
-                relatorios: {
-                    id: 'tab-btn-relatorios',
-                    titulo: 'Relatórios',
-                    subtitulo: '',
-                    moduloBreadcrumb: 'ESTOQUE',
-                    submoduloBreadcrumb: 'RELATÓRIOS',
+                }
+            }
+        },
+        os: {
+            id: 'group-os',
+            nome: 'Ordens de Serviço',
+            tipo: 'standalone',
+            submodulos: {
+                os: {
+                    id: 'tab-btn-os',
+                    titulo: 'Ordens de Serviço (OS)',
+                    subtitulo: 'Acompanhamento em tempo real do fluxo de oficina, orçamentos e checklists',
+                    moduloBreadcrumb: 'OFICINA',
+                    submoduloBreadcrumb: 'ORDENS DE SERVIÇO',
                     mostrarBotaoCadastrar: false
                 }
             }
@@ -53,28 +97,51 @@ const Sidebar = {
         cotacao: {
             id: 'group-cotacao',
             nome: 'Cotação de Peças',
-            tipo: 'standalone', // Módulo de nível único (sem acordeon)
+            tipo: 'standalone',
             submodulos: {
                 cotacao: {
                     id: 'tab-btn-cotacao',
-                    titulo: 'Cotação de Peças',
-                    subtitulo: '',
+                    titulo: 'Cotação de Peças & Orçamentos',
+                    subtitulo: 'Cote com múltiplos fornecedores e gere orçamentos para clientes',
                     moduloBreadcrumb: 'ORÇAMENTOS',
                     submoduloBreadcrumb: 'COTAÇÃO',
                     mostrarBotaoCadastrar: false
                 }
             }
         },
+        relatorios: {
+            id: 'group-relatorios',
+            nome: 'Relatórios',
+            tipo: 'grupo', // Acordeon com relatórios e Curva ABC
+            submodulos: {
+                relatorios: {
+                    id: 'tab-btn-relatorios',
+                    titulo: 'Relatório de Estoque',
+                    subtitulo: 'Análise executiva financeira, discriminada de peças e impressão A4',
+                    moduloBreadcrumb: 'RELATÓRIOS',
+                    submoduloBreadcrumb: 'ESTOQUE',
+                    mostrarBotaoCadastrar: false
+                },
+                saidas: {
+                    id: 'tab-btn-saidas',
+                    titulo: 'Curva ABC (Giro)',
+                    subtitulo: 'Classificação estratégica de giro, relevância financeira e controle de ruptura',
+                    moduloBreadcrumb: 'RELATÓRIOS',
+                    submoduloBreadcrumb: 'CURVA ABC',
+                    mostrarBotaoCadastrar: false
+                }
+            }
+        },
         usuarios: {
             id: 'group-usuarios',
-            nome: 'Equipe & Acessos',
+            nome: 'Equipe',
             tipo: 'standalone',
             somenteRole: ['admin'],
             submodulos: {
                 usuarios: {
                     id: 'tab-btn-usuarios',
                     titulo: 'Equipe & Acessos',
-                    subtitulo: '',
+                    subtitulo: 'Gerencie operadores, mecânicos e níveis de acesso do sistema',
                     moduloBreadcrumb: 'CONFIGURAÇÕES',
                     submoduloBreadcrumb: 'EQUIPE',
                     mostrarBotaoCadastrar: false
@@ -129,7 +196,7 @@ const Sidebar = {
         // Recuperar e aplicar aba ativa salva para evitar qualquer salto de tela no refresh (F5)
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
+            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'cotacao', 'relatorios', 'saidas', 'usuarios'];
             const abaSalva = (hash && abasValidas.includes(hash))
                 ? hash
                 : localStorage.getItem('autocar_active_tab');
@@ -234,13 +301,30 @@ const Sidebar = {
      */
     onModuloEstoqueClick() {
         if (this.collapsed) {
-            const abaEstoque = ['produtos', 'reposicao', 'saidas', 'relatorios'].includes(this.abaAtiva)
+            const abaEstoque = ['produtos', 'reposicao'].includes(this.abaAtiva)
                 ? this.abaAtiva
                 : 'produtos';
             if (window.Estoque) Estoque.alternarAba(abaEstoque);
             this.fecharFlyouts();
         } else {
             this.toggleGrupo('estoque');
+        }
+    },
+
+    /**
+     * Clique no botão do Módulo Relatórios:
+     * - Se colapsado: navega diretamente para relatórios (mantendo a aba atual ou Relatório de Estoque)
+     * - Se expandido: abre ou fecha o acordeon
+     */
+    onModuloRelatoriosClick() {
+        if (this.collapsed) {
+            const abaRel = ['relatorios', 'saidas'].includes(this.abaAtiva)
+                ? this.abaAtiva
+                : 'relatorios';
+            if (window.Estoque) Estoque.alternarAba(abaRel);
+            this.fecharFlyouts();
+        } else {
+            this.toggleGrupo('relatorios');
         }
     },
 
@@ -378,6 +462,16 @@ const Sidebar = {
             }
             if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
                 Estoque.carregarRelatorio();
+            } else if (aba === 'saidas' && window.Estoque && typeof Estoque.calcularCurvaABC === 'function') {
+                Estoque.calcularCurvaABC();
+                Estoque.renderizarCardsABC();
+                Estoque.renderizarTabelaRanking();
+            } else if (aba === 'reposicao' && window.Estoque && typeof Estoque.renderizarTabelaReposicao === 'function') {
+                Estoque.renderizarTabelaReposicao();
+            } else if (aba === 'cotacao' && window.Cotacao && typeof Cotacao.iniciar === 'function') {
+                Cotacao.iniciar();
+            } else if (aba === 'usuarios' && window.Usuarios && typeof Usuarios.carregarLista === 'function') {
+                Usuarios.carregarLista();
             }
         }
 

@@ -5375,3 +5375,143 @@ i.ph, i[class*="ph-"] {
     font-weight: 800 !important;
     color: #1E293B !important;
 }
+
+/* =========================================================
+   CARDS DE APRESENTAÇÃO / ESTRUTURAÇÃO DE NOVOS MÓDULOS
+   ========================================================= */
+.module-placeholder-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 8px 0;
+    max-width: 980px;
+    width: 100%;
+}
+
+.module-placeholder-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px 28px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.placeholder-hero {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.placeholder-hero-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.placeholder-hero-content {
+    flex: 1;
+}
+
+.placeholder-hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+}
+
+.placeholder-hero-content h2 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #0F172A;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.2px;
+}
+
+.placeholder-hero-content p {
+    font-size: 0.90rem;
+    color: #64748B;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.placeholder-roadmap-box {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.placeholder-roadmap-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #475569;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.placeholder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.placeholder-feature-item {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.placeholder-feature-item:hover {
+    border-color: #CBD5E1;
+    transform: translateY(-2px);
+}
+
+.placeholder-feature-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.placeholder-feature-head i {
+    font-size: 1.15rem;
+    color: var(--primary);
+}
+
+.placeholder-feature-desc {
+    font-size: 0.78rem;
+    color: #64748B;
+    line-height: 1.4;
+}
+

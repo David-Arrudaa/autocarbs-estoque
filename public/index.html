@@ -231,23 +231,39 @@
             <!-- Navegação Vertical ERP -->
             <div class="sidebar-menu-wrapper">
                 <nav class="sidebar-nav">
-                    <!-- MÓDULO PRINCIPAL: ESTOQUE (com subitens retráteis e flyout no modo mini) -->
+                    <!-- 1. DASHBOARD -->
+                    <div class="sidebar-module-group" id="group-dashboard">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-dashboard" onclick="Estoque.alternarAba('dashboard')" data-tooltip="Dashboard">
+                            <i class="ph ph-squares-four"></i>
+                            <span>Dashboard</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. CLIENTES -->
+                    <div class="sidebar-module-group" id="group-clientes">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-clientes" onclick="Estoque.alternarAba('clientes')" data-tooltip="Clientes">
+                            <i class="ph ph-users"></i>
+                            <span>Clientes</span>
+                        </button>
+                    </div>
+
+                    <!-- 3. PRODUTOS / ESTOQUE (Acordeon com Estoque Geral & Reposição) -->
                     <div class="sidebar-module-group open is-active-module" id="group-estoque">
-                        <button class="sidebar-module-btn" onclick="Sidebar.onModuloEstoqueClick()" data-tooltip="Estoque">
+                        <button class="sidebar-module-btn" onclick="Sidebar.onModuloEstoqueClick()" data-tooltip="Produtos / Estoque">
                             <div class="module-btn-left">
                                 <i class="ph ph-package"></i>
-                                <span class="module-btn-title">Estoque</span>
+                                <span class="module-btn-title">Produtos / Estoque</span>
                             </div>
                             <div class="module-btn-right">
                                 <i class="ph ph-caret-down group-caret"></i>
                             </div>
                         </button>
 
-                        <!-- SUBMÓDULOS DE ESTOQUE (Flyout no modo mini) -->
+                        <!-- SUBMÓDULOS DE ESTOQUE -->
                         <div class="sidebar-submodules" id="submodules-estoque">
-                            <div class="submodules-flyout-header">ESTOQUE</div>
+                            <div class="submodules-flyout-header">PRODUTOS / ESTOQUE</div>
                             <button class="tab-btn sub-tab-btn active" id="tab-btn-produtos" onclick="Estoque.alternarAba('produtos')">
-                                <i class="ph ph-squares-four"></i>
+                                <i class="ph ph-boxes"></i>
                                 <span>Estoque Geral</span>
                             </button>
                             <button class="tab-btn sub-tab-btn" id="tab-btn-reposicao" onclick="Estoque.alternarAba('reposicao')">
@@ -255,18 +271,26 @@
                                 <span>Reposição</span>
                                 <span class="tab-badge" id="badge-count-reposicao" style="display:none;">0</span>
                             </button>
-                            <button class="tab-btn sub-tab-btn" id="tab-btn-saidas" onclick="Estoque.alternarAba('saidas')">
-                                <i class="ph ph-chart-line-up"></i>
-                                <span>Curva ABC (Giro)</span>
-                            </button>
-                            <button class="tab-btn sub-tab-btn" id="tab-btn-relatorios" onclick="Estoque.alternarAba('relatorios')">
-                                <i class="ph ph-chart-pie-slice"></i>
-                                <span>Relatórios</span>
-                            </button>
                         </div>
                     </div>
 
-                    <!-- MÓDULO PRINCIPAL: COTAÇÃO DE PEÇAS -->
+                    <!-- 4. SERVIÇOS -->
+                    <div class="sidebar-module-group" id="group-servicos">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-servicos" onclick="Estoque.alternarAba('servicos')" data-tooltip="Serviços">
+                            <i class="ph ph-wrench"></i>
+                            <span>Serviços</span>
+                        </button>
+                    </div>
+
+                    <!-- 5. ORDENS DE SERVIÇO -->
+                    <div class="sidebar-module-group" id="group-os">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-os" onclick="Estoque.alternarAba('os')" data-tooltip="Ordens de Serviço">
+                            <i class="ph ph-clipboard-text"></i>
+                            <span>Ordens de Serviço</span>
+                        </button>
+                    </div>
+
+                    <!-- 6. COTAÇÃO DE PEÇAS -->
                     <div class="sidebar-module-group" id="group-cotacao">
                         <button class="tab-btn module-standalone-btn" id="tab-btn-cotacao" onclick="Estoque.alternarAba('cotacao')" data-tooltip="Cotação de Peças">
                             <i class="ph ph-receipt"></i>
@@ -274,11 +298,37 @@
                         </button>
                     </div>
 
-                    <!-- MÓDULO PRINCIPAL: EQUIPE & ACESSOS (RBAC) -->
+                    <!-- 7. RELATÓRIOS (Acordeon com Relatório de Estoque & Curva ABC) -->
+                    <div class="sidebar-module-group" id="group-relatorios">
+                        <button class="sidebar-module-btn" onclick="Sidebar.onModuloRelatoriosClick()" data-tooltip="Relatórios">
+                            <div class="module-btn-left">
+                                <i class="ph ph-chart-line-up"></i>
+                                <span class="module-btn-title">Relatórios</span>
+                            </div>
+                            <div class="module-btn-right">
+                                <i class="ph ph-caret-down group-caret"></i>
+                            </div>
+                        </button>
+
+                        <!-- SUBMÓDULOS DE RELATÓRIOS -->
+                        <div class="sidebar-submodules" id="submodules-relatorios">
+                            <div class="submodules-flyout-header">RELATÓRIOS</div>
+                            <button class="tab-btn sub-tab-btn" id="tab-btn-relatorios" onclick="Estoque.alternarAba('relatorios')">
+                                <i class="ph ph-chart-pie-slice"></i>
+                                <span>Relatório de Estoque</span>
+                            </button>
+                            <button class="tab-btn sub-tab-btn" id="tab-btn-saidas" onclick="Estoque.alternarAba('saidas')">
+                                <i class="ph ph-chart-bar"></i>
+                                <span>Curva ABC (Giro)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 8. EQUIPE & ACESSOS (RBAC) -->
                     <div class="sidebar-module-group" id="group-usuarios" style="display:none;">
-                        <button class="tab-btn module-standalone-btn" id="tab-btn-usuarios" onclick="Estoque.alternarAba('usuarios')" data-tooltip="Equipe & Acessos">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-usuarios" onclick="Estoque.alternarAba('usuarios')" data-tooltip="Equipe">
                             <i class="ph ph-users-three"></i>
-                            <span>Equipe & Acessos</span>
+                            <span>Equipe</span>
                         </button>
                     </div>
                 </nav>
@@ -333,25 +383,237 @@
             <!-- Área de Conteúdo das Abas -->
             <div class="content-area">
                 
-                <!-- MÓDULO MODULAR: ESTOQUE (Geral, Reposição, Curva ABC) -->
+                <!-- 1. ABA DASHBOARD (Módulo Modular / Em Estruturação) -->
+                <div class="tab-pane hidden" id="tab-pane-dashboard">
+                    <div class="module-placeholder-wrapper">
+                        <div class="module-placeholder-card">
+                            <div class="placeholder-hero">
+                                <div class="placeholder-hero-icon">
+                                    <i class="ph ph-squares-four"></i>
+                                </div>
+                                <div class="placeholder-hero-content">
+                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> Visão Executiva</span>
+                                    <h2>Dashboard & Indicadores Operacionais</h2>
+                                    <p>Central estratégica para acompanhamento do volume de atendimentos, faturamento em tempo real, ticket médio da oficina e fluxo de serviços.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-roadmap-box">
+                                <div class="placeholder-roadmap-title">
+                                    <i class="ph ph-compass"></i> Recursos em Estruturação
+                                </div>
+                                <div class="placeholder-grid">
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-chart-line-up"></i>
+                                            <span>Faturamento & Margem</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Receita bruta diária/mensal, margem líquida média de peças e faturamento de mão de obra.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-car"></i>
+                                            <span>Fluxo de Pátio</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Total de veículos em atendimento, orçamentos aguardando aprovação e prontos para entrega.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-clock-countdown"></i>
+                                            <span>Tempo Médio (TME)</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Tempo médio de permanência dos veículos na oficina por tipo de serviço executado.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-warning-octagon"></i>
+                                            <span>Alertas Imediatos</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Notificações automáticas de peças abaixo do estoque mínimo e revisões pendentes.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. ABA CLIENTES (Módulo Modular / Em Estruturação) -->
+                <div class="tab-pane hidden" id="tab-pane-clientes">
+                    <div class="module-placeholder-wrapper">
+                        <div class="module-placeholder-card">
+                            <div class="placeholder-hero">
+                                <div class="placeholder-hero-icon">
+                                    <i class="ph ph-users"></i>
+                                </div>
+                                <div class="placeholder-hero-content">
+                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> CRM Automotivo</span>
+                                    <h2>Gestão de Clientes & Veículos</h2>
+                                    <p>Cadastro centralizado de clientes, proprietários de frotas e prontuário veicular completo com vínculo direto por placa e chassi.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-roadmap-box">
+                                <div class="placeholder-roadmap-title">
+                                    <i class="ph ph-compass"></i> Recursos em Estruturação
+                                </div>
+                                <div class="placeholder-grid">
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-address-book"></i>
+                                            <span>Cadastro Completo</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Pessoas Físicas (CPF) e Empresas (CNPJ), dados para nota fiscal e múltiplos contatos.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-garage"></i>
+                                            <span>Garagem de Veículos</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Associação de um ou mais veículos por cliente com dados de modelo, ano, motor e placa.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-clock-counter-clockwise"></i>
+                                            <span>Histórico por Placa</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Prontuário completo de todas as passagens, peças aplicadas e manutenções anteriores.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-whatsapp-logo"></i>
+                                            <span>Lembretes de Revisão</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Disparo programado de mensagens pós-serviço (óleo, pastilhas, correia) para fidelização.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. MÓDULO MODULAR: ESTOQUE (Geral & Reposição) -->
                 <div id="container-modulo-estoque" data-module="estoque">
                     <!-- Injetado dinamicamente via ViewLoader (modules/estoque/estoque.view.html) -->
                 </div>
 
-            <!-- ABA 4: Relatórios Estratégicos (Módulo Modular) -->
-            <div class="tab-pane hidden" id="tab-pane-relatorios" data-module="relatorios">
-                <!-- Injetado dinamicamente via ViewLoader (modules/relatorios/relatorios.view.html) -->
-            </div>
+                <!-- 4. ABA SERVIÇOS (Módulo Modular / Em Estruturação) -->
+                <div class="tab-pane hidden" id="tab-pane-servicos">
+                    <div class="module-placeholder-wrapper">
+                        <div class="module-placeholder-card">
+                            <div class="placeholder-hero">
+                                <div class="placeholder-hero-icon">
+                                    <i class="ph ph-wrench"></i>
+                                </div>
+                                <div class="placeholder-hero-content">
+                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> Catálogo Oficina</span>
+                                    <h2>Tabela de Serviços & Mão de Obra</h2>
+                                    <p>Padronização de serviços da oficina mecânica, definição de tempo padrão de execução e pacotes preventivos.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-roadmap-box">
+                                <div class="placeholder-roadmap-title">
+                                    <i class="ph ph-compass"></i> Recursos em Estruturação
+                                </div>
+                                <div class="placeholder-grid">
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-timer"></i>
+                                            <span>Tempo Padrão de Execução</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Parametrização de tempo estimado por serviço para agendamento preciso no pátio.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-currency-circle-dollar"></i>
+                                            <span>Preço de Mão de Obra</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Tabela de valor/hora diferenciada por complexidade (mecânica leve, pesada, injeção).</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-package"></i>
+                                            <span>Kits & Pacotes de Revisão</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Combinação de serviços e peças com valor promocional fechado (Ex: Troca de óleo + filtros).</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-user-check"></i>
+                                            <span>Comissionamento Técnico</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Cálculo transparente de produtividade e comissão por mecânico executor.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- ABA 5: Cotação de Peças & Orçamentos (Módulo Modular) -->
-            <div class="tab-pane hidden" id="tab-pane-cotacao" data-module="cotacao">
-                <!-- Injetado dinamicamente via ViewLoader (modules/cotacao/cotacao.view.html) -->
-            </div>
+                <!-- 5. ABA ORDENS DE SERVIÇO (Módulo Modular / Em Estruturação) -->
+                <div class="tab-pane hidden" id="tab-pane-os">
+                    <div class="module-placeholder-wrapper">
+                        <div class="module-placeholder-card">
+                            <div class="placeholder-hero">
+                                <div class="placeholder-hero-icon">
+                                    <i class="ph ph-clipboard-text"></i>
+                                </div>
+                                <div class="placeholder-hero-content">
+                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> Operação de Oficina</span>
+                                    <h2>Ordens de Serviço (OS) & Pátio</h2>
+                                    <p>Acompanhamento completo do ciclo de atendimento: entrada, diagnóstico, checklist fotográfico, aprovação de orçamento e entrega.</p>
+                                </div>
+                            </div>
+                            <div class="placeholder-roadmap-box">
+                                <div class="placeholder-roadmap-title">
+                                    <i class="ph ph-compass"></i> Recursos em Estruturação
+                                </div>
+                                <div class="placeholder-grid">
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-kanban"></i>
+                                            <span>Painel Visual de Status</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Quadro Kanban: Em Diagnóstico, Aguardando Peças, Em Execução, Teste Final e Faturado.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-camera"></i>
+                                            <span>Checklist com Registro Fotográfico</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Vistoria de entrada com nível de combustível, km, estado do veículo e fotos de avarias.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-link"></i>
+                                            <span>Integração Peças & Cotação</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Importe cotações vencedoras e baixe peças do estoque direto para a OS com 1 clique.</span>
+                                    </div>
+                                    <div class="placeholder-feature-item">
+                                        <div class="placeholder-feature-head">
+                                            <i class="ph ph-file-pdf"></i>
+                                            <span>Ordem de Serviço em PDF</span>
+                                        </div>
+                                        <span class="placeholder-feature-desc">Impressão formalizada com discriminação de peças, mão de obra, termos e assinatura.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- ABA 6: Gestão de Equipe & Usuários (Módulo Modular RBAC) -->
-            <div class="tab-pane hidden" id="tab-pane-usuarios" data-module="equipe">
-                <!-- Injetado dinamicamente via ViewLoader (modules/equipe/equipe.view.html) -->
-            </div>
+                <!-- 6. ABA COTAÇÃO DE PEÇAS & ORÇAMENTOS (Módulo Modular) -->
+                <div class="tab-pane hidden" id="tab-pane-cotacao" data-module="cotacao">
+                    <!-- Injetado dinamicamente via ViewLoader (modules/cotacao/cotacao.view.html) -->
+                </div>
+
+                <!-- 7. ABA RELATÓRIOS ESTRATÉGICOS (Módulo Modular) -->
+                <div class="tab-pane hidden" id="tab-pane-relatorios" data-module="relatorios">
+                    <!-- Injetado dinamicamente via ViewLoader (modules/relatorios/relatorios.view.html) -->
+                </div>
+
+                <!-- 8. ABA GESTÃO DE EQUIPE & ACESSOS (Módulo Modular RBAC) -->
+                <div class="tab-pane hidden" id="tab-pane-usuarios" data-module="equipe">
+                    <!-- Injetado dinamicamente via ViewLoader (modules/equipe/equipe.view.html) -->
+                </div>
 
             </div>
         </main>
@@ -364,16 +626,16 @@
     <div id="relatorio-documento-impressao" class="print-document-only"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=135.0"></script>
-    <script src="js/ui.js?v=135.0"></script>
-    <script src="modals/dialog.js?v=135.0"></script>
-    <script src="js/sidebar.js?v=135.0"></script>
-    <script src="js/api.js?v=135.0"></script>
-    <script src="modules/auth/auth.js?v=135.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=135.0"></script>
-    <script src="modules/equipe/equipe.js?v=135.0"></script>
-    <script src="modules/scanner/scanner.js?v=135.0"></script>
-    <script src="modules/estoque/estoque.js?v=135.0"></script>
-    <script src="js/app.js?v=135.0"></script>
+    <script src="js/core/view-loader.js?v=136.0"></script>
+    <script src="js/ui.js?v=136.0"></script>
+    <script src="modals/dialog.js?v=136.0"></script>
+    <script src="js/sidebar.js?v=136.0"></script>
+    <script src="js/api.js?v=136.0"></script>
+    <script src="modules/auth/auth.js?v=136.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=136.0"></script>
+    <script src="modules/equipe/equipe.js?v=136.0"></script>
+    <script src="modules/scanner/scanner.js?v=136.0"></script>
+    <script src="modules/estoque/estoque.js?v=136.0"></script>
+    <script src="js/app.js?v=136.0"></script>
 </body>
 </html>

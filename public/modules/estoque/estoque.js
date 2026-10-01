@@ -71,7 +71,7 @@ const Estoque = {
         // Suporte a navegação por histórico do navegador (botão Voltar/Avançar)
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao'];
+            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'cotacao', 'relatorios', 'saidas', 'usuarios'];
             if (hash && abasValidas.includes(hash) && this.abaAtiva !== hash) {
                 this.alternarAba(hash);
             }
@@ -239,7 +239,7 @@ const Estoque = {
         let aba = 'produtos';
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
+            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'cotacao', 'relatorios', 'saidas', 'usuarios'];
             if (hash && abasValidas.includes(hash)) {
                 aba = hash;
             } else {
