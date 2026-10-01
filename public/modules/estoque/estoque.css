@@ -12,9 +12,9 @@
 
 /* Indicadores específicos de status de estoque */
 .stock-badge-low {
-    background: rgba(234, 179, 8, 0.15);
-    color: var(--gold);
-    border: 1px solid rgba(234, 179, 8, 0.35);
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FDE68A;
     padding: 3px 8px;
     border-radius: 6px;
     font-size: 0.75rem;

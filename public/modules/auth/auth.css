@@ -2,11 +2,10 @@
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
  * Módulo de Autenticação: Estilos Modern Wave (Clean Light Edition)
- * Identidade Visual Oficial:
- * - PANTONE 7407 C: #CAA151 (Gold Nobre / Dourado Acetinado)
- * - PANTONE 7622 C: #93272C (Carmim / Vinho Esportivo Rubro)
- * - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Tipografia Executiva)
- * - HEX F6F6F6: #F6F6F6 (Superfícies Claras & Off-White)
+ * Identidade Visual Enterprise:
+ * - Primary Blue: #2563EB (Azul Institucional B2B)
+ * - Slate Dark: #0F172A / #1E293B (Superfícies de Contraste e Tipografia Executiva)
+ * - Slate Backgrounds: #F8FAFC / #FFFFFF
  * =========================================================
  */
 
@@ -50,32 +49,32 @@
     animation: authOrbFloat 14s ease-in-out infinite alternate;
 }
 
-/* Orbe Dourado Superior (Pantone 7407 C - Bem Marcante e Visível) */
+/* Orbe Azul Corporativo Superior */
 .auth-orb-gold {
     width: 720px;
     height: 720px;
     top: -200px;
     left: -120px;
-    background: radial-gradient(circle, rgba(202, 161, 81, 0.70) 0%, rgba(202, 161, 81, 0.32) 42%, transparent 72%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.05) 42%, transparent 72%);
 }
 
-/* Orbe Carmim Inferior (Pantone 7622 C - Bem Marcante e Visível) */
+/* Orbe Ardósia Inferior */
 .auth-orb-carmine {
     width: 780px;
     height: 780px;
     bottom: -220px;
     right: -150px;
-    background: radial-gradient(circle, rgba(147, 39, 44, 0.62) 0%, rgba(147, 39, 44, 0.26) 42%, transparent 72%);
+    background: radial-gradient(circle, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.04) 42%, transparent 72%);
     animation-delay: -6s;
 }
 
-/* Orbe Champagne Superior Direito */
+/* Orbe Azul Suave Superior Direito */
 .auth-orb-center {
     width: 580px;
     height: 580px;
     top: -120px;
     right: 5%;
-    background: radial-gradient(circle, rgba(202, 161, 81, 0.42) 0%, rgba(202, 161, 81, 0.16) 45%, transparent 70%);
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.10) 0%, rgba(59, 130, 246, 0.03) 45%, transparent 70%);
 }
 
 @keyframes authOrbFloat {
@@ -106,17 +105,14 @@
     max-width: 960px;
     min-height: 560px;
     background: #FFFFFF;
-    border-radius: 28px;
-    border: 1.5px solid rgba(202, 161, 81, 0.40);
+    border-radius: 16px;
+    border: 1px solid var(--border);
     position: relative;
     z-index: 2;
     overflow: hidden;
     display: flex;
     flex-direction: row;
-    box-shadow: 
-        0 30px 80px -10px rgba(16, 24, 30, 0.22),
-        0 0 50px -5px rgba(202, 161, 81, 0.28),
-        0 0 60px -10px rgba(147, 39, 44, 0.22);
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.04);
     box-sizing: border-box;
     animation: authWavePop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -165,15 +161,13 @@
     align-items: center;
     gap: 12px;
     padding: 7px 18px 7px 8px;
-    background: rgba(0, 0, 0, 0.30);
+    background: rgba(15, 23, 42, 0.65);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(202, 161, 81, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 999px;
     align-self: flex-start;
-    box-shadow: 
-        0 4px 18px rgba(0, 0, 0, 0.35),
-        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
     margin-bottom: 24px;
     animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s backwards;
 }
@@ -182,21 +176,19 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #CAA151;
-    border: 1.5px solid rgba(255, 255, 255, 0.6);
-    color: #93272C;
+    background: var(--primary);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.15rem;
-    box-shadow: 
-        0 0 12px rgba(202, 161, 81, 0.6),
-        inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    box-shadow: none;
     transition: transform 0.25s ease;
 }
 
 .auth-brand-badge:hover .auth-brand-icon {
-    transform: rotate(-15deg) scale(1.06);
+    transform: rotate(-10deg) scale(1.05);
 }
 
 .auth-brand-info {
@@ -207,23 +199,23 @@
 
 .auth-brand-name {
     font-size: 1.15rem;
-    font-weight: 900;
-    font-style: italic;
-    letter-spacing: 0.6px;
+    font-weight: 700;
+    font-style: normal;
+    letter-spacing: -0.02em;
     color: #FFFFFF;
 }
 
 .auth-brand-name span {
-    color: #E02E34;
+    color: #60A5FA;
     font-style: normal;
-    text-shadow: 0 0 10px rgba(224, 46, 52, 0.45);
+    text-shadow: none;
 }
 
 .auth-brand-sub {
     font-size: 0.64rem;
-    font-weight: 800;
-    letter-spacing: 1.6px;
-    color: #CAA151;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    color: #94A3B8;
     text-transform: uppercase;
     margin-top: 2px;
 }
@@ -234,8 +226,8 @@
 }
 
 .auth-wave-greeting {
-    font-size: 0.95rem;
-    color: #CAA151;
+    font-size: 0.88rem;
+    color: #60A5FA;
     font-weight: 600;
     margin-bottom: 8px;
     display: block;
@@ -244,7 +236,7 @@
 }
 
 .auth-wave-title {
-    font-size: 2.35rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: #FFFFFF;
     line-height: 1.15;
@@ -270,25 +262,24 @@
 .auth-wave-feat-icon {
     width: 40px;
     height: 40px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.16);
-    border: 1px solid rgba(202, 161, 81, 0.40);
-    color: #CAA151;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #60A5FA;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
     backdrop-filter: blur(8px);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
     transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
 .auth-wave-feat-item:hover .auth-wave-feat-icon {
-    transform: scale(1.08) translateY(-1px);
-    border-color: #CAA151;
-    background: rgba(202, 161, 81, 0.25);
-    box-shadow: 0 4px 12px rgba(202, 161, 81, 0.25);
+    transform: scale(1.05);
+    border-color: #60A5FA;
+    background: rgba(59, 130, 246, 0.20);
+    box-shadow: none;
 }
 
 .auth-wave-feat-text strong {
@@ -322,31 +313,31 @@
     background: #FFFFFF;
 }
 
-/* Badge Circular com Cadeado (Carmim 7622 C + Dourado 7407 C com Acabamento Nobre) */
+/* Badge Circular com Cadeado (Enterprise Blue) */
 .auth-neon-lock-badge {
     width: 62px;
     height: 62px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(202, 161, 81, 0.16) 0%, rgba(147, 39, 44, 0.09) 100%);
-    border: 1.5px solid rgba(202, 161, 81, 0.65);
-    color: #93272C;
+    background: #EFF6FF;
+    border: 1.5px solid #BFDBFE;
+    color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.85rem;
     margin: 0 auto 16px;
     box-shadow: 
-        0 6px 20px rgba(202, 161, 81, 0.22),
-        inset 0 1px 2px rgba(255, 255, 255, 0.6);
+        0 4px 14px rgba(37, 99, 235, 0.12),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.08s backwards;
 }
 
 .auth-neon-lock-badge:hover {
-    transform: scale(1.08) translateY(-2px);
+    transform: scale(1.05) translateY(-2px);
     box-shadow: 
-        0 8px 24px rgba(202, 161, 81, 0.32),
-        inset 0 1px 2px rgba(255, 255, 255, 0.8);
+        0 8px 20px rgba(37, 99, 235, 0.20),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
 .auth-form-headline {
@@ -436,13 +427,13 @@
 }
 
 .auth-wave-input:focus {
-    border-color: #93272C !important;
+    border-color: var(--primary) !important;
     background: #FFFFFF !important;
-    box-shadow: 0 0 0 3.5px rgba(147, 39, 44, 0.12) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
 
 .auth-wave-input-box:focus-within .auth-wave-icon {
-    color: #93272C;
+    color: var(--primary);
 }
 
 /* Botão Olhinho */
@@ -532,81 +523,59 @@
 
 .auth-remember-me input {
     cursor: pointer;
-    accent-color: #93272C;
+    accent-color: var(--primary);
 }
 
 .auth-contact-link {
-    color: #93272C;
+    color: var(--primary);
     cursor: pointer;
     transition: color 0.2s ease;
     font-weight: 600;
 }
 
 .auth-contact-link:hover {
-    color: #CAA151;
+    color: var(--primary-hover);
     text-decoration: underline;
 }
 
-/* Botão de Envio (Continuar) com Shimmer Metálico Deslizante */
+/* Botão de Envio (Continuar) Corporativo Seguro */
 .auth-wave-btn-submit {
     width: 100%;
     height: 48px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #93272C 0%, #761C20 100%);
-    border: 1px solid rgba(202, 161, 81, 0.45);
+    border-radius: 8px;
+    background: var(--primary);
+    border: 1px solid var(--primary-hover);
     color: #FFFFFF;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.94rem;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    box-shadow: 0 4px 16px rgba(147, 39, 44, 0.32);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
     position: relative;
     overflow: hidden;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.2s ease;
     animation: authItemFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.34s backwards;
 }
 
-/* Feixe de Luz Deslizante (Shimmer) */
 .auth-wave-btn-submit::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 55%;
-    height: 100%;
-    background: linear-gradient(
-        90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.22), 
-        rgba(202, 161, 81, 0.35), 
-        transparent
-    );
-    transform: skewX(-22deg);
-    transition: none;
-    pointer-events: none;
-}
-
-.auth-wave-btn-submit:hover:not(:disabled)::after {
-    left: 140%;
-    transition: left 0.75s ease-in-out;
+    display: none;
 }
 
 .auth-wave-btn-submit i {
-    color: #CAA151;
+    color: #FFFFFF;
     font-size: 1.1rem;
-    transition: transform 0.25s ease;
+    transition: transform 0.2s ease;
 }
 
 .auth-wave-btn-submit:hover:not(:disabled) {
-    background: linear-gradient(135deg, #A82D33 0%, #852126 100%);
-    border-color: #CAA151;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(147, 39, 44, 0.45), 0 0 14px rgba(202, 161, 81, 0.25);
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .auth-wave-btn-submit:hover:not(:disabled) i {
@@ -666,7 +635,7 @@
 
 .auth-autocomplete-header i {
     font-size: 0.85rem;
-    color: #CAA151;
+    color: var(--primary);
 }
 
 .auth-autocomplete-item {
@@ -684,7 +653,7 @@
 }
 
 .auth-autocomplete-item:hover {
-    background: #FFF9EE;
+    background: #F1F5F9;
 }
 
 .auth-ac-icon {
@@ -694,13 +663,13 @@
 }
 
 .auth-autocomplete-item:hover .auth-ac-icon {
-    color: #CAA151;
+    color: var(--primary);
 }
 
 .auth-autocomplete-text {
     flex: 1;
     font-size: 0.86rem;
-    color: #10181E;
+    color: #0F172A;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -708,8 +677,8 @@
 }
 
 .auth-autocomplete-text strong {
-    color: #93272C;
-    font-weight: 800;
+    color: var(--primary);
+    font-weight: 700;
 }
 
 .auth-autocomplete-del {
@@ -728,7 +697,7 @@
 }
 
 .auth-autocomplete-del:hover {
-    color: #93272C;
+    color: #DC2626;
     background: #FEE2E2;
     opacity: 1;
 }
@@ -740,7 +709,7 @@
     background: #FEF2F2;
     border: 1px solid #FECACA;
     border-radius: 10px;
-    color: #93272C;
+    color: #DC2626;
     font-size: 0.82rem;
     font-weight: 600;
     display: flex;
@@ -785,9 +754,9 @@
 
     .auth-wave-left {
         padding: 34px 26px 28px;
-        background: linear-gradient(135deg, #93272C 0%, #591216 100%);
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
         border-radius: 0 0 28px 28px;
-        box-shadow: 0 10px 25px -4px rgba(16, 24, 30, 0.16);
+        box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.2);
         position: relative;
         z-index: 3;
     }

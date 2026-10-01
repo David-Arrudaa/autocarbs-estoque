@@ -1620,7 +1620,7 @@ const Cotacao = {
             return `
                 <div class="history-item" onclick="Cotacao.loadItem('${x.id}')">
                     <div style="flex:1;">
-                        <span style="color:var(--gold); font-weight:800; font-size:1.08rem; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
+                        <span style="color:var(--text-heading); font-weight:700; font-size:1.02rem; font-family:monospace; letter-spacing:0.5px;">🚗 ${cleanPlate || 'SEM PLACA'}</span>
                         <strong style="color:var(--text-heading); margin-left:10px; font-size:0.98rem;">${x.model || 'Sem Modelo'}</strong>
                         ${totalStr ? `<span style="display:inline-block; font-size:0.8rem; color:#0369a1; background:#e0f2fe; border:1px solid #bae6fd; padding:2px 8px; border-radius:4px; margin-left:10px; font-weight:700;">${totalStr}</span>` : ''}<br>
                         <small style="color:var(--text-secondary); font-size:0.82rem; margin-top:4px; display:inline-block;"><i class="ph ph-calendar"></i> Criado em: ${x.date || '-'}</small>

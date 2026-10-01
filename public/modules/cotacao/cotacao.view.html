@@ -104,7 +104,7 @@
     <!-- Painel de Visualização e Edição do Texto Gerado -->
     <div id="cot-resultPanel" class="cot-result-panel" style="display:none; margin-top:14px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
-            <strong style="color:var(--gold-dark); font-size:0.88rem; display:flex; align-items:center; gap:6px;">
+            <strong style="color:var(--text-heading); font-size:0.88rem; display:flex; align-items:center; gap:6px;">
                 <i class="ph ph-note-pencil" style="color:var(--success); font-size:1.15rem;"></i> 
                 <span>Texto Gerado — <span style="font-weight:normal; color:var(--text-secondary); font-size:0.82rem;">Você pode editar ou apagar antes de enviar</span></span>
             </strong>
@@ -123,8 +123,8 @@
 <div id="cot-laborModal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cot-labor-titulo" onclick="if(event.target === this) Cotacao.toggleLaborModal()">
     <div class="modal-form" style="width: 620px; max-width:95vw;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-            <h3 id="cot-labor-titulo" style="margin:0; color:var(--gold); display:flex; align-items:center; gap:8px; font-size:1.1rem;">
-                <i class="ph ph-wrench"></i> CONFIGURAR MÃO DE OBRA &amp; SERVIÇOS
+            <h3 id="cot-labor-titulo" style="margin:0; color:var(--text-heading); display:flex; align-items:center; gap:8px; font-size:1.1rem; font-weight:700;">
+                <i class="ph ph-wrench" style="color:var(--primary);"></i> CONFIGURAR MÃO DE OBRA &amp; SERVIÇOS
             </h3>
             <button type="button" class="btn-close-modal" aria-label="Fechar modal" onclick="Cotacao.toggleLaborModal()"><i class="ph ph-x"></i></button>
         </div>
@@ -173,8 +173,8 @@
 <div id="cot-historyModal" class="modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="cot-history-titulo" onclick="if(event.target === this) Cotacao.toggleHistory()">
     <div class="modal-form" style="width: 860px; max-width: 95vw; height: 86vh; max-height: 820px; display: flex; flex-direction: column;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:10px; flex-shrink: 0;">
-            <h3 id="cot-history-titulo" style="margin:0; color:var(--gold); display:flex; align-items:center; gap:8px; font-size:1.15rem; font-weight:800;">
-                <i class="ph ph-archive-box"></i> HISTÓRICO DE ORÇAMENTOS
+            <h3 id="cot-history-titulo" style="margin:0; color:var(--text-heading); display:flex; align-items:center; gap:8px; font-size:1.15rem; font-weight:700;">
+                <i class="ph ph-archive-box" style="color:var(--primary);"></i> HISTÓRICO DE ORÇAMENTOS
             </h3>
             <div style="display:flex; gap:8px; align-items:center;">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="Cotacao.exportHistory()" title="Exportar backup do histórico em formato JSON">

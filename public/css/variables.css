@@ -43,23 +43,25 @@
     --text-inverse: #FFFFFF;              /* Texto branco para botões coloridos */
 
     /* =========================================================
-       CORES DA MARCA (APLICADAS COM CONTENÇÃO EXECUTIVA)
+       PALETA CORPORATIVA SÉRIA (BLUE SLATE ENTERPRISE)
        ========================================================= */
-    --primary: #C8202A;                   /* Carmim esportivo AutoCar BS */
-    --primary-hover: #A8181F;             /* Hover sóbrio */
-    --primary-bg: rgba(200, 32, 42, 0.06);/* Fundo sutil */
-    --carmim: #93272C;
-    --carmim-bg: rgba(147, 39, 44, 0.08);
-    --black-pantone: #10181E;
+    --primary: #2563EB;                   /* Azul Corporativo Seguro (Stripe / Linear / SAP) */
+    --primary-hover: #1D4ED8;             /* Azul mais escuro no hover */
+    --primary-bg: #EFF6FF;                /* Fundo azul ultra-suave */
+    --primary-border: #BFDBFE;
 
-    --gold: #CAA151;                      /* Acento nobre pontual */
-    --gold-hover: #B88E3E;
-    --gold-dark: #8C6218;
-    --gold-bg: rgba(202, 161, 81, 0.08);
-    --gold-bg-hover: rgba(202, 161, 81, 0.15);
-    --gold-border: rgba(202, 161, 81, 0.35);
+    --carmim: #2563EB;                    /* Redirecionado para azul corporativo */
+    --carmim-bg: #EFF6FF;
+    --black-pantone: #0F172A;
 
-    --accent: #C8202A;
+    --gold: #475569;                      /* Substituído por ardósia neutra elegante */
+    --gold-hover: #334155;
+    --gold-dark: #1E293B;
+    --gold-bg: #F1F5F9;
+    --gold-bg-hover: #E2E8F0;
+    --gold-border: #CBD5E1;
+
+    --accent: #2563EB;
 
     /* =========================================================
        STATUS SEMÂNTICOS SÓBRIOS (PADRÃO B2B SAAS)

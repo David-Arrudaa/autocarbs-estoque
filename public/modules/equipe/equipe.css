@@ -22,7 +22,7 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%23CAA151'%3e%3cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3e%3c/path%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%2364748B'%3e%3cpath d='M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z'%3e%3c/path%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 14px center;
     background-size: 14px;
@@ -32,8 +32,8 @@
 #modal-usuario select#usr-role:focus,
 #modal-editar-usuario select#edit-usr-role:focus,
 #modal-editar-usuario select#edit-usr-status:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px var(--gold-bg);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 #modal-usuario select#usr-role option,
@@ -68,21 +68,21 @@
 }
 
 .usr-avatar.admin {
-    background: linear-gradient(135deg, var(--gold-bg), transparent);
-    border-color: var(--gold-border);
-    color: var(--gold);
+    background: #EEF2FF;
+    border-color: #C7D2FE;
+    color: #4338CA;
 }
 
 .usr-avatar.supervisor {
-    background: linear-gradient(135deg, var(--info-bg), transparent);
-    border-color: var(--info-border);
-    color: var(--info);
+    background: #F0F9FF;
+    border-color: #BAE6FD;
+    color: #0369A1;
 }
 
 .usr-avatar.operador {
-    background: linear-gradient(135deg, var(--success-bg), transparent);
-    border-color: var(--success-border);
-    color: var(--success);
+    background: #F8FAFC;
+    border-color: #E2E8F0;
+    color: #334155;
 }
 
 .usr-profile-details {
@@ -107,8 +107,8 @@
 
 .usr-self-pill {
     font-size: 0.68rem;
-    background: var(--gold-bg);
-    color: var(--gold);
+    background: var(--primary-bg);
+    color: var(--primary);
     padding: 1px 6px;
     border-radius: 10px;
     font-weight: 700;
@@ -127,21 +127,21 @@
 }
 
 .badge-role-admin {
-    background: var(--gold-bg);
-    color: var(--gold);
-    border: 1px solid var(--gold-border);
+    background: #EEF2FF;
+    color: #4338CA;
+    border: 1px solid #C7D2FE;
 }
 
 .badge-role-supervisor {
-    background: var(--info-bg);
-    color: var(--info);
-    border: 1px solid var(--info-border);
+    background: #F0F9FF;
+    color: #0369A1;
+    border: 1px solid #BAE6FD;
 }
 
 .badge-role-operador {
-    background: var(--success-bg);
-    color: var(--success);
-    border: 1px solid var(--success-border);
+    background: #F8FAFC;
+    color: #334155;
+    border: 1px solid #E2E8F0;
 }
 
 /* Status do Usuário */
@@ -193,7 +193,7 @@
 }
 
 .usr-pin-protected i {
-    color: var(--gold);
+    color: var(--text-muted);
 }
 
 /* Linha Inativa */
@@ -232,19 +232,19 @@
 
 .btn-action-usr.btn-action-edit {
     padding: 6px 12px;
-    color: var(--gold);
-    border-color: var(--gold-border);
+    color: var(--text-secondary);
+    border-color: var(--border);
 }
 
 .btn-action-usr.btn-action-edit:hover {
-    border-color: var(--gold);
-    background: var(--gold-bg);
-    color: var(--gold-hover);
+    border-color: var(--primary);
+    background: var(--primary-bg);
+    color: var(--primary);
 }
 
 .btn-action-usr.btn-action-pin:hover {
-    border-color: var(--gold);
-    color: var(--gold);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .btn-action-usr.btn-action-delete {

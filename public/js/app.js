@@ -116,7 +116,7 @@ function atualizarPerfilUsuario(usuario) {
         };
         elRole.innerText = roles[usuario.role] || (usuario.role ? usuario.role.toUpperCase() : 'Operador');
         if (usuario.role === 'supervisor' || usuario.role === 'gerencia' || usuario.role === 'admin') {
-            elRole.style.color = 'var(--gold)';
+            elRole.style.color = 'var(--primary)';
             elRole.style.fontWeight = '600';
         } else {
             elRole.style.color = '';

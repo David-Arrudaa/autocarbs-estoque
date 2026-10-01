@@ -689,31 +689,38 @@ const Estoque = {
                 <tr>
                     <td style="width:40%;">
                         <span class="mobile-label">PRODUTO:</span>
-                        <div style="padding: 1px 0;">
-                            <strong style="font-size:0.86rem; color:var(--text-primary); display:inline-block; margin-bottom:2px;">${tipo} ${modelo}</strong><br>
-                            <span style="font-size:0.73rem; color:var(--text-secondary); font-family:monospace;">${marca} ${codigo}</span>
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            <strong style="font-weight:600; font-size:0.875rem; color:var(--text-heading);">${tipo} ${modelo}</strong>
+                            <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--text-secondary);">
+                                <span>${marca}</span>
+                                ${codigo ? `<span style="background:#F1F5F9; border:1px solid #E2E8F0; padding:1px 5px; border-radius:4px; font-family:monospace; font-size:0.72rem; color:#475569;">REF: ${codigo}</span>` : ''}
+                            </div>
                         </div>
                     </td>
-                    <td style="width:15%;">
+                    <td style="width:15%; text-align:right;">
                         <span class="mobile-label">ATUAL:</span>
-                        <span class="stock-pill ${pillClass}">
-                            <i class="ph ${qtd === 0 ? 'ph-x-circle' : 'ph-warning'}"></i>
-                            <span>${qtd} un</span>
-                            <small>${pillText}</small>
-                        </span>
+                        <div style="display:flex; justify-content:flex-end;">
+                            <span class="stock-pill ${pillClass}">
+                                <i class="ph ${qtd === 0 ? 'ph-x-circle' : 'ph-warning'}"></i>
+                                <span>${qtd} un</span>
+                                <small>${pillText}</small>
+                            </span>
+                        </div>
                     </td>
-                    <td style="width:15%;">
+                    <td style="width:15%; text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--text-secondary); font-size:0.85rem;">
                         <span class="mobile-label">MÍNIMO:</span>
-                        <span style="color:var(--text-secondary); font-weight:600; font-size:0.84rem;">${minimo} un</span>
+                        ${minimo} un
                     </td>
-                    <td style="width:15%;">
+                    <td style="width:15%; text-align:right;">
                         <span class="mobile-label">DÉFICIT:</span>
-                        <span class="stock-deficit-badge">
-                            <i class="ph ph-arrow-up-right"></i> +${faltam} un
-                        </span>
+                        <div style="display:flex; justify-content:flex-end;">
+                            <span class="stock-deficit-badge">
+                                <i class="ph ph-arrow-up-right"></i> +${faltam} un
+                            </span>
+                        </div>
                     </td>
-                    <td style="width:15%;">
-                        <div class="actions-wrapper">
+                    <td style="width:15%; text-align:right;">
+                        <div class="actions-wrapper" style="justify-content:flex-end;">
                             <button class="action-btn btn-action-in" onclick="Estoque.abrirEntrada(${p.id})" title="Entrada / Repor Estoque (+)">
                                 <i class="ph ph-plus"></i>
                             </button>
@@ -1118,10 +1125,10 @@ const Estoque = {
                         <th style="width:26%;">Categoria / Tipo</th>
                         <th style="width:12%; text-align:center;">Produtos</th>
                         <th style="width:14%; text-align:center;">Saúde Estoque</th>
-                        <th style="width:10%; text-align:center;">Saídas</th>
-                        <th style="width:14%;">Receita Gerada</th>
+                        <th style="width:10%; text-align:right;">Saídas</th>
+                        <th style="width:14%; text-align:right;">Receita Gerada</th>
                         <th style="width:10%; text-align:center;">% Acum.</th>
-                        <th style="width:12%; text-align:center;">Ações</th>
+                        <th style="width:12%; text-align:right;">Ações</th>
                     </tr>
                 `;
             } else {
@@ -1130,9 +1137,9 @@ const Estoque = {
                         <th style="width:12%; text-align:center;">Classe / Rank</th>
                         <th style="width:30%;">Produto / Especificação</th>
                         <th style="width:14%; text-align:center;">Saldo Estoque</th>
-                        <th style="width:10%; text-align:center;">Saídas</th>
-                        <th style="width:11%;">Preço Venda</th>
-                        <th style="width:13%;">Receita Gerada</th>
+                        <th style="width:10%; text-align:right;">Saídas</th>
+                        <th style="width:11%; text-align:right;">Preço Venda</th>
+                        <th style="width:13%; text-align:right;">Receita Gerada</th>
                         <th style="width:10%; text-align:center;">% Acum.</th>
                         <th style="width:10%; text-align:right;">Ações Rápidas</th>
                     </tr>
@@ -1210,7 +1217,7 @@ const Estoque = {
                         <td style="width:26%;">
                             <div style="padding: 2px 0;">
                                 <strong style="font-size:0.9rem; color:var(--text-heading); display:flex; align-items:center; gap:6px;">
-                                    <i class="ph ph-tag" style="color:var(--gold);"></i> ${UI.escapeHtml(p.tipo)}
+                                    <i class="ph ph-tag" style="color:var(--primary);"></i> ${UI.escapeHtml(p.tipo)}
                                 </strong>
                             </div>
                         </td>
@@ -1220,15 +1227,17 @@ const Estoque = {
                         <td style="width:14%; text-align:center;">
                             ${saudeHtml}
                         </td>
-                        <td style="width:10%; text-align:center;">
-                            <strong style="color:var(--success); font-size:0.88rem; font-weight:700;">
-                                <i class="ph ph-arrow-circle-up" style="margin-right:2px;"></i> ${p.saidasNum} un
+                        <td style="width:10%; text-align:right;">
+                            <span class="mobile-label">SAÍDAS:</span>
+                            <strong style="color:var(--text-heading); font-size:0.88rem; font-weight:700; font-variant-numeric:tabular-nums;">
+                                ${p.saidasNum} un
                             </strong>
                         </td>
-                        <td style="width:14%;">
-                            <div style="display:flex; flex-direction:column;">
-                                <strong style="color:var(--text-heading); font-size:0.88rem;">${UI.formatCurrency(p.faturamento)}</strong>
-                                <span style="font-size:0.71rem; color:var(--text-secondary);">${p.percIndividual.toFixed(1)}% do faturamento</span>
+                        <td style="width:14%; text-align:right;">
+                            <span class="mobile-label">RECEITA:</span>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <strong style="color:var(--text-heading); font-size:0.88rem; font-variant-numeric:tabular-nums;">${UI.formatCurrency(p.faturamento)}</strong>
+                                <span style="font-size:0.71rem; color:var(--text-secondary); font-variant-numeric:tabular-nums;">${p.percIndividual.toFixed(1)}% do faturamento</span>
                             </div>
                         </td>
                         <td style="width:10%; text-align:center;">
@@ -1239,7 +1248,7 @@ const Estoque = {
                                 </div>
                             </div>
                         </td>
-                        <td style="width:12%; text-align:center;">
+                        <td style="width:12%; text-align:right;">
                             <button class="btn btn-secondary btn-sm" onclick="Estoque.verPecasDaCategoria(this.dataset.tipo)" data-tipo="${UI.escapeHtml(p.tipo)}" title="Ver todas as peças desta categoria">
                                 <i class="ph ph-magnifying-glass"></i> Ver Peças
                             </button>
@@ -1283,9 +1292,12 @@ const Estoque = {
                         </td>
                         <td style="width:30%;">
                             <span class="mobile-label">PRODUTO:</span>
-                            <div style="padding: 1px 0;">
-                                <strong style="font-size:0.86rem; color:var(--text-heading); display:inline-block; margin-bottom:2px;">${tipo} ${modelo}</strong><br>
-                                <span style="font-size:0.73rem; color:var(--text-secondary); font-family:monospace;">${marca} ${codigo}</span>
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <strong style="font-weight:600; font-size:0.875rem; color:var(--text-heading);">${tipo} ${modelo}</strong>
+                                <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--text-secondary);">
+                                    <span>${marca}</span>
+                                    ${codigo ? `<span style="background:#F1F5F9; border:1px solid #E2E8F0; padding:1px 5px; border-radius:4px; font-family:monospace; font-size:0.72rem; color:#475569;">REF: ${codigo}</span>` : ''}
+                                </div>
                             </div>
                         </td>
                         <td style="width:14%; text-align:center;">
@@ -1295,21 +1307,21 @@ const Estoque = {
                                 ${ruptureAlertHtml}
                             </div>
                         </td>
-                        <td style="width:10%; text-align:center;">
+                        <td style="width:10%; text-align:right;">
                             <span class="mobile-label">SAÍDAS:</span>
-                            <strong style="color:var(--success); font-size:0.88rem; font-weight:700;">
-                                <i class="ph ph-arrow-circle-up" style="margin-right:2px;"></i> ${p.saidasNum} un
+                            <strong style="color:var(--text-heading); font-size:0.88rem; font-weight:700; font-variant-numeric:tabular-nums;">
+                                ${p.saidasNum} un
                             </strong>
                         </td>
-                        <td style="width:11%;">
+                        <td style="width:11%; text-align:right;">
                             <span class="mobile-label">VENDA:</span>
-                            <span style="color:var(--text-primary); font-weight:600; font-size:0.84rem;">R$ ${vendaFmt}</span>
+                            <span style="color:var(--text-primary); font-weight:600; font-size:0.85rem; font-variant-numeric:tabular-nums;">R$ ${vendaFmt}</span>
                         </td>
-                        <td style="width:13%;">
+                        <td style="width:13%; text-align:right;">
                             <span class="mobile-label">RECEITA:</span>
-                            <div style="display:flex; flex-direction:column;">
-                                <strong style="color:var(--text-heading); font-size:0.86rem;">${UI.formatCurrency(p.faturamento)}</strong>
-                                <span style="font-size:0.71rem; color:var(--text-secondary);">${p.percIndividual.toFixed(1)}% do total</span>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <strong style="color:var(--text-heading); font-size:0.88rem; font-variant-numeric:tabular-nums;">${UI.formatCurrency(p.faturamento)}</strong>
+                                <span style="font-size:0.71rem; color:var(--text-secondary); font-variant-numeric:tabular-nums;">${p.percIndividual.toFixed(1)}% do total</span>
                             </div>
                         </td>
                         <td style="width:10%; text-align:center;">
@@ -1345,10 +1357,10 @@ const Estoque = {
                     <td colspan="3" style="padding:10px 14px; color:var(--text-secondary); font-size:0.8rem;">
                         TOTAIS (${lista.length} ${rotuloTotal})
                     </td>
-                    <td style="text-align:center; color:var(--success); font-weight:800; font-size:0.88rem;">${somaSaidas} un</td>
                     <td>-</td>
-                    <td style="color:var(--text-heading); font-weight:800; font-size:0.88rem;">${UI.formatCurrency(somaFaturamento)}</td>
-                    <td style="text-align:center; color:var(--gold); font-weight:800; font-size:0.84rem;">${somaPerc.toFixed(1)}%</td>
+                    <td style="text-align:right; color:var(--text-heading); font-weight:800; font-size:0.88rem; font-variant-numeric:tabular-nums;">${somaSaidas} un</td>
+                    <td style="text-align:right; color:var(--text-heading); font-weight:800; font-size:0.88rem; font-variant-numeric:tabular-nums;">${UI.formatCurrency(somaFaturamento)}</td>
+                    <td style="text-align:center; color:var(--text-heading); font-weight:800; font-size:0.84rem;">${somaPerc.toFixed(1)}%</td>
                     <td></td>
                 </tr>`;
         }
@@ -1365,7 +1377,7 @@ const Estoque = {
 
         if (tipo === 'reposicao') {
             titulo.innerText = 'REPOSIÇÃO NECESSÁRIA';
-            titulo.style.color = 'var(--gold)';
+            titulo.style.color = 'var(--text-heading)';
             const baixos = this.listaStats.reposicao || [];
             baixos.forEach(p => {
                 content.innerHTML += `
@@ -1375,7 +1387,7 @@ const Estoque = {
                             <span style="font-size:0.8rem; color:#888">${UI.escapeHtml(p.marca || '')}</span>
                         </div>
                         <div style="text-align:right">
-                            <strong style="color:var(--gold); font-size:1.2rem;">${p.qtd} un</strong>
+                            <strong style="color:var(--warning); font-size:1.2rem; font-variant-numeric:tabular-nums;">${p.qtd} un</strong>
                             <div style="font-size:0.8rem; color:#666">Mín: ${p.minimo}</div>
                         </div>
                     </div>`;
@@ -1887,7 +1899,7 @@ const Estoque = {
                             <td>${this.formatarMoeda(m.vendaUnit || (m.unidadesTotais > 0 ? m.valorVenda / m.unidadesTotais : 0))}</td>
                             <td><strong>${this.formatarMoeda(m.valorCusto)}</strong></td>
                             <td>${this.formatarMoeda(m.valorVenda)}</td>
-                            <td style="text-align:right; color:var(--gold); font-weight:700;">${margem}%</td>
+                            <td style="text-align:right; color:var(--primary); font-weight:700; font-variant-numeric:tabular-nums;">${margem}%</td>
                         </tr>
                     `;
                 });
@@ -1903,7 +1915,7 @@ const Estoque = {
                                     <td>-</td>
                                     <td>${this.formatarMoeda(geral.totalCusto)}</td>
                                     <td>${this.formatarMoeda(geral.totalVendaPotencial)}</td>
-                                    <td style="text-align:right; color:var(--gold);">${margemGeralFmt}%</td>
+                                    <td style="text-align:right; color:var(--primary); font-weight:700; font-variant-numeric:tabular-nums;">${margemGeralFmt}%</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -2026,7 +2038,7 @@ const Estoque = {
                             </td>
                             <td><strong>${this.formatarMoeda(m.valorCusto)}</strong></td>
                             <td>${this.formatarMoeda(m.valorVenda)}</td>
-                            <td style="text-align:right; color:var(--gold); font-weight:700;">${margem}%</td>
+                            <td style="text-align:right; color:var(--primary); font-weight:700; font-variant-numeric:tabular-nums;">${margem}%</td>
                         </tr>
                     `;
                 });
@@ -2076,7 +2088,7 @@ const Estoque = {
                     <td>${this.formatarMoeda(t.valorCusto)}</td>
                     <td>${this.formatarMoeda(t.valorVenda)}</td>
                     <td style="color:var(--success); font-weight:600;">${this.formatarMoeda(lucro)}</td>
-                    <td style="text-align:center; color:var(--gold); font-weight:600;">${margem}%</td>
+                    <td style="text-align:center; color:var(--primary); font-weight:600; font-variant-numeric:tabular-nums;">${margem}%</td>
                     <td style="text-align:right;"><strong>${percEstoque}%</strong></td>
                 </tr>
             `;
@@ -2116,8 +2128,8 @@ const Estoque = {
                                 <td style="text-align:center;">${totalUnidades} un</td>
                                 <td>${this.formatarMoeda(totalCusto)}</td>
                                 <td>${this.formatarMoeda(totalVenda)}</td>
-                                <td style="color:var(--success);">${this.formatarMoeda(totalLucro)}</td>
-                                <td style="text-align:center; color:var(--gold);">${totalMargem}%</td>
+                                <td style="color:var(--success); font-weight:700;">${this.formatarMoeda(totalLucro)}</td>
+                                <td style="text-align:center; color:var(--primary); font-weight:700; font-variant-numeric:tabular-nums;">${totalMargem}%</td>
                                 <td style="text-align:right;">100.0%</td>
                             </tr>
                         </tfoot>
@@ -2168,7 +2180,7 @@ const Estoque = {
                     <td><strong>${this.formatarMoeda(m.valorCusto)}</strong></td>
                     <td>${this.formatarMoeda(m.valorVenda)}</td>
                     <td style="color:var(--success); font-weight:600;">${this.formatarMoeda(lucro)}</td>
-                    <td style="text-align:right; color:var(--gold); font-weight:600;">${margem}%</td>
+                    <td style="text-align:right; color:var(--primary); font-weight:600; font-variant-numeric:tabular-nums;">${margem}%</td>
                 </tr>
             `;
         });
@@ -2211,8 +2223,8 @@ const Estoque = {
                                 <td>-</td>
                                 <td>${this.formatarMoeda(totalCusto)}</td>
                                 <td>${this.formatarMoeda(totalVenda)}</td>
-                                <td style="color:var(--success);">${this.formatarMoeda(totalLucro)}</td>
-                                <td style="text-align:right; color:var(--gold);">${totalMargem}%</td>
+                                <td style="color:var(--success); font-weight:700;">${this.formatarMoeda(totalLucro)}</td>
+                                <td style="text-align:right; color:var(--primary); font-weight:700; font-variant-numeric:tabular-nums;">${totalMargem}%</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -2266,7 +2278,7 @@ const Estoque = {
                     <td><strong>${this.formatarMoeda(p.subtotalCusto)}</strong></td>
                     <td>${this.formatarMoeda(p.subtotalVenda)}</td>
                     <td style="color:var(--success); font-weight:600;">${this.formatarMoeda(lucroTotal)}</td>
-                    <td style="text-align:right; color:var(--gold); font-weight:600;">${p.margemLucro.toFixed(1)}%</td>
+                    <td style="text-align:right; color:var(--primary); font-weight:600; font-variant-numeric:tabular-nums;">${p.margemLucro.toFixed(1)}%</td>
                 </tr>
             `;
         });
@@ -2311,8 +2323,8 @@ const Estoque = {
                                 <td>-</td>
                                 <td>${this.formatarMoeda(totalCusto)}</td>
                                 <td>${this.formatarMoeda(totalVenda)}</td>
-                                <td style="color:var(--success);">${this.formatarMoeda(totalLucro)}</td>
-                                <td style="text-align:right; color:var(--gold);">${totalMargem}%</td>
+                                <td style="color:var(--success); font-weight:700;">${this.formatarMoeda(totalLucro)}</td>
+                                <td style="text-align:right; color:var(--primary); font-weight:700; font-variant-numeric:tabular-nums;">${totalMargem}%</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -3582,7 +3594,7 @@ const Estoque = {
                         </div>
                         <div class="scan-card-stat-item">
                             <span class="scan-card-stat-label">Preço Venda</span>
-                            <span class="scan-card-stat-val" style="color: var(--gold);">${UI.formatCurrency(precoVenda)}</span>
+                            <span class="scan-card-stat-val" style="color: var(--primary); font-weight: 700;">${UI.formatCurrency(precoVenda)}</span>
                         </div>
                     </div>
                 </div>
@@ -3622,7 +3634,7 @@ const Estoque = {
                         <span>Peça não localizada no estoque</span>
                     </div>
                     <div class="scan-card-meta" style="font-size:0.88rem; color:var(--text-secondary);">
-                        Código lido: <strong style="color:var(--gold);">${UI.escapeHtml(codigoBuscado)}</strong>
+                        Código lido: <strong style="color:var(--primary); font-family:monospace;">${UI.escapeHtml(codigoBuscado)}</strong>
                     </div>
                     <p style="font-size:0.78rem; color:var(--text-secondary); margin:8px 0 0 0; line-height:1.4;">
                         Nenhum item com este código de barras foi encontrado no estoque da oficina. Deseja cadastrar este item agora com 1 clique?

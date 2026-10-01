@@ -49,7 +49,7 @@ const Usuarios = {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="5" class="empty-state-card" style="text-align:center; padding:40px 20px;">
-                            <i class="ph ph-spinner erp-spin" style="font-size:2rem; color:var(--gold);"></i>
+                            <i class="ph ph-spinner erp-spin" style="font-size:2rem; color:var(--primary);"></i>
                             <div style="margin-top:10px; color:var(--text-secondary);">Carregando colaboradores da oficina...</div>
                         </td>
                     </tr>
@@ -217,7 +217,7 @@ const Usuarios = {
                                     ${isSelf ? '<span class="usr-self-pill">(Você)</span>' : ''}
                                 </div>
                                 <span class="usr-email" style="font-size:0.78rem; color:var(--text-secondary); display:flex; align-items:center; gap:4px; margin-top:2px;">
-                                    <i class="ph ph-envelope-simple" style="color:var(--gold);"></i> ${UI.escapeHtml(u.email || 'Sem e-mail')}
+                                    <i class="ph ph-envelope-simple" style="color:var(--text-muted);"></i> ${UI.escapeHtml(u.email || 'Sem e-mail')}
                                 </span>
                                 <span class="usr-date" style="font-size:0.7rem; color:var(--text-secondary); margin-top:1px;">Desde: ${dataCriacao}</span>
                             </div>

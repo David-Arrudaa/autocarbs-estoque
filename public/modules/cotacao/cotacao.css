@@ -67,17 +67,15 @@
 }
 
 .cot-status-badge.cot-badge-new {
-    background: rgba(202, 161, 81, 0.12);
-    color: #8C6218;
-    border: 1px solid rgba(202, 161, 81, 0.40);
-    box-shadow: 0 0 8px rgba(202, 161, 81, 0.12);
+    background: #EFF6FF;
+    color: var(--primary);
+    border: 1px solid #BFDBFE;
 }
 
 .cot-status-badge.cot-badge-editing {
-    background: rgba(147, 39, 44, 0.10);
-    color: #93272C;
-    border: 1px solid rgba(147, 39, 44, 0.35);
-    box-shadow: 0 0 8px rgba(147, 39, 44, 0.10);
+    background: #FEF3C7;
+    color: #B45309;
+    border: 1px solid #FDE68A;
 }
 
 .cot-input-group {
@@ -340,8 +338,8 @@
 }
 
 .cot-live-summary .total-badge {
-    color: var(--gold-dark, #8C6218);
-    font-weight: 800;
+    color: var(--text-heading);
+    font-weight: 700;
 }
 
 /* =========================================================
@@ -435,15 +433,16 @@
 }
 
 .cot-margin-control input.inp-margem:focus {
-    border-color: var(--gold);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     outline: none;
     background: #ffffff;
 }
 
 .cot-margin-control .margin-suffix {
     font-size: 0.7rem;
-    color: var(--gold);
-    font-weight: 800;
+    color: var(--text-secondary);
+    font-weight: 700;
 }
 
 /* Células da Tabela */
@@ -584,8 +583,8 @@
 }
 
 #cot-mainTable input.inp-name:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 2px rgba(202, 161, 81, 0.3);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     outline: none;
 }
 
@@ -877,7 +876,7 @@
 }
 
 .cot-footer-hint strong {
-    color: var(--gold);
+    color: var(--text-heading);
 }
 
 /* =========================================================
@@ -976,7 +975,6 @@
     padding: 12px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
-    border-bottom: 3px solid var(--gold);
 }
 
 .cot-output-textarea {
@@ -1086,8 +1084,9 @@
     border: 1px solid var(--border);
     border-radius: 4px;
     text-align: right;
-    font-weight: 800;
-    color: var(--gold);
+    font-weight: 700;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
 }
 
 .history-group {
@@ -1124,10 +1123,9 @@
 }
 
 .history-item:hover {
-    border-left-color: var(--gold);
-    background: var(--bg-surface-active);
-    transform: translateX(3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    border-left-color: var(--primary);
+    background: var(--bg-hover);
+    box-shadow: var(--shadow-card);
 }
 
 /* Paginação do Modal de Histórico */
@@ -1165,5 +1163,5 @@
 }
 
 .cot-pagination-current strong {
-    color: var(--gold);
+    color: var(--primary);
 }
