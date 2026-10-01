@@ -31,16 +31,23 @@
                     <span class="chip-count" id="chip-count-zerados">0</span>
                 </button>
             </div>
+            <div class="toolbar-actions" style="display:flex; align-items:center; gap:8px;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.abrirModalEtiquetas()" title="Gerar Etiquetas de Prateleira com Código de Barras e Preço" style="white-space:nowrap; padding: 6px 12px; font-weight: 700;">
+                    <i class="ph ph-barcode" style="font-size:1.1rem; color:var(--primary);"></i>
+                    <span>ETIQUETAS</span>
+                </button>
+            </div>
         </div>
         
         <div class="table-wrapper">
             <table class="erp-table" id="table-estoque-geral">
                 <thead>
                     <tr>
-                        <th style="width:38%;">Produto / Especificação</th>
-                        <th style="width:14%; text-align:right;">Preço Custo</th>
-                        <th style="width:14%; text-align:right;">Preço Venda</th>
-                        <th style="width:16%; text-align:center;">Estoque Atual</th>
+                        <th style="width:7%; text-align:center;">Cód.</th>
+                        <th style="width:35%;">Produto / Especificação</th>
+                        <th style="width:13%; text-align:right;">Preço Custo</th>
+                        <th style="width:13%; text-align:right;">Preço Venda</th>
+                        <th style="width:14%; text-align:center;">Estoque</th>
                         <th style="width:18%; text-align:right;">Ações Rápidas</th>
                     </tr>
                 </thead>
@@ -390,6 +397,143 @@
             <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-lista')"><i class="ph ph-x"></i></button>
         </div>
         <div id="conteudo-modal-lista"></div>
+    </div>
+</div>
+
+<!-- MODAL: Ficha Técnica & Detalhes do Produto (👁️) -->
+<div id="modal-ficha-produto" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-ficha-titulo">
+    <div class="modal-form" style="width:530px; max-width:95vw; padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+            <div style="flex:1;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <span class="product-id-badge" id="ficha-badge-id">#0000</span>
+                    <span class="status-pill" id="ficha-badge-status">REGULAR</span>
+                </div>
+                <h3 id="modal-ficha-titulo" style="margin:0; font-size:1.15rem; font-weight:800; color:#0F172A;">Nome do Produto</h3>
+                <span id="ficha-subtitulo" style="font-size:0.80rem; color:#64748B; font-weight:600;">Marca / Modelo</span>
+            </div>
+            <button class="btn-close-modal" aria-label="Fechar ficha" onclick="Estoque.fecharModal('modal-ficha-produto')"><i class="ph ph-x"></i></button>
+        </div>
+
+        <!-- Grid de Informações Técnicas e Cadastrais -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px 12px;">
+                <span style="font-size:0.70rem; color:#64748B; font-weight:700; text-transform:uppercase; display:block;">Código de Barras / Ref</span>
+                <strong id="ficha-codigo" style="font-family:monospace; font-size:0.92rem; color:#0F172A; display:flex; align-items:center; gap:6px; margin-top:2px;">
+                    <i class="ph ph-barcode"></i> <span>-</span>
+                </strong>
+            </div>
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px 12px;">
+                <span style="font-size:0.70rem; color:#64748B; font-weight:700; text-transform:uppercase; display:block;">Categoria / Tipo</span>
+                <strong id="ficha-categoria" style="font-size:0.90rem; color:#0F172A; display:block; margin-top:2px;">-</strong>
+            </div>
+        </div>
+
+        <!-- Bloco de Métricas de Estoque & Valores -->
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:14px;">
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:8px; padding:10px; text-align:center;">
+                <span style="font-size:0.68rem; color:#64748B; font-weight:700; text-transform:uppercase;">Preço Custo</span>
+                <strong id="ficha-custo" style="display:block; font-size:1rem; color:#475569; margin-top:2px;">R$ 0,00</strong>
+            </div>
+            <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:10px; text-align:center;">
+                <span style="font-size:0.68rem; color:var(--primary); font-weight:700; text-transform:uppercase;">Preço Venda</span>
+                <strong id="ficha-venda" style="display:block; font-size:1.05rem; color:#1E40AF; font-weight:800; margin-top:2px;">R$ 0,00</strong>
+            </div>
+            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:10px; text-align:center;">
+                <span style="font-size:0.68rem; color:#166534; font-weight:700; text-transform:uppercase;">Margem Lucro</span>
+                <strong id="ficha-margem" style="display:block; font-size:1rem; color:#15803D; font-weight:800; margin-top:2px;">0%</strong>
+            </div>
+        </div>
+
+        <!-- Indicador de Saldo Físico & Mínimo -->
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:12px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <span style="font-size:0.70rem; color:#64748B; font-weight:700; text-transform:uppercase;">Saldo em Estoque</span>
+                <div style="display:flex; align-items:baseline; gap:6px; margin-top:2px;">
+                    <strong id="ficha-saldo" style="font-size:1.35rem; color:#0F172A; font-weight:800;">0 un</strong>
+                    <span id="ficha-minimo" style="font-size:0.75rem; color:#64748B;">(Mínimo: 0 un)</span>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <span style="font-size:0.70rem; color:#64748B; font-weight:700; text-transform:uppercase;">Total Investido</span>
+                <strong id="ficha-total-custo" style="display:block; font-size:0.95rem; color:#475569; font-weight:700; margin-top:2px;">R$ 0,00</strong>
+            </div>
+        </div>
+
+        <!-- Barra de Ações Rápidas da Ficha -->
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" id="ficha-btn-etiqueta" style="flex:1;">
+                <i class="ph ph-barcode"></i> Imprimir Etiqueta
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="ficha-btn-editar" style="flex:1;">
+                <i class="ph ph-pencil-simple"></i> Editar Item
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="ficha-btn-entrada" style="flex:1; background:#16A34A; border-color:#15803D;">
+                <i class="ph ph-plus"></i> Entrada (+)
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="ficha-btn-saida" style="flex:1; background:#DC2626; border-color:#B91C1C;">
+                <i class="ph ph-minus"></i> Baixa (-)
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Gerador de Etiquetas de Código de Barras e Prateleira -->
+<div id="modal-etiquetas" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-etiquetas-titulo">
+    <div class="modal-form" style="width:620px; max-width:95vw; padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <i class="ph ph-barcode" style="font-size:1.6rem; color:var(--primary);"></i>
+                <div>
+                    <h3 id="modal-etiquetas-titulo" style="margin:0; font-size:1.1rem; font-weight:800; color:#0F172A;">Gerador de Etiquetas de Peças</h3>
+                    <span style="font-size:0.78rem; color:#64748B;">Impressão para prateleiras, gavetas e embalagens de peças</span>
+                </div>
+            </div>
+            <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-etiquetas')"><i class="ph ph-x"></i></button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+            <div class="form-control">
+                <label for="etiqueta-select-produto" style="font-size:0.75rem; font-weight:700;">PRODUTO / PEÇA</label>
+                <select id="etiqueta-select-produto" class="form-control" onchange="Estoque.atualizarPreviewEtiqueta()" style="padding:8px 10px; font-size:0.85rem; font-weight:600;">
+                    <!-- Preenchido dinamicamente -->
+                </select>
+            </div>
+            <div class="form-control">
+                <label for="etiqueta-modelo-layout" style="font-size:0.75rem; font-weight:700;">MODELO DE ETIQUETA</label>
+                <select id="etiqueta-modelo-layout" class="form-control" onchange="Estoque.atualizarPreviewEtiqueta()" style="padding:8px 10px; font-size:0.85rem; font-weight:600;">
+                    <option value="gondola">🏷️ Gôndola / Prateleira (Preço Grande)</option>
+                    <option value="embalagem">📦 Embalagem / Peça (Código + Barras)</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px 14px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <label for="etiqueta-copias" style="font-size:0.78rem; font-weight:700; color:#475569; margin:0;">CÓPIAS A GERAR:</label>
+                <input type="number" id="etiqueta-copias" value="1" min="1" max="100" style="width:70px; padding:4px 8px; border:1px solid var(--border); border-radius:6px; font-weight:700; text-align:center;" onchange="Estoque.atualizarPreviewEtiqueta()">
+            </div>
+            <button type="button" class="btn btn-sm btn-secondary" onclick="Estoque.usarEstoqueComoCopias()" title="Ajustar quantidade de cópias igual ao estoque atual da peça">
+                <i class="ph ph-copy"></i> Qtd do Estoque
+            </button>
+        </div>
+
+        <!-- Área de Pré-Visualização da Etiqueta -->
+        <div style="margin-bottom:16px;">
+            <span style="font-size:0.72rem; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Pré-visualização da Etiqueta:</span>
+            <div id="etiqueta-preview-box" class="etiqueta-preview-wrapper" style="min-height:145px; background:#F1F5F9; border:2px dashed #CBD5E1; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:16px;">
+                <!-- Etiqueta renderizada em tempo real -->
+            </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button type="button" class="btn btn-secondary" onclick="Estoque.fecharModal('modal-etiquetas')">FECHAR</button>
+            <button type="button" class="btn btn-primary" onclick="Estoque.imprimirEtiquetas()" style="background:#2563EB;">
+                <i class="ph ph-printer" style="font-size:1.1rem;"></i>
+                <span>IMPRIMIR ETIQUETAS</span>
+            </button>
+        </div>
     </div>
 </div>
 

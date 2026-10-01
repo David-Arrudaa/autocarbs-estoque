@@ -71,7 +71,7 @@ const Estoque = {
         // Suporte a navegação por histórico do navegador (botão Voltar/Avançar)
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
-            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'cotacao', 'relatorios', 'saidas', 'usuarios'];
+            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao'];
             if (hash && abasValidas.includes(hash) && this.abaAtiva !== hash) {
                 this.alternarAba(hash);
             }
@@ -239,7 +239,7 @@ const Estoque = {
         let aba = 'produtos';
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'cotacao', 'relatorios', 'saidas', 'usuarios'];
+            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
             if (hash && abasValidas.includes(hash)) {
                 aba = hash;
             } else {
@@ -488,7 +488,7 @@ const Estoque = {
         if (!produtos || produtos.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" style="text-align:center; padding: 40px 15px; color: var(--text-secondary);">
+                    <td colspan="6" style="text-align:center; padding: 40px 15px; color: var(--text-secondary);">
                         <i class="ph ph-magnifying-glass" style="font-size: 2rem; color: #475569; display: block; margin: 0 auto 8px;"></i>
                         ${msgVazia}
                     </td>
@@ -506,8 +506,16 @@ const Estoque = {
             const modelo = UI.escapeHtml(p.modelo || '');
             const marca = UI.escapeHtml(p.marca || '');
             const codigo = UI.escapeHtml(p.codigo || '');
-            const compra = Number(p.compra || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-            const venda = Number(p.venda || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            const compraNum = Number(p.compra) || 0;
+            const vendaNum = Number(p.venda) || 0;
+            const compra = compraNum.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+            const venda = vendaNum.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+            let markupBadge = '';
+            if (compraNum > 0 && vendaNum > compraNum) {
+                const markup = Math.round(((vendaNum - compraNum) / compraNum) * 100);
+                markupBadge = `<span style="font-size:0.68rem; font-weight:700; color:#16A34A; line-height:1; margin-top:2px;">+${markup}%</span>`;
+            }
 
             let stockPillHtml = '';
             if (isZero) {
@@ -534,30 +542,39 @@ const Estoque = {
 
             tbody.innerHTML += `
                 <tr>
-                    <td style="width:38%;">
+                    <td style="width:7%; text-align:center;">
+                        <span class="product-id-badge" title="Código Interno: #${p.id}">#${p.id}</span>
+                    </td>
+                    <td style="width:35%;">
                         <span class="mobile-label">PRODUTO:</span>
                         <div style="padding: 2px 0;">
-                            <span style="font-size:0.875rem; font-weight:600; color:#0F172A; display:block; margin-bottom:3px; letter-spacing:-0.1px;">${tipo} ${modelo}</span>
-                            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                                <span style="font-size:0.75rem; color:#64748B; font-weight:500;">${marca}</span>
-                                ${codigo ? `<span style="font-size:0.68rem; font-family:monospace; background:#F1F5F9; color:#475569; border:1px solid #E2E8F0; padding:1px 5px; border-radius:4px; font-weight:600;">${codigo}</span>` : ''}
+                            <span style="font-size:0.875rem; font-weight:700; color:#0F172A; display:block; margin-bottom:3px; letter-spacing:-0.1px;">${tipo} ${modelo}</span>
+                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                ${marca ? `<span style="font-size:0.75rem; color:#475569; font-weight:600;"><i class="ph ph-tag" style="font-size:0.75rem;"></i> ${marca}</span>` : ''}
+                                ${codigo ? `<span style="font-size:0.70rem; font-family:monospace; background:#F8FAFC; color:#334155; border:1px solid #CBD5E1; padding:1px 6px; border-radius:4px; font-weight:600; display:inline-flex; align-items:center; gap:4px;" title="Código de Barras / Ref"><i class="ph ph-barcode"></i> ${codigo}</span>` : '<span style="font-size:0.68rem; color:#94A3B8; font-style:italic;">Sem cód. barras</span>'}
                             </div>
                         </div>
                     </td>
-                    <td style="width:14%; text-align:right;" class="cell-financial">
+                    <td style="width:13%; text-align:right;" class="cell-financial">
                         <span class="mobile-label">CUSTO:</span>
-                        <span style="color:#64748B; font-size:0.84rem; font-weight:500; font-variant-numeric:tabular-nums;">R$ ${compra}</span>
+                        <span style="color:#64748B; font-size:0.84rem; font-weight:600; font-variant-numeric:tabular-nums;">R$ ${compra}</span>
                     </td>
-                    <td style="width:14%; text-align:right;" class="cell-financial">
+                    <td style="width:13%; text-align:right;" class="cell-financial">
                         <span class="mobile-label">VENDA:</span>
-                        <span style="color:#0F172A; font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums;">R$ ${venda}</span>
+                        <div style="display:inline-flex; flex-direction:column; align-items:flex-end;">
+                            <span style="color:#0F172A; font-size:0.88rem; font-weight:800; font-variant-numeric:tabular-nums;">R$ ${venda}</span>
+                            ${markupBadge}
+                        </div>
                     </td>
-                    <td style="width:16%; text-align:center;">
+                    <td style="width:14%; text-align:center;">
                         <span class="mobile-label">ESTOQUE:</span>
                         ${stockPillHtml}
                     </td>
                     <td style="width:18%; text-align:right;">
                         <div class="actions-wrapper" style="justify-content:flex-end;">
+                            <button class="action-btn btn-action-view" onclick="Estoque.abrirFichaProduto(${p.id})" title="Visualizar Ficha Técnica (👁️)">
+                                <i class="ph ph-eye"></i>
+                            </button>
                             <button class="action-btn btn-action-in" onclick="Estoque.abrirEntrada(${p.id})" title="Entrada no Estoque (+)">
                                 <i class="ph ph-plus"></i>
                             </button>
@@ -1485,6 +1502,329 @@ const Estoque = {
         } finally {
             UI.setLoading(false);
         }
+    },
+
+    /**
+     * Abre o modal com a Ficha Técnica e visão 360° do produto (👁️)
+     */
+    abrirFichaProduto(id) {
+        const p = this.obterProdutoPorId(id);
+        if (!p) {
+            return UI.toast('Não foi possível carregar os dados deste produto.', 'warning');
+        }
+
+        const elId = document.getElementById('ficha-badge-id');
+        const elStatus = document.getElementById('ficha-badge-status');
+        const elTitulo = document.getElementById('modal-ficha-titulo');
+        const elSubtitulo = document.getElementById('ficha-subtitulo');
+        const elCodigo = document.getElementById('ficha-codigo');
+        const elCategoria = document.getElementById('ficha-categoria');
+        const elCusto = document.getElementById('ficha-custo');
+        const elVenda = document.getElementById('ficha-venda');
+        const elMargem = document.getElementById('ficha-margem');
+        const elSaldo = document.getElementById('ficha-saldo');
+        const elMinimo = document.getElementById('ficha-minimo');
+        const elTotalCusto = document.getElementById('ficha-total-custo');
+
+        const qtd = Number(p.qtd) || 0;
+        const minimo = Number(p.minimo) || 0;
+        const compra = Number(p.compra || p.compraUnit || 0);
+        const venda = Number(p.venda || p.vendaUnit || 0);
+
+        if (elId) elId.innerText = `#${p.id}`;
+        if (elTitulo) elTitulo.innerText = `${p.tipo || 'Produto'} ${p.modelo || ''}`.trim();
+        if (elSubtitulo) elSubtitulo.innerText = `Marca: ${p.marca || 'Não especificada'}`;
+
+        if (elStatus) {
+            if (qtd <= 0) {
+                elStatus.className = 'status-pill pill-danger';
+                elStatus.innerText = 'ZERADO';
+            } else if (qtd < minimo) {
+                elStatus.className = 'status-pill pill-warning';
+                elStatus.innerText = 'REPOR';
+            } else {
+                elStatus.className = 'status-pill pill-success';
+                elStatus.innerText = 'REGULAR';
+            }
+        }
+
+        if (elCodigo) {
+            elCodigo.innerHTML = p.codigo 
+                ? `<i class="ph ph-barcode" style="font-size:1.1rem; color:var(--primary);"></i> <span>${UI.escapeHtml(p.codigo)}</span>`
+                : `<span style="color:#94A3B8; font-style:italic;">Sem código de barras</span>`;
+        }
+        if (elCategoria) elCategoria.innerText = p.tipo || 'Geral';
+        if (elCusto) elCusto.innerText = this.formatarMoeda(compra);
+        if (elVenda) elVenda.innerText = this.formatarMoeda(venda);
+
+        if (elMargem) {
+            if (compra > 0 && venda > compra) {
+                const perc = Math.round(((venda - compra) / compra) * 100);
+                elMargem.innerText = `+${perc}%`;
+                elMargem.style.color = '#15803D';
+            } else {
+                elMargem.innerText = '0%';
+                elMargem.style.color = '#64748B';
+            }
+        }
+
+        if (elSaldo) elSaldo.innerText = `${qtd} un`;
+        if (elMinimo) elMinimo.innerText = `(Mínimo: ${minimo} un)`;
+        if (elTotalCusto) elTotalCusto.innerText = this.formatarMoeda(qtd * compra);
+
+        // Conecta os botões de ação rápida da ficha
+        const btnEtiqueta = document.getElementById('ficha-btn-etiqueta');
+        if (btnEtiqueta) {
+            btnEtiqueta.onclick = () => {
+                this.fecharModal('modal-ficha-produto');
+                this.abrirModalEtiquetas(p.id);
+            };
+        }
+
+        const btnEditar = document.getElementById('ficha-btn-editar');
+        if (btnEditar) {
+            btnEditar.onclick = () => {
+                this.fecharModal('modal-ficha-produto');
+                this.editarProduto(p.id);
+            };
+        }
+
+        const btnEntrada = document.getElementById('ficha-btn-entrada');
+        if (btnEntrada) {
+            btnEntrada.onclick = () => {
+                this.fecharModal('modal-ficha-produto');
+                this.abrirEntrada(p.id);
+            };
+        }
+
+        const btnSaida = document.getElementById('ficha-btn-saida');
+        if (btnSaida) {
+            btnSaida.onclick = () => {
+                this.fecharModal('modal-ficha-produto');
+                this.abrirSaida(p.id);
+            };
+        }
+
+        UI.abrirModal('modal-ficha-produto');
+    },
+
+    /**
+     * Abre o modal gerador de etiquetas de prateleira / caixas
+     */
+    abrirModalEtiquetas(produtoIdSelecionado = null) {
+        const select = document.getElementById('etiqueta-select-produto');
+        if (!select) return;
+
+        select.innerHTML = '';
+
+        const lista = this.listaProdutos || [];
+        if (lista.length === 0) {
+            return UI.toast('Nenhum produto disponível no momento.', 'warning');
+        }
+
+        lista.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            const ref = p.codigo ? `[${p.codigo}] ` : '';
+            opt.innerText = `#${p.id} - ${ref}${p.tipo} ${p.modelo || ''} (${p.marca || 'Geral'}) - R$ ${Number(p.venda || 0).toFixed(2)}`;
+            select.appendChild(opt);
+        });
+
+        if (produtoIdSelecionado) {
+            select.value = produtoIdSelecionado;
+        }
+
+        const inputCopias = document.getElementById('etiqueta-copias');
+        if (inputCopias) inputCopias.value = 1;
+
+        this.atualizarPreviewEtiqueta();
+        UI.abrirModal('modal-etiquetas');
+    },
+
+    /**
+     * Preenche o campo de cópias com a quantidade exata do estoque do produto selecionado
+     */
+    usarEstoqueComoCopias() {
+        const select = document.getElementById('etiqueta-select-produto');
+        if (!select || !select.value) return;
+        const p = this.obterProdutoPorId(select.value);
+        if (!p) return;
+        const inputCopias = document.getElementById('etiqueta-copias');
+        if (inputCopias) {
+            inputCopias.value = Math.max(1, Number(p.qtd) || 1);
+            this.atualizarPreviewEtiqueta();
+        }
+    },
+
+    /**
+     * Atualiza a prévia visual da etiqueta no modal em tempo real
+     */
+    atualizarPreviewEtiqueta() {
+        const select = document.getElementById('etiqueta-select-produto');
+        const box = document.getElementById('etiqueta-preview-box');
+        const layout = document.getElementById('etiqueta-modelo-layout')?.value || 'gondola';
+        if (!select || !box) return;
+
+        const p = this.obterProdutoPorId(select.value);
+        if (!p) {
+            box.innerHTML = '<span style="color:#94A3B8;">Selecione um produto</span>';
+            return;
+        }
+
+        box.innerHTML = this.renderizarHtmlEtiqueta(p, layout);
+    },
+
+    /**
+     * Renderiza o HTML de uma etiqueta formatada para prateleira ou embalagem
+     */
+    renderizarHtmlEtiqueta(p, layout = 'gondola') {
+        const id = p.id || 0;
+        const tipo = UI.escapeHtml(p.tipo || 'Peça');
+        const modelo = UI.escapeHtml(p.modelo || '');
+        const marca = UI.escapeHtml(p.marca || '');
+        const codigo = UI.escapeHtml(p.codigo || '');
+        const venda = Number(p.venda || p.vendaUnit || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        const barcodeCode = p.codigo ? p.codigo.trim() : `ACBS${id}`;
+        const barcodeSvg = this.gerarBarcodeSVG(barcodeCode, { height: 28 });
+
+        if (layout === 'embalagem') {
+            return `
+                <div class="etiqueta-card etiqueta-embalagem">
+                    <div class="etiqueta-brand-line">
+                        <span class="etiqueta-brand">AUTOCAR BS</span>
+                        <span class="etiqueta-ref">#${id}</span>
+                    </div>
+                    <div class="etiqueta-nome-peca" style="font-size:0.75rem;">
+                        ${tipo} ${modelo}
+                    </div>
+                    <div style="font-size:0.65rem; color:#475569; font-weight:600;">${marca || 'Geral'}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto;">
+                        <div class="etiqueta-barcode-col">
+                            ${barcodeSvg}
+                            <span class="etiqueta-barcode-num">${codigo || ('#' + id)}</span>
+                        </div>
+                        <div class="etiqueta-preco-box">
+                            <strong class="etiqueta-preco-val" style="font-size:1.05rem;">R$ ${venda}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Layout padrão: Gôndola / Prateleira
+        return `
+            <div class="etiqueta-card etiqueta-gondola">
+                <div class="etiqueta-brand-line">
+                    <span class="etiqueta-brand">AUTOCAR BS</span>
+                    <span class="etiqueta-ref">${codigo ? 'REF: ' + codigo : 'CÓD: #' + id}</span>
+                </div>
+                <div class="etiqueta-nome-peca" title="${tipo} ${modelo}">
+                    ${tipo} ${modelo}
+                </div>
+                <div class="etiqueta-marca-line">
+                    <span>${marca || 'Peça Automotiva'}</span>
+                </div>
+                <div class="etiqueta-bottom-row">
+                    <div class="etiqueta-barcode-col">
+                        ${barcodeSvg}
+                        <span class="etiqueta-barcode-num">${codigo || ('#' + id)}</span>
+                    </div>
+                    <div class="etiqueta-preco-box">
+                        <span class="etiqueta-preco-lbl">PREÇO</span>
+                        <strong class="etiqueta-preco-val">R$ ${venda}</strong>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Imprime as etiquetas configuradas usando a área oficial de impressão do ERP
+     */
+    imprimirEtiquetas() {
+        const select = document.getElementById('etiqueta-select-produto');
+        const layout = document.getElementById('etiqueta-modelo-layout')?.value || 'gondola';
+        const copias = Math.max(1, parseInt(document.getElementById('etiqueta-copias')?.value) || 1);
+
+        if (!select || !select.value) return;
+        const p = this.obterProdutoPorId(select.value);
+        if (!p) return;
+
+        const printArea = this.obterAreaImpressao();
+        if (!printArea) return;
+
+        let html = `
+            <div class="print-sheet" style="padding:4mm;">
+                <div class="print-labels-grid">
+        `;
+
+        for (let i = 0; i < copias; i++) {
+            html += this.renderizarHtmlEtiqueta(p, layout);
+        }
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        printArea.innerHTML = html;
+        this.fecharModal('modal-etiquetas');
+        setTimeout(() => {
+            window.print();
+        }, 100);
+    },
+
+    /**
+     * Gerador nativo e ultraleve de Código de Barras Code 128B em SVG puro.
+     * Sem dependências externas, compatível com qualquer impressora e leitor.
+     */
+    gerarBarcodeSVG(texto, options = {}) {
+        const height = options.height || 28;
+        const str = String(texto || 'ACBS0000').trim().toUpperCase().replace(/[^ -~]/g, '');
+        if (!str) return '';
+
+        const CODE128_PATTERNS = [
+            "212222", "222122", "222221", "121223", "121322", "131222", "122213", "122312", "132212", "221213",
+            "221312", "231212", "112232", "122132", "122231", "113222", "123122", "123221", "223211", "221132",
+            "221231", "213212", "223112", "312131", "311222", "321122", "321221", "312212", "322112", "322211",
+            "212123", "212321", "232121", "111323", "131123", "131321", "112313", "132113", "132311", "211313",
+            "231113", "231311", "112133", "112331", "132131", "113123", "113321", "133121", "313121", "211331",
+            "231131", "213113", "213311", "213131", "311123", "311321", "331121", "312113", "312311", "332111",
+            "314111", "221411", "431111", "111224", "111422", "121124", "121421", "141122", "141221", "112214",
+            "112412", "122114", "122411", "142112", "142211", "241211", "221114", "413111", "241112", "134111",
+            "111242", "121142", "121241", "114212", "124112", "124211", "411212", "421112", "421211", "212141",
+            "214121", "412121", "111143", "111341", "131141", "114113", "114311", "411113", "411311", "113141",
+            "114131", "311141", "411131", "211412", "211214", "211232", "2331112"
+        ];
+
+        const symbols = [104]; // Start B
+        let checksum = 104;
+
+        for (let i = 0; i < str.length; i++) {
+            const code = str.charCodeAt(i) - 32;
+            const val = (code >= 0 && code <= 95) ? code : 0;
+            symbols.push(val);
+            checksum += val * (i + 1);
+        }
+
+        symbols.push(checksum % 103);
+        symbols.push(106); // Stop
+
+        let x = 0;
+        let rects = '';
+
+        symbols.forEach(sym => {
+            const pattern = CODE128_PATTERNS[sym] || "212222";
+            for (let i = 0; i < pattern.length; i++) {
+                const width = parseInt(pattern[i], 10);
+                if (i % 2 === 0) {
+                    rects += `<rect x="${x}" y="0" width="${width}" height="${height}" fill="#000000" />`;
+                }
+                x += width;
+            }
+        });
+
+        return `<svg viewBox="0 0 ${x} ${height}" preserveAspectRatio="none" style="width:100%; height:${height}px; display:block;">${rects}</svg>`;
     },
 
     abrirEntrada(id) {

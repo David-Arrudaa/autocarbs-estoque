@@ -5515,3 +5515,167 @@ i.ph, i[class*="ph-"] {
     line-height: 1.4;
 }
 
+/* =========================================================
+   BADGE DE CÓDIGO INTERNO & AÇÃO DE VISUALIZAÇÃO
+   ========================================================= */
+.product-id-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.80rem;
+    font-weight: 700;
+    color: #334155;
+    letter-spacing: -0.2px;
+}
+
+.btn-action-view:hover {
+    background: #F1F5F9;
+    border-color: #94A3B8;
+    color: #0F172A;
+}
+
+/* =========================================================
+   ETIQUETAS DE PRATELEIRA / CÓDIGO DE BARRAS
+   ========================================================= */
+.etiqueta-card {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+    page-break-inside: avoid;
+    user-select: none;
+}
+
+.etiqueta-gondola {
+    width: 250px;
+    height: 125px;
+    border: 1px solid #94A3B8;
+}
+
+.etiqueta-embalagem {
+    width: 220px;
+    height: 110px;
+}
+
+.etiqueta-brand-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #E2E8F0;
+    padding-bottom: 3px;
+    margin-bottom: 4px;
+}
+
+.etiqueta-brand {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #1E293B;
+}
+
+.etiqueta-ref {
+    font-size: 0.62rem;
+    font-family: monospace;
+    font-weight: 700;
+    color: #475569;
+}
+
+.etiqueta-nome-peca {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #0F172A;
+    line-height: 1.15;
+    max-height: 2.3em;
+    overflow: hidden;
+    text-transform: uppercase;
+}
+
+.etiqueta-marca-line {
+    font-size: 0.68rem;
+    color: #475569;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.etiqueta-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.etiqueta-barcode-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    overflow: hidden;
+}
+
+.etiqueta-barcode-col svg {
+    max-width: 100%;
+    height: 32px;
+}
+
+.etiqueta-barcode-num {
+    font-family: monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #334155;
+    letter-spacing: 0.5px;
+    margin-top: 1px;
+}
+
+.etiqueta-preco-box {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.etiqueta-preco-lbl {
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: #64748B;
+    text-transform: uppercase;
+}
+
+.etiqueta-preco-val {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #0F172A;
+    line-height: 1;
+}
+
+/* Folha de Impressão de Etiquetas */
+.print-labels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8mm;
+    padding: 5mm;
+}
+
+@media print {
+    .print-labels-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6mm !important;
+        padding: 4mm !important;
+    }
+    .print-labels-grid .etiqueta-card {
+        border: 1px solid #000000 !important;
+        box-shadow: none !important;
+    }
+}
+
