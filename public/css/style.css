@@ -3270,133 +3270,140 @@ input.no-uppercase {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .report-kpi-card {
-.report-kpi-card {
     background: #FFFFFF;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 16px 18px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .report-kpi-card:hover {
     border-color: var(--border-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.09);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
 }
 
 .report-kpi-card.kpi-blue {
-    border-left: 5px solid #2563EB !important;
+    border-left: 4px solid #2563EB !important;
 }
 
 .report-kpi-card.kpi-green {
-    border-left: 5px solid #16A34A !important;
+    border-left: 4px solid #16A34A !important;
 }
 
 .report-kpi-card.kpi-gold {
-    border-left: 5px solid #D97706 !important;
+    border-left: 4px solid #D97706 !important;
 }
 
 .report-kpi-card.kpi-purple {
-    border-left: 5px solid #7C3AED !important;
+    border-left: 4px solid #7C3AED !important;
 }
 
 .report-kpi-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .report-kpi-title {
-    font-size: 0.73rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    color: var(--text-secondary, #334155);
+    color: var(--text-secondary, #475569);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .kpi-icon {
     font-size: 1.25rem;
-    color: #64748b;
+    color: #94A3B8;
 }
 
 .kpi-tag-badge {
     font-size: 0.68rem;
-    font-weight: 800;
-    background: rgba(212, 175, 55, 0.15);
-    color: var(--gold);
+    font-weight: 700;
+    background: #FEF3C7;
+    color: #B45309;
     padding: 2px 7px;
-    border-radius: 10px;
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+    border: 1px solid #FDE68A;
 }
 
 .report-kpi-val {
-    font-size: 1.38rem;
+    font-size: 1.4rem;
     font-weight: 800;
     color: var(--text-heading);
     line-height: 1.2;
+    letter-spacing: -0.3px;
 }
 
 .report-kpi-sub {
     font-size: 0.74rem;
-    color: #64748b;
-    margin-top: 5px;
+    color: #64748B;
+    margin-top: 6px;
+    font-weight: 500;
 }
 
-/* Faixa de Saúde do Estoque */
+/* Faixa de Saúde do Estoque (Grid 3 colunas) */
 .report-health-strip {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
+}
+
+@media (max-width: 900px) {
+    .report-health-strip {
+        grid-template-columns: 1fr;
+    }
 }
 
 .health-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
+    gap: 14px;
+    padding: 14px 18px;
     border-radius: 8px;
     border: 1px solid var(--border);
+    background: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     user-select: none;
 }
 
 .health-item:hover {
     transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.07);
 }
 
 .health-item.ok {
-    background: #FFFFFF;
-    border-color: rgba(16, 185, 129, 0.35);
-    border-left: 5px solid #16A34A !important;
-    color: #15803D;
-    box-shadow: 0 2px 6px rgba(22, 163, 74, 0.08);
+    border-left: 4px solid #16A34A !important;
+}
+.health-item.ok i {
+    color: #16A34A;
 }
 
 .health-item.warning {
-    background: #FFFFFF;
-    border-color: rgba(245, 158, 11, 0.35);
-    border-left: 5px solid #D97706 !important;
-    color: #B45309;
-    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.08);
+    border-left: 4px solid #D97706 !important;
+}
+.health-item.warning i {
+    color: #D97706;
 }
 
 .health-item.danger {
-    background: #FFFFFF;
-    border-color: rgba(239, 68, 68, 0.35);
-    border-left: 5px solid #DC2626 !important;
+    border-left: 4px solid #DC2626 !important;
+}
+.health-item.danger i {
     color: #DC2626;
-    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
 }
 
 .health-item i {
@@ -3404,17 +3411,24 @@ input.no-uppercase {
     flex-shrink: 0;
 }
 
+.health-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
 .health-info strong {
     display: block;
-    font-size: 1.15rem;
-    font-weight: 800;
+    font-size: 1rem;
+    font-weight: 700;
     color: var(--text-heading);
     line-height: 1.2;
 }
 
 .health-info span {
-    font-size: 0.74rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
+    font-weight: 500;
 }
 
 /* Seções de Tabelas no Relatório */
@@ -5084,11 +5098,6 @@ table tbody tr:hover {
     font-size: 1rem !important;
 }
 
-/* --- REPORT FILTER BAR — fundo visível --- */
-.report-filter-bar {
-    background: var(--bg-table-th) !important;
-    padding: 14px 18px !important;
-}
 
 /* --- REPORT KPI: valor mais imponente --- */
 .report-kpi-val {
