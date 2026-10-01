@@ -2,7 +2,10 @@
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
  * Módulo: Gestão de Clientes (clientes.js)
- * Estrutura: Lista Enxuta + Ficha em 2 Abas (Dados / OS)
+ * Navegação em Páginas Reais (Subviews):
+ * - Subview 1: Lista Enxuta
+ * - Subview 2: Ficha 360° em Tela Cheia (Abas: Dados / OS)
+ * - Subview 3: Formulário de Cadastro / Edição em Tela Cheia
  * =========================================================
  */
 
@@ -15,6 +18,7 @@ const Clientes = {
     clienteIdParaExcluir: null,
     clienteAtualFicha: null,
     timerBusca: null,
+    subviewAtiva: 'lista',
     iniciado: false,
 
     /**
@@ -22,8 +26,31 @@ const Clientes = {
      */
     async iniciar() {
         this.configurarEventos();
+        this.mostrarSubview('lista');
         await this.carregarLista(1);
         this.iniciado = true;
+    },
+
+    /**
+     * Alternador de telas/páginas (Subviews)
+     * @param {'lista' | 'ficha' | 'cadastro'} nomeSubview 
+     */
+    mostrarSubview(nomeSubview) {
+        this.subviewAtiva = nomeSubview;
+
+        const viewLista = document.getElementById('view-clientes-lista');
+        const viewFicha = document.getElementById('view-clientes-ficha');
+        const viewCad = document.getElementById('view-clientes-cadastro');
+
+        if (viewLista) viewLista.classList.toggle('hidden', nomeSubview !== 'lista');
+        if (viewFicha) viewFicha.classList.toggle('hidden', nomeSubview !== 'ficha');
+        if (viewCad) viewCad.classList.toggle('hidden', nomeSubview !== 'cadastro');
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+
+    voltarParaLista() {
+        this.mostrarSubview('lista');
     },
 
     /**
@@ -77,7 +104,7 @@ const Clientes = {
 
         if (btnNovo && !btnNovo.dataset.hasListener) {
             btnNovo.dataset.hasListener = 'true';
-            btnNovo.addEventListener('click', () => this.abrirModalNovo());
+            btnNovo.addEventListener('click', () => this.abrirNovo());
         }
 
         if (formCliente && !formCliente.dataset.hasListener) {
@@ -106,9 +133,7 @@ const Clientes = {
             });
         }
 
-        // Modais - Fechamento
-        this.ligarFechamentoModal('modal-cadastro-cliente', 'btn-fechar-modal-cliente', 'btn-cancelar-cliente');
-        this.ligarFechamentoModal('modal-ficha-cliente', 'btn-fechar-ficha-cliente', null);
+        // Modal de Exclusão (diálogo de segurança)
         this.ligarFechamentoModal('modal-confirmacao-excluir-cliente', null, 'btn-cancelar-exclusao-cliente');
 
         const btnConfirmaExcluir = document.getElementById('btn-confirmar-exclusao-cliente');
@@ -161,7 +186,7 @@ const Clientes = {
     },
 
     /**
-     * Alterna abas na Ficha 360° do Cliente
+     * Alterna abas na Ficha da Página
      */
     alternarAbaFicha(aba) {
         const btnDados = document.getElementById('tab-btn-ficha-dados');
@@ -204,7 +229,7 @@ const Clientes = {
                 pagina: pagina,
                 limite: this.limite,
                 ordenarPor: 'id',
-                ordem: 'desc' // Mostra os códigos mais novos primeiro, igual no print
+                ordem: 'desc'
             });
 
             if (!res.success) throw new Error(res.mensagem || 'Falha ao buscar clientes.');
@@ -298,7 +323,7 @@ const Clientes = {
     },
 
     /**
-     * Abre a Ficha em 2 Abas ao clicar no "Olho" 👁️
+     * Abre a Ficha em PÁGINA COMPLETA ao clicar no "Olho" 👁️
      */
     async abrirFicha(id) {
         try {
@@ -308,7 +333,7 @@ const Clientes = {
             const c = res.cliente;
             this.clienteAtualFicha = c;
 
-            // Inicia sempre na Aba 1 (Dados do Cliente)
+            // Inicia na Aba 1 (Dados do Cliente)
             this.alternarAbaFicha('dados');
 
             // 1. Aba Dados do Cliente
@@ -394,7 +419,7 @@ const Clientes = {
                 } else {
                     tbodyOs.innerHTML = checklists.map((chk, idx) => {
                         const dados = chk.dados_checklist || {};
-                        const numOs = dados.numero_os || chk.id?.substring(0, 4) || (1350 + idx);
+                        const numOs = dados.numero_os || chk.id?.substring(0, 4) || (1351 - idx);
                         const dataInicial = dados.data_entrada || (chk.created_at ? new Date(chk.created_at).toLocaleDateString('pt-BR') : '-');
                         const dataFinal = dados.data_saida || dados.previsao_entrega || '-';
                         const carroDesc = `${dados.veiculo_marca || ''} ${dados.veiculo_versao || ''} ${dados.veiculo_ano_modelo || ''}`.trim() || 'VEÍCULO';
@@ -405,7 +430,7 @@ const Clientes = {
 
                         return `
                             <tr>
-                                <td style="font-weight: 700; color: var(--text-primary);">${numOs}</td>
+                                <td style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${numOs}</td>
                                 <td>${dataInicial}</td>
                                 <td>${dataFinal}</td>
                                 <td>
@@ -437,8 +462,8 @@ const Clientes = {
                 btnEditarHeader.onclick = () => this.abrirEdicao(c.id);
             }
 
-            const modalFicha = document.getElementById('modal-ficha-cliente');
-            if (modalFicha) modalFicha.classList.remove('hidden');
+            // Ativa a subview da Ficha (Página Inteira!)
+            this.mostrarSubview('ficha');
 
         } catch (err) {
             console.error('[Clientes] Erro ao abrir ficha:', err);
@@ -500,14 +525,14 @@ const Clientes = {
     },
 
     /**
-     * Abre modal para cadastro de novo cliente
+     * Abre página de cadastro de novo cliente
      */
-    abrirModalNovo() {
+    abrirNovo() {
         const form = document.getElementById('form-cliente-erp');
         if (form) form.reset();
 
         document.getElementById('cad_cliente_id').value = '';
-        document.getElementById('modal-cliente-titulo').innerHTML = `
+        document.getElementById('cadastro-cliente-titulo').innerHTML = `
             <i class="ph ph-user-plus"></i>
             <span>Novo Cliente</span>
         `;
@@ -516,15 +541,18 @@ const Clientes = {
         this.veiculosTemporarios = [];
         this.renderizarVeiculosCadastro();
 
-        const modal = document.getElementById('modal-cadastro-cliente');
-        if (modal) modal.classList.remove('hidden');
+        this.mostrarSubview('cadastro');
 
         const inputNome = document.getElementById('cad_nome');
         if (inputNome) setTimeout(() => inputNome.focus(), 100);
     },
 
+    abrirModalNovo() {
+        this.abrirNovo();
+    },
+
     /**
-     * Abre modal para edição de cliente
+     * Abre página de edição de cliente
      */
     async abrirEdicao(id) {
         try {
@@ -543,7 +571,7 @@ const Clientes = {
             document.getElementById('cad_endereco').value = c.endereco || '';
             document.getElementById('cad_numero').value = c.numero || '';
 
-            document.getElementById('modal-cliente-titulo').innerHTML = `
+            document.getElementById('cadastro-cliente-titulo').innerHTML = `
                 <i class="ph ph-note-pencil"></i>
                 <span>Editar Cliente #${c.id}</span>
             `;
@@ -552,11 +580,7 @@ const Clientes = {
             this.veiculosTemporarios = Array.isArray(c.veiculos) ? [...c.veiculos] : [];
             this.renderizarVeiculosCadastro();
 
-            const modalFicha = document.getElementById('modal-ficha-cliente');
-            if (modalFicha) modalFicha.classList.add('hidden');
-
-            const modalCad = document.getElementById('modal-cadastro-cliente');
-            if (modalCad) modalCad.classList.remove('hidden');
+            this.mostrarSubview('cadastro');
 
         } catch (err) {
             console.error('[Clientes] Erro ao abrir edição:', err);
@@ -597,15 +621,13 @@ const Clientes = {
             const res = await API.salvarCliente(dados);
             if (!res.success) throw new Error(res.mensagem || 'Falha ao salvar cliente.');
 
-            const modal = document.getElementById('modal-cadastro-cliente');
-            if (modal) modal.classList.add('hidden');
-
             if (window.UI && typeof UI.mostrarToast === 'function') {
                 UI.mostrarToast(res.mensagem || 'Cliente salvo com sucesso!', 'sucesso');
             } else {
                 alert(res.mensagem || 'Cliente salvo com sucesso!');
             }
 
+            this.voltarParaLista();
             await this.carregarLista(this.paginaAtual);
 
         } catch (err) {
@@ -620,7 +642,7 @@ const Clientes = {
     },
 
     /**
-     * Veículos no modal de cadastro
+     * Veículos no cadastro
      */
     adicionarVeiculoTemp() {
         const inputPlaca = document.getElementById('temp_placa');
