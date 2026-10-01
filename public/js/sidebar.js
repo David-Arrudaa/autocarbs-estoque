@@ -19,7 +19,7 @@ const Sidebar = {
                 produtos: {
                     id: 'tab-btn-produtos',
                     titulo: 'Estoque Geral',
-                    subtitulo: 'Visão consolidada dos produtos e controle de estoque',
+                    subtitulo: '',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'GERAL',
                     mostrarBotaoCadastrar: true
@@ -27,23 +27,23 @@ const Sidebar = {
                 reposicao: {
                     id: 'tab-btn-reposicao',
                     titulo: 'Reposição de Estoque',
-                    subtitulo: 'Itens com saldo abaixo do estoque mínimo parametrizado',
+                    subtitulo: '',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'REPOSIÇÃO',
                     mostrarBotaoCadastrar: false
                 },
                 saidas: {
                     id: 'tab-btn-saidas',
-                    titulo: 'Curva ABC & Giro de Peças',
-                    subtitulo: 'Classificação estratégica de giro, relevância financeira e controle de ruptura',
+                    titulo: 'Curva ABC (Giro)',
+                    subtitulo: '',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'CURVA ABC',
                     mostrarBotaoCadastrar: false
                 },
                 relatorios: {
                     id: 'tab-btn-relatorios',
-                    titulo: 'Relatórios Gerenciais',
-                    subtitulo: 'Análise executiva financeira e discriminada de peças',
+                    titulo: 'Relatórios',
+                    subtitulo: '',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'RELATÓRIOS',
                     mostrarBotaoCadastrar: false
@@ -57,10 +57,10 @@ const Sidebar = {
             submodulos: {
                 cotacao: {
                     id: 'tab-btn-cotacao',
-                    titulo: 'Cotação de Peças & Orçamentos',
-                    subtitulo: 'Cote com múltiplos fornecedores e gere orçamentos para clientes',
+                    titulo: 'Cotação de Peças',
+                    subtitulo: '',
                     moduloBreadcrumb: 'ORÇAMENTOS',
-                    submoduloBreadcrumb: 'COTAÇÃO DE PEÇAS',
+                    submoduloBreadcrumb: 'COTAÇÃO',
                     mostrarBotaoCadastrar: false
                 }
             }
@@ -73,10 +73,10 @@ const Sidebar = {
             submodulos: {
                 usuarios: {
                     id: 'tab-btn-usuarios',
-                    titulo: 'Equipe & Controle de Acessos',
-                    subtitulo: 'Gerenciamento de colaboradores, cargos e senhas de acesso individuais',
+                    titulo: 'Equipe & Acessos',
+                    subtitulo: '',
                     moduloBreadcrumb: 'CONFIGURAÇÕES',
-                    submoduloBreadcrumb: 'EQUIPE & ACESSOS',
+                    submoduloBreadcrumb: 'EQUIPE',
                     mostrarBotaoCadastrar: false
                 }
             }

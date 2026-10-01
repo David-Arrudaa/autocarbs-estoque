@@ -705,59 +705,56 @@ body {
 .page-title-box {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .page-breadcrumb {
     display: flex;
     align-items: center;
-    gap: 7px;
-    font-size: 0.72rem;
-    font-weight: 700;
+    gap: 6px;
+    font-size: 0.70rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 4px;
+    letter-spacing: 0.6px;
+    margin-bottom: 1px;
 }
 
 .breadcrumb-module {
-    background: #FFFFFF;
-    color: var(--gold-dark, #8C6218);
-    border: 1.5px solid #CAA151;
-    padding: 1px 7px;
-    border-radius: 4px;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    box-shadow: 0 1px 3px rgba(202, 161, 81, 0.20);
+    background: transparent !important;
+    color: #64748B !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.6px !important;
+    box-shadow: none !important;
 }
 
 .breadcrumb-separator {
-    color: var(--gold);
-    font-size: 0.72rem;
-    opacity: 0.85;
+    color: #94A3B8 !important;
+    font-size: 0.65rem !important;
+    opacity: 0.7 !important;
 }
 
 .breadcrumb-submodule {
-    color: var(--carmim, #93272C);
-    font-weight: 800;
-    letter-spacing: 0.6px;
+    color: #334155 !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.6px !important;
 }
 
 .page-title {
     margin: 0;
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
     color: #0F172A;
     letter-spacing: -0.3px;
-    border-left: 3.5px solid var(--gold);
-    padding-left: 10px;
-    line-height: 1.25;
+    border-left: none !important;
+    padding-left: 0 !important;
+    line-height: 1.2;
 }
 
 .page-subtitle {
-    font-size: 0.76rem;
-    color: #475569;
-    font-weight: 500;
-    padding-left: 10px;
-    margin-top: 2px;
+    display: none !important;
 }
 
 .top-header-right {
@@ -5275,30 +5272,34 @@ table tbody tr:hover {
 }
 
 /* =========================================================
-   ONDA 4 — TOPBAR: BREADCRUMB MAIS REFINADO
+   ONDA 4 — TOPBAR: BREADCRUMB LIMPO & MINIMALISTA
    ========================================================= */
 .page-breadcrumb {
     margin-bottom: 2px;
 }
 
 .breadcrumb-module {
-    font-size: 0.68rem !important;
-    padding: 2px 8px !important;
-    border-radius: 5px !important;
-    font-weight: 900 !important;
-    letter-spacing: 0.8px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    color: #64748B !important;
+    font-size: 0.70rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.6px !important;
 }
 
 .breadcrumb-submodule {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--text-secondary) !important;
+    font-size: 0.70rem !important;
+    font-weight: 700 !important;
+    color: #334155 !important;
+    letter-spacing: 0.6px !important;
 }
 
-/* Page title com borda esquerda mais fina e elegante */
+/* Page title limpo e imponente, sem barras laterais */
 .page-title {
-    border-left-width: 3px !important;
-    border-left-color: var(--gold) !important;
+    border-left: none !important;
+    padding-left: 0 !important;
 }
 
 /* =========================================================
