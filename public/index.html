@@ -247,31 +247,12 @@
                         </button>
                     </div>
 
-                    <!-- 3. PRODUTOS / ESTOQUE (Acordeon com Estoque Geral & Reposição) -->
-                    <div class="sidebar-module-group open is-active-module" id="group-estoque">
-                        <button class="sidebar-module-btn" onclick="Sidebar.onModuloEstoqueClick()" data-tooltip="Produtos / Estoque">
-                            <div class="module-btn-left">
-                                <i class="ph ph-package"></i>
-                                <span class="module-btn-title">Produtos / Estoque</span>
-                            </div>
-                            <div class="module-btn-right">
-                                <i class="ph ph-caret-down group-caret"></i>
-                            </div>
+                    <!-- 3. PRODUTOS / ESTOQUE (Módulo Direto 1-Clique) -->
+                    <div class="sidebar-module-group" id="group-estoque">
+                        <button class="tab-btn module-standalone-btn" id="tab-btn-produtos" onclick="Estoque.alternarAba('produtos')" data-tooltip="Produtos / Estoque">
+                            <i class="ph ph-package"></i>
+                            <span>Produtos / Estoque</span>
                         </button>
-
-                        <!-- SUBMÓDULOS DE ESTOQUE -->
-                        <div class="sidebar-submodules" id="submodules-estoque">
-                            <div class="submodules-flyout-header">PRODUTOS / ESTOQUE</div>
-                            <button class="tab-btn sub-tab-btn active" id="tab-btn-produtos" onclick="Estoque.alternarAba('produtos')">
-                                <i class="ph ph-boxes"></i>
-                                <span>Estoque Geral</span>
-                            </button>
-                            <button class="tab-btn sub-tab-btn" id="tab-btn-reposicao" onclick="Estoque.alternarAba('reposicao')">
-                                <i class="ph ph-warning-circle"></i>
-                                <span>Reposição</span>
-                                <span class="tab-badge" id="badge-count-reposicao" style="display:none;">0</span>
-                            </button>
-                        </div>
                     </div>
 
                     <!-- 4. SERVIÇOS -->
@@ -298,7 +279,7 @@
                         </button>
                     </div>
 
-                    <!-- 7. RELATÓRIOS (Acordeon com Relatório de Estoque & Curva ABC) -->
+                    <!-- 7. RELATÓRIOS (Acordeon com Relatório Geral, Reposição & Curva ABC) -->
                     <div class="sidebar-module-group" id="group-relatorios">
                         <button class="sidebar-module-btn" onclick="Sidebar.onModuloRelatoriosClick()" data-tooltip="Relatórios">
                             <div class="module-btn-left">
@@ -316,6 +297,11 @@
                             <button class="tab-btn sub-tab-btn" id="tab-btn-relatorios" onclick="Estoque.alternarAba('relatorios')">
                                 <i class="ph ph-chart-pie-slice"></i>
                                 <span>Relatório de Estoque</span>
+                            </button>
+                            <button class="tab-btn sub-tab-btn" id="tab-btn-reposicao" onclick="Estoque.alternarAba('reposicao')">
+                                <i class="ph ph-warning-circle"></i>
+                                <span>Reposição</span>
+                                <span class="tab-badge" id="badge-count-reposicao" style="display:none;">0</span>
                             </button>
                             <button class="tab-btn sub-tab-btn" id="tab-btn-saidas" onclick="Estoque.alternarAba('saidas')">
                                 <i class="ph ph-chart-bar"></i>
@@ -626,16 +612,16 @@
     <div id="relatorio-documento-impressao" class="print-document-only"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=137.0"></script>
-    <script src="js/ui.js?v=137.0"></script>
-    <script src="modals/dialog.js?v=137.0"></script>
-    <script src="js/sidebar.js?v=137.0"></script>
-    <script src="js/api.js?v=137.0"></script>
-    <script src="modules/auth/auth.js?v=137.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=137.0"></script>
-    <script src="modules/equipe/equipe.js?v=137.0"></script>
-    <script src="modules/scanner/scanner.js?v=137.0"></script>
-    <script src="modules/estoque/estoque.js?v=137.0"></script>
-    <script src="js/app.js?v=137.0"></script>
+    <script src="js/core/view-loader.js?v=138.0"></script>
+    <script src="js/ui.js?v=138.0"></script>
+    <script src="modals/dialog.js?v=138.0"></script>
+    <script src="js/sidebar.js?v=138.0"></script>
+    <script src="js/api.js?v=138.0"></script>
+    <script src="modules/auth/auth.js?v=138.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=138.0"></script>
+    <script src="modules/equipe/equipe.js?v=138.0"></script>
+    <script src="modules/scanner/scanner.js?v=138.0"></script>
+    <script src="modules/estoque/estoque.js?v=138.0"></script>
+    <script src="js/app.js?v=138.0"></script>
 </body>
 </html>

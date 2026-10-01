@@ -44,23 +44,15 @@ const Sidebar = {
         estoque: {
             id: 'group-estoque',
             nome: 'Produtos / Estoque',
-            tipo: 'grupo', // Acordeon com submódulos de peças
+            tipo: 'standalone', // Módulo direto em 1 clique
             submodulos: {
                 produtos: {
                     id: 'tab-btn-produtos',
-                    titulo: 'Estoque Geral',
-                    subtitulo: 'Visão consolidada dos produtos e controle de estoque físico',
+                    titulo: 'Estoque de Peças & Produtos',
+                    subtitulo: 'Controle físico de estoque, entradas, baixas e etiquetas',
                     moduloBreadcrumb: 'ESTOQUE',
-                    submoduloBreadcrumb: 'GERAL',
+                    submoduloBreadcrumb: 'PRODUTOS',
                     mostrarBotaoCadastrar: true
-                },
-                reposicao: {
-                    id: 'tab-btn-reposicao',
-                    titulo: 'Reposição de Estoque',
-                    subtitulo: 'Itens com saldo abaixo do estoque mínimo parametrizado',
-                    moduloBreadcrumb: 'ESTOQUE',
-                    submoduloBreadcrumb: 'REPOSIÇÃO',
-                    mostrarBotaoCadastrar: false
                 }
             }
         },
@@ -112,14 +104,22 @@ const Sidebar = {
         relatorios: {
             id: 'group-relatorios',
             nome: 'Relatórios',
-            tipo: 'grupo', // Acordeon com relatórios e Curva ABC
+            tipo: 'grupo', // Acordeon com Relatório Geral, Reposição e Curva ABC
             submodulos: {
                 relatorios: {
                     id: 'tab-btn-relatorios',
-                    titulo: 'Relatório de Estoque',
+                    titulo: 'Relatório Geral de Estoque',
                     subtitulo: 'Análise executiva financeira, discriminada de peças e impressão A4',
                     moduloBreadcrumb: 'RELATÓRIOS',
                     submoduloBreadcrumb: 'ESTOQUE',
+                    mostrarBotaoCadastrar: false
+                },
+                reposicao: {
+                    id: 'tab-btn-reposicao',
+                    titulo: 'Reposição & Ordem de Compra',
+                    subtitulo: 'Itens com saldo abaixo do estoque mínimo parametrizado',
+                    moduloBreadcrumb: 'RELATÓRIOS',
+                    submoduloBreadcrumb: 'REPOSIÇÃO',
                     mostrarBotaoCadastrar: false
                 },
                 saidas: {
@@ -295,30 +295,22 @@ const Sidebar = {
     },
 
     /**
-     * Clique no botão do Módulo Estoque:
-     * - Se colapsado: navega diretamente para o estoque (mantendo a aba atual ou Estoque Geral)
-     * - Se expandido: abre ou fecha o acordeon
+     * Clique no botão do Módulo Produtos / Estoque (Standalone):
+     * Navega diretamente para o estoque geral com 1 clique
      */
     onModuloEstoqueClick() {
-        if (this.collapsed) {
-            const abaEstoque = ['produtos', 'reposicao'].includes(this.abaAtiva)
-                ? this.abaAtiva
-                : 'produtos';
-            if (window.Estoque) Estoque.alternarAba(abaEstoque);
-            this.fecharFlyouts();
-        } else {
-            this.toggleGrupo('estoque');
-        }
+        if (window.Estoque) Estoque.alternarAba('produtos');
+        this.fecharFlyouts();
     },
 
     /**
      * Clique no botão do Módulo Relatórios:
-     * - Se colapsado: navega diretamente para relatórios (mantendo a aba atual ou Relatório de Estoque)
+     * - Se colapsado: navega diretamente para relatórios (mantendo a aba ativa atual)
      * - Se expandido: abre ou fecha o acordeon
      */
     onModuloRelatoriosClick() {
         if (this.collapsed) {
-            const abaRel = ['relatorios', 'saidas'].includes(this.abaAtiva)
+            const abaRel = ['relatorios', 'reposicao', 'saidas'].includes(this.abaAtiva)
                 ? this.abaAtiva
                 : 'relatorios';
             if (window.Estoque) Estoque.alternarAba(abaRel);
