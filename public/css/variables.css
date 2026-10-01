@@ -12,92 +12,85 @@
 
 :root {
     /* =========================================================
-       SUPERFÍCIES E FUNDOS — 3 NÍVEIS DE HIERARQUIA VISUAL
-       Nível 0 (body):    #E8EDF5  ← cinza-azulado frio, caráter
-       Nível 1 (cards):   #FFFFFF  ← branco puro, contrasta com body
-       Nível 2 (th/chips):#EEF1F6  ← cinza claro, distinto do branco
+       SUPERFÍCIES E FUNDOS ENTERPRISE (SÓBRIOS & PROFISSIONAIS)
        ========================================================= */
-    --bg-body: #F4F6FA;                   /* Nível 0 — fundo global neutro, contrasta com sidebar */
-    --bg-card: #FFFFFF;                   /* Nível 1 — cards e painéis brancos puros */
-    --bg-sidebar: #F8FAFC;                /* Cinza-azulado frio — coerente com o body */
-    --bg-sidebar-footer: #EEF1F6;         /* Rodapé sidebar unificado com bg-table-th */
+    --bg-body: #F8FAFC;                   /* Fundo neutro limpo ardósia */
+    --bg-card: #FFFFFF;                   /* Cards brancos puros com separação nítida */
+    --bg-sidebar: #FFFFFF;                /* Sidebar branca integrada com borda sutil */
+    --bg-sidebar-footer: #F8FAFC;         /* Rodapé neutro discreto */
     --bg-header: #FFFFFF;                 /* Topbar branco limpo */
     --bg-input: #FFFFFF;                  /* Fundo branco de caixas de entrada de texto */
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
     --bg-surface-active: #FFFFFF;         /* Superfície ativa limpa elevada (cards, abas) */
-    --bg-hover: #EEF2F7;                  /* Hover suave azulado */
-    --bg-table-th: #EEF1F6;              /* Nível 2 — TH claramente distinto das células brancas */
-    --bg-table-hover: #EDF0F7;            /* Hover de linha suave */
+    --bg-hover: #F1F5F9;                  /* Hover neutro suave */
+    --bg-table-th: #F8FAFC;              /* Cabeçalho de tabela sutil e limpo */
+    --bg-table-hover: #F1F5F9;            /* Hover de linha suave */
 
     /* =========================================================
-       BORDAS E DIVISÓRIAS — MAIS PRESENTES
+       BORDAS CIRÚRGICAS DE 1PX (PADRÃO LINEAR / STRIPE)
        ========================================================= */
-    --border: #C8D2DE;                    /* Bordas ligeiramente mais visíveis */
-    --border-hover: #94A3B8;              /* Foco interativo */
-    --border-subtle: #DDE3EC;             /* Linhas divisórias internas mais presentes */
+    --border: #E2E8F0;                    /* Borda limpa e precisa */
+    --border-hover: #CBD5E1;              /* Foco interativo discreto */
+    --border-subtle: #F1F5F9;             /* Divisórias ultra-leves */
 
     /* =========================================================
-       TIPOGRAFIA E TEXTOS (MÁXIMA LEGIBILIDADE)
+       TIPOGRAFIA E TEXTOS
        ========================================================= */
-    --text-primary: #0F172A;              /* Preto-grafite profundo e nítido */
+    --text-primary: #0F172A;              /* Preto-ardósia profundo */
     --text-heading: #0F172A;              /* Títulos principais e marcas */
-    --text-secondary: #334155;            /* Códigos de peças, subtítulos e dados de apoio */
-    --text-muted: #64748B;                /* Textos suavizados e placeholders */
+    --text-secondary: #475569;            /* Rótulos e dados de apoio */
+    --text-muted: #94A3B8;                /* Textos suavizados e placeholders */
     --text-inverse: #FFFFFF;              /* Texto branco para botões coloridos */
 
     /* =========================================================
-       CORES DA MARCA & AÇÕES PRINCIPAIS (PALETA OFICIAL PANTONE)
-       - PANTONE 7407 C: #CAA151 (Gold Nobre / Dourado Acetinado)
-       - PANTONE 7622 C: #93272C (Carmim Esportivo / Vinho)
-       - PANTONE BLACK 6 C: #10181E (Carvão Profundo / Tipografia Executiva)
+       CORES DA MARCA (APLICADAS COM CONTENÇÃO EXECUTIVA)
        ========================================================= */
-    --primary: #C8202A;                   /* Carmim-esportivo profundo AutoCar BS — mais executivo */
-    --primary-hover: #A8181F;             /* Hover de botões primários */
-    --primary-bg: rgba(200, 32, 42, 0.08);/* Fundo sutil do vermelho */
-    --carmim: #93272C;                    /* Pantone 7622 C Vinho / Carmim */
-    --carmim-bg: rgba(147, 39, 44, 0.10);
-    --black-pantone: #10181E;             /* Pantone Black 6 C */
+    --primary: #C8202A;                   /* Carmim esportivo AutoCar BS */
+    --primary-hover: #A8181F;             /* Hover sóbrio */
+    --primary-bg: rgba(200, 32, 42, 0.06);/* Fundo sutil */
+    --carmim: #93272C;
+    --carmim-bg: rgba(147, 39, 44, 0.08);
+    --black-pantone: #10181E;
 
-    --gold: #CAA151;                      /* Pantone 7407 C Gold Nobre */
-    --gold-hover: #B88E3E;                /* Hover do tom dourado */
-    --gold-dark: #8C6218;                 /* Dourado escurecido para tipografia de alto contraste */
-    --gold-bg: rgba(202, 161, 81, 0.12);  /* Fundo sutil dourado */
-    --gold-bg-hover: rgba(202, 161, 81, 0.20);
-    --gold-border: rgba(202, 161, 81, 0.45);
-    --gold-gradient: linear-gradient(135deg, #FBF6EB 0%, #F5ECDA 100%);
+    --gold: #CAA151;                      /* Acento nobre pontual */
+    --gold-hover: #B88E3E;
+    --gold-dark: #8C6218;
+    --gold-bg: rgba(202, 161, 81, 0.08);
+    --gold-bg-hover: rgba(202, 161, 81, 0.15);
+    --gold-border: rgba(202, 161, 81, 0.35);
 
-    --accent: #C8202A;                    /* Acento principal — sincronizado com primary */
+    --accent: #C8202A;
 
     /* =========================================================
-       CORES DE STATUS E FEEDBACK DO SISTEMA
+       STATUS SEMÂNTICOS SÓBRIOS (PADRÃO B2B SAAS)
        ========================================================= */
-    --success: #16A34A;                   /* Verde esmeralda para entradas e estoque em dia */
+    --success: #16A34A;
     --success-hover: #15803D;
-    --success-bg: #DCFCE7;
-    --success-border: #86EFAC;
+    --success-bg: #F0FDF4;
+    --success-border: #BBF7D0;
 
-    --danger: #DC2626;                    /* Vermelho para exclusões e alertas críticos */
+    --danger: #DC2626;
     --danger-hover: #B91C1C;
-    --danger-bg: #FEE2E2;
-    --danger-border: #FCA5A5;
+    --danger-bg: #FEF2F2;
+    --danger-border: #FECACA;
 
-    --warning: #D97706;                   /* Âmbar / amarelo para saídas e reposição */
+    --warning: #D97706;
     --warning-hover: #B45309;
-    --warning-bg: #FEF3C7;
+    --warning-bg: #FFFBEB;
     --warning-border: #FDE68A;
 
-    --info: #0284C7;                      /* Azul para dados informativos e supervisão */
+    --info: #0284C7;
     --info-hover: #0369A1;
-    --info-bg: #E0F2FE;
-    --info-border: #7DD3FC;
+    --info-bg: #F0F9FF;
+    --info-border: #BAE6FD;
 
     /* =========================================================
-       TIPOGRAFIA, BORDAS ARREDONDADAS E SOMBRAS
+       TIPOGRAFIA, BORDAS E SOMBRAS NEUTRAS (SEM BRILHO COLORIDO)
        ========================================================= */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --shadow-card: 0 1px 4px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.04);
-    --shadow-elevated: 0 8px 24px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.06);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+    --shadow-elevated: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
 }
