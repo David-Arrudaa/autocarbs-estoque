@@ -1366,91 +1366,95 @@ th {
 }
 
 .filter-chips {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    background: #F1F5F9;
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    gap: 2px;
 }
 
 .chip-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #F4F7FC;
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    padding: 6px 14px;
-    border-radius: 20px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #475569;
+    padding: 5px 12px;
+    border-radius: 6px;
     font-size: 0.78rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     user-select: none;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    box-shadow: none;
 }
 
 .chip-pill:hover {
-    background: #EBF0F9;
-    color: var(--text-primary);
-    border-color: var(--border-hover);
+    color: #0F172A;
+    background: rgba(255, 255, 255, 0.7);
 }
 
 .chip-count {
-    background: #DDE3EC;
-    padding: 1px 7px;
+    background: #E2E8F0;
+    padding: 1px 6px;
     border-radius: 10px;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    color: #334155;
+    color: #475569;
 }
 
 .chip-pill.active {
-    background: #E02E34;
-    border-color: #E02E34;
-    color: #FFFFFF;
-    box-shadow: 0 2px 8px rgba(224, 46, 52, 0.30);
+    background: #FFFFFF !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    color: #0F172A !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
 }
 
 .chip-pill.active .chip-count {
-    background: rgba(255, 255, 255, 0.25);
-    color: #FFFFFF;
+    background: #F1F5F9 !important;
+    color: #0F172A !important;
 }
 
 .chip-pill.warning.active {
-    background: #D97706;
-    border-color: #D97706;
-    color: #FFFFFF;
+    background: #FFFFFF !important;
+    color: #B45309 !important;
 }
 
 .chip-pill.warning.active .chip-count {
-    background: rgba(255, 255, 255, 0.25);
-    color: #FFFFFF;
+    background: #FEF3C7 !important;
+    color: #92400E !important;
 }
 
 .chip-pill.danger.active {
-    background: #DC2626;
-    border-color: #DC2626;
-    color: #FFFFFF;
+    background: #FFFFFF !important;
+    color: #B91C1C !important;
 }
 
 .chip-pill.danger.active .chip-count {
-    background: rgba(255, 255, 255, 0.25);
-    color: #FFFFFF;
+    background: #FEE2E2 !important;
+    color: #991B1B !important;
 }
 
 .toolbar-stats-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 14px;
-    border-radius: 20px;
+    padding: 5px 12px;
+    border-radius: 6px;
     font-size: 0.8rem;
     font-weight: 600;
+    background: #F8FAFC;
+    border: 1px solid var(--border);
 }
 
 .toolbar-stats-pill.warning {
-    background: #FEF3C7;
+    background: #FFFBEB;
     border: 1px solid #FDE68A;
+    border-left: 3px solid #D97706;
     color: #92400E;
 }
 
@@ -1460,8 +1464,9 @@ th {
 }
 
 .toolbar-stats-pill.success {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-left: 3px solid #16A34A;
     color: #15803D;
 }
 
@@ -1471,58 +1476,68 @@ th {
 }
 
 /* =========================================================
-   PILLS DE ESTOQUE & MEDALHAS
+   STATUS DO ESTOQUE (PILLS SÓBRIAS ENTERPRISE)
    ========================================================= */
 .stock-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 9px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 700;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.76rem;
+    font-weight: 600;
     line-height: 1.2;
 }
 
 .stock-pill i {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 .stock-pill small {
     font-size: 0.65rem;
-    font-weight: 800;
+    font-weight: 700;
     text-transform: uppercase;
-    padding: 1px 4px;
+    padding: 0 4px;
     border-radius: 3px;
     letter-spacing: 0.3px;
 }
 
 .stock-pill.pill-ok {
-    background: #DCFCE7;
-    border: 1px solid #86EFAC;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
     color: #15803D;
 }
 
 .stock-pill.pill-low {
-    background: #FEF3C7;
+    background: #FFFBEB;
     border: 1px solid #FDE68A;
     color: #B45309;
 }
 
 .stock-pill.pill-low small {
-    background: #FDE68A;
+    background: #FEF3C7;
     color: #92400E;
 }
 
 .stock-pill.pill-zero {
-    background: #FEE2E2;
-    border: 1px solid #FCA5A5;
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
     color: #B91C1C;
 }
 
 .stock-pill.pill-zero small {
-    background: #FCA5A5;
-    color: #7F1D1D;
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+/* Hover reveal nas ações da tabela: interface limpa e silenciosa no repouso */
+.table-wrapper tbody tr .actions-wrapper {
+    opacity: 0.40;
+    transition: opacity 0.15s ease;
+}
+
+.table-wrapper tbody tr:hover .actions-wrapper {
+    opacity: 1;
 }
 
 .stock-deficit-badge {

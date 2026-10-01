@@ -534,27 +534,30 @@ const Estoque = {
 
             tbody.innerHTML += `
                 <tr>
-                    <td style="width:40%;">
+                    <td style="width:38%;">
                         <span class="mobile-label">PRODUTO:</span>
-                        <div style="padding: 1px 0;">
-                            <strong style="font-size:0.86rem; color:var(--text-primary); display:inline-block; margin-bottom:2px; letter-spacing:0.2px;">${tipo} ${modelo}</strong><br>
-                            <span style="font-size:0.73rem; color:var(--text-secondary); font-family:monospace;">${marca} ${codigo}</span>
+                        <div style="padding: 2px 0;">
+                            <span style="font-size:0.875rem; font-weight:600; color:#0F172A; display:block; margin-bottom:3px; letter-spacing:-0.1px;">${tipo} ${modelo}</span>
+                            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                <span style="font-size:0.75rem; color:#64748B; font-weight:500;">${marca}</span>
+                                ${codigo ? `<span style="font-size:0.68rem; font-family:monospace; background:#F1F5F9; color:#475569; border:1px solid #E2E8F0; padding:1px 5px; border-radius:4px; font-weight:600;">${codigo}</span>` : ''}
+                            </div>
                         </div>
                     </td>
-                    <td style="width:14%;">
+                    <td style="width:14%; text-align:right;" class="cell-financial">
                         <span class="mobile-label">CUSTO:</span>
-                        <span style="color:var(--text-secondary); font-size:0.82rem; font-weight:600;">R$ ${compra}</span>
+                        <span style="color:#64748B; font-size:0.84rem; font-weight:500; font-variant-numeric:tabular-nums;">R$ ${compra}</span>
                     </td>
-                    <td style="width:14%;">
+                    <td style="width:14%; text-align:right;" class="cell-financial">
                         <span class="mobile-label">VENDA:</span>
-                        <span style="color:var(--text-primary); font-size:0.85rem; font-weight:700;">R$ ${venda}</span>
+                        <span style="color:#0F172A; font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums;">R$ ${venda}</span>
                     </td>
-                    <td style="width:16%;">
+                    <td style="width:16%; text-align:center;">
                         <span class="mobile-label">ESTOQUE:</span>
                         ${stockPillHtml}
                     </td>
-                    <td style="width:16%;">
-                        <div class="actions-wrapper">
+                    <td style="width:18%; text-align:right;">
+                        <div class="actions-wrapper" style="justify-content:flex-end;">
                             <button class="action-btn btn-action-in" onclick="Estoque.abrirEntrada(${p.id})" title="Entrada no Estoque (+)">
                                 <i class="ph ph-plus"></i>
                             </button>
