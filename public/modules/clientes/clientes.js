@@ -240,6 +240,9 @@ const Clientes = {
             this.renderizarTabela(res.clientes || [], res.paginacao);
             this.atualizarControlesPaginacao(res.paginacao);
 
+            const badgeTotal = document.getElementById('badge-total-clientes');
+            if (badgeTotal) badgeTotal.innerText = res.paginacao.total.toLocaleString('pt-BR');
+
         } catch (err) {
             console.error('[Clientes] Erro ao carregar lista:', err);
             tbody.innerHTML = `

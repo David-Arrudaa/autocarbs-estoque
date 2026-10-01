@@ -1,10 +1,10 @@
 /* =========================================================
    AUTOCAR BS - ERP OFICINA
    Módulo: Gestão de Clientes (clientes.css)
-   Layout em Páginas Reais (Subviews)
-   - Lista Enxuta
+   Design System & Ergonomia UI/UX:
+   - Tabela Enxuta de Alta Performance
    - Ficha do Cliente em Tela Cheia (Abas: Dados / OS)
-   - Cadastro e Edição em Tela Cheia
+   - Formulário de Cadastro / Edição Amplo
    ========================================================= */
 
 .clientes-module-container {
@@ -19,15 +19,23 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    animation: fadeInSubview 0.2s ease-out;
+    animation: fadeInClientesSubview 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeInSubview {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes fadeInClientesSubview {
+    from { 
+        opacity: 0; 
+        transform: translateY(6px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
-/* 1. BARRA SUPERIOR DA LISTA */
+/* =========================================================
+   1. BARRA SUPERIOR DA LISTA (TOOLBAR)
+   ========================================================= */
 .clientes-toolbar-card {
     background: var(--bg-card, #1e293b);
     border: 1px solid var(--border, #334155);
@@ -38,31 +46,77 @@
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .clientes-toolbar-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 }
 
-.clientes-header-title {
+/* Botão +Cliente Verde Padrão Oficina */
+.btn-novo-cliente-legacy {
+    background: #16a34a !important;
+    border: 1px solid #15803d !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    padding: 9px 18px !important;
+    border-radius: 6px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    box-shadow: 0 2px 5px rgba(22, 163, 74, 0.25);
+    text-transform: none !important;
+}
+
+.btn-novo-cliente-legacy:hover {
+    background: #15803d !important;
+    border-color: #166534 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
+}
+
+.btn-novo-cliente-legacy:active {
+    transform: translateY(1px);
+}
+
+/* Card Badge de Título com Contador */
+.clientes-badge-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.05rem;
+    padding: 8px 14px;
+    background: var(--bg-body, #0f172a);
+    border: 1px solid var(--border, #334155);
+    border-radius: 6px;
+    font-size: 0.92rem;
     font-weight: 700;
     color: var(--text-primary, #f8fafc);
 }
 
-.clientes-header-title i {
+.clientes-badge-header i {
     color: var(--primary, #2563eb);
-    font-size: 1.3rem;
+    font-size: 1.15rem;
 }
 
+.clientes-counter-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--primary, #2563eb);
+    font-size: 0.78rem;
+    font-weight: 800;
+    font-family: monospace;
+}
+
+/* Campo de Pesquisa */
 .clientes-search-box {
     flex: 1;
-    min-width: 280px;
+    min-width: 260px;
     position: relative;
     display: flex;
     align-items: center;
@@ -78,23 +132,24 @@
 
 .clientes-search-box input {
     width: 100%;
-    padding: 10px 40px 10px 40px;
+    padding: 10px 38px 10px 40px;
     background: var(--bg-body, #0f172a);
     border: 1px solid var(--border, #334155);
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--text-primary, #f8fafc);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .clientes-search-box input:focus {
     border-color: var(--primary, #2563eb);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .btn-clear-search {
     position: absolute;
-    right: 12px;
+    right: 10px;
     background: transparent;
     border: none;
     color: var(--text-secondary, #94a3b8);
@@ -103,6 +158,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.btn-clear-search:hover {
+    color: var(--text-primary, #f8fafc);
 }
 
 .clientes-toolbar-actions {
@@ -111,13 +172,15 @@
     gap: 8px;
 }
 
-/* 2. TABELA PRINCIPAL */
+/* =========================================================
+   2. TABELA PRINCIPAL DE CLIENTES
+   ========================================================= */
 .clientes-table-card {
     background: var(--bg-card, #1e293b);
     border: 1px solid var(--border, #334155);
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .table-responsive {
@@ -128,7 +191,7 @@
 .erp-modern-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     text-align: left;
 }
 
@@ -150,8 +213,12 @@
     vertical-align: middle;
 }
 
+.erp-modern-table tbody tr {
+    transition: background-color 0.12s ease;
+}
+
 .erp-modern-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 /* Botões de Ação na Tabela (Olho, Editar, Excluir) */
@@ -162,19 +229,20 @@
     width: 34px;
     height: 32px;
     border-radius: 6px;
-    border: 1px solid var(--border, #334155);
+    border: 1px solid var(--border, #cbd5e1);
     background: var(--bg-body, #0f172a);
     color: var(--text-primary, #f8fafc);
     cursor: pointer;
-    font-size: 1.05rem;
-    transition: all 0.15s;
-    margin-right: 4px;
+    font-size: 1.15rem;
+    transition: all 0.15s ease;
+    margin-right: 5px;
 }
 
 .btn-action-view:hover {
     border-color: var(--primary, #2563eb);
     color: var(--primary, #2563eb);
     background: rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
 }
 
 .btn-action-edit {
@@ -188,14 +256,15 @@
     background: #0d9488;
     color: #ffffff;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.15s;
-    margin-right: 4px;
+    font-size: 1.05rem;
+    transition: all 0.15s ease;
+    margin-right: 5px;
 }
 
 .btn-action-edit:hover {
     background: #0f766e;
     border-color: #0f766e;
+    transform: translateY(-1px);
 }
 
 .btn-action-delete {
@@ -209,16 +278,19 @@
     background: #ef4444;
     color: #ffffff;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.15s;
+    font-size: 1.05rem;
+    transition: all 0.15s ease;
 }
 
 .btn-action-delete:hover {
     background: #dc2626;
     border-color: #dc2626;
+    transform: translateY(-1px);
 }
 
-/* 3. PAGINAÇÃO */
+/* =========================================================
+   3. BARRA DE PAGINAÇÃO
+   ========================================================= */
 .clientes-pagination-bar {
     padding: 12px 18px;
     display: flex;
@@ -254,18 +326,19 @@
     background: var(--bg-card, #1e293b);
     border: 1px solid var(--border, #334155);
     border-radius: 10px;
-    padding: 10px 18px;
+    padding: 12px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .ficha-topbar-left {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 18px;
     flex-wrap: wrap;
 }
 
@@ -275,46 +348,50 @@
     gap: 6px;
     font-weight: 600;
     padding: 8px 14px;
+    cursor: pointer;
 }
 
 .ficha-tabs-nav {
     display: flex;
     gap: 6px;
+    background: var(--bg-body, #0f172a);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border, #334155);
 }
 
 .ficha-tab-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 18px;
-    background: var(--bg-body, #0f172a);
-    border: 1px solid var(--border, #334155);
-    border-radius: 8px;
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
     color: var(--text-secondary, #94a3b8);
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.15s ease;
     font-family: inherit;
 }
 
 .ficha-tab-btn:hover {
     color: var(--text-primary, #f8fafc);
-    border-color: var(--primary, #2563eb);
 }
 
 .ficha-tab-btn.active {
-    color: #ffffff;
-    background: var(--primary, #2563eb);
-    border-color: var(--primary, #2563eb);
+    color: var(--primary, #2563eb);
+    background: var(--bg-card, #1e293b);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .ficha-badge-count {
     display: inline-block;
     padding: 1px 7px;
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.25);
-    color: #ffffff;
+    background: rgba(37, 99, 235, 0.15);
+    color: var(--primary, #2563eb);
     font-size: 0.75rem;
     font-weight: 700;
 }
@@ -325,6 +402,20 @@
     gap: 10px;
 }
 
+#ficha-btn-editar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    border-color: #0d9488;
+    color: #0d9488;
+}
+
+#ficha-btn-editar:hover {
+    background: #0d9488;
+    color: #ffffff;
+}
+
 /* Seções em cartões dentro da aba Dados do Cliente */
 .ficha-section-card {
     background: var(--bg-card, #1e293b);
@@ -332,13 +423,14 @@
     border-radius: 10px;
     margin-bottom: 16px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .ficha-section-header {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.02);
     border-bottom: 1px solid var(--border, #334155);
-    padding: 12px 18px;
-    font-size: 0.88rem;
+    padding: 11px 18px;
+    font-size: 0.85rem;
     font-weight: 700;
     color: var(--text-secondary, #94a3b8);
     display: flex;
@@ -370,8 +462,8 @@
 }
 
 .ficha-table-label {
-    width: 200px;
-    font-size: 0.88rem;
+    width: 220px;
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--text-secondary, #94a3b8);
     flex-shrink: 0;
@@ -390,13 +482,14 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 3px 10px;
+    padding: 4px 10px;
     border-radius: 4px;
     background: #22c55e;
     color: #ffffff !important;
     text-decoration: none;
     font-size: 0.8rem;
     font-weight: 700;
+    transition: background-color 0.15s ease;
 }
 
 .btn-whatsapp-inline:hover {
@@ -407,7 +500,7 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 3px 10px;
+    padding: 4px 10px;
     border-radius: 4px;
     background: rgba(37, 99, 235, 0.12);
     color: var(--primary, #2563eb) !important;
@@ -415,6 +508,11 @@
     text-decoration: none;
     font-size: 0.8rem;
     font-weight: 600;
+    transition: background-color 0.15s ease;
+}
+
+.btn-maps-inline:hover {
+    background: rgba(37, 99, 235, 0.22);
 }
 
 /* Tabela de OS na Aba 2 */
@@ -427,6 +525,7 @@
 .os-desc-carro {
     font-weight: 700;
     color: var(--text-primary, #f8fafc);
+    font-size: 0.92rem;
 }
 
 .os-desc-placa {
@@ -451,6 +550,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .cadastro-page-topbar h3 {
@@ -471,7 +571,7 @@
     border: 1px solid var(--border, #334155);
     border-radius: 10px;
     padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .form-section-title {
