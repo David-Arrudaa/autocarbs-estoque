@@ -28,18 +28,18 @@
             <div class="cot-vehicle-inputs">
                 <div class="cot-input-group cot-group-model">
                     <i class="ph ph-car cot-input-icon"></i>
-                    <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" oninput="Cotacao.saveDraft()">
+                    <input type="text" id="cot-carModel" placeholder="MARCA / MODELO / ANO / MOTOR (EX: HYUNDAI VERA CRUZ 3.8 2010)" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="Cotacao.saveDraft()">
                 </div>
                 <div class="cot-input-group cot-group-plate">
                     <i class="ph ph-identification-card cot-input-icon"></i>
-                    <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
+                    <input type="text" id="cot-carPlate" placeholder="PLACA" maxlength="7" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="Cotacao.formatPlate(this); Cotacao.saveDraft();">
                 </div>
             </div>
 
             <div class="cot-vendor-box">
                 <div class="cot-add-vendor-inline">
                     <i class="ph ph-user-plus" style="margin-left:8px; color:var(--text-secondary);"></i>
-                    <input type="text" id="cot-newVendorInput" placeholder="Add Vendedor" onkeydown="if(event.key==='Enter') Cotacao.addVendor()">
+                    <input type="text" id="cot-newVendorInput" placeholder="Add Vendedor" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter') Cotacao.addVendor()">
                     <button type="button" class="btn-vendor-add" onclick="Cotacao.addVendor()" title="Adicionar Coluna de Vendedor">+</button>
                 </div>
                 <div id="cot-vendorTags" class="cot-vendor-tags"></div>

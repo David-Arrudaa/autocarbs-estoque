@@ -401,7 +401,7 @@ const Cotacao = {
                 <td class="td-stock-section td-check ${stockWinClass}" style="text-align:center">
                     <input type="radio" name="win_${p.id}" class="radio-win radio-stock" ${isStock ? 'checked' : ''} onclick="Cotacao.setWinner(${p.id}, 'ESTOQUE')" title="Marcar como item do estoque">
                 </td>
-                <td class="td-stock-section ${stockWinClass}"><input type="text" class="inp-brand" placeholder="Marca" value="${stockData.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, 'ESTOQUE', this.value)"></td>
+                <td class="td-stock-section ${stockWinClass}"><input type="text" class="inp-brand" placeholder="Marca" autocomplete="off" value="${stockData.marca || ''}" oninput="Cotacao.updateBrand(${p.id}, 'ESTOQUE', this.value)"></td>
                 <td class="td-stock-section ${stockWinClass}"><input type="number" class="inp-sm bg-custo" placeholder="0" value="${stockData.custo !== null && stockData.custo !== undefined ? stockData.custo : ''}" oninput="Cotacao.updatePrice(${p.id}, 'ESTOQUE', this)"></td>
                 <td class="td-stock-section ${stockWinClass}">
                     <input class="inp-sale inp-stock-venda ${isStock ? 'inp-winner-venda' : ''}" 
@@ -427,7 +427,7 @@ const Cotacao = {
                             <input type="radio" name="win_${p.id}" class="radio-win" ${isWinner ? 'checked' : ''} data-part-id="${p.id}" data-vendor="${vAttr}" onclick="Cotacao.setWinner(${p.id}, this.dataset.vendor)" title="Marcar ${vEsc} como vencedor">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
-                            <input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updateBrand(${p.id}, this.dataset.vendor, this.value)">
+                            <input type="text" class="inp-brand" placeholder="Marca" autocomplete="off" value="${pr.marca || ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updateBrand(${p.id}, this.dataset.vendor, this.value)">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
                             <input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updatePrice(${p.id}, this.dataset.vendor, this)">
@@ -463,7 +463,7 @@ const Cotacao = {
                                     <i class="ph ${isStock ? 'ph-package' : 'ph-paper-plane-tilt'}"></i>
                                     <span>${isStock ? 'Estoque' : 'Cotar'}</span>
                                 </button>
-                                <input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." oninput="Cotacao.updatePartName(${p.id}, this.value)" onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
+                                <input value="${p.nome}" class="inp-name" placeholder="DIGITE O NOME DA PEÇA..." autocomplete="off" spellcheck="false" oninput="Cotacao.updatePartName(${p.id}, this.value)" onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
                             </div>
                         </td>
                         ${stockCols}
