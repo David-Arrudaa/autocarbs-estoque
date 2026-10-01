@@ -32,15 +32,16 @@
     </style>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=135.0">
-    <link rel="stylesheet" href="css/style.css?v=135.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=135.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=135.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=135.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=135.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=135.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=135.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=135.0">
+    <link rel="stylesheet" href="css/variables.css?v=139.0">
+    <link rel="stylesheet" href="css/style.css?v=139.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=139.0">
+    <link rel="stylesheet" href="modules/clientes/clientes.css?v=139.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=139.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=139.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=139.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=139.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=139.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=139.0">
 </head>
 <body>
 
@@ -422,57 +423,9 @@
                     </div>
                 </div>
 
-                <!-- 2. ABA CLIENTES (Módulo Modular / Em Estruturação) -->
-                <div class="tab-pane hidden" id="tab-pane-clientes">
-                    <div class="module-placeholder-wrapper">
-                        <div class="module-placeholder-card">
-                            <div class="placeholder-hero">
-                                <div class="placeholder-hero-icon">
-                                    <i class="ph ph-users"></i>
-                                </div>
-                                <div class="placeholder-hero-content">
-                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> CRM Automotivo</span>
-                                    <h2>Gestão de Clientes & Veículos</h2>
-                                    <p>Cadastro centralizado de clientes, proprietários de frotas e prontuário veicular completo com vínculo direto por placa e chassi.</p>
-                                </div>
-                            </div>
-                            <div class="placeholder-roadmap-box">
-                                <div class="placeholder-roadmap-title">
-                                    <i class="ph ph-compass"></i> Recursos em Estruturação
-                                </div>
-                                <div class="placeholder-grid">
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-address-book"></i>
-                                            <span>Cadastro Completo</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Pessoas Físicas (CPF) e Empresas (CNPJ), dados para nota fiscal e múltiplos contatos.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-garage"></i>
-                                            <span>Garagem de Veículos</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Associação de um ou mais veículos por cliente com dados de modelo, ano, motor e placa.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-clock-counter-clockwise"></i>
-                                            <span>Histórico por Placa</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Prontuário completo de todas as passagens, peças aplicadas e manutenções anteriores.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-whatsapp-logo"></i>
-                                            <span>Lembretes de Revisão</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Disparo programado de mensagens pós-serviço (óleo, pastilhas, correia) para fidelização.</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 2. ABA CLIENTES (Módulo Modular) -->
+                <div class="tab-pane hidden" id="tab-pane-clientes" data-module="clientes">
+                    <!-- Injetado dinamicamente via ViewLoader (modules/clientes/clientes.view.html) -->
                 </div>
 
                 <!-- 3. MÓDULO MODULAR: ESTOQUE (Geral & Reposição) -->
@@ -612,16 +565,17 @@
     <div id="relatorio-documento-impressao" class="print-document-only"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=138.0"></script>
-    <script src="js/ui.js?v=138.0"></script>
-    <script src="modals/dialog.js?v=138.0"></script>
-    <script src="js/sidebar.js?v=138.0"></script>
-    <script src="js/api.js?v=138.0"></script>
-    <script src="modules/auth/auth.js?v=138.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=138.0"></script>
-    <script src="modules/equipe/equipe.js?v=138.0"></script>
-    <script src="modules/scanner/scanner.js?v=138.0"></script>
-    <script src="modules/estoque/estoque.js?v=138.0"></script>
-    <script src="js/app.js?v=138.0"></script>
+    <script src="js/core/view-loader.js?v=139.0"></script>
+    <script src="js/ui.js?v=139.0"></script>
+    <script src="modals/dialog.js?v=139.0"></script>
+    <script src="js/sidebar.js?v=139.0"></script>
+    <script src="js/api.js?v=139.0"></script>
+    <script src="modules/auth/auth.js?v=139.0"></script>
+    <script src="modules/clientes/clientes.js?v=139.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=139.0"></script>
+    <script src="modules/equipe/equipe.js?v=139.0"></script>
+    <script src="modules/scanner/scanner.js?v=139.0"></script>
+    <script src="modules/estoque/estoque.js?v=139.0"></script>
+    <script src="js/app.js?v=139.0"></script>
 </body>
 </html>

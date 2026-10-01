@@ -1,0 +1,471 @@
+<!-- =========================================================
+     AUTOCAR BS - ERP OFICINA
+     Módulo: Gestão de Clientes & Veículos (clientes.view.html)
+     ========================================================= -->
+
+<div class="clientes-module-container">
+
+    <!-- 1. CARDS DE RESUMO E INDICADORES (KPIs) -->
+    <div class="kpi-grid-clientes">
+        <div class="kpi-card-cliente">
+            <div class="kpi-icon-cliente bg-blue-subtle">
+                <i class="ph ph-users"></i>
+            </div>
+            <div class="kpi-info-cliente">
+                <span class="kpi-label-cliente">CLIENTES CADASTRADOS</span>
+                <span class="kpi-value-cliente" id="kpi-total-clientes">...</span>
+                <span class="kpi-subtext-cliente"><i class="ph ph-shield-check"></i> Base segura e sincronizada</span>
+            </div>
+        </div>
+
+        <div class="kpi-card-cliente">
+            <div class="kpi-icon-cliente bg-purple-subtle">
+                <i class="ph ph-car-profile"></i>
+            </div>
+            <div class="kpi-info-cliente">
+                <span class="kpi-label-cliente">VEÍCULOS NA FROTA</span>
+                <span class="kpi-value-cliente" id="kpi-total-veiculos">...</span>
+                <span class="kpi-subtext-cliente"><i class="ph ph-identification-badge"></i> Vínculo direto por placa</span>
+            </div>
+        </div>
+
+        <div class="kpi-card-cliente">
+            <div class="kpi-icon-cliente bg-green-subtle">
+                <i class="ph ph-clipboard-text"></i>
+            </div>
+            <div class="kpi-info-cliente">
+                <span class="kpi-label-cliente">CHECKLISTS / OS SALVAS</span>
+                <span class="kpi-value-cliente" id="kpi-total-checklists">...</span>
+                <span class="kpi-subtext-cliente"><i class="ph ph-clock-counter-clockwise"></i> Histórico automotivo</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. BARRA DE FERRAMENTAS & PESQUISA RÁPIDA -->
+    <div class="clientes-toolbar-card">
+        <div class="clientes-search-box">
+            <i class="ph ph-magnifying-glass"></i>
+            <input 
+                type="text" 
+                id="input-busca-clientes" 
+                placeholder="Buscar por Nome do Cliente, CPF, Telefone ou Placa do Veículo..." 
+                autocomplete="off"
+            >
+            <button type="button" class="btn-clear-search" id="btn-limpar-busca-clientes" title="Limpar pesquisa" style="display:none;">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <div class="clientes-toolbar-actions">
+            <button type="button" class="btn btn-secondary" id="btn-recarregar-clientes" title="Recarregar dados">
+                <i class="ph ph-arrows-clockwise" id="icon-reload-clientes"></i>
+                <span>Atualizar</span>
+            </button>
+
+            <button type="button" class="btn btn-primary" id="btn-novo-cliente">
+                <i class="ph ph-user-plus"></i>
+                <span>Novo Cliente</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. TABELA DE CLIENTES -->
+    <div class="clientes-table-card">
+        <div class="table-responsive">
+            <table class="erp-modern-table" id="tabela-clientes">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Cód.</th>
+                        <th>Nome do Cliente</th>
+                        <th style="width: 150px;">CPF / CNPJ</th>
+                        <th style="width: 180px;">Contato / WhatsApp</th>
+                        <th>Veículo(s) Vinculado(s)</th>
+                        <th style="width: 160px;">Cidade / UF</th>
+                        <th style="width: 140px; text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-clientes">
+                    <!-- Linhas injetadas dinamicamente via JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 4. BARRA DE PAGINAÇÃO -->
+        <div class="clientes-pagination-bar">
+            <div class="pagination-info" id="info-paginacao-clientes">
+                Carregando registros...
+            </div>
+            <div class="pagination-controls">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-prev-clientes" disabled>
+                    <i class="ph ph-caret-left"></i> Anterior
+                </button>
+                <span class="pagination-current" id="texto-pagina-clientes">Página 1 de 1</span>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-next-clientes" disabled>
+                    Próxima <i class="ph ph-caret-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- =========================================================
+     MODAL 1: CADASTRO / EDIÇÃO DE CLIENTE & VEÍCULOS
+     ========================================================= -->
+<div id="modal-cadastro-cliente" class="modal-overlay hidden" style="z-index: 2500;">
+    <div class="modal-form modal-cliente-dialog">
+        <div class="modal-header">
+            <h3 id="modal-cliente-titulo">
+                <i class="ph ph-user-plus"></i>
+                <span>Novo Cliente</span>
+            </h3>
+            <button type="button" class="btn-close-modal" id="btn-fechar-modal-cliente" title="Fechar Janela">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <form id="form-cliente-erp" autocomplete="off">
+            <input type="hidden" id="cad_cliente_id" value="">
+
+            <!-- Seção 1: Dados Pessoais -->
+            <div class="form-section-title">
+                <i class="ph ph-identification-card"></i>
+                <span>Dados Pessoais & Contato</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-control full-width">
+                    <label for="cad_nome">Nome Completo do Cliente *</label>
+                    <input 
+                        type="text" 
+                        id="cad_nome" 
+                        name="nome" 
+                        placeholder="Ex: JOÃO DA SILVA SANTOS" 
+                        required 
+                        autocomplete="off"
+                        style="text-transform: uppercase;"
+                    >
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_cpf">CPF / CNPJ</label>
+                    <input 
+                        type="text" 
+                        id="cad_cpf" 
+                        name="cpf" 
+                        placeholder="000.000.000-00" 
+                        maxlength="18"
+                        data-mascara="cpf_cnpj"
+                    >
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_telefone">Telefone / WhatsApp *</label>
+                    <input 
+                        type="text" 
+                        id="cad_telefone" 
+                        name="telefone" 
+                        placeholder="(15) 99999-9999" 
+                        required 
+                        maxlength="15"
+                        data-mascara="telefone"
+                    >
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_cep">CEP</label>
+                    <div class="input-icon-group">
+                        <input 
+                            type="text" 
+                            id="cad_cep" 
+                            name="cep" 
+                            placeholder="00000-000" 
+                            maxlength="9"
+                            data-mascara="cep"
+                        >
+                        <i class="ph ph-magnifying-glass" id="icon-cep-cliente-loading"></i>
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_uf">UF</label>
+                    <input 
+                        type="text" 
+                        id="cad_uf" 
+                        name="uf" 
+                        placeholder="SP" 
+                        maxlength="2"
+                        style="text-transform: uppercase;"
+                    >
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_cidade">Cidade</label>
+                    <input 
+                        type="text" 
+                        id="cad_cidade" 
+                        name="cidade" 
+                        placeholder="Ex: Tatuí"
+                        style="text-transform: uppercase;"
+                    >
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_bairro">Bairro</label>
+                    <input 
+                        type="text" 
+                        id="cad_bairro" 
+                        name="bairro" 
+                        placeholder="Ex: Centro"
+                        style="text-transform: uppercase;"
+                    >
+                </div>
+
+                <div class="form-control" style="grid-column: span 1;">
+                    <label for="cad_endereco">Endereço (Rua / Avenida)</label>
+                    <input 
+                        type="text" 
+                        id="cad_endereco" 
+                        name="endereco" 
+                        placeholder="Ex: Rua São Bento"
+                        style="text-transform: uppercase;"
+                    >
+                </div>
+
+                <div class="form-control">
+                    <label for="cad_numero">Número</label>
+                    <input 
+                        type="text" 
+                        id="cad_numero" 
+                        name="numero" 
+                        placeholder="Ex: 120"
+                    >
+                </div>
+            </div>
+
+            <!-- Seção 2: Garagem de Veículos Vinculados -->
+            <div class="form-section-title" style="margin-top: 25px;">
+                <i class="ph ph-garage"></i>
+                <span>Veículos do Cliente (Garagem)</span>
+            </div>
+
+            <div class="veiculo-input-card">
+                <div class="form-grid">
+                    <div class="form-control">
+                        <label for="temp_placa">Placa do Veículo *</label>
+                        <div class="input-icon-group">
+                            <input 
+                                type="text" 
+                                id="temp_placa" 
+                                placeholder="ABC-1234 ou ABC1D23" 
+                                maxlength="8"
+                                data-mascara="placa"
+                                style="text-transform: uppercase; font-weight: 700; letter-spacing: 1px;"
+                            >
+                            <i class="ph ph-magnifying-glass" id="icon-placa-cliente-loading" title="Busca automática de placa"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-control">
+                        <label for="temp_marca">Marca</label>
+                        <input type="text" id="temp_marca" placeholder="Ex: VW, FIAT, FORD" style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-control">
+                        <label for="temp_modelo">Modelo / Versão</label>
+                        <input type="text" id="temp_modelo" placeholder="Ex: GOL 1.6 MSI" style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-control">
+                        <label for="temp_ano">Ano / Modelo</label>
+                        <input type="text" id="temp_ano" placeholder="Ex: 2018/2019" maxlength="9" data-mascara="ano_modelo">
+                    </div>
+
+                    <div class="form-control">
+                        <label for="temp_cor">Cor</label>
+                        <input type="text" id="temp_cor" placeholder="Ex: PRATA" style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-control">
+                        <label for="temp_combustivel">Combustível</label>
+                        <select id="temp_combustivel">
+                            <option value="">Selecione...</option>
+                            <option value="FLEX">FLEX</option>
+                            <option value="GASOLINA">GASOLINA</option>
+                            <option value="ALCOOL">ÁLCOOL</option>
+                            <option value="DIESEL">DIESEL</option>
+                            <option value="HIBRIDO">HÍBRIDO / ELÉTRICO</option>
+                        </select>
+                    </div>
+
+                    <div class="form-control full-width">
+                        <label for="temp_chassi">Nº Chassi</label>
+                        <input type="text" id="temp_chassi" placeholder="Chassi (17 caracteres)" maxlength="17" data-mascara="chassi" style="text-transform: uppercase;">
+                    </div>
+
+                    <div class="form-control full-width" style="margin-top: 5px;">
+                        <button type="button" class="btn btn-secondary" id="btn-adicionar-veiculo-lista" style="width: 100%; justify-content: center;">
+                            <i class="ph ph-plus-circle"></i> Adicionar Veículo à Garagem
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela dos Veículos adicionados temporariamente no formulário -->
+            <div class="table-container" style="margin-top: 15px;">
+                <table class="erp-modern-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 120px;">Placa</th>
+                            <th>Marca / Modelo</th>
+                            <th style="width: 110px;">Ano</th>
+                            <th style="width: 100px;">Combustível</th>
+                            <th style="width: 80px; text-align: right;">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-veiculos-cadastro">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 15px;">
+                                Nenhum veículo adicionado ainda. Preencha acima e clique em Adicionar.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Botões de Ação do Formulário -->
+            <div class="actions" style="margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" id="btn-cancelar-cliente">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" id="btn-salvar-cliente-submit">
+                    <i class="ph ph-floppy-disk"></i>
+                    <span id="texto-btn-salvar-cliente">Salvar Cliente</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL 2: FICHA 360° DO CLIENTE (VISUALIZAR)
+     ========================================================= -->
+<div id="modal-ficha-cliente" class="modal-overlay hidden" style="z-index: 2600;">
+    <div class="modal-form modal-ficha-dialog">
+        <div class="modal-header">
+            <div class="ficha-header-profile">
+                <div class="ficha-avatar" id="ficha-cliente-avatar">AB</div>
+                <div>
+                    <h3 id="ficha-cliente-nome" style="margin: 0; font-size: 1.25rem;">NOME DO CLIENTE</h3>
+                    <div class="ficha-subheader">
+                        <span class="badge" id="ficha-cliente-id">#000</span>
+                        <span id="ficha-cliente-desde" style="color: var(--text-secondary); font-size: 0.85rem;">Cliente desde ...</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn-close-modal" id="btn-fechar-ficha-cliente" title="Fechar Ficha">
+                <i class="ph ph-x"></i>
+            </button>
+        </div>
+
+        <div class="ficha-body">
+            <!-- Dados de Contato e Endereço -->
+            <div class="ficha-info-grid">
+                <div class="ficha-info-item">
+                    <span class="ficha-info-label"><i class="ph ph-identification-card"></i> CPF / CNPJ</span>
+                    <strong class="ficha-info-value" id="ficha-cpf">-</strong>
+                </div>
+
+                <div class="ficha-info-item">
+                    <span class="ficha-info-label"><i class="ph ph-phone"></i> Telefone / WhatsApp</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <strong class="ficha-info-value" id="ficha-telefone">-</strong>
+                        <a href="#" target="_blank" id="ficha-btn-whatsapp" class="btn-whatsapp-mini" title="Conversar no WhatsApp">
+                            <i class="ph-bold ph-whatsapp-logo"></i> WhatsApp
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ficha-info-item full-width">
+                    <span class="ficha-info-label"><i class="ph ph-map-pin"></i> Endereço Completo</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong class="ficha-info-value" id="ficha-endereco">-</strong>
+                        <a href="#" target="_blank" id="ficha-btn-maps" class="btn-link-maps" title="Abrir no Google Maps">
+                            <i class="ph ph-arrow-square-out"></i> Ver no Mapa
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Garagem de Veículos do Cliente -->
+            <div class="form-section-title" style="margin-top: 25px; margin-bottom: 12px;">
+                <i class="ph ph-car"></i>
+                <span>Veículos Cadastrados (<span id="ficha-veiculos-count">0</span>)</span>
+            </div>
+
+            <div class="ficha-veiculos-grid" id="ficha-veiculos-container">
+                <!-- Injetado dinamicamente -->
+            </div>
+
+            <!-- Histórico de Ordens de Serviço & Checklists -->
+            <div class="form-section-title" style="margin-top: 25px; margin-bottom: 12px;">
+                <i class="ph ph-clock-counter-clockwise"></i>
+                <span>Histórico de Checklists & Passagens na Oficina (<span id="ficha-checklists-count">0</span>)</span>
+            </div>
+
+            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                <table class="erp-modern-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Placa</th>
+                            <th>Mecânico</th>
+                            <th>Serviço Relatado</th>
+                            <th style="text-align: right;">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ficha-checklists-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 15px;">
+                                Nenhum checklist registrado para este cliente.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Rodapé de Ações Rápidas da Ficha -->
+            <div style="margin-top: 25px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 15px;">
+                <button type="button" class="btn btn-secondary" id="ficha-btn-editar">
+                    <i class="ph ph-pencil-simple"></i> Editar Cadastro
+                </button>
+                <button type="button" class="btn btn-secondary" id="ficha-btn-fechar">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL 3: CONFIRMAÇÃO DE EXCLUSÃO
+     ========================================================= -->
+<div id="modal-confirmacao-excluir-cliente" class="modal-overlay hidden" style="z-index: 3000;">
+    <div class="modal-form" style="max-width: 440px; text-align: center; padding: 30px 20px;">
+        <i class="ph ph-warning-circle" style="font-size: 3.5rem; color: #ef4444; margin-bottom: 15px; display: inline-block;"></i>
+        <h3 style="margin: 0 0 10px 0; color: var(--text-primary); font-size: 1.35rem;">
+            Excluir Cliente?
+        </h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem; line-height: 1.5;" id="texto-confirmar-exclusao-cliente">
+            Tem certeza que deseja excluir este cliente permanentemente?
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <button type="button" class="btn btn-secondary" id="btn-cancelar-exclusao-cliente">
+                Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="btn-confirmar-exclusao-cliente">
+                <i class="ph ph-trash"></i> Sim, Excluir
+            </button>
+        </div>
+    </div>
+</div>

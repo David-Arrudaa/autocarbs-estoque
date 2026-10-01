@@ -145,6 +145,18 @@ const Estoque = {
 
             // Atualiza títulos e breadcrumbs dinâmicos da página na Topbar
             const titulos = {
+                dashboard: {
+                    modulo: 'VISÃO GERAL',
+                    submodulo: 'DASHBOARD',
+                    titulo: 'Dashboard Operacional',
+                    subtitulo: 'Indicadores operacionais, financeiros e fluxo de serviços da oficina'
+                },
+                clientes: {
+                    modulo: 'CADASTROS',
+                    submodulo: 'CLIENTES',
+                    titulo: 'Gestão de Clientes & Veículos',
+                    subtitulo: 'Cadastro unificado de clientes, frotas e histórico automotivo'
+                },
                 produtos: { 
                     modulo: 'ESTOQUE', 
                     submodulo: 'GERAL', 
@@ -206,7 +218,11 @@ const Estoque = {
         }
 
         // Renderiza conteúdo específico se necessário
-        if (aba === 'reposicao') {
+        if (aba === 'clientes') {
+            if (window.Clientes && typeof Clientes.iniciar === 'function') {
+                Clientes.iniciar();
+            }
+        } else if (aba === 'reposicao') {
             this.renderizarTabelaReposicao();
         } else if (aba === 'saidas') {
             this.calcularCurvaABC();
@@ -239,7 +255,7 @@ const Estoque = {
         let aba = 'produtos';
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
+            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
             if (hash && abasValidas.includes(hash)) {
                 aba = hash;
             } else {

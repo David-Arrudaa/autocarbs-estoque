@@ -452,7 +452,9 @@ const Sidebar = {
             if (paneAtivo.dataset.module && window.ViewLoader) {
                 await ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
             }
-            if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
+            if (aba === 'clientes' && window.Clientes && typeof Clientes.iniciar === 'function') {
+                Clientes.iniciar();
+            } else if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
                 Estoque.carregarRelatorio();
             } else if (aba === 'saidas' && window.Estoque && typeof Estoque.calcularCurvaABC === 'function') {
                 Estoque.calcularCurvaABC();

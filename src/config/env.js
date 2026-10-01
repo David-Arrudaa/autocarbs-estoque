@@ -22,13 +22,15 @@ if (missing.length > 0) {
 }
 
 const config = {
-    port:          parseInt(process.env.PORT) || 3000,
-    nodeEnv:       process.env.NODE_ENV || 'production',
-    supabaseUrl:   process.env.SUPABASE_URL,
-    supabaseKey:   process.env.SUPABASE_KEY,
-    pinAcesso:     process.env.PIN_ACESSO,
-    pinSupervisor: process.env.PIN_SUPERVISOR,
-    sessionSecret: process.env.SESSION_SECRET,
+    port:                 parseInt(process.env.PORT) || 3000,
+    nodeEnv:              process.env.NODE_ENV || 'production',
+    supabaseUrl:          process.env.SUPABASE_URL,
+    supabaseKey:          process.env.SUPABASE_KEY,
+    supabaseClientesUrl:  process.env.SUPABASE_CLIENTES_URL || process.env.SUPABASE_URL,
+    supabaseClientesKey:  process.env.SUPABASE_CLIENTES_KEY || process.env.SUPABASE_KEY,
+    pinAcesso:            process.env.PIN_ACESSO,
+    pinSupervisor:        process.env.PIN_SUPERVISOR,
+    sessionSecret:        process.env.SESSION_SECRET,
     // Lista de origens permitidas para CORS (separar múltiplas por vírgula no .env)
     allowedOrigins: (process.env.ALLOWED_ORIGINS || `http://localhost:${process.env.PORT || 3000}`).split(',').map(o => o.trim())
 };

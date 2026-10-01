@@ -226,6 +226,45 @@ const API = {
         return this.request(`/usuarios/${id}`, {
             method: 'DELETE'
         });
+    },
+
+    // ─── MÓDULO DE CLIENTES & VEÍCULOS ──────────────────────────────────
+    async listarClientes(params = {}) {
+        const qs = new URLSearchParams();
+        if (params.busca) qs.set('busca', params.busca);
+        if (params.pagina) qs.set('pagina', params.pagina);
+        if (params.limite) qs.set('limite', params.limite);
+        if (params.ordenarPor) qs.set('ordenarPor', params.ordenarPor);
+        if (params.ordem) qs.set('ordem', params.ordem);
+        const queryStr = qs.toString() ? `?${qs.toString()}` : '';
+        return this.request(`/clientes${queryStr}`, { method: 'GET' });
+    },
+
+    async obterCliente(id) {
+        return this.request(`/clientes/${id}`, { method: 'GET' });
+    },
+
+    async salvarCliente(dados) {
+        if (dados.id) {
+            return this.request(`/clientes/${dados.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(dados)
+            });
+        }
+        return this.request('/clientes', {
+            method: 'POST',
+            body: JSON.stringify(dados)
+        });
+    },
+
+    async excluirCliente(id) {
+        return this.request(`/clientes/${id}`, {
+            method: 'DELETE'
+        });
+    },
+
+    async metricasClientes() {
+        return this.request('/clientes/metricas', { method: 'GET' });
     }
 };
 

@@ -9,6 +9,7 @@ const errorHandler = require('./src/middlewares/errorHandler');
 
 // Rotas modulares do ERP
 const authRoutes     = require('./src/modules/auth/auth.routes');
+const clientesRoutes = require('./src/modules/clientes/clientes.routes');
 const estoqueRoutes  = require('./src/modules/estoque/estoque.routes');
 const cotacoesRoutes = require('./src/modules/cotacoes/cotacoes.routes');
 const usuariosRoutes = require('./src/modules/usuarios/usuarios.routes');
@@ -32,7 +33,7 @@ app.use(helmet({
             styleSrc:      ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
             fontSrc:       ["'self'", "https://unpkg.com", "https://cdn.jsdelivr.net", "data:"],
             imgSrc:        ["'self'", "data:", "blob:"],
-            connectSrc:    ["'self'", "https://*.supabase.co", "https://*.vercel.app"],
+            connectSrc:    ["'self'", "https://*.supabase.co", "https://*.vercel.app", "https://viacep.com.br", "https://corsproxy.io", "https://placas.app.br"],
             frameSrc:      ["'none'"],
             objectSrc:     ["'none'"]
         }
@@ -66,6 +67,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── 5. Módulos da API (Arquitetura ERP Modular) ──────────────────────────
 app.use('/api/auth',     authRoutes);
+app.use('/api/clientes', clientesRoutes);
 app.use('/api/estoque',  estoqueRoutes);
 app.use('/api/cotacoes', cotacoesRoutes);
 app.use('/api/usuarios', usuariosRoutes);
