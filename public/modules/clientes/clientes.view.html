@@ -1,54 +1,30 @@
 <!-- =========================================================
      AUTOCAR BS - ERP OFICINA
-     Módulo: Gestão de Clientes & Veículos (clientes.view.html)
+     Módulo: Gestão de Clientes (clientes.view.html)
+     Estrutura Limpa: Lista Enxuta + Ficha em Abas (Dados / OS)
      ========================================================= -->
 
 <div class="clientes-module-container">
 
-    <!-- 1. CARDS DE RESUMO E INDICADORES (KPIs) -->
-    <div class="kpi-grid-clientes">
-        <div class="kpi-card-cliente">
-            <div class="kpi-icon-cliente bg-blue-subtle">
-                <i class="ph ph-users"></i>
-            </div>
-            <div class="kpi-info-cliente">
-                <span class="kpi-label-cliente">CLIENTES CADASTRADOS</span>
-                <span class="kpi-value-cliente" id="kpi-total-clientes">...</span>
-                <span class="kpi-subtext-cliente"><i class="ph ph-shield-check"></i> Base segura e sincronizada</span>
-            </div>
-        </div>
-
-        <div class="kpi-card-cliente">
-            <div class="kpi-icon-cliente bg-purple-subtle">
-                <i class="ph ph-car-profile"></i>
-            </div>
-            <div class="kpi-info-cliente">
-                <span class="kpi-label-cliente">VEÍCULOS NA FROTA</span>
-                <span class="kpi-value-cliente" id="kpi-total-veiculos">...</span>
-                <span class="kpi-subtext-cliente"><i class="ph ph-identification-badge"></i> Vínculo direto por placa</span>
-            </div>
-        </div>
-
-        <div class="kpi-card-cliente">
-            <div class="kpi-icon-cliente bg-green-subtle">
-                <i class="ph ph-clipboard-text"></i>
-            </div>
-            <div class="kpi-info-cliente">
-                <span class="kpi-label-cliente">CHECKLISTS / OS SALVAS</span>
-                <span class="kpi-value-cliente" id="kpi-total-checklists">...</span>
-                <span class="kpi-subtext-cliente"><i class="ph ph-clock-counter-clockwise"></i> Histórico automotivo</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. BARRA DE FERRAMENTAS & PESQUISA RÁPIDA -->
+    <!-- 1. BARRA DE FERRAMENTAS & PESQUISA RÁPIDA -->
     <div class="clientes-toolbar-card">
+        <div class="clientes-toolbar-left">
+            <button type="button" class="btn btn-primary" id="btn-novo-cliente">
+                <i class="ph ph-plus-bold"></i>
+                <span>Novo Cliente</span>
+            </button>
+            <div class="clientes-header-title">
+                <i class="ph ph-user"></i>
+                <span>Clientes</span>
+            </div>
+        </div>
+
         <div class="clientes-search-box">
             <i class="ph ph-magnifying-glass"></i>
             <input 
                 type="text" 
                 id="input-busca-clientes" 
-                placeholder="Buscar por Nome do Cliente, CPF, Telefone ou Placa do Veículo..." 
+                placeholder="Buscar cliente por nome, CPF ou telefone..." 
                 autocomplete="off"
             >
             <button type="button" class="btn-clear-search" id="btn-limpar-busca-clientes" title="Limpar pesquisa" style="display:none;">
@@ -59,28 +35,21 @@
         <div class="clientes-toolbar-actions">
             <button type="button" class="btn btn-secondary" id="btn-recarregar-clientes" title="Recarregar dados">
                 <i class="ph ph-arrows-clockwise" id="icon-reload-clientes"></i>
-                <span>Atualizar</span>
-            </button>
-
-            <button type="button" class="btn btn-primary" id="btn-novo-cliente">
-                <i class="ph ph-user-plus"></i>
-                <span>Novo Cliente</span>
             </button>
         </div>
     </div>
 
-    <!-- 3. TABELA DE CLIENTES -->
+    <!-- 2. TABELA PRINCIPAL LIMPA (Conforme padrão operacional) -->
     <div class="clientes-table-card">
         <div class="table-responsive">
             <table class="erp-modern-table" id="tabela-clientes">
                 <thead>
                     <tr>
-                        <th style="width: 80px;">Cód.</th>
-                        <th>Nome do Cliente</th>
-                        <th style="width: 150px;">CPF / CNPJ</th>
-                        <th style="width: 180px;">Contato / WhatsApp</th>
-                        <th>Veículo(s) Vinculado(s)</th>
-                        <th style="width: 160px;">Cidade / UF</th>
+                        <th style="width: 100px;">Cód.</th>
+                        <th>Nome</th>
+                        <th style="width: 160px;">CPF / CNPJ</th>
+                        <th style="width: 170px;">Telefone</th>
+                        <th style="width: 220px;">E-mail</th>
                         <th style="width: 140px; text-align: right;">Ações</th>
                     </tr>
                 </thead>
@@ -90,7 +59,7 @@
             </table>
         </div>
 
-        <!-- 4. BARRA DE PAGINAÇÃO -->
+        <!-- 3. BARRA DE PAGINAÇÃO -->
         <div class="clientes-pagination-bar">
             <div class="pagination-info" id="info-paginacao-clientes">
                 Carregando registros...
@@ -110,7 +79,173 @@
 </div>
 
 <!-- =========================================================
-     MODAL 1: CADASTRO / EDIÇÃO DE CLIENTE & VEÍCULOS
+     MODAL FICHA 360° DO CLIENTE (ABRE AO CLICAR NO "OLHO" 👁️)
+     Contém 2 Abas: [Dados do Cliente] e [Ordens de serviço]
+     ========================================================= -->
+<div id="modal-ficha-cliente" class="modal-overlay hidden" style="z-index: 2600;">
+    <div class="modal-form modal-ficha-dialog">
+        
+        <!-- Header da Ficha com as 2 Abas e Botão Editar -->
+        <div class="ficha-nav-header">
+            <div class="ficha-tabs">
+                <button type="button" class="ficha-tab-btn active" id="tab-btn-ficha-dados" onclick="Clientes.alternarAbaFicha('dados')">
+                    <i class="ph ph-user"></i>
+                    <span>Dados do Cliente</span>
+                </button>
+                <button type="button" class="ficha-tab-btn" id="tab-btn-ficha-os" onclick="Clientes.alternarAbaFicha('os')">
+                    <i class="ph ph-clipboard-text"></i>
+                    <span>Ordens de serviço</span>
+                    <span class="ficha-badge-count" id="ficha-os-count-badge">0</span>
+                </button>
+            </div>
+
+            <div class="ficha-header-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="ficha-btn-editar" title="Editar dados deste cliente">
+                    <i class="ph ph-note-pencil"></i>
+                    <span>Editar</span>
+                </button>
+                <button type="button" class="btn-close-modal" id="btn-fechar-ficha-cliente" title="Fechar Janela">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO DA ABA 1: DADOS DO CLIENTE -->
+        <div class="ficha-tab-content active" id="ficha-conteudo-dados">
+            
+            <!-- 1.1 Dados Pessoais -->
+            <div class="ficha-section-card">
+                <div class="ficha-section-header">
+                    <i class="ph ph-user"></i>
+                    <span>Dados Pessoais</span>
+                </div>
+                <div class="ficha-table-vertical">
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">Nome</div>
+                        <div class="ficha-table-value" id="ficha-nome">-</div>
+                    </div>
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">Documento</div>
+                        <div class="ficha-table-value" id="ficha-documento">-</div>
+                    </div>
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">Data de Cadastro</div>
+                        <div class="ficha-table-value" id="ficha-data-cadastro">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.2 Contatos -->
+            <div class="ficha-section-card">
+                <div class="ficha-section-header">
+                    <i class="ph ph-phone"></i>
+                    <span>Contatos</span>
+                </div>
+                <div class="ficha-table-vertical">
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">Telefone</div>
+                        <div class="ficha-table-value">
+                            <span id="ficha-telefone">-</span>
+                            <a href="#" target="_blank" id="ficha-btn-whatsapp" class="btn-whatsapp-inline" style="display:none;" title="Conversar no WhatsApp">
+                                <i class="ph-bold ph-whatsapp-logo"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">E-mail</div>
+                        <div class="ficha-table-value" id="ficha-email">autocarbstatui@gmail.com</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.3 Endereço -->
+            <div class="ficha-section-card">
+                <div class="ficha-section-header">
+                    <i class="ph ph-map-pin"></i>
+                    <span>Endereço</span>
+                </div>
+                <div class="ficha-table-vertical">
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">Logradouro / Nº</div>
+                        <div class="ficha-table-value" id="ficha-endereco-completo">-</div>
+                    </div>
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">Bairro / Cidade / UF</div>
+                        <div class="ficha-table-value" id="ficha-bairro-cidade">-</div>
+                    </div>
+                    <div class="ficha-table-row">
+                        <div class="ficha-table-label">CEP</div>
+                        <div class="ficha-table-value">
+                            <span id="ficha-cep">-</span>
+                            <a href="#" target="_blank" id="ficha-btn-maps" class="btn-maps-inline" style="display:none;" title="Abrir no Google Maps">
+                                <i class="ph ph-arrow-square-out"></i> Ver no Mapa
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1.4 Veículos (Garagem) -->
+            <div class="ficha-section-card">
+                <div class="ficha-section-header">
+                    <i class="ph ph-car"></i>
+                    <span>Veículos do Cliente (<span id="ficha-veiculos-count">0</span>)</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="erp-modern-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 110px;">Placa</th>
+                                <th>Marca / Modelo</th>
+                                <th style="width: 100px;">Ano</th>
+                                <th style="width: 100px;">Cor</th>
+                                <th style="width: 110px;">Combustível</th>
+                                <th>Chassi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ficha-veiculos-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 15px;">
+                                    Nenhum veículo cadastrado.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CONTEÚDO DA ABA 2: ORDENS DE SERVIÇO (HISTÓRICO) -->
+        <div class="ficha-tab-content hidden" id="ficha-conteudo-os">
+            <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
+                <table class="erp-modern-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 90px;">Nº OS</th>
+                            <th style="width: 110px;">Data Inicial</th>
+                            <th style="width: 110px;">Dados Finais</th>
+                            <th>Descrição</th>
+                            <th>Defeito / Serviço Solicitado</th>
+                            <th style="width: 90px; text-align: right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ficha-os-tbody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 30px;">
+                                Nenhuma ordem de serviço registrada para este cliente.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- =========================================================
+     MODAL DE CADASTRO / EDIÇÃO DE CLIENTE & VEÍCULOS
      ========================================================= -->
 <div id="modal-cadastro-cliente" class="modal-overlay hidden" style="z-index: 2500;">
     <div class="modal-form modal-cliente-dialog">
@@ -140,7 +275,7 @@
                         type="text" 
                         id="cad_nome" 
                         name="nome" 
-                        placeholder="Ex: JOÃO DA SILVA SANTOS" 
+                        placeholder="Ex: RAQUEL SOARES DA SILVA E SILVA" 
                         required 
                         autocomplete="off"
                         style="text-transform: uppercase;"
@@ -268,17 +403,17 @@
 
                     <div class="form-control">
                         <label for="temp_marca">Marca</label>
-                        <input type="text" id="temp_marca" placeholder="Ex: VW, FIAT, FORD" style="text-transform: uppercase;">
+                        <input type="text" id="temp_marca" placeholder="Ex: RENAULT, VW, FIAT" style="text-transform: uppercase;">
                     </div>
 
                     <div class="form-control">
                         <label for="temp_modelo">Modelo / Versão</label>
-                        <input type="text" id="temp_modelo" placeholder="Ex: GOL 1.6 MSI" style="text-transform: uppercase;">
+                        <input type="text" id="temp_modelo" placeholder="Ex: CLIO 1.6 16V" style="text-transform: uppercase;">
                     </div>
 
                     <div class="form-control">
                         <label for="temp_ano">Ano / Modelo</label>
-                        <input type="text" id="temp_ano" placeholder="Ex: 2018/2019" maxlength="9" data-mascara="ano_modelo">
+                        <input type="text" id="temp_ano" placeholder="Ex: 2014/2015" maxlength="9" data-mascara="ano_modelo">
                     </div>
 
                     <div class="form-control">
@@ -348,107 +483,7 @@
 </div>
 
 <!-- =========================================================
-     MODAL 2: FICHA 360° DO CLIENTE (VISUALIZAR)
-     ========================================================= -->
-<div id="modal-ficha-cliente" class="modal-overlay hidden" style="z-index: 2600;">
-    <div class="modal-form modal-ficha-dialog">
-        <div class="modal-header">
-            <div class="ficha-header-profile">
-                <div class="ficha-avatar" id="ficha-cliente-avatar">AB</div>
-                <div>
-                    <h3 id="ficha-cliente-nome" style="margin: 0; font-size: 1.25rem;">NOME DO CLIENTE</h3>
-                    <div class="ficha-subheader">
-                        <span class="badge" id="ficha-cliente-id">#000</span>
-                        <span id="ficha-cliente-desde" style="color: var(--text-secondary); font-size: 0.85rem;">Cliente desde ...</span>
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn-close-modal" id="btn-fechar-ficha-cliente" title="Fechar Ficha">
-                <i class="ph ph-x"></i>
-            </button>
-        </div>
-
-        <div class="ficha-body">
-            <!-- Dados de Contato e Endereço -->
-            <div class="ficha-info-grid">
-                <div class="ficha-info-item">
-                    <span class="ficha-info-label"><i class="ph ph-identification-card"></i> CPF / CNPJ</span>
-                    <strong class="ficha-info-value" id="ficha-cpf">-</strong>
-                </div>
-
-                <div class="ficha-info-item">
-                    <span class="ficha-info-label"><i class="ph ph-phone"></i> Telefone / WhatsApp</span>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <strong class="ficha-info-value" id="ficha-telefone">-</strong>
-                        <a href="#" target="_blank" id="ficha-btn-whatsapp" class="btn-whatsapp-mini" title="Conversar no WhatsApp">
-                            <i class="ph-bold ph-whatsapp-logo"></i> WhatsApp
-                        </a>
-                    </div>
-                </div>
-
-                <div class="ficha-info-item full-width">
-                    <span class="ficha-info-label"><i class="ph ph-map-pin"></i> Endereço Completo</span>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong class="ficha-info-value" id="ficha-endereco">-</strong>
-                        <a href="#" target="_blank" id="ficha-btn-maps" class="btn-link-maps" title="Abrir no Google Maps">
-                            <i class="ph ph-arrow-square-out"></i> Ver no Mapa
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Garagem de Veículos do Cliente -->
-            <div class="form-section-title" style="margin-top: 25px; margin-bottom: 12px;">
-                <i class="ph ph-car"></i>
-                <span>Veículos Cadastrados (<span id="ficha-veiculos-count">0</span>)</span>
-            </div>
-
-            <div class="ficha-veiculos-grid" id="ficha-veiculos-container">
-                <!-- Injetado dinamicamente -->
-            </div>
-
-            <!-- Histórico de Ordens de Serviço & Checklists -->
-            <div class="form-section-title" style="margin-top: 25px; margin-bottom: 12px;">
-                <i class="ph ph-clock-counter-clockwise"></i>
-                <span>Histórico de Checklists & Passagens na Oficina (<span id="ficha-checklists-count">0</span>)</span>
-            </div>
-
-            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
-                <table class="erp-modern-table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Placa</th>
-                            <th>Mecânico</th>
-                            <th>Serviço Relatado</th>
-                            <th style="text-align: right;">Ação</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ficha-checklists-tbody">
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 15px;">
-                                Nenhum checklist registrado para este cliente.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Rodapé de Ações Rápidas da Ficha -->
-            <div style="margin-top: 25px; display: flex; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 15px;">
-                <button type="button" class="btn btn-secondary" id="ficha-btn-editar">
-                    <i class="ph ph-pencil-simple"></i> Editar Cadastro
-                </button>
-                <button type="button" class="btn btn-secondary" id="ficha-btn-fechar">
-                    Fechar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- =========================================================
-     MODAL 3: CONFIRMAÇÃO DE EXCLUSÃO
+     MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
      ========================================================= -->
 <div id="modal-confirmacao-excluir-cliente" class="modal-overlay hidden" style="z-index: 3000;">
     <div class="modal-form" style="max-width: 440px; text-align: center; padding: 30px 20px;">

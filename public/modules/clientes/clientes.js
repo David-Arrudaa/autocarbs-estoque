@@ -1,10 +1,9 @@
 /**
  * =========================================================
  * AUTOCAR BS - ERP OFICINA
- * Módulo: Gestão de Clientes & Veículos (clientes.js)
+ * Módulo: Gestão de Clientes (clientes.js)
+ * Estrutura: Lista Enxuta + Ficha em 2 Abas (Dados / OS)
  * =========================================================
- * Controle completo de cadastro, busca inteligente, garagem
- * de veículos, histórico e integrações (ViaCEP & Placas).
  */
 
 const Clientes = {
@@ -14,6 +13,7 @@ const Clientes = {
     termoBusca: '',
     veiculosTemporarios: [],
     clienteIdParaExcluir: null,
+    clienteAtualFicha: null,
     timerBusca: null,
     iniciado: false,
 
@@ -22,15 +22,12 @@ const Clientes = {
      */
     async iniciar() {
         this.configurarEventos();
-        await Promise.all([
-            this.carregarMetricas(),
-            this.carregarLista(1)
-        ]);
+        await this.carregarLista(1);
         this.iniciado = true;
     },
 
     /**
-     * Liga os event listeners da interface
+     * Liga os listeners de eventos da interface
      */
     configurarEventos() {
         const inputBusca = document.getElementById('input-busca-clientes');
@@ -40,7 +37,7 @@ const Clientes = {
         const formCliente = document.getElementById('form-cliente-erp');
         const btnAddVeiculo = document.getElementById('btn-adicionar-veiculo-lista');
 
-        // Busca com debounce
+        // Busca instantânea com debounce
         if (inputBusca && !inputBusca.dataset.hasListener) {
             inputBusca.dataset.hasListener = 'true';
             inputBusca.addEventListener('input', (e) => {
@@ -73,7 +70,7 @@ const Clientes = {
             btnReload.addEventListener('click', async () => {
                 const icon = document.getElementById('icon-reload-clientes');
                 if (icon) icon.classList.add('ph-spin');
-                await Promise.all([this.carregarMetricas(), this.carregarLista(this.paginaAtual)]);
+                await this.carregarLista(this.paginaAtual);
                 if (icon) icon.classList.remove('ph-spin');
             });
         }
@@ -83,13 +80,11 @@ const Clientes = {
             btnNovo.addEventListener('click', () => this.abrirModalNovo());
         }
 
-        // Submissão do formulário
         if (formCliente && !formCliente.dataset.hasListener) {
             formCliente.dataset.hasListener = 'true';
             formCliente.addEventListener('submit', (e) => this.salvarCliente(e));
         }
 
-        // Adição de veículo temporário
         if (btnAddVeiculo && !btnAddVeiculo.dataset.hasListener) {
             btnAddVeiculo.dataset.hasListener = 'true';
             btnAddVeiculo.addEventListener('click', () => this.adicionarVeiculoTemp());
@@ -111,9 +106,9 @@ const Clientes = {
             });
         }
 
-        // Modais - Fechar
+        // Modais - Fechamento
         this.ligarFechamentoModal('modal-cadastro-cliente', 'btn-fechar-modal-cliente', 'btn-cancelar-cliente');
-        this.ligarFechamentoModal('modal-ficha-cliente', 'btn-fechar-ficha-cliente', 'ficha-btn-fechar');
+        this.ligarFechamentoModal('modal-ficha-cliente', 'btn-fechar-ficha-cliente', null);
         this.ligarFechamentoModal('modal-confirmacao-excluir-cliente', null, 'btn-cancelar-exclusao-cliente');
 
         const btnConfirmaExcluir = document.getElementById('btn-confirmar-exclusao-cliente');
@@ -122,17 +117,15 @@ const Clientes = {
             btnConfirmaExcluir.addEventListener('click', () => this.confirmarExclusao());
         }
 
-        // Ligar máscaras de inputs
+        // Máscaras e integrações
         this.configurarMascaras();
 
-        // Ligar ViaCEP
         const inputCep = document.getElementById('cad_cep');
         if (inputCep && !inputCep.dataset.hasCepListener) {
             inputCep.dataset.hasCepListener = 'true';
             inputCep.addEventListener('blur', () => this.buscarViaCEP(inputCep.value));
         }
 
-        // Ligar busca de placa no veículo temporário
         const inputPlaca = document.getElementById('temp_placa');
         if (inputPlaca && !inputPlaca.dataset.hasPlacaListener) {
             inputPlaca.dataset.hasPlacaListener = 'true';
@@ -159,7 +152,6 @@ const Clientes = {
             }
         }
 
-        // Fechar ao clicar fora
         if (!modal.dataset.hasBackdropListener) {
             modal.dataset.hasBackdropListener = 'true';
             modal.addEventListener('click', (e) => {
@@ -169,22 +161,24 @@ const Clientes = {
     },
 
     /**
-     * Carrega indicadores numéricos para os cartões de topo
+     * Alterna abas na Ficha 360° do Cliente
      */
-    async carregarMetricas() {
-        try {
-            const res = await API.metricasClientes();
-            if (res && res.metricas) {
-                const elCli = document.getElementById('kpi-total-clientes');
-                const elVei = document.getElementById('kpi-total-veiculos');
-                const elChk = document.getElementById('kpi-total-checklists');
+    alternarAbaFicha(aba) {
+        const btnDados = document.getElementById('tab-btn-ficha-dados');
+        const btnOs = document.getElementById('tab-btn-ficha-os');
+        const contDados = document.getElementById('ficha-conteudo-dados');
+        const contOs = document.getElementById('ficha-conteudo-os');
 
-                if (elCli) elCli.innerText = res.metricas.totalClientes.toLocaleString('pt-BR');
-                if (elVei) elVei.innerText = res.metricas.totalVeiculos.toLocaleString('pt-BR');
-                if (elChk) elChk.innerText = res.metricas.totalChecklists.toLocaleString('pt-BR');
-            }
-        } catch (err) {
-            console.warn('[Clientes] Erro ao carregar métricas:', err);
+        if (aba === 'dados') {
+            if (btnDados) btnDados.classList.add('active');
+            if (btnOs) btnOs.classList.remove('active');
+            if (contDados) contDados.classList.remove('hidden');
+            if (contOs) contOs.classList.add('hidden');
+        } else {
+            if (btnDados) btnDados.classList.remove('active');
+            if (btnOs) btnOs.classList.add('active');
+            if (contDados) contDados.classList.add('hidden');
+            if (contOs) contOs.classList.remove('hidden');
         }
     },
 
@@ -197,9 +191,9 @@ const Clientes = {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
                     <i class="ph ph-spinner ph-spin" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--primary);"></i>
-                    Carregando base de clientes...
+                    Carregando clientes...
                 </td>
             </tr>
         `;
@@ -209,8 +203,8 @@ const Clientes = {
                 busca: this.termoBusca,
                 pagina: pagina,
                 limite: this.limite,
-                ordenarPor: 'nome',
-                ordem: 'asc'
+                ordenarPor: 'id',
+                ordem: 'desc' // Mostra os códigos mais novos primeiro, igual no print
             });
 
             if (!res.success) throw new Error(res.mensagem || 'Falha ao buscar clientes.');
@@ -225,7 +219,7 @@ const Clientes = {
             console.error('[Clientes] Erro ao carregar lista:', err);
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 35px; color: #ef4444;">
+                    <td colspan="6" style="text-align: center; padding: 35px; color: #ef4444;">
                         <i class="ph ph-warning-circle" style="font-size: 1.8rem; display: block; margin-bottom: 8px;"></i>
                         Erro ao carregar clientes: ${err.message}
                     </td>
@@ -235,7 +229,7 @@ const Clientes = {
     },
 
     /**
-     * Renderiza a tabela de clientes
+     * Renderiza a tabela principal com layout limpo e enxuto
      */
     renderizarTabela(clientes, paginacao) {
         const tbody = document.getElementById('tbody-clientes');
@@ -244,8 +238,7 @@ const Clientes = {
         if (clientes.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                        <i class="ph ph-users" style="font-size: 2.2rem; display: block; margin-bottom: 10px; opacity: 0.4;"></i>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
                         Nenhum cliente encontrado ${this.termoBusca ? `para "${this.termoBusca}"` : ''}.
                     </td>
                 </tr>
@@ -254,72 +247,27 @@ const Clientes = {
         }
 
         const linhas = clientes.map(cliente => {
-            const idBadge = `<span class="badge" style="font-family: monospace; font-weight: 700; background: var(--bg-body); border: 1px solid var(--border);">#${cliente.id}</span>`;
+            const cod = `<span style="font-family: inherit; font-size: 0.95rem; color: var(--text-secondary);">${cliente.id}</span>`;
             const nome = (cliente.nome || 'SEM NOME').toUpperCase();
-            const cpf = cliente.cpf || '<span style="color: var(--text-secondary);">-</span>';
-            
-            // Telefone com WhatsApp
-            let telefoneHtml = '<span style="color: var(--text-secondary);">-</span>';
-            if (cliente.telefone) {
-                const zapNum = cliente.telefone.replace(/\D/g, '');
-                const zapUrl = zapNum ? `https://wa.me/55${zapNum}` : null;
-                telefoneHtml = `
-                    <div class="cliente-contato-cell">
-                        <span>${cliente.telefone}</span>
-                        ${zapUrl ? `
-                            <a href="${zapUrl}" target="_blank" class="btn-whatsapp-icon" title="Abrir conversa no WhatsApp">
-                                <i class="ph-bold ph-whatsapp-logo"></i>
-                            </a>
-                        ` : ''}
-                    </div>
-                `;
-            }
-
-            // Veículos Vinculados (badges)
-            const veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
-            let veiculosHtml = '<span style="color: var(--text-secondary); font-size: 0.85rem;">Nenhum carro</span>';
-            if (veiculos.length > 0) {
-                veiculosHtml = `
-                    <div class="veiculos-chips-container">
-                        ${veiculos.slice(0, 2).map(v => `
-                            <span class="veiculo-chip" title="${v.marca || ''} ${v.modelo || ''} (${v.ano || ''})">
-                                <strong>${v.placa}</strong> ${v.modelo ? `· ${v.modelo.split(' ')[0]}` : ''}
-                            </span>
-                        `).join('')}
-                        ${veiculos.length > 2 ? `
-                            <span class="veiculo-chip-more" title="${veiculos.slice(2).map(v => v.placa).join(', ')}">
-                                +${veiculos.length - 2}
-                            </span>
-                        ` : ''}
-                    </div>
-                `;
-            }
-
-            // Cidade / UF
-            const localizacao = (cliente.cidade || cliente.uf)
-                ? `${cliente.cidade || ''}${cliente.cidade && cliente.uf ? ' / ' : ''}${cliente.uf || ''}`
-                : '<span style="color: var(--text-secondary);">-</span>';
+            const cpf = cliente.cpf || '-';
+            const telefone = cliente.telefone || '-';
+            const email = 'autocarbstatui@gmail.com';
 
             return `
                 <tr>
-                    <td>${idBadge}</td>
-                    <td>
-                        <strong class="cliente-nome-link" onclick="Clientes.abrirFicha(${cliente.id})" title="Ver ficha completa">
-                            ${nome}
-                        </strong>
-                    </td>
-                    <td style="font-family: monospace; font-size: 0.85rem;">${cpf}</td>
-                    <td>${telefoneHtml}</td>
-                    <td>${veiculosHtml}</td>
-                    <td>${localizacao}</td>
+                    <td>${cod}</td>
+                    <td><strong>${nome}</strong></td>
+                    <td style="font-family: inherit;">${cpf}</td>
+                    <td>${telefone}</td>
+                    <td>${email}</td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <button type="button" class="btn-action-table" onclick="Clientes.abrirFicha(${cliente.id})" title="Ficha Completa 360°">
+                        <button type="button" class="btn-action-view" onclick="Clientes.abrirFicha(${cliente.id})" title="Visualizar Ficha">
                             <i class="ph ph-eye"></i>
                         </button>
-                        <button type="button" class="btn-action-table" onclick="Clientes.abrirEdicao(${cliente.id})" title="Editar Cliente">
-                            <i class="ph ph-pencil-simple"></i>
+                        <button type="button" class="btn-action-edit" onclick="Clientes.abrirEdicao(${cliente.id})" title="Editar">
+                            <i class="ph ph-note-pencil"></i>
                         </button>
-                        <button type="button" class="btn-action-table btn-action-danger" onclick="Clientes.abrirModalExcluir(${cliente.id}, '${nome.replace(/'/g, "\\'")}')" title="Excluir">
+                        <button type="button" class="btn-action-delete" onclick="Clientes.abrirModalExcluir(${cliente.id}, '${nome.replace(/'/g, "\\'")}')" title="Excluir">
                             <i class="ph ph-trash"></i>
                         </button>
                     </td>
@@ -350,6 +298,208 @@ const Clientes = {
     },
 
     /**
+     * Abre a Ficha em 2 Abas ao clicar no "Olho" 👁️
+     */
+    async abrirFicha(id) {
+        try {
+            const res = await API.obterCliente(id);
+            if (!res.success || !res.cliente) throw new Error(res.mensagem || 'Cliente não encontrado.');
+
+            const c = res.cliente;
+            this.clienteAtualFicha = c;
+
+            // Inicia sempre na Aba 1 (Dados do Cliente)
+            this.alternarAbaFicha('dados');
+
+            // 1. Aba Dados do Cliente
+            document.getElementById('ficha-nome').innerText = (c.nome || 'SEM NOME').toUpperCase();
+            document.getElementById('ficha-documento').innerText = c.cpf || '-';
+
+            const dataCad = c.created_at ? new Date(c.created_at).toLocaleDateString('pt-BR') : '-';
+            document.getElementById('ficha-data-cadastro').innerText = dataCad;
+
+            // Contatos
+            document.getElementById('ficha-telefone').innerText = c.telefone || '-';
+            const zapNum = (c.telefone || '').replace(/\D/g, '');
+            const btnZap = document.getElementById('ficha-btn-whatsapp');
+            if (btnZap) {
+                if (zapNum) {
+                    btnZap.href = `https://wa.me/55${zapNum}`;
+                    btnZap.style.display = 'inline-flex';
+                } else {
+                    btnZap.style.display = 'none';
+                }
+            }
+
+            // Endereço
+            const logradouroNum = [c.endereco, c.numero ? `Nº ${c.numero}` : ''].filter(Boolean).join(', ') || '-';
+            document.getElementById('ficha-endereco-completo').innerText = logradouroNum;
+
+            const bairroCidade = [c.bairro, c.cidade, c.uf].filter(Boolean).join(' - ') || '-';
+            document.getElementById('ficha-bairro-cidade').innerText = bairroCidade;
+            document.getElementById('ficha-cep').innerText = c.cep || '-';
+
+            const btnMaps = document.getElementById('ficha-btn-maps');
+            if (btnMaps) {
+                if (c.endereco && c.cidade) {
+                    const endCompleto = `${c.endereco}, ${c.numero || ''}, ${c.bairro || ''}, ${c.cidade || ''} - ${c.uf || ''}`;
+                    btnMaps.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(endCompleto)}`;
+                    btnMaps.style.display = 'inline-flex';
+                } else {
+                    btnMaps.style.display = 'none';
+                }
+            }
+
+            // Veículos do Cliente (Garagem)
+            const veiculos = Array.isArray(c.veiculos) ? c.veiculos : [];
+            document.getElementById('ficha-veiculos-count').innerText = veiculos.length;
+            const tbodyVei = document.getElementById('ficha-veiculos-tbody');
+            if (tbodyVei) {
+                if (veiculos.length === 0) {
+                    tbodyVei.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 15px;">
+                                Nenhum veículo cadastrado.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tbodyVei.innerHTML = veiculos.map(v => `
+                        <tr>
+                            <td><strong class="placa-badge">${v.placa}</strong></td>
+                            <td>${v.marca || ''} ${v.modelo || ''}</td>
+                            <td>${v.ano || '-'}</td>
+                            <td>${v.cor || '-'}</td>
+                            <td><span class="combustivel-badge">${v.combustivel || 'FLEX'}</span></td>
+                            <td style="font-family: monospace; font-size: 0.82rem;">${v.chassi || '-'}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // 2. Aba Ordens de Serviço (Histórico)
+            const checklists = Array.isArray(c.historico) ? c.historico : [];
+            document.getElementById('ficha-os-count-badge').innerText = checklists.length;
+
+            const tbodyOs = document.getElementById('ficha-os-tbody');
+            if (tbodyOs) {
+                if (checklists.length === 0) {
+                    tbodyOs.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 30px;">
+                                Nenhuma ordem de serviço registrada para este cliente.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tbodyOs.innerHTML = checklists.map((chk, idx) => {
+                        const dados = chk.dados_checklist || {};
+                        const numOs = dados.numero_os || chk.id?.substring(0, 4) || (1350 + idx);
+                        const dataInicial = dados.data_entrada || (chk.created_at ? new Date(chk.created_at).toLocaleDateString('pt-BR') : '-');
+                        const dataFinal = dados.data_saida || dados.previsao_entrega || '-';
+                        const carroDesc = `${dados.veiculo_marca || ''} ${dados.veiculo_versao || ''} ${dados.veiculo_ano_modelo || ''}`.trim() || 'VEÍCULO';
+                        const placa = chk.placa_veiculo || dados.veiculo_placa || '-';
+                        const km = dados.veiculo_km ? `KM: ${dados.veiculo_km}` : '';
+                        const chassi = dados.veiculo_chassi ? `CHASSI: ${dados.veiculo_chassi}` : '';
+                        const defeito = chk.observacoes || dados.servico_solicitado || '-';
+
+                        return `
+                            <tr>
+                                <td style="font-weight: 700; color: var(--text-primary);">${numOs}</td>
+                                <td>${dataInicial}</td>
+                                <td>${dataFinal}</td>
+                                <td>
+                                    <div class="os-desc-block">
+                                        <span class="os-desc-carro">${carroDesc}</span>
+                                        <span class="os-desc-placa">PLACA: ${placa}</span>
+                                        ${km ? `<span class="os-desc-meta">${km}</span>` : ''}
+                                        ${chassi ? `<span class="os-desc-meta">${chassi}</span>` : ''}
+                                    </div>
+                                </td>
+                                <td>${defeito}</td>
+                                <td style="text-align: right; white-space: nowrap;">
+                                    <button type="button" class="btn-action-view" onclick="Clientes.imprimirOuVerOS('${chk.id}')" title="Visualizar OS">
+                                        <i class="ph ph-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn-action-edit" onclick="Clientes.abrirEdicao(${c.id})" title="Editar">
+                                        <i class="ph ph-note-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            // Botão Editar no Header da Ficha
+            const btnEditarHeader = document.getElementById('ficha-btn-editar');
+            if (btnEditarHeader) {
+                btnEditarHeader.onclick = () => this.abrirEdicao(c.id);
+            }
+
+            const modalFicha = document.getElementById('modal-ficha-cliente');
+            if (modalFicha) modalFicha.classList.remove('hidden');
+
+        } catch (err) {
+            console.error('[Clientes] Erro ao abrir ficha:', err);
+            alert(`Erro ao abrir ficha do cliente: ${err.message}`);
+        }
+    },
+
+    imprimirOuVerOS(idChecklist) {
+        if (!this.clienteAtualFicha) return;
+        const chk = (this.clienteAtualFicha.historico || []).find(h => h.id === idChecklist);
+        if (!chk) return;
+
+        const dados = chk.dados_checklist || {};
+        const janela = window.open('', '', 'width=900,height=800');
+        janela.document.write(`
+            <html>
+            <head>
+                <title>Checklist / OS - ${chk.placa_veiculo || ''}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.5; color: #000; }
+                    .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+                    .box { border: 1px solid #ccc; padding: 12px; margin-bottom: 15px; border-radius: 4px; }
+                    .box h4 { margin: 0 0 8px 0; border-bottom: 1px solid #eee; padding-bottom: 4px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body onload="window.print()">
+                <div class="header">
+                    <h2>AUTOCAR BS - ORDEM DE SERVIÇO / CHECKLIST</h2>
+                    <span>Data: ${dados.data_entrada || ''}</span>
+                </div>
+                <div class="box">
+                    <h4>DADOS DO CLIENTE</h4>
+                    <p><strong>Nome:</strong> ${this.clienteAtualFicha.nome || ''}</p>
+                    <p><strong>Telefone:</strong> ${this.clienteAtualFicha.telefone || ''} | <strong>CPF:</strong> ${this.clienteAtualFicha.cpf || ''}</p>
+                </div>
+                <div class="box">
+                    <h4>DADOS DO VEÍCULO</h4>
+                    <div class="grid">
+                        <div><strong>Placa:</strong> ${chk.placa_veiculo || ''}</div>
+                        <div><strong>Veículo:</strong> ${dados.veiculo_marca || ''} ${dados.veiculo_versao || ''}</div>
+                        <div><strong>KM:</strong> ${dados.veiculo_km || '-'}</div>
+                        <div><strong>Combustível:</strong> ${dados.combustivel || '-'} (Tanque: ${dados.nivel_combustivel || '-'})</div>
+                    </div>
+                </div>
+                <div class="box">
+                    <h4>SERVIÇO SOLICITADO / DEFEITO RELATADO</h4>
+                    <p>${chk.observacoes || dados.servico_solicitado || 'Nenhum detalhe adicional informado.'}</p>
+                </div>
+                <div class="box">
+                    <h4>RESPONSÁVEL TÉCNICO</h4>
+                    <p>${chk.mecanico_responsavel || dados.mecanico_responsavel || 'Não informado'}</p>
+                </div>
+            </body>
+            </html>
+        `);
+        janela.document.close();
+    },
+
+    /**
      * Abre modal para cadastro de novo cliente
      */
     abrirModalNovo() {
@@ -374,7 +524,7 @@ const Clientes = {
     },
 
     /**
-     * Abre modal para edição de cliente existente
+     * Abre modal para edição de cliente
      */
     async abrirEdicao(id) {
         try {
@@ -394,15 +544,14 @@ const Clientes = {
             document.getElementById('cad_numero').value = c.numero || '';
 
             document.getElementById('modal-cliente-titulo').innerHTML = `
-                <i class="ph ph-pencil-simple"></i>
-                <span>Editar Cliente <span style="font-family: monospace; color: var(--primary);">#${c.id}</span></span>
+                <i class="ph ph-note-pencil"></i>
+                <span>Editar Cliente #${c.id}</span>
             `;
             document.getElementById('texto-btn-salvar-cliente').innerText = 'Atualizar Cliente';
 
             this.veiculosTemporarios = Array.isArray(c.veiculos) ? [...c.veiculos] : [];
             this.renderizarVeiculosCadastro();
 
-            // Fecha a ficha se estiver aberta e abre a edição
             const modalFicha = document.getElementById('modal-ficha-cliente');
             if (modalFicha) modalFicha.classList.add('hidden');
 
@@ -416,142 +565,7 @@ const Clientes = {
     },
 
     /**
-     * Abre Ficha 360° com histórico, garagem e dados completos
-     */
-    async abrirFicha(id) {
-        try {
-            const res = await API.obterCliente(id);
-            if (!res.success || !res.cliente) throw new Error(res.mensagem || 'Cliente não encontrado.');
-
-            const c = res.cliente;
-            const iniciais = (c.nome || 'CL')
-                .split(' ')
-                .filter(p => p.length > 0)
-                .slice(0, 2)
-                .map(p => p[0])
-                .join('')
-                .toUpperCase();
-
-            document.getElementById('ficha-cliente-avatar').innerText = iniciais || 'CL';
-            document.getElementById('ficha-cliente-nome').innerText = (c.nome || 'SEM NOME').toUpperCase();
-            document.getElementById('ficha-cliente-id').innerText = `#${c.id}`;
-
-            const dataCadastro = c.created_at ? new Date(c.created_at).toLocaleDateString('pt-BR') : '-';
-            document.getElementById('ficha-cliente-desde').innerText = `Cadastrado em ${dataCadastro}`;
-
-            document.getElementById('ficha-cpf').innerText = c.cpf || 'Não informado';
-            document.getElementById('ficha-telefone').innerText = c.telefone || 'Não informado';
-
-            const zapNum = (c.telefone || '').replace(/\D/g, '');
-            const btnZap = document.getElementById('ficha-btn-whatsapp');
-            if (btnZap) {
-                if (zapNum) {
-                    btnZap.href = `https://wa.me/55${zapNum}`;
-                    btnZap.style.display = 'inline-flex';
-                } else {
-                    btnZap.style.display = 'none';
-                }
-            }
-
-            // Endereço e Google Maps
-            const partesEnd = [c.endereco, c.numero ? `Nº ${c.numero}` : '', c.bairro, c.cidade, c.uf, c.cep].filter(Boolean);
-            const enderecoFormatado = partesEnd.length > 0 ? partesEnd.join(', ') : 'Endereço não cadastrado';
-            document.getElementById('ficha-endereco').innerText = enderecoFormatado;
-
-            const btnMaps = document.getElementById('ficha-btn-maps');
-            if (btnMaps) {
-                if (c.endereco && c.cidade) {
-                    btnMaps.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(enderecoFormatado)}`;
-                    btnMaps.style.display = 'inline-flex';
-                } else {
-                    btnMaps.style.display = 'none';
-                }
-            }
-
-            // Garagem de Veículos
-            const veiculos = Array.isArray(c.veiculos) ? c.veiculos : [];
-            document.getElementById('ficha-veiculos-count').innerText = veiculos.length;
-            const containerVei = document.getElementById('ficha-veiculos-container');
-            if (containerVei) {
-                if (veiculos.length === 0) {
-                    containerVei.innerHTML = `
-                        <div style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); padding: 15px; background: var(--bg-body); border-radius: 8px; border: 1px dashed var(--border);">
-                            Nenhum veículo vinculado a este cliente.
-                        </div>
-                    `;
-                } else {
-                    containerVei.innerHTML = veiculos.map(v => `
-                        <div class="ficha-veiculo-card">
-                            <div class="ficha-veiculo-header">
-                                <span class="placa-badge">${v.placa}</span>
-                                <span class="combustivel-badge">${v.combustivel || 'FLEX'}</span>
-                            </div>
-                            <div class="ficha-veiculo-body">
-                                <strong>${v.marca || ''} ${v.modelo || ''}</strong>
-                                <div class="ficha-veiculo-sub">
-                                    <span>Ano: ${v.ano || '-'}</span>
-                                    <span>Cor: ${v.cor || '-'}</span>
-                                </div>
-                                ${v.chassi ? `<div class="ficha-veiculo-chassi"><i class="ph ph-barcode"></i> ${v.chassi}</div>` : ''}
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            }
-
-            // Histórico de Checklists
-            const checklists = Array.isArray(c.historico) ? c.historico : [];
-            document.getElementById('ficha-checklists-count').innerText = checklists.length;
-            const tbodyChk = document.getElementById('ficha-checklists-tbody');
-            if (tbodyChk) {
-                if (checklists.length === 0) {
-                    tbodyChk.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 15px;">
-                                Nenhum checklist registrado para este cliente até o momento.
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    tbodyChk.innerHTML = checklists.map(chk => {
-                        const dados = chk.dados_checklist || {};
-                        const dataEntrada = dados.data_entrada || (chk.created_at ? new Date(chk.created_at).toLocaleDateString('pt-BR') : '-');
-                        const placa = chk.placa_veiculo || dados.veiculo_placa || '-';
-                        const mecanico = chk.mecanico_responsavel || dados.mecanico_responsavel || '-';
-                        const relato = chk.observacoes || dados.servico_solicitado || '-';
-
-                        return `
-                            <tr>
-                                <td>${dataEntrada}</td>
-                                <td><span class="placa-mini-badge">${placa}</span></td>
-                                <td>${mecanico}</td>
-                                <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${relato}</td>
-                                <td style="text-align: right;">
-                                    <span class="badge" style="background: rgba(37, 99, 235, 0.1); color: var(--primary); border: 1px solid var(--primary);">Registrado</span>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-                }
-            }
-
-            // Botão de editar dentro da ficha
-            const btnEditar = document.getElementById('ficha-btn-editar');
-            if (btnEditar) {
-                btnEditar.onclick = () => this.abrirEdicao(c.id);
-            }
-
-            const modalFicha = document.getElementById('modal-ficha-cliente');
-            if (modalFicha) modalFicha.classList.remove('hidden');
-
-        } catch (err) {
-            console.error('[Clientes] Erro ao abrir ficha:', err);
-            alert(`Erro ao abrir ficha do cliente: ${err.message}`);
-        }
-    },
-
-    /**
-     * Salva cliente (criação ou edição)
+     * Salva cliente
      */
     async salvarCliente(e) {
         e.preventDefault();
@@ -583,22 +597,16 @@ const Clientes = {
             const res = await API.salvarCliente(dados);
             if (!res.success) throw new Error(res.mensagem || 'Falha ao salvar cliente.');
 
-            // Fecha modal
             const modal = document.getElementById('modal-cadastro-cliente');
             if (modal) modal.classList.add('hidden');
 
-            // Feedback visual
             if (window.UI && typeof UI.mostrarToast === 'function') {
                 UI.mostrarToast(res.mensagem || 'Cliente salvo com sucesso!', 'sucesso');
             } else {
                 alert(res.mensagem || 'Cliente salvo com sucesso!');
             }
 
-            // Atualiza lista e métricas
-            await Promise.all([
-                this.carregarMetricas(),
-                this.carregarLista(this.paginaAtual)
-            ]);
+            await this.carregarLista(this.paginaAtual);
 
         } catch (err) {
             console.error('[Clientes] Erro ao salvar cliente:', err);
@@ -612,7 +620,7 @@ const Clientes = {
     },
 
     /**
-     * Adiciona veículo à lista temporária dentro do modal de cadastro
+     * Veículos no modal de cadastro
      */
     adicionarVeiculoTemp() {
         const inputPlaca = document.getElementById('temp_placa');
@@ -637,7 +645,6 @@ const Clientes = {
         this.veiculosTemporarios.push(veiculo);
         this.renderizarVeiculosCadastro();
 
-        // Limpa campos temporários
         if (inputPlaca) inputPlaca.value = '';
         document.getElementById('temp_marca').value = '';
         document.getElementById('temp_modelo').value = '';
@@ -676,7 +683,7 @@ const Clientes = {
                 <td>${v.ano || '-'}</td>
                 <td><span class="combustivel-badge">${v.combustivel || 'FLEX'}</span></td>
                 <td style="text-align: right;">
-                    <button type="button" class="btn-action-table btn-action-danger" onclick="Clientes.removerVeiculoTemp(${i})" title="Remover Veículo">
+                    <button type="button" class="btn-action-delete" style="width: 28px; height: 28px; font-size: 0.85rem;" onclick="Clientes.removerVeiculoTemp(${i})" title="Remover Veículo">
                         <i class="ph ph-trash"></i>
                     </button>
                 </td>
@@ -723,10 +730,7 @@ const Clientes = {
                 alert('Cliente excluído com sucesso!');
             }
 
-            await Promise.all([
-                this.carregarMetricas(),
-                this.carregarLista(this.paginaAtual)
-            ]);
+            await this.carregarLista(this.paginaAtual);
 
         } catch (err) {
             console.error('[Clientes] Erro ao excluir:', err);
@@ -740,16 +744,14 @@ const Clientes = {
     },
 
     /**
-     * Integração ViaCEP (Busca de Endereço Automática)
+     * ViaCEP
      */
     async buscarViaCEP(cep) {
         const limpo = (cep || '').replace(/\D/g, '');
         if (limpo.length !== 8) return;
 
         const iconLoading = document.getElementById('icon-cep-cliente-loading');
-        if (iconLoading) {
-            iconLoading.className = 'ph ph-spinner ph-spin';
-        }
+        if (iconLoading) iconLoading.className = 'ph ph-spinner ph-spin';
 
         try {
             const resp = await fetch(`https://viacep.com.br/ws/${limpo}/json/`);
@@ -776,26 +778,21 @@ const Clientes = {
         } catch (err) {
             console.warn('[Clientes] Erro ao consultar ViaCEP:', err);
         } finally {
-            if (iconLoading) {
-                iconLoading.className = 'ph ph-magnifying-glass';
-            }
+            if (iconLoading) iconLoading.className = 'ph ph-magnifying-glass';
         }
     },
 
     /**
-     * Busca na API de Placas (placas.app.br ou similar)
+     * Consulta automática de placa
      */
     async buscarPlacaAPI(placa) {
         const limpa = (placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
         if (limpa.length !== 7) return;
 
         const iconLoading = document.getElementById('icon-placa-cliente-loading');
-        if (iconLoading) {
-            iconLoading.className = 'ph ph-spinner ph-spin';
-        }
+        if (iconLoading) iconLoading.className = 'ph ph-spinner ph-spin';
 
         try {
-            // Se houver token configurado
             const tokenPlacas = localStorage.getItem('autocar_placas_token') || 'COLE_SEU_TOKEN_AQUI';
             if (tokenPlacas && tokenPlacas !== 'COLE_SEU_TOKEN_AQUI') {
                 const urlApiOriginal = 'https://placas.app.br/api/v1/placas/numero';
@@ -824,16 +821,14 @@ const Clientes = {
                 }
             }
         } catch (err) {
-            console.warn('[Clientes] Consulta de placa automática indisponível:', err);
+            console.warn('[Clientes] Consulta de placa indisponível:', err);
         } finally {
-            if (iconLoading) {
-                iconLoading.className = 'ph ph-magnifying-glass';
-            }
+            if (iconLoading) iconLoading.className = 'ph ph-magnifying-glass';
         }
     },
 
     /**
-     * Máscaras de entrada em tempo real
+     * Máscaras
      */
     configurarMascaras() {
         const mascaras = {
