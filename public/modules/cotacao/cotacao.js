@@ -96,8 +96,6 @@ const Cotacao = {
     updateStatusBadge() {
         const badge = document.getElementById('cot-statusBadge');
         if (badge) badge.remove();
-        const summary = document.getElementById('cot-liveSummary');
-        if (summary) summary.remove();
 
         const btnText = document.getElementById('cot-btnSaveText');
         const btn = document.getElementById('cot-btnSave');
@@ -136,10 +134,32 @@ const Cotacao = {
     },
 
     updateLiveSummary() {
-        const summary = document.getElementById('cot-liveSummary');
-        if (summary) summary.remove();
-        const badge = document.getElementById('cot-statusBadge');
-        if (badge) badge.remove();
+        const elCount = document.getElementById('cot-sum-count');
+        const elWinners = document.getElementById('cot-sum-winners');
+        const elTotal = document.getElementById('cot-sum-total');
+        if (!elCount && !elWinners && !elTotal) return;
+
+        let totalParts = this.state.pecas.length;
+        let winnersCount = 0;
+        let totalVenda = 0;
+
+        this.state.pecas.forEach(p => {
+            if (p.vencedor) {
+                winnersCount++;
+                const pr = p.precos[p.vencedor];
+                if (pr) {
+                    let v = pr.venda;
+                    if (v === null || v === undefined) {
+                        v = this.calculateSellPrice(pr.custo, p.vencedor, true);
+                    }
+                    totalVenda += (Number(v) || 0) * (Number(p.qty) || 1);
+                }
+            }
+        });
+
+        if (elCount) elCount.innerText = totalParts;
+        if (elWinners) elWinners.innerText = winnersCount;
+        if (elTotal) elTotal.innerText = `R$ ${totalVenda.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     },
 
     // --- LÓGICA DE LAVAGEM ---
@@ -279,11 +299,12 @@ const Cotacao = {
                 stockInput.value = stockVal ? stockVal.toFixed(2) : '';
             }
 
-            this.state.vendedores.forEach(v => {
+            const vendInputs = row.querySelectorAll('.inp-sale:not(.inp-stock-venda)');
+            this.state.vendedores.forEach((v, vIdx) => {
                 const vendVal = p.precos[v]?.venda;
-                const vendInput = row.querySelector(`input[data-vendor-venda="${v}"]`);
+                const vendInput = vendInputs[vIdx] || row.querySelector(`input[data-vendor-venda="${v}"]`);
                 if (vendInput && document.activeElement !== vendInput) {
-                    vendInput.value = vendVal ? vendVal.toFixed(2) : '';
+                    vendInput.value = (vendVal !== null && vendVal !== undefined && !isNaN(vendVal)) ? Number(vendVal).toFixed(2) : '';
                 }
             });
         });
@@ -403,13 +424,13 @@ const Cotacao = {
 
                     return `
                         <td class="td-check ${c} ${winClass}">
-                            <input type="radio" name="win_${p.id}" class="radio-win" ${isWinner ? 'checked' : ''} data-part-id="${p.id}" data-vendor="${vAttr}" onclick="Cotacao.setWinner(this.dataset.partId|0, this.dataset.vendor)" title="Marcar ${vEsc} como vencedor">
+                            <input type="radio" name="win_${p.id}" class="radio-win" ${isWinner ? 'checked' : ''} data-part-id="${p.id}" data-vendor="${vAttr}" onclick="Cotacao.setWinner(${p.id}, this.dataset.vendor)" title="Marcar ${vEsc} como vencedor">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
-                            <input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updateBrand(this.dataset.partId|0, this.dataset.vendor, this.value)">
+                            <input type="text" class="inp-brand" placeholder="Marca" value="${pr.marca || ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updateBrand(${p.id}, this.dataset.vendor, this.value)">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
-                            <input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updatePrice(this.dataset.partId|0, this.dataset.vendor, this)">
+                            <input type="number" class="inp-sm bg-custo" placeholder="0" value="${pr.custo !== null && pr.custo !== undefined ? pr.custo : ''}" data-part-id="${p.id}" data-vendor="${vAttr}" oninput="Cotacao.updatePrice(${p.id}, this.dataset.vendor, this)">
                         </td>
                         <td class="td-vendor-cell ${c} ${winClass}">
                             <input class="inp-sale ${isWinner ? 'inp-winner-venda' : ''}"
@@ -417,7 +438,7 @@ const Cotacao = {
                                    data-part-id="${p.id}"
                                    data-vendor="${vAttr}"
                                    value="${pr.venda ? pr.venda.toFixed(2) : ''}"
-                                   onchange="Cotacao.updateManualSellPrice(this.dataset.partId|0, this.dataset.vendor, this.value)"
+                                   onchange="Cotacao.updateManualSellPrice(${p.id}, this.dataset.vendor, this.value)"
                                    onkeydown="if(event.key==='Enter') Cotacao.handleRowEnter(${p.id})">
                         </td>
                     `;
@@ -560,8 +581,9 @@ const Cotacao = {
             p.vencedor = vendor;
             p.emEstoque = (vendor === 'ESTOQUE');
         }
-        this.renderBody();
         this.recalcAllPricesAndRefresh();
+        this.renderBody();
+        this.updateLiveSummary();
         this.saveDraft();
     },
 

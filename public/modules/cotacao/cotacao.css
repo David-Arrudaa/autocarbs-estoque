@@ -849,12 +849,21 @@
 
 /* Rodapé da Tabela */
 .cot-table-footer {
-    padding: 6px 14px;
-    background: var(--bg-input);
+    padding: 8px 14px;
+    background: var(--bg-card);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.cot-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .btn-add-part {
@@ -877,6 +886,41 @@
 
 .cot-footer-hint strong {
     color: var(--text-heading);
+}
+
+.cot-footer-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cot-footer-count {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.cot-footer-total-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    padding: 4px 12px;
+    border-radius: 6px;
+}
+
+.cot-footer-total-lbl {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.cot-footer-total-val {
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
 }
 
 /* =========================================================

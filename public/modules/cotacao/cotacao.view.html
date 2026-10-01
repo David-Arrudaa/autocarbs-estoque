@@ -54,15 +54,25 @@
             <tbody></tbody>
         </table>
         
-        <!-- Rodapé da Tabela Otimizado -->
+        <!-- Rodapé da Tabela Otimizado com Total Automático -->
         <div class="cot-table-footer">
-            <button type="button" class="btn btn-green-cot btn-add-part" onclick="Cotacao.addPartRow()">
-                <i class="ph ph-plus-circle"></i>
-                <span>ADICIONAR PEÇA</span>
-            </button>
-            <span class="cot-footer-hint">
-                <i class="ph ph-info"></i> Pressione <strong>Enter</strong> no valor de venda para adicionar a próxima linha automaticamente
-            </span>
+            <div class="cot-footer-left">
+                <button type="button" class="btn btn-green-cot btn-add-part" onclick="Cotacao.addPartRow()">
+                    <i class="ph ph-plus-circle"></i>
+                    <span>ADICIONAR PEÇA</span>
+                </button>
+                <span class="cot-footer-hint">
+                    <i class="ph ph-info"></i> Pressione <strong>Enter</strong> no valor de venda para adicionar a próxima linha automaticamente
+                </span>
+            </div>
+
+            <div id="cot-liveSummary" class="cot-footer-summary">
+                <span class="cot-footer-count"><span id="cot-sum-count">0</span> itens (<strong id="cot-sum-winners" style="color:var(--primary);">0</strong> selecionados)</span>
+                <div class="cot-footer-total-box">
+                    <span class="cot-footer-total-lbl">TOTAL PEÇAS:</span>
+                    <strong id="cot-sum-total" class="cot-footer-total-val">R$ 0,00</strong>
+                </div>
+            </div>
         </div>
     </div>
 
