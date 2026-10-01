@@ -216,7 +216,7 @@ const Clientes = {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
                     <i class="ph ph-spinner ph-spin" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--primary);"></i>
                     Carregando clientes...
                 </td>
@@ -244,7 +244,7 @@ const Clientes = {
             console.error('[Clientes] Erro ao carregar lista:', err);
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 35px; color: #ef4444;">
+                    <td colspan="5" style="text-align: center; padding: 35px; color: #ef4444;">
                         <i class="ph ph-warning-circle" style="font-size: 1.8rem; display: block; margin-bottom: 8px;"></i>
                         Erro ao carregar clientes: ${err.message}
                     </td>
@@ -263,7 +263,7 @@ const Clientes = {
         if (clientes.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
                         Nenhum cliente encontrado ${this.termoBusca ? `para "${this.termoBusca}"` : ''}.
                     </td>
                 </tr>
@@ -276,7 +276,6 @@ const Clientes = {
             const nome = (cliente.nome || 'SEM NOME').toUpperCase();
             const cpf = cliente.cpf || '-';
             const telefone = cliente.telefone || '-';
-            const email = 'autocarbstatui@gmail.com';
 
             return `
                 <tr>
@@ -284,7 +283,6 @@ const Clientes = {
                     <td><strong>${nome}</strong></td>
                     <td style="font-family: inherit;">${cpf}</td>
                     <td>${telefone}</td>
-                    <td>${email}</td>
                     <td style="text-align: right; white-space: nowrap;">
                         <button type="button" class="btn-action-view" onclick="Clientes.abrirFicha(${cliente.id})" title="Visualizar Ficha">
                             <i class="ph ph-eye"></i>
