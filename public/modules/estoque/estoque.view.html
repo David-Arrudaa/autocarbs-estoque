@@ -7,7 +7,20 @@
         <div class="inventory-toolbar">
             <div class="search-box-erp">
                 <i class="ph ph-magnifying-glass"></i>
-                <input type="text" id="input-busca" placeholder="Pesquisar por descrição, marca, modelo ou código..." onkeyup="Estoque.pesquisar()">
+                <input 
+                    type="search" 
+                    id="input-busca" 
+                    name="estoque_filtro_busca_no_autofill"
+                    placeholder="Pesquisar por descrição, marca, modelo ou código..." 
+                    onkeyup="Estoque.pesquisar()"
+                    autocomplete="one-time-code"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                    data-form-type="other"
+                >
                 <button type="button" class="btn-clear-search hidden" id="btn-clear-busca" onclick="Estoque.limparBusca()" title="Limpar pesquisa">
                     <i class="ph ph-x"></i>
                 </button>
@@ -78,7 +91,20 @@
         <div class="inventory-toolbar">
             <div class="search-box-erp">
                 <i class="ph ph-magnifying-glass"></i>
-                <input type="text" id="input-busca-reposicao" placeholder="Filtrar itens que necessitam de reposição..." onkeyup="Estoque.filtrarReposicao()">
+                <input 
+                    type="search" 
+                    id="input-busca-reposicao" 
+                    name="reposicao_filtro_busca_no_autofill"
+                    placeholder="Filtrar itens que necessitam de reposição..." 
+                    onkeyup="Estoque.filtrarReposicao()"
+                    autocomplete="one-time-code"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                    data-form-type="other"
+                >
                 <button type="button" class="btn-clear-search hidden" id="btn-clear-reposicao" onclick="Estoque.limparBuscaReposicao()" title="Limpar filtro">
                     <i class="ph ph-x"></i>
                 </button>
@@ -240,7 +266,20 @@
         <div class="inventory-toolbar" style="flex-wrap:wrap; gap:12px;">
             <div class="search-box-erp" style="min-width:220px; flex:1;">
                 <i class="ph ph-magnifying-glass"></i>
-                <input type="text" id="input-busca-ranking" placeholder="Filtrar produtos ou categorias na Curva ABC..." onkeyup="Estoque.filtrarRanking()">
+                <input 
+                    type="search" 
+                    id="input-busca-ranking" 
+                    name="ranking_filtro_busca_no_autofill"
+                    placeholder="Filtrar produtos ou categorias na Curva ABC..." 
+                    onkeyup="Estoque.filtrarRanking()"
+                    autocomplete="one-time-code"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                    data-form-type="other"
+                >
                 <button type="button" class="btn-clear-search hidden" id="btn-clear-ranking" onclick="Estoque.limparBuscaRanking()" title="Limpar filtro">
                     <i class="ph ph-x"></i>
                 </button>

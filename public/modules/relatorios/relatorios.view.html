@@ -37,7 +37,20 @@
     <div class="report-filter-bar">
         <div class="search-box-erp report-search-box">
             <i class="ph ph-magnifying-glass"></i>
-            <input type="text" id="input-busca-relatorio" placeholder="Filtrar dados deste relatório..." onkeyup="Estoque.filtrarBuscaRelatorio()">
+            <input 
+                type="search" 
+                id="input-busca-relatorio" 
+                name="relatorio_filtro_busca_no_autofill"
+                placeholder="Filtrar dados deste relatório..." 
+                onkeyup="Estoque.filtrarBuscaRelatorio()"
+                autocomplete="one-time-code"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-form-type="other"
+            >
             <button type="button" class="btn-clear-search hidden" id="btn-clear-relatorio" onclick="Estoque.limparBuscaRelatorio()" title="Limpar busca">
                 <i class="ph ph-x"></i>
             </button>

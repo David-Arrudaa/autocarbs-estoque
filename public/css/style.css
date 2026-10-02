@@ -1275,6 +1275,18 @@ th {
     letter-spacing: 0.2px;
 }
 
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration,
+.search-box-erp input::-webkit-search-decoration,
+.search-box-erp input::-webkit-search-cancel-button,
+.search-box-erp input::-webkit-search-results-button,
+.search-box-erp input::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    display: none;
+}
+
 .search-box-erp input::placeholder {
     color: #64748b;
 }
