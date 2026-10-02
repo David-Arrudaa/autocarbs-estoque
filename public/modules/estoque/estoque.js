@@ -102,6 +102,7 @@ const Estoque = {
 
     async alternarAba(aba) {
         this.abaAtiva = aba;
+        this.mostrarSubview('lista');
 
         try {
             localStorage.setItem('autocar_active_tab', aba);
@@ -1448,12 +1449,92 @@ const Estoque = {
         if (el) el.classList.toggle('blur-value');
     },
 
+    /**
+     * Controle de Navegação em Páginas Reais (Subviews) do Estoque
+     */
+    mostrarSubview(nome) {
+        const viewLista = document.getElementById('view-estoque-lista');
+        const viewProduto = document.getElementById('view-estoque-produto');
+        const btnHeaderCadastrar = document.getElementById('btn-header-cadastrar');
+
+        if (nome === 'produto') {
+            if (viewLista) viewLista.classList.add('hidden');
+            if (viewProduto) viewProduto.classList.remove('hidden');
+            if (btnHeaderCadastrar) btnHeaderCadastrar.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            if (viewProduto) viewProduto.classList.add('hidden');
+            if (viewLista) viewLista.classList.remove('hidden');
+            if (btnHeaderCadastrar && this.abaAtiva === 'produtos') {
+                btnHeaderCadastrar.style.display = 'inline-flex';
+            }
+        }
+    },
+
+    voltarParaLista() {
+        this.idEdicao = null;
+        this.mostrarSubview('lista');
+    },
+
+    atualizarCalculoMargemForm() {
+        const campoCompra = document.getElementById('valorCompra');
+        const campoVenda = document.getElementById('valorVenda');
+        const elLucro = document.getElementById('form-lucro-estimado');
+        const elMarkup = document.getElementById('form-markup-estimado');
+        const elMargem = document.getElementById('form-margem-estimado');
+
+        if (!campoCompra || !campoVenda || !elLucro || !elMarkup) return;
+
+        const compra = UI.lerMoeda(campoCompra.value);
+        const venda = UI.lerMoeda(campoVenda.value);
+        const lucro = venda - compra;
+
+        elLucro.textContent = UI.formatarMoeda(lucro);
+        if (lucro > 0) {
+            elLucro.style.color = 'var(--success, #16a34a)';
+        } else if (lucro < 0) {
+            elLucro.style.color = 'var(--danger, #ef4444)';
+        } else {
+            elLucro.style.color = 'var(--primary, #2563eb)';
+        }
+
+        if (compra > 0) {
+            const markupPerc = ((venda - compra) / compra) * 100;
+            elMarkup.textContent = `${markupPerc >= 0 ? '+' : ''}${markupPerc.toFixed(1)}%`;
+            elMarkup.style.color = markupPerc >= 0 ? 'var(--success, #16a34a)' : 'var(--danger, #ef4444)';
+        } else {
+            elMarkup.textContent = '0%';
+            elMarkup.style.color = 'var(--text-secondary, #94a3b8)';
+        }
+
+        if (elMargem) {
+            if (venda > 0) {
+                const margemPerc = ((venda - compra) / venda) * 100;
+                elMargem.textContent = `${margemPerc >= 0 ? '+' : ''}${margemPerc.toFixed(1)}%`;
+                elMargem.style.color = margemPerc >= 0 ? 'var(--success, #16a34a)' : 'var(--danger, #ef4444)';
+            } else {
+                elMargem.textContent = '0%';
+                elMargem.style.color = 'var(--text-secondary, #94a3b8)';
+            }
+        }
+    },
+
     abrirModalCadastro() {
         this.idEdicao = null;
-        document.querySelectorAll('#modal-cadastro input').forEach(i => i.value = '');
-        document.getElementById('modal-cadastro-titulo').innerText = 'CADASTRAR PRODUTO';
-        UI.abrirModal('modal-cadastro');
-        setTimeout(() => document.getElementById('tipo')?.focus(), 50);
+        document.querySelectorAll('#view-estoque-produto input').forEach(i => i.value = '');
+        
+        const elTitulo = document.getElementById('produto-form-titulo');
+        if (elTitulo) {
+            elTitulo.innerHTML = '<i class="ph ph-package"></i> <span>Novo Produto</span>';
+        }
+        const btnTopo = document.getElementById('texto-btn-salvar-produto-topo');
+        if (btnTopo) btnTopo.textContent = 'SALVAR PRODUTO';
+        const btnRodape = document.getElementById('texto-btn-salvar-produto-rodape');
+        if (btnRodape) btnRodape.textContent = 'SALVAR PRODUTO';
+
+        this.atualizarCalculoMargemForm();
+        this.mostrarSubview('produto');
+        setTimeout(() => document.getElementById('tipo')?.focus(), 80);
     },
 
     obterProdutoPorId(id) {
@@ -1473,7 +1554,15 @@ const Estoque = {
             return UI.toast('Não foi possível carregar os dados deste produto.', 'warning');
         }
 
-        document.getElementById('modal-cadastro-titulo').innerText = 'EDITAR PRODUTO';
+        const elTitulo = document.getElementById('produto-form-titulo');
+        if (elTitulo) {
+            elTitulo.innerHTML = `<i class="ph ph-pencil-simple"></i> <span>Editar Produto #${p.id} - ${UI.escapeHtml(p.tipo || '')} ${UI.escapeHtml(p.marca || '')}</span>`;
+        }
+        const btnTopo = document.getElementById('texto-btn-salvar-produto-topo');
+        if (btnTopo) btnTopo.textContent = 'SALVAR ALTERAÇÕES';
+        const btnRodape = document.getElementById('texto-btn-salvar-produto-rodape');
+        if (btnRodape) btnRodape.textContent = 'SALVAR ALTERAÇÕES';
+
         document.getElementById('tipo').value = p.tipo || '';
         document.getElementById('marca').value = p.marca || '';
         document.getElementById('modelo').value = p.modelo || '';
@@ -1483,7 +1572,9 @@ const Estoque = {
         document.getElementById('valorCompra').value = Number(p.compra || p.compraUnit || 0).toFixed(2).replace('.', ',');
         document.getElementById('valorVenda').value = Number(p.venda || p.vendaUnit || 0).toFixed(2).replace('.', ',');
 
-        UI.abrirModal('modal-cadastro');
+        this.atualizarCalculoMargemForm();
+        this.mostrarSubview('produto');
+        setTimeout(() => document.getElementById('tipo')?.focus(), 80);
     },
 
     async salvarProduto() {
@@ -1511,7 +1602,7 @@ const Estoque = {
                 await API.atualizarProduto(this.idEdicao, p);
                 UI.toast('Produto atualizado com sucesso!', 'success');
             }
-            this.fecharModal('modal-cadastro');
+            this.voltarParaLista();
             await this.carregarTudo();
         } catch (err) {
             UI.toast(err.message || 'Erro ao salvar produto.', 'error');
@@ -3863,8 +3954,8 @@ const Estoque = {
             }
             UI.toast(`Código preenchido: ${codigo}`, 'success');
 
-            const modalCad = document.getElementById('modal-cadastro');
-            if (modalCad && modalCad.classList.contains('hidden')) {
+            const viewProd = document.getElementById('view-estoque-produto');
+            if (viewProd && viewProd.classList.contains('hidden')) {
                 this.abrirModalCadastro();
                 if (inputCodigo) inputCodigo.value = codigo;
             }
@@ -4031,6 +4122,10 @@ const Estoque = {
     },
 
     fecharModal(id) {
+        if (id === 'modal-cadastro') {
+            this.voltarParaLista();
+            return;
+        }
         UI.fecharModal(id);
         this.idEdicao = null;
         this.idExclusao = null;

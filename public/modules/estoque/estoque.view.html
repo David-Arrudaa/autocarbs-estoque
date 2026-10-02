@@ -1,5 +1,13 @@
 <!-- MÓDULO MODULAR: ESTOQUE, REPOSIÇÃO & CURVA ABC (AUTOCAR BS) -->
 
+<div class="estoque-module-container">
+
+    <!-- =========================================================
+         SUBVIEW 1: LISTAGEM PRINCIPAL DO ESTOQUE
+         (Produtos, Reposição e Curva ABC)
+         ========================================================= -->
+    <div id="view-estoque-lista" class="estoque-subview">
+
 <!-- ABA 1: Estoque Geral (Produtos) -->
 <div class="tab-pane" id="tab-pane-produtos">
     <div class="card table-container" style="flex:1;">
@@ -326,45 +334,150 @@
         </div>
     </div>
 </div>
+    </div>
+    <!-- FIM SUBVIEW 1: LISTAGEM PRINCIPAL -->
+
+    <!-- =========================================================
+         SUBVIEW 2: FORMULÁRIO COMPLETO DE PRODUTO (PÁGINA COMPLETA)
+         Abre em página inteira ao clicar em "+ NOVO PRODUTO" ou "Editar"
+         ========================================================= -->
+    <div id="view-estoque-produto" class="estoque-subview hidden">
+        
+        <!-- Topbar da Página de Produto -->
+        <div class="produto-page-topbar">
+            <button type="button" class="btn btn-secondary btn-sm btn-voltar-subview" onclick="Estoque.voltarParaLista()">
+                <i class="ph ph-arrow-left"></i>
+                <span>Voltar para o Estoque</span>
+            </button>
+            <div class="produto-topbar-titulo">
+                <h3 id="produto-form-titulo">
+                    <i class="ph ph-package"></i>
+                    <span>Novo Produto</span>
+                </h3>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="Estoque.salvarProduto()" id="btn-salvar-produto-topo">
+                <i class="ph ph-floppy-disk"></i>
+                <span id="texto-btn-salvar-produto-topo">SALVAR PRODUTO</span>
+            </button>
+        </div>
+
+        <!-- Cartões Estruturados do Formulário -->
+        <div class="produto-form-cards-container">
+            
+            <!-- Card 1: Identificação & Aplicação -->
+            <div class="produto-page-card">
+                <div class="form-section-title">
+                    <i class="ph ph-tag"></i>
+                    <span>1. Identificação & Aplicação do Produto</span>
+                </div>
+                <div class="form-grid-2x2">
+                    <div class="form-control">
+                        <label for="tipo">TIPO / CATEGORIA <span class="campo-obrigatorio">*</span></label>
+                        <input type="text" id="tipo" placeholder="EX: FILTRO DE ÓLEO, PASTILHA DE FREIO..." autocomplete="off">
+                        <span class="form-helper-text">Descrição principal ou categoria da peça no estoque</span>
+                    </div>
+                    <div class="form-control">
+                        <label for="marca">MARCA / FABRICANTE</label>
+                        <input type="text" id="marca" placeholder="EX: BOSCH, FRAM, MANN, NAKATA..." autocomplete="off">
+                        <span class="form-helper-text">Fabricante homologado ou fornecedor da peça</span>
+                    </div>
+                    <div class="form-control">
+                        <label for="modelo">MODELO / APLICAÇÃO</label>
+                        <input type="text" id="modelo" placeholder="EX: GOL G5 1.0 / FOX 1.6 / ONIX..." autocomplete="off">
+                        <span class="form-helper-text">Compatibilidade veicular ou especificação técnica</span>
+                    </div>
+                    <div class="form-control">
+                        <label for="codigo">CÓDIGO DE BARRAS / REFERÊNCIA</label>
+                        <div class="input-with-action">
+                            <input type="text" id="codigo" placeholder="Código de barras EAN ou ref do fabricante..." autocomplete="off">
+                            <button type="button" class="btn-input-scan" onclick="ScannerModule.abrirScanner('cadastro')" title="Escanear Código com Câmera">
+                                <i class="ph ph-barcode"></i>
+                            </button>
+                        </div>
+                        <span class="form-helper-text">Escaneie com leitor óptico / câmera ou informe manualmente</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Saldo Físico & Níveis de Segurança -->
+            <div class="produto-page-card">
+                <div class="form-section-title">
+                    <i class="ph ph-stack"></i>
+                    <span>2. Saldo Físico & Níveis de Segurança</span>
+                </div>
+                <div class="form-grid-2x2">
+                    <div class="form-control">
+                        <label for="qtd">QUANTIDADE ATUAL EM ESTOQUE</label>
+                        <input type="number" id="qtd" inputmode="numeric" placeholder="0" min="0">
+                        <span class="form-helper-text">Saldo físico real disponível na oficina no momento</span>
+                    </div>
+                    <div class="form-control">
+                        <label for="minimo">ESTOQUE MÍNIMO DE SEGURANÇA</label>
+                        <input type="number" id="minimo" inputmode="numeric" placeholder="0" min="0">
+                        <span class="form-helper-text">Dispara alertas automáticos quando o saldo atingir este nível</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Precificação & Rentabilidade Comercial -->
+            <div class="produto-page-card">
+                <div class="form-section-title">
+                    <i class="ph ph-currency-circle-dollar"></i>
+                    <span>3. Precificação & Rentabilidade Comercial</span>
+                </div>
+                <div class="form-grid-2x2">
+                    <div class="form-control">
+                        <label for="valorCompra">PREÇO DE CUSTO (R$)</label>
+                        <input type="text" id="valorCompra" placeholder="0,00" oninput="UI.mascaraMoeda(this); Estoque.atualizarCalculoMargemForm();" inputmode="numeric" autocomplete="off">
+                        <span class="form-helper-text">Valor líquido pago na compra junto ao fornecedor</span>
+                    </div>
+                    <div class="form-control">
+                        <label for="valorVenda">PREÇO DE VENDA (R$)</label>
+                        <input type="text" id="valorVenda" placeholder="0,00" oninput="UI.mascaraMoeda(this); Estoque.atualizarCalculoMargemForm();" inputmode="numeric" autocomplete="off">
+                        <span class="form-helper-text">Preço final praticado para clientes na oficina</span>
+                    </div>
+                </div>
+
+                <!-- Painel de Rentabilidade em Tempo Real -->
+                <div class="kpi-rentabilidade-card" id="painel-rentabilidade-produto">
+                    <div class="kpi-rentabilidade-item">
+                        <span class="kpi-rent-lbl">Lucro Bruto Unitário</span>
+                        <strong class="kpi-rent-val" id="form-lucro-estimado">R$ 0,00</strong>
+                    </div>
+                    <div class="kpi-rentabilidade-divider"></div>
+                    <div class="kpi-rentabilidade-item">
+                        <span class="kpi-rent-lbl">Markup Sobre Custo</span>
+                        <strong class="kpi-rent-val" id="form-markup-estimado">0%</strong>
+                    </div>
+                    <div class="kpi-rentabilidade-divider"></div>
+                    <div class="kpi-rentabilidade-item">
+                        <span class="kpi-rent-lbl">Margem Bruta (Venda)</span>
+                        <strong class="kpi-rent-val" id="form-margem-estimado">0%</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé de Ações -->
+            <div class="form-actions-footer">
+                <button type="button" class="btn btn-secondary" onclick="Estoque.voltarParaLista()">
+                    <i class="ph ph-x"></i> CANCELAR
+                </button>
+                <button type="button" class="btn btn-primary" onclick="Estoque.salvarProduto()" id="btn-salvar-produto-rodape" style="padding: 10px 24px;">
+                    <i class="ph ph-floppy-disk"></i> <span id="texto-btn-salvar-produto-rodape">SALVAR PRODUTO</span>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- FIM SUBVIEW 2: FORMULÁRIO PRODUTO -->
+
+</div>
+<!-- FIM ESTOQUE-MODULE-CONTAINER -->
 
 <!-- =========================================================
      MODAIS DE OPERAÇÃO DO ESTOQUE
      ========================================================= -->
-
-<!-- MODAL: Cadastro & Edição de Produto -->
-<div id="modal-cadastro" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-cadastro-titulo">
-    <div class="modal-form">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h3 id="modal-cadastro-titulo" style="margin:0;">PRODUTO</h3>
-            <button class="btn-close-modal" aria-label="Fechar modal" onclick="Estoque.fecharModal('modal-cadastro')"><i class="ph ph-x"></i></button>
-        </div>
-        <div class="form-grid">
-            <div class="form-control"><label for="tipo">TIPO *</label><input type="text" id="tipo" placeholder="EX: FILTRO"></div>
-            <div class="form-control"><label for="marca">MARCA</label><input type="text" id="marca" placeholder="EX: BOSCH"></div>
-        </div>
-        <div class="form-grid">
-            <div class="form-control"><label for="modelo">MODELO</label><input type="text" id="modelo"></div>
-            <div class="form-control">
-                <label for="codigo">CÓDIGO</label>
-                <div class="input-with-action">
-                    <input type="text" id="codigo" placeholder="Código de barras ou ref...">
-                    <button type="button" class="btn-input-scan" onclick="ScannerModule.abrirScanner('cadastro')" title="Escanear Código com Câmera">
-                        <i class="ph ph-barcode"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="form-grid">
-            <div class="form-control"><label for="qtd">QTD ESTOQUE</label><input type="number" id="qtd" inputmode="numeric"></div>
-            <div class="form-control"><label for="minimo">ESTOQUE MÍNIMO</label><input type="number" id="minimo" inputmode="numeric"></div>
-        </div>
-        <div class="form-grid">
-            <div class="form-control"><label for="valorCompra">CUSTO (R$)</label><input type="text" id="valorCompra" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric"></div>
-            <div class="form-control"><label for="valorVenda">VENDA (R$)</label><input type="text" id="valorVenda" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric"></div>
-        </div>
-        <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="Estoque.salvarProduto()">SALVAR PRODUTO</button>
-    </div>
-</div>
 
 <!-- MODAL: Entrada de Estoque -->
 <div id="modal-entrada" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-entrada-titulo">
