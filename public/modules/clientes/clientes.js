@@ -272,27 +272,29 @@ const Clientes = {
         }
 
         const linhas = clientes.map(cliente => {
-            const cod = `<span style="font-family: inherit; font-size: 0.95rem; color: var(--text-secondary);">${cliente.id}</span>`;
-            const nome = (cliente.nome || 'SEM NOME').toUpperCase();
-            const cpf = cliente.cpf || '-';
-            const telefone = cliente.telefone || '-';
+            const cod = `<span class="badge-codigo">${cliente.id}</span>`;
+            const nome = UI.escapeHtml((cliente.nome || 'SEM NOME').toUpperCase());
+            const cpf = UI.escapeHtml(cliente.cpf || '-');
+            const telefone = UI.escapeHtml(cliente.telefone || '-');
 
             return `
                 <tr>
-                    <td>${cod}</td>
-                    <td><strong>${nome}</strong></td>
+                    <td style="text-align: center;">${cod}</td>
+                    <td><span class="servico-nome-titulo">${nome}</span></td>
                     <td style="font-family: inherit;">${cpf}</td>
                     <td>${telefone}</td>
-                    <td style="text-align: right; white-space: nowrap;">
-                        <button type="button" class="btn-action-view" onclick="Clientes.abrirFicha(${cliente.id})" title="Visualizar Ficha">
-                            <i class="ph ph-eye"></i>
-                        </button>
-                        <button type="button" class="btn-action-edit" onclick="Clientes.abrirEdicao(${cliente.id})" title="Editar">
-                            <i class="ph ph-note-pencil"></i>
-                        </button>
-                        <button type="button" class="btn-action-delete" onclick="Clientes.abrirModalExcluir(${cliente.id}, '${nome.replace(/'/g, "\\'")}')" title="Excluir">
-                            <i class="ph ph-trash"></i>
-                        </button>
+                    <td style="text-align: right;">
+                        <div class="actions-wrapper" style="justify-content: flex-end;">
+                            <button type="button" class="action-btn btn-action-view" onclick="Clientes.abrirFicha(${cliente.id})" title="Visualizar Ficha">
+                                <i class="ph ph-eye"></i>
+                            </button>
+                            <button type="button" class="action-btn btn-action-edit" onclick="Clientes.abrirEdicao(${cliente.id})" title="Editar">
+                                <i class="ph ph-pencil-simple"></i>
+                            </button>
+                            <button type="button" class="action-btn btn-action-del" onclick="Clientes.abrirModalExcluir(${cliente.id}, '${nome.replace(/'/g, "\\'")}')" title="Excluir">
+                                <i class="ph ph-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;

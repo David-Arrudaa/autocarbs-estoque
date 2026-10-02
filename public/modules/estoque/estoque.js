@@ -584,22 +584,22 @@ const Estoque = {
                     </td>
                     <td style="width:35%;">
                         <span class="mobile-label">PRODUTO:</span>
-                        <div style="padding: 2px 0;">
-                            <span style="font-size:0.875rem; font-weight:700; color:#0F172A; display:block; margin-bottom:3px; letter-spacing:-0.1px;">${tipo} ${modelo}</span>
-                            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                                ${marca ? `<span style="font-size:0.75rem; color:#475569; font-weight:600;"><i class="ph ph-tag" style="font-size:0.75rem;"></i> ${marca}</span>` : ''}
-                                ${codigo ? `<span style="font-size:0.70rem; font-family:monospace; background:#F8FAFC; color:#334155; border:1px solid #CBD5E1; padding:1px 6px; border-radius:4px; font-weight:600; display:inline-flex; align-items:center; gap:4px;" title="Código de Barras / Ref"><i class="ph ph-barcode"></i> ${codigo}</span>` : '<span style="font-size:0.68rem; color:#94A3B8; font-style:italic;">Sem cód. barras</span>'}
+                        <div style="padding: 1px 0;">
+                            <span class="servico-nome-titulo" style="display:block; margin-bottom:2px;">${tipo} ${modelo}</span>
+                            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                ${marca ? `<span style="font-size:0.72rem; color:#64748B; font-weight:600;"><i class="ph ph-tag" style="font-size:0.72rem;"></i> ${marca}</span>` : ''}
+                                ${codigo ? `<span style="font-size:0.68rem; font-family:monospace; background:#F8FAFC; color:#334155; border:1px solid #CBD5E1; padding:1px 5px; border-radius:4px; font-weight:600; display:inline-flex; align-items:center; gap:3px;" title="Código de Barras / Ref"><i class="ph ph-barcode"></i> ${codigo}</span>` : '<span style="font-size:0.68rem; color:#94A3B8; font-style:italic;">Sem cód. barras</span>'}
                             </div>
                         </div>
                     </td>
                     <td style="width:13%; text-align:right;" class="cell-financial">
                         <span class="mobile-label">CUSTO:</span>
-                        <span style="color:#64748B; font-size:0.84rem; font-weight:600; font-variant-numeric:tabular-nums;">R$ ${compra}</span>
+                        <span style="color:#64748B; font-size:0.82rem; font-weight:600; font-variant-numeric:tabular-nums;">R$ ${compra}</span>
                     </td>
                     <td style="width:13%; text-align:right;" class="cell-financial">
                         <span class="mobile-label">VENDA:</span>
                         <div style="display:inline-flex; flex-direction:column; align-items:flex-end;">
-                            <span style="color:#0F172A; font-size:0.88rem; font-weight:800; font-variant-numeric:tabular-nums;">R$ ${venda}</span>
+                            <span style="color:#0F172A; font-size:0.86rem; font-weight:700; font-variant-numeric:tabular-nums;">R$ ${venda}</span>
                             ${markupBadge}
                         </div>
                     </td>
