@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1281,
+    "codigo": "1281",
+    "nome": "SUBS. JUNTA CARTER",
+    "preco": 1125,
+    "tempo_estimado": "02:30",
+    "categoria": "Motor & Injeção",
+    "descricao": "Substituição completa da junta do carter do motor com limpeza, desengraxe e aplicação de vedante de alta temperatura.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:00:00Z",
+    "updated_at": "2026-03-20T10:00:00Z"
+  },
+  {
+    "id": 1280,
+    "codigo": "1280",
+    "nome": "SUBS. RETENTOR DO EIXO COMPRESSOR",
+    "preco": 100,
+    "tempo_estimado": "01:00",
+    "categoria": "Ar Condicionado",
+    "descricao": "Substituição do retentor do eixo do compressor de ar condicionado para eliminação de vazamentos.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:05:00Z",
+    "updated_at": "2026-03-20T10:05:00Z"
+  },
+  {
+    "id": 1279,
+    "codigo": "1279",
+    "nome": "DESMONTAGEM E REPARO NO ALTERNADOR",
+    "preco": 740,
+    "tempo_estimado": "02:00",
+    "categoria": "Elétrica & Eletrônica",
+    "descricao": "Desmontagem, teste de bancada, troca de regulador/rolamentos e revisão geral do alternador.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:10:00Z",
+    "updated_at": "2026-03-20T10:10:00Z"
+  },
+  {
+    "id": 1278,
+    "codigo": "1278",
+    "nome": "SUBS. VALVULA DE SERVIÇO AR COND.",
+    "preco": 250,
+    "tempo_estimado": "00:45",
+    "categoria": "Ar Condicionado",
+    "descricao": "Troca da válvula de serviço de alta/baixa pressão e teste de estanqueidade no sistema de ar condicionado.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:15:00Z",
+    "updated_at": "2026-03-20T10:15:00Z"
+  },
+  {
+    "id": 1277,
+    "codigo": "1277",
+    "nome": "SUBS. DA BOBINA MAGNETICA AR COND.",
+    "preco": 250,
+    "tempo_estimado": "01:00",
+    "categoria": "Ar Condicionado",
+    "descricao": "Substituição da bobina magnética da embreagem do compressor de ar condicionado.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:20:00Z",
+    "updated_at": "2026-03-20T10:20:00Z"
+  },
+  {
+    "id": 1276,
+    "codigo": "1276",
+    "nome": "SUBS. ROLAMENTO GUIA",
+    "preco": 250,
+    "tempo_estimado": "00:45",
+    "categoria": "Motor & Injeção",
+    "descricao": "Substituição do rolamento guia da correia de acessórios / dentada.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:25:00Z",
+    "updated_at": "2026-03-20T10:25:00Z"
+  },
+  {
+    "id": 1275,
+    "codigo": "1275",
+    "nome": "REMAP STAGE1 / REMOÇÃO DELAY",
+    "preco": 2500,
+    "tempo_estimado": "01:30",
+    "categoria": "Performance & Remap",
+    "descricao": "Reprogramação eletrônica de injeção Stage 1 para ganho de potência, torque e eliminação do delay no pedal de aceleração.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:30:00Z",
+    "updated_at": "2026-03-20T10:30:00Z"
+  },
+  {
+    "id": 1274,
+    "codigo": "1274",
+    "nome": "SUBS. TRAVA WASTGATE",
+    "preco": 65,
+    "tempo_estimado": "00:30",
+    "categoria": "Motor & Injeção",
+    "descricao": "Substituição da presilha/trava da haste da válvula wastegate da turbina.",
+    "ativo": true,
+    "created_at": "2026-03-20T10:35:00Z",
+    "updated_at": "2026-03-20T10:35:00Z"
+  }
+]

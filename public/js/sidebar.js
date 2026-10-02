@@ -454,6 +454,8 @@ const Sidebar = {
             }
             if (aba === 'clientes' && window.Clientes && typeof Clientes.iniciar === 'function') {
                 Clientes.iniciar();
+            } else if (aba === 'servicos' && window.Servicos && typeof Servicos.iniciar === 'function') {
+                Servicos.iniciar();
             } else if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
                 Estoque.carregarRelatorio();
             } else if (aba === 'saidas' && window.Estoque && typeof Estoque.calcularCurvaABC === 'function') {

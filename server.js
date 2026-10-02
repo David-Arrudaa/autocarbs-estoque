@@ -13,6 +13,7 @@ const clientesRoutes = require('./src/modules/clientes/clientes.routes');
 const estoqueRoutes  = require('./src/modules/estoque/estoque.routes');
 const cotacoesRoutes = require('./src/modules/cotacoes/cotacoes.routes');
 const usuariosRoutes = require('./src/modules/usuarios/usuarios.routes');
+const servicosRoutes = require('./src/modules/servicos/servicos.routes');
 
 const app = express();
 
@@ -71,6 +72,7 @@ app.use('/api/clientes', clientesRoutes);
 app.use('/api/estoque',  estoqueRoutes);
 app.use('/api/cotacoes', cotacoesRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/servicos', servicosRoutes);
 
 // ─── 6. Health check — protegido, retorna apenas status ──────────────────────
 // Não expõe módulos internos; usa require do middleware auth para proteger

@@ -265,6 +265,46 @@ const API = {
 
     async metricasClientes() {
         return this.request('/clientes/metricas', { method: 'GET' });
+    },
+
+    // ─── MÓDULO DE SERVIÇOS & MÃO DE OBRA ───────────────────────────────
+    async listarServicos(params = {}) {
+        const qs = new URLSearchParams();
+        if (params.busca) qs.set('busca', params.busca);
+        if (params.categoria) qs.set('categoria', params.categoria);
+        if (params.pagina) qs.set('pagina', params.pagina);
+        if (params.limite) qs.set('limite', params.limite);
+        if (params.ordenarPor) qs.set('ordenarPor', params.ordenarPor);
+        if (params.ordem) qs.set('ordem', params.ordem);
+        const queryStr = qs.toString() ? `?${qs.toString()}` : '';
+        return this.request(`/servicos${queryStr}`, { method: 'GET' });
+    },
+
+    async obterServico(id) {
+        return this.request(`/servicos/${id}`, { method: 'GET' });
+    },
+
+    async salvarServico(dados) {
+        if (dados.id) {
+            return this.request(`/servicos/${dados.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(dados)
+            });
+        }
+        return this.request('/servicos', {
+            method: 'POST',
+            body: JSON.stringify(dados)
+        });
+    },
+
+    async excluirServico(id) {
+        return this.request(`/servicos/${id}`, {
+            method: 'DELETE'
+        });
+    },
+
+    async metricasServicos() {
+        return this.request('/servicos/metricas/resumo', { method: 'GET' });
     }
 };
 

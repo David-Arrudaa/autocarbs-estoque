@@ -32,16 +32,17 @@
     </style>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=150.0">
-    <link rel="stylesheet" href="css/style.css?v=150.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=150.0">
-    <link rel="stylesheet" href="modules/clientes/clientes.css?v=150.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=150.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=150.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=150.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=150.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=150.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=150.0">
+    <link rel="stylesheet" href="css/variables.css?v=151.0">
+    <link rel="stylesheet" href="css/style.css?v=151.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=151.0">
+    <link rel="stylesheet" href="modules/clientes/clientes.css?v=151.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=151.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=151.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=151.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=151.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=151.0">
+    <link rel="stylesheet" href="modules/servicos/servicos.css?v=151.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=151.0">
 </head>
 <body>
 
@@ -433,57 +434,9 @@
                     <!-- Injetado dinamicamente via ViewLoader (modules/estoque/estoque.view.html) -->
                 </div>
 
-                <!-- 4. ABA SERVIÇOS (Módulo Modular / Em Estruturação) -->
-                <div class="tab-pane hidden" id="tab-pane-servicos">
-                    <div class="module-placeholder-wrapper">
-                        <div class="module-placeholder-card">
-                            <div class="placeholder-hero">
-                                <div class="placeholder-hero-icon">
-                                    <i class="ph ph-wrench"></i>
-                                </div>
-                                <div class="placeholder-hero-content">
-                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> Catálogo Oficina</span>
-                                    <h2>Tabela de Serviços & Mão de Obra</h2>
-                                    <p>Padronização de serviços da oficina mecânica, definição de tempo padrão de execução e pacotes preventivos.</p>
-                                </div>
-                            </div>
-                            <div class="placeholder-roadmap-box">
-                                <div class="placeholder-roadmap-title">
-                                    <i class="ph ph-compass"></i> Recursos em Estruturação
-                                </div>
-                                <div class="placeholder-grid">
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-timer"></i>
-                                            <span>Tempo Padrão de Execução</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Parametrização de tempo estimado por serviço para agendamento preciso no pátio.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-currency-circle-dollar"></i>
-                                            <span>Preço de Mão de Obra</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Tabela de valor/hora diferenciada por complexidade (mecânica leve, pesada, injeção).</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-package"></i>
-                                            <span>Kits & Pacotes de Revisão</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Combinação de serviços e peças com valor promocional fechado (Ex: Troca de óleo + filtros).</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-user-check"></i>
-                                            <span>Comissionamento Técnico</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Cálculo transparente de produtividade e comissão por mecânico executor.</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 4. ABA SERVIÇOS (Módulo Modular) -->
+                <div class="tab-pane hidden" id="tab-pane-servicos" data-module="servicos">
+                    <!-- Injetado dinamicamente via ViewLoader (modules/servicos/servicos.view.html) -->
                 </div>
 
                 <!-- 5. ABA ORDENS DE SERVIÇO (Módulo Modular / Em Estruturação) -->
@@ -565,17 +518,18 @@
     <div id="relatorio-documento-impressao" class="print-document-only"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=150.0"></script>
-    <script src="js/ui.js?v=150.0"></script>
-    <script src="modals/dialog.js?v=150.0"></script>
-    <script src="js/sidebar.js?v=150.0"></script>
-    <script src="js/api.js?v=150.0"></script>
-    <script src="modules/auth/auth.js?v=150.0"></script>
-    <script src="modules/clientes/clientes.js?v=150.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=150.0"></script>
-    <script src="modules/equipe/equipe.js?v=150.0"></script>
-    <script src="modules/scanner/scanner.js?v=150.0"></script>
-    <script src="modules/estoque/estoque.js?v=150.0"></script>
-    <script src="js/app.js?v=150.0"></script>
+    <script src="js/core/view-loader.js?v=151.0"></script>
+    <script src="js/ui.js?v=151.0"></script>
+    <script src="modals/dialog.js?v=151.0"></script>
+    <script src="js/sidebar.js?v=151.0"></script>
+    <script src="js/api.js?v=151.0"></script>
+    <script src="modules/auth/auth.js?v=151.0"></script>
+    <script src="modules/clientes/clientes.js?v=151.0"></script>
+    <script src="modules/servicos/servicos.js?v=151.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=151.0"></script>
+    <script src="modules/equipe/equipe.js?v=151.0"></script>
+    <script src="modules/scanner/scanner.js?v=151.0"></script>
+    <script src="modules/estoque/estoque.js?v=151.0"></script>
+    <script src="js/app.js?v=151.0"></script>
 </body>
 </html>
