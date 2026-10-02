@@ -3,6 +3,7 @@
  * AUTOCAR BS - ERP OFICINA
  * Módulo: Catálogo de Serviços & Mão de Obra (servicos.js)
  * Arquitetura de Navegação em Páginas Reais (Subviews)
+ * Foco: Código, Procedimento / Serviço e Valor Hora
  * =========================================================
  */
 
@@ -12,7 +13,6 @@ const Servicos = {
     totalRegistros: 0,
     totalPaginas: 1,
     termoBusca: '',
-    categoriaAtiva: 'todos',
     idEdicao: null,
     debounceTimeout: null,
     inicializado: false,
@@ -54,7 +54,7 @@ const Servicos = {
     },
 
     /**
-     * Carrega as métricas executivas do topo
+     * Carrega as métricas do topo (Total de Serviços e Valor Hora Médio)
      */
     async carregarMetricas() {
         try {
@@ -63,13 +63,9 @@ const Servicos = {
                 const m = res.metricas;
                 const elTotal = document.getElementById('kpi-total-servicos');
                 const elPreco = document.getElementById('kpi-preco-medio');
-                const elCat = document.getElementById('kpi-total-categorias');
 
                 if (elTotal) elTotal.textContent = String(m.totalServicos || 0);
                 if (elPreco) elPreco.textContent = UI.formatarMoeda(m.precoMedio || 0);
-                if (elCat) elCat.textContent = String(m.categoriasCount || 0);
-
-                this.atualizarSelectCategorias(m.categorias || []);
             }
         } catch (err) {
             console.warn('[Servicos] Falha ao carregar métricas:', err.message);
@@ -77,27 +73,7 @@ const Servicos = {
     },
 
     /**
-     * Atualiza as opções do filtro de categorias
-     */
-    atualizarSelectCategorias(categorias) {
-        const select = document.getElementById('select-filtro-categoria');
-        if (!select) return;
-
-        const valorAtual = select.value;
-        select.innerHTML = '<option value="todos">Todas as Categorias</option>';
-        categorias.forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat;
-            opt.textContent = cat;
-            select.appendChild(opt);
-        });
-        if (categorias.includes(valorAtual)) {
-            select.value = valorAtual;
-        }
-    },
-
-    /**
-     * Carrega e renderiza a lista de serviços da página solicitada
+     * Carrega e renderiza a lista de serviços
      */
     async carregar(pagina = this.paginaAtual) {
         this.paginaAtual = pagina;
@@ -108,7 +84,7 @@ const Servicos = {
         if (tbody) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align:center; padding: 32px; color: var(--text-secondary);">
+                    <td colspan="4" style="text-align:center; padding: 32px; color: var(--text-secondary);">
                         <i class="ph ph-circle-notch ph-spin" style="font-size:1.8rem; color:var(--primary); display:block; margin-bottom:8px;"></i>
                         <span>Carregando serviços...</span>
                     </td>
@@ -121,7 +97,6 @@ const Servicos = {
                 pagina: this.paginaAtual,
                 limite: this.limitePorPagina,
                 busca: this.termoBusca,
-                categoria: this.categoriaAtiva,
                 ordenarPor: 'codigo',
                 ordem: 'desc'
             });
@@ -137,7 +112,7 @@ const Servicos = {
             if (tbody) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" style="text-align:center; padding: 24px; color: var(--danger);">
+                        <td colspan="4" style="text-align:center; padding: 24px; color: var(--danger);">
                             <i class="ph ph-warning-circle" style="font-size:1.6rem; display:block; margin-bottom:6px;"></i>
                             <span>Não foi possível carregar os serviços. Verifique a conexão.</span>
                         </td>
@@ -150,7 +125,7 @@ const Servicos = {
     },
 
     /**
-     * Renderiza as linhas da tabela
+     * Renderiza a tabela limpa (Cód., Procedimento / Serviço, Valor Hora, Ações)
      */
     renderizarTabela(servicos) {
         const tbody = document.getElementById('tbody-servicos');
@@ -159,7 +134,7 @@ const Servicos = {
         if (servicos.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" style="text-align:center; padding: 40px 16px; color: var(--text-secondary);">
+                    <td colspan="4" style="text-align:center; padding: 40px 16px; color: var(--text-secondary);">
                         <i class="ph ph-magnifying-glass" style="font-size:2rem; opacity:0.4; display:block; margin-bottom:8px;"></i>
                         <strong>Nenhum serviço encontrado.</strong>
                         <p style="font-size:0.8rem; margin-top:4px; opacity:0.8;">Tente ajustar o termo de pesquisa ou adicione um novo serviço.</p>
@@ -170,9 +145,7 @@ const Servicos = {
         }
 
         tbody.innerHTML = servicos.map(s => {
-            const precoFormatado = UI.formatarMoeda(s.preco || 0);
-            const tempo = s.tempo_estimado || '01:00';
-            const categoria = s.categoria || 'Geral';
+            const valorHoraFormatado = UI.formatarMoeda(s.preco || 0);
             const descricao = s.descricao ? UI.escapeHtml(s.descricao) : '';
 
             return `
@@ -186,18 +159,8 @@ const Servicos = {
                             ${descricao ? `<span class="servico-nome-desc" title="${descricao}">${descricao}</span>` : ''}
                         </div>
                     </td>
-                    <td>
-                        <span class="badge-categoria-servico">
-                            <i class="ph ph-tag"></i> ${UI.escapeHtml(categoria)}
-                        </span>
-                    </td>
-                    <td style="text-align:center;">
-                        <span class="badge-tempo-servico">
-                            <i class="ph ph-clock"></i> ${UI.escapeHtml(tempo)}
-                        </span>
-                    </td>
                     <td style="text-align:right;">
-                        <span class="servico-preco-valor">${precoFormatado}</span>
+                        <span class="servico-preco-valor">${valorHoraFormatado}</span>
                     </td>
                     <td style="text-align:right;">
                         <div class="actions-wrapper" style="justify-content:flex-end;">
@@ -272,11 +235,6 @@ const Servicos = {
         this.carregar(1);
     },
 
-    filtrarCategoria(categoria) {
-        this.categoriaAtiva = categoria;
-        this.carregar(1);
-    },
-
     /**
      * Abre a subview para cadastrar um novo serviço
      */
@@ -284,8 +242,6 @@ const Servicos = {
         this.idEdicao = null;
         document.getElementById('serv_codigo').value = '';
         document.getElementById('serv_nome').value = '';
-        document.getElementById('serv_categoria').value = 'Mecânica Geral';
-        document.getElementById('serv_tempo').value = '01:00';
         document.getElementById('serv_preco').value = '';
         document.getElementById('serv_descricao').value = '';
 
@@ -319,8 +275,6 @@ const Servicos = {
 
             document.getElementById('serv_codigo').value = s.codigo || '';
             document.getElementById('serv_nome').value = s.nome || '';
-            document.getElementById('serv_categoria').value = s.categoria || '';
-            document.getElementById('serv_tempo').value = s.tempo_estimado || '01:00';
             document.getElementById('serv_preco').value = Number(s.preco || 0).toFixed(2).replace('.', ',');
             document.getElementById('serv_descricao').value = s.descricao || '';
 
@@ -348,10 +302,8 @@ const Servicos = {
      */
     async salvar() {
         const nome = document.getElementById('serv_nome').value.trim();
-        const categoria = document.getElementById('serv_categoria').value.trim() || 'Mecânica Geral';
         const preco = UI.lerMoeda(document.getElementById('serv_preco').value);
         const codigo = document.getElementById('serv_codigo').value.trim();
-        const tempo_estimado = document.getElementById('serv_tempo').value.trim() || '01:00';
         const descricao = document.getElementById('serv_descricao').value.trim();
 
         if (!nome) {
@@ -361,7 +313,7 @@ const Servicos = {
         }
 
         if (preco <= 0) {
-            UI.toast('Informe um valor válido para a mão de obra!', 'warning');
+            UI.toast('Informe o valor hora do serviço!', 'warning');
             document.getElementById('serv_preco')?.focus();
             return;
         }
@@ -369,9 +321,7 @@ const Servicos = {
         const payload = {
             codigo,
             nome,
-            categoria,
             preco,
-            tempo_estimado,
             descricao
         };
 

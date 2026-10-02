@@ -438,21 +438,16 @@ class ServicosService {
         if (total === 0) {
             return {
                 totalServicos: 0,
-                precoMedio: 0,
-                categoriasCount: 0,
-                categorias: []
+                precoMedio: 0
             };
         }
 
         const somaPrecos = servicos.reduce((acc, s) => acc + (parseFloat(s.preco) || 0), 0);
         const precoMedio = total > 0 ? somaPrecos / total : 0;
-        const categoriasSet = new Set(servicos.map(s => s.categoria).filter(Boolean));
 
         return {
             totalServicos: total,
-            precoMedio: parseFloat(precoMedio.toFixed(2)),
-            categoriasCount: categoriasSet.size,
-            categorias: Array.from(categoriasSet)
+            precoMedio: parseFloat(precoMedio.toFixed(2))
         };
     }
 }

@@ -11,7 +11,7 @@
          ========================================================= -->
     <div id="view-servicos-lista" class="servicos-subview">
 
-        <!-- 1.1 KPIs Executivos do Topo -->
+        <!-- 1.1 KPIs Executivos do Topo (2 Cards: Total e Valor Hora Médio) -->
         <div class="servicos-kpis-grid">
             <div class="servico-kpi-card">
                 <div class="servico-kpi-icon blue">
@@ -28,23 +28,13 @@
                     <i class="ph ph-currency-circle-dollar"></i>
                 </div>
                 <div class="servico-kpi-info">
-                    <span class="servico-kpi-label">Preço Médio de Mão de Obra</span>
+                    <span class="servico-kpi-label">Valor Hora Médio</span>
                     <strong class="servico-kpi-value" id="kpi-preco-medio">R$ 0,00</strong>
-                </div>
-            </div>
-
-            <div class="servico-kpi-card">
-                <div class="servico-kpi-icon amber">
-                    <i class="ph ph-tag"></i>
-                </div>
-                <div class="servico-kpi-info">
-                    <span class="servico-kpi-label">Especialidades / Categorias</span>
-                    <strong class="servico-kpi-value" id="kpi-total-categorias">0</strong>
                 </div>
             </div>
         </div>
 
-        <!-- 1.2 Barra de Ferramentas & Filtros Rápidos -->
+        <!-- 1.2 Barra de Ferramentas & Busca Rápida -->
         <div class="servicos-toolbar-card">
             <div class="servicos-toolbar-left">
                 <button type="button" class="btn-novo-servico-hero" onclick="Servicos.abrirCadastro()">
@@ -68,16 +58,13 @@
             </div>
 
             <div class="servicos-toolbar-filters">
-                <select id="select-filtro-categoria" class="select-filtro-categoria" onchange="Servicos.filtrarCategoria(this.value)">
-                    <option value="todos">Todas as Categorias</option>
-                </select>
                 <button type="button" class="btn btn-secondary" onclick="Servicos.carregar()" title="Recarregar dados">
                     <i class="ph ph-arrows-clockwise" id="icon-reload-servicos"></i>
                 </button>
             </div>
         </div>
 
-        <!-- 1.3 Tabela Moderna de Serviços -->
+        <!-- 1.3 Tabela Limpa de Serviços (Cód., Procedimento / Serviço, Valor Hora, Ações) -->
         <div class="servicos-table-card">
             <div class="table-responsive">
                 <table class="erp-modern-table" id="tabela-servicos-grid">
@@ -85,10 +72,8 @@
                         <tr>
                             <th style="width: 100px; text-align: center;">Cód.</th>
                             <th>Procedimento / Serviço</th>
-                            <th style="width: 200px;">Categoria</th>
-                            <th style="width: 130px; text-align: center;">Tempo Est.</th>
-                            <th style="width: 160px; text-align: right;">Preço M.O</th>
-                            <th style="width: 120px; text-align: right;">Ações</th>
+                            <th style="width: 180px; text-align: right;">Valor Hora</th>
+                            <th style="width: 110px; text-align: right;">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-servicos">
@@ -143,7 +128,7 @@
         <!-- Cartões do Formulário -->
         <div class="servicos-form-cards-container">
             
-            <!-- Card 1: Identificação & Classificação -->
+            <!-- Card 1: Identificação do Serviço -->
             <div class="servicos-page-card">
                 <div class="form-section-title">
                     <i class="ph ph-tag"></i>
@@ -159,50 +144,28 @@
                     <div class="form-control">
                         <label for="serv_nome">NOME DO SERVIÇO / PROCEDIMENTO <span class="campo-obrigatorio">*</span></label>
                         <input type="text" id="serv_nome" placeholder="EX: SUBS. JUNTA CARTER, TROCA DE DISCOS..." required style="text-transform: uppercase;">
-                        <span class="form-helper-text">Descrição objetiva da mão de obra</span>
-                    </div>
-
-                    <div class="form-control">
-                        <label for="serv_categoria">CATEGORIA / ESPECIALIDADE <span class="campo-obrigatorio">*</span></label>
-                        <input type="text" id="serv_categoria" list="lista-categorias-sugestoes" placeholder="EX: Motor & Injeção, Ar Condicionado...">
-                        <datalist id="lista-categorias-sugestoes">
-                            <option value="Motor & Injeção">
-                            <option value="Ar Condicionado">
-                            <option value="Suspensão & Freios">
-                            <option value="Elétrica & Eletrônica">
-                            <option value="Câmbio & Embreagem">
-                            <option value="Performance & Remap">
-                            <option value="Revisão Preventiva">
-                            <option value="Mecânica Geral">
-                        </datalist>
-                        <span class="form-helper-text">Especialidade automotiva ou área de atuação</span>
-                    </div>
-
-                    <div class="form-control">
-                        <label for="serv_tempo">TEMPO ESTIMADO DE EXECUÇÃO (HORAS:MIN)</label>
-                        <input type="text" id="serv_tempo" placeholder="01:30" maxlength="5">
-                        <span class="form-helper-text">Duração média para planejamento de pátio (Ex: 01:30 para 1h 30m)</span>
+                        <span class="form-helper-text">Descrição da mão de obra a ser realizada</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2: Precificação & Detalhamento -->
+            <!-- Card 2: Valor Hora & Descrição -->
             <div class="servicos-page-card">
                 <div class="form-section-title">
                     <i class="ph ph-currency-circle-dollar"></i>
-                    <span>2. Precificação & Escopo Técnico</span>
+                    <span>2. Precificação & Detalhamento</span>
                 </div>
                 <div class="form-grid-2x2">
                     <div class="form-control">
-                        <label for="serv_preco">PREÇO PADRÃO DA MÃO DE OBRA (R$) <span class="campo-obrigatorio">*</span></label>
+                        <label for="serv_preco">VALOR HORA (R$) <span class="campo-obrigatorio">*</span></label>
                         <input type="text" id="serv_preco" placeholder="0,00" oninput="UI.mascaraMoeda(this)" inputmode="numeric" required>
-                        <span class="form-helper-text">Valor padrão cobrado na ordem de serviço ou orçamento</span>
+                        <span class="form-helper-text">Valor cobrado pela execução do serviço</span>
                     </div>
 
                     <div class="form-control full-width" style="grid-column: 1 / -1;">
-                        <label for="serv_descricao">DESCRIÇÃO DETALHADA / ESCOPO TÉCNICO</label>
-                        <textarea id="serv_descricao" rows="4" placeholder="Descreva os passos do serviço, componentes inspecionados ou o que está incluso..."></textarea>
-                        <span class="form-helper-text">Informações que auxiliam o mecânico e podem ser exibidas ao cliente</span>
+                        <label for="serv_descricao">DESCRIÇÃO / OBSERVAÇÕES TÉCNICAS</label>
+                        <textarea id="serv_descricao" rows="4" placeholder="Observações, peças relacionadas ou escopo do procedimento..."></textarea>
+                        <span class="form-helper-text">Informações adicionais para a equipe e ordens de serviço</span>
                     </div>
                 </div>
             </div>
