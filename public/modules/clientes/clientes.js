@@ -403,7 +403,7 @@ const Clientes = {
                 }
             }
 
-            // 2. Aba Ordens de Serviço (Histórico)
+            // 2. Aba Checklists de Entrada (Histórico de Recepção do Veículo)
             const checklists = Array.isArray(c.historico) ? c.historico : [];
             document.getElementById('ficha-os-count-badge').innerText = checklists.length;
 
@@ -413,42 +413,42 @@ const Clientes = {
                     tbodyOs.innerHTML = `
                         <tr>
                             <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 30px;">
-                                Nenhuma ordem de serviço registrada para este cliente.
+                                Nenhum checklist de entrada registrado para este cliente.
                             </td>
                         </tr>
                     `;
                 } else {
                     tbodyOs.innerHTML = checklists.map((chk, idx) => {
                         const dados = chk.dados_checklist || {};
-                        const numOs = dados.numero_os || chk.id?.substring(0, 4) || (1351 - idx);
-                        const dataInicial = dados.data_entrada || (chk.created_at ? new Date(chk.created_at).toLocaleDateString('pt-BR') : '-');
-                        const dataFinal = dados.data_saida || dados.previsao_entrega || '-';
+                        const cod = chk.id ? chk.id.substring(0, 4).toUpperCase() : `#${idx + 1}`;
+                        const dataEntrada = dados.data_entrada || (chk.created_at ? new Date(chk.created_at).toLocaleDateString('pt-BR') : '-');
+                        const horaEntrada = dados.horario_entrada ? `<br><small style="color:var(--text-secondary); font-size:0.78rem;">${dados.horario_entrada}</small>` : '';
                         const carroDesc = `${dados.veiculo_marca || ''} ${dados.veiculo_versao || ''} ${dados.veiculo_ano_modelo || ''}`.trim() || 'VEÍCULO';
                         const placa = chk.placa_veiculo || dados.veiculo_placa || '-';
                         const km = dados.veiculo_km ? `KM: ${dados.veiculo_km}` : '';
-                        const chassi = dados.veiculo_chassi ? `CHASSI: ${dados.veiculo_chassi}` : '';
+                        const combustivel = dados.combustivel || '-';
+                        const nivelTanque = dados.nivel_combustivel ? `Tanque: ${dados.nivel_combustivel}` : '';
                         const defeito = chk.observacoes || dados.servico_solicitado || '-';
 
                         return `
                             <tr>
-                                <td style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${numOs}</td>
-                                <td>${dataInicial}</td>
-                                <td>${dataFinal}</td>
+                                <td style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem;">${cod}</td>
+                                <td style="font-size: 0.88rem; line-height: 1.3;">${dataEntrada}${horaEntrada}</td>
                                 <td>
                                     <div class="os-desc-block">
                                         <span class="os-desc-carro">${carroDesc}</span>
                                         <span class="os-desc-placa">PLACA: ${placa}</span>
                                         ${km ? `<span class="os-desc-meta">${km}</span>` : ''}
-                                        ${chassi ? `<span class="os-desc-meta">${chassi}</span>` : ''}
                                     </div>
                                 </td>
-                                <td>${defeito}</td>
+                                <td style="font-size: 0.85rem;">
+                                    <strong>${combustivel}</strong>
+                                    ${nivelTanque ? `<br><small style="color:var(--text-secondary); font-size:0.76rem;">${nivelTanque}</small>` : ''}
+                                </td>
+                                <td style="font-size: 0.88rem; max-width: 280px;">${defeito}</td>
                                 <td style="text-align: right; white-space: nowrap;">
-                                    <button type="button" class="btn-action-view" onclick="Clientes.imprimirOuVerOS('${chk.id}')" title="Visualizar OS">
+                                    <button type="button" class="btn-action-view" onclick="Clientes.imprimirOuVerChecklist('${chk.id}')" title="Visualizar Checklist de Entrada">
                                         <i class="ph ph-eye"></i>
-                                    </button>
-                                    <button type="button" class="btn-action-edit" onclick="Clientes.abrirEdicao(${c.id})" title="Editar">
-                                        <i class="ph ph-note-pencil"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -472,7 +472,7 @@ const Clientes = {
         }
     },
 
-    imprimirOuVerOS(idChecklist) {
+    imprimirOuVerChecklist(idChecklist) {
         if (!this.clienteAtualFicha) return;
         const chk = (this.clienteAtualFicha.historico || []).find(h => h.id === idChecklist);
         if (!chk) return;
@@ -482,47 +482,68 @@ const Clientes = {
         janela.document.write(`
             <html>
             <head>
-                <title>Checklist / OS - ${chk.placa_veiculo || ''}</title>
+                <title>Checklist de Entrada - ${chk.placa_veiculo || ''}</title>
                 <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.5; color: #000; }
-                    .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-                    .box { border: 1px solid #ccc; padding: 12px; margin-bottom: 15px; border-radius: 4px; }
-                    .box h4 { margin: 0 0 8px 0; border-bottom: 1px solid #eee; padding-bottom: 4px; }
-                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 25px; line-height: 1.5; color: #0f172a; }
+                    .header { border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+                    .header h2 { margin: 0; color: #1e3a8a; font-size: 1.3rem; }
+                    .header span { color: #64748b; font-size: 0.9rem; font-weight: 600; }
+                    .box { border: 1px solid #e2e8f0; padding: 14px; margin-bottom: 15px; border-radius: 6px; background: #fafafa; }
+                    .box h4 { margin: 0 0 10px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; color: #334155; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+                    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+                    .label { color: #64748b; font-size: 0.78rem; text-transform: uppercase; font-weight: 600; }
+                    .val { font-size: 0.95rem; font-weight: 600; color: #0f172a; margin-top: 2px; }
                     @media print { .no-print { display: none; } }
                 </style>
             </head>
             <body onload="window.print()">
                 <div class="header">
-                    <h2>AUTOCAR BS - ORDEM DE SERVIÇO / CHECKLIST</h2>
-                    <span>Data: ${dados.data_entrada || ''}</span>
+                    <div>
+                        <h2>AUTOCAR BS — CHECKLIST DE ENTRADA DO VEÍCULO</h2>
+                        <small style="color: #64748b;">Registro de Recepção e Vistoria Inicial</small>
+                    </div>
+                    <span>Data: ${dados.data_entrada || ''} ${dados.horario_entrada ? 'às ' + dados.horario_entrada : ''}</span>
                 </div>
                 <div class="box">
-                    <h4>DADOS DO CLIENTE</h4>
-                    <p><strong>Nome:</strong> ${this.clienteAtualFicha.nome || ''}</p>
-                    <p><strong>Telefone:</strong> ${this.clienteAtualFicha.telefone || ''} | <strong>CPF:</strong> ${this.clienteAtualFicha.cpf || ''}</p>
-                </div>
-                <div class="box">
-                    <h4>DADOS DO VEÍCULO</h4>
+                    <h4>1. DADOS DO CLIENTE</h4>
                     <div class="grid">
-                        <div><strong>Placa:</strong> ${chk.placa_veiculo || ''}</div>
-                        <div><strong>Veículo:</strong> ${dados.veiculo_marca || ''} ${dados.veiculo_versao || ''}</div>
-                        <div><strong>KM:</strong> ${dados.veiculo_km || '-'}</div>
-                        <div><strong>Combustível:</strong> ${dados.combustivel || '-'} (Tanque: ${dados.nivel_combustivel || '-'})</div>
+                        <div><div class="label">Nome</div><div class="val">${this.clienteAtualFicha.nome || ''}</div></div>
+                        <div><div class="label">Telefone / WhatsApp</div><div class="val">${this.clienteAtualFicha.telefone || '-'}</div></div>
+                        <div><div class="label">CPF / CNPJ</div><div class="val">${this.clienteAtualFicha.cpf || '-'}</div></div>
+                        <div><div class="label">Cidade / UF</div><div class="val">${this.clienteAtualFicha.cidade || ''} - ${this.clienteAtualFicha.uf || ''}</div></div>
                     </div>
                 </div>
                 <div class="box">
-                    <h4>SERVIÇO SOLICITADO / DEFEITO RELATADO</h4>
-                    <p>${chk.observacoes || dados.servico_solicitado || 'Nenhum detalhe adicional informado.'}</p>
+                    <h4>2. DADOS DO VEÍCULO NA ENTRADA</h4>
+                    <div class="grid-3">
+                        <div><div class="label">Placa</div><div class="val" style="color:#2563eb;">${chk.placa_veiculo || dados.veiculo_placa || '-'}</div></div>
+                        <div><div class="label">Veículo</div><div class="val">${dados.veiculo_marca || ''} ${dados.veiculo_versao || ''} (${dados.veiculo_ano_modelo || '-'})</div></div>
+                        <div><div class="label">KM Entrada</div><div class="val">${dados.veiculo_km || '-'}</div></div>
+                        <div><div class="label">Cor</div><div class="val">${dados.veiculo_cor || '-'}</div></div>
+                        <div><div class="label">Câmbio / Portas</div><div class="val">${dados.cambio || '-'} / ${dados.portas || '-'}</div></div>
+                        <div><div class="label">Combustível / Nível</div><div class="val">${dados.combustivel || '-'} (${dados.nivel_combustivel || '-'})</div></div>
+                        <div><div class="label">Luz de Injeção / Painel</div><div class="val">${dados.luz_painel || 'NÃO'}</div></div>
+                        <div><div class="label">Entrada por Guincho?</div><div class="val">${dados.guincho || 'NÃO'}</div></div>
+                        <div><div class="label">Chassi</div><div class="val" style="font-family:monospace; font-size:0.85rem;">${dados.veiculo_chassi || '-'}</div></div>
+                    </div>
                 </div>
                 <div class="box">
-                    <h4>RESPONSÁVEL TÉCNICO</h4>
-                    <p>${chk.mecanico_responsavel || dados.mecanico_responsavel || 'Não informado'}</p>
+                    <h4>3. SERVIÇO SOLICITADO / RELATO DO CLIENTE</h4>
+                    <p style="margin: 0; font-size: 0.95rem; line-height: 1.6;">${chk.observacoes || dados.servico_solicitado || 'Nenhum detalhe adicional informado.'}</p>
+                </div>
+                <div class="box">
+                    <h4>4. RESPONSÁVEL PELA RECEPÇÃO</h4>
+                    <p style="margin: 0; font-weight: 600;">${dados.mecanico_responsavel || chk.mecanico_responsavel || 'Não informado'}</p>
                 </div>
             </body>
             </html>
         `);
         janela.document.close();
+    },
+
+    imprimirOuVerOS(idChecklist) {
+        this.imprimirOuVerChecklist(idChecklist);
     },
 
     /**

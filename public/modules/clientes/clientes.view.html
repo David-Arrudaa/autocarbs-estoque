@@ -114,7 +114,7 @@
                     </button>
                     <button type="button" class="ficha-tab-btn" id="tab-btn-ficha-os" onclick="Clientes.alternarAbaFicha('os')">
                         <i class="ph ph-clipboard-text"></i>
-                        <span>Ordens de serviço</span>
+                        <span>Checklists de Entrada</span>
                         <span class="ficha-badge-count" id="ficha-os-count-badge">0</span>
                     </button>
                 </div>
@@ -230,25 +230,25 @@
 
         </div>
 
-        <!-- CONTEÚDO DA ABA 2: ORDENS DE SERVIÇO (HISTÓRICO) -->
+        <!-- CONTEÚDO DA ABA 2: CHECKLISTS DE ENTRADA DO VEÍCULO -->
         <div class="ficha-tab-content hidden" id="ficha-conteudo-os">
             <div class="ficha-section-card" style="padding: 0; overflow: hidden;">
                 <div class="table-responsive">
                     <table class="erp-modern-table">
                         <thead>
                             <tr>
-                                <th style="width: 90px;">Nº OS</th>
-                                <th style="width: 120px;">Data Inicial</th>
-                                <th style="width: 120px;">Dados Finais</th>
-                                <th>Descrição</th>
-                                <th>Defeito</th>
-                                <th style="width: 100px; text-align: right;">Ações</th>
+                                <th style="width: 80px;">Cód.</th>
+                                <th style="width: 130px;">Data & Hora</th>
+                                <th>Veículo & Placa</th>
+                                <th style="width: 140px;">Combustível</th>
+                                <th>Serviço Solicitado / Relato</th>
+                                <th style="width: 80px; text-align: right;">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="ficha-os-tbody">
                             <tr>
                                 <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 30px;">
-                                    Nenhuma ordem de serviço registrada para este cliente.
+                                    Nenhum checklist de entrada registrado para este cliente.
                                 </td>
                             </tr>
                         </tbody>
