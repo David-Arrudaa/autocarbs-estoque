@@ -6,7 +6,7 @@
  * Integração com a base de dados dedicada de clientes (Supabase 2).
  */
 
-const { supabaseClientes } = require('../../config/supabase');
+const { supabase, supabaseClientes } = require('../../config/supabase');
 const auditoriaService = require('../auditoria/auditoria.service');
 
 function escaparIlike(valor) {
@@ -91,22 +91,59 @@ class ClientesService {
         if (error) throw error;
         if (!cliente) return null;
 
-        // Busca histórico de checklists desse cliente
-        let historico = [];
+        // 1. Busca histórico de checklists desse cliente no banco de clientes
+        let historico_checklists = [];
         try {
             const { data: checklists } = await supabaseClientes
                 .from('historico_checklists')
                 .select('*')
                 .ilike('cliente_nome', `%${escaparIlike(cliente.nome)}%`)
                 .order('created_at', { ascending: false })
-                .limit(20);
+                .limit(50);
 
-            historico = checklists || [];
+            historico_checklists = checklists || [];
+        } catch (_) {}
+
+        // 2. Busca histórico de Ordens de Serviço (OS) no banco principal
+        let ordens_servico = [];
+        try {
+            // Busca por nome do cliente
+            const { data: osPorNome } = await supabase
+                .from('ordens_servico')
+                .select('*, os_itens(*)')
+                .ilike('cliente', `%${escaparIlike(cliente.nome)}%`)
+                .order('created_at', { ascending: false })
+                .limit(50);
+
+            ordens_servico = osPorNome || [];
+
+            // Se o cliente possui placas vinculadas, complementa com OS encontradas por placa
+            const placas = (cliente.veiculos || []).map(v => (v.placa || '').replace(/[^a-zA-Z0-9]/g, '')).filter(Boolean);
+            if (placas.length > 0) {
+                for (const p of placas) {
+                    const { data: osPorPlaca } = await supabase
+                        .from('ordens_servico')
+                        .select('*, os_itens(*)')
+                        .ilike('placa', `%${escaparIlike(p)}%`)
+                        .order('created_at', { ascending: false })
+                        .limit(20);
+
+                    if (osPorPlaca && osPorPlaca.length > 0) {
+                        for (const itemOs of osPorPlaca) {
+                            if (!ordens_servico.some(existente => existente.id === itemOs.id)) {
+                                ordens_servico.push(itemOs);
+                            }
+                        }
+                    }
+                }
+            }
         } catch (_) {}
 
         return {
             ...cliente,
-            historico
+            historico: historico_checklists, // compatibilidade
+            historico_checklists,
+            ordens_servico
         };
     }
 

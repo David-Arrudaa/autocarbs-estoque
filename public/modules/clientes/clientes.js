@@ -189,22 +189,19 @@ const Clientes = {
      * Alterna abas na Ficha da Página
      */
     alternarAbaFicha(aba) {
-        const btnDados = document.getElementById('tab-btn-ficha-dados');
-        const btnOs = document.getElementById('tab-btn-ficha-os');
-        const contDados = document.getElementById('ficha-conteudo-dados');
-        const contOs = document.getElementById('ficha-conteudo-os');
-
-        if (aba === 'dados') {
-            if (btnDados) btnDados.classList.add('active');
-            if (btnOs) btnOs.classList.remove('active');
-            if (contDados) contDados.classList.remove('hidden');
-            if (contOs) contOs.classList.add('hidden');
-        } else {
-            if (btnDados) btnDados.classList.remove('active');
-            if (btnOs) btnOs.classList.add('active');
-            if (contDados) contDados.classList.add('hidden');
-            if (contOs) contOs.classList.remove('hidden');
-        }
+        const abas = ['dados', 'checklists', 'os'];
+        abas.forEach(nome => {
+            const btn = document.getElementById(`tab-btn-ficha-${nome}`);
+            const cont = document.getElementById(`ficha-conteudo-${nome}`);
+            if (btn) {
+                if (nome === aba) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+            if (cont) {
+                if (nome === aba) cont.classList.remove('hidden');
+                else cont.classList.add('hidden');
+            }
+        });
     },
 
     /**
@@ -404,13 +401,16 @@ const Clientes = {
             }
 
             // 2. Aba Checklists de Entrada (Histórico de Recepção do Veículo)
-            const checklists = Array.isArray(c.historico) ? c.historico : [];
-            document.getElementById('ficha-os-count-badge').innerText = checklists.length;
+            const checklists = Array.isArray(c.historico_checklists) ? c.historico_checklists : (Array.isArray(c.historico) ? c.historico : []);
+            const badgeChecklists = document.getElementById('ficha-checklists-count-badge');
+            const headerChecklists = document.getElementById('ficha-checklists-count-header');
+            if (badgeChecklists) badgeChecklists.innerText = checklists.length;
+            if (headerChecklists) headerChecklists.innerText = checklists.length;
 
-            const tbodyOs = document.getElementById('ficha-os-tbody');
-            if (tbodyOs) {
+            const tbodyChecklists = document.getElementById('ficha-checklists-tbody');
+            if (tbodyChecklists) {
                 if (checklists.length === 0) {
-                    tbodyOs.innerHTML = `
+                    tbodyChecklists.innerHTML = `
                         <tr>
                             <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 30px;">
                                 Nenhum checklist de entrada registrado para este cliente.
@@ -418,7 +418,7 @@ const Clientes = {
                         </tr>
                     `;
                 } else {
-                    tbodyOs.innerHTML = checklists.map((chk, idx) => {
+                    tbodyChecklists.innerHTML = checklists.map((chk, idx) => {
                         const dados = chk.dados_checklist || {};
                         const cod = chk.id ? chk.id.substring(0, 4).toUpperCase() : `#${idx + 1}`;
                         const dataEntrada = dados.data_entrada || (chk.created_at ? new Date(chk.created_at).toLocaleDateString('pt-BR') : '-');
@@ -457,6 +457,55 @@ const Clientes = {
                 }
             }
 
+            // 3. Aba Ordens de Serviço (OS do Banco Principal)
+            const ordensServico = Array.isArray(c.ordens_servico) ? c.ordens_servico : [];
+            const badgeOs = document.getElementById('ficha-os-count-badge');
+            const headerOs = document.getElementById('ficha-os-count-header');
+            if (badgeOs) badgeOs.innerText = ordensServico.length;
+            if (headerOs) headerOs.innerText = ordensServico.length;
+
+            const tbodyOs = document.getElementById('ficha-os-tbody');
+            if (tbodyOs) {
+                if (ordensServico.length === 0) {
+                    tbodyOs.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 30px;">
+                                Nenhuma ordem de serviço registrada para este cliente.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tbodyOs.innerHTML = ordensServico.map(os => {
+                        const numOs = `#${String(os.id).padStart(4, '0')}`;
+                        const dataOs = os.created_at ? new Date(os.created_at).toLocaleDateString('pt-BR') : '-';
+                        const carroDesc = os.veiculo || 'VEÍCULO NÃO INFORMADO';
+                        const placa = os.placa || '-';
+                        const totalItens = Array.isArray(os.os_itens) ? os.os_itens.length : 0;
+                        const totalValor = Number(os.total || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+                        return `
+                            <tr>
+                                <td style="font-weight: 700; color: var(--primary); font-size: 0.95rem;">${numOs}</td>
+                                <td style="font-size: 0.88rem;">${dataOs}</td>
+                                <td>
+                                    <div class="os-desc-block">
+                                        <span class="os-desc-carro">${carroDesc}</span>
+                                        <span class="os-desc-placa">PLACA: ${placa}</span>
+                                    </div>
+                                </td>
+                                <td style="font-size: 0.88rem;">${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</td>
+                                <td style="font-weight: 700; color: #16a34a; font-size: 0.95rem;">${totalValor}</td>
+                                <td style="text-align: right; white-space: nowrap;">
+                                    <button type="button" class="btn-action-view" onclick="Clientes.imprimirOuVerOrdemServico(${os.id})" title="Visualizar Ordem de Serviço">
+                                        <i class="ph ph-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
             // Botão Editar no Header da Ficha
             const btnEditarHeader = document.getElementById('ficha-btn-editar');
             if (btnEditarHeader) {
@@ -474,7 +523,7 @@ const Clientes = {
 
     imprimirOuVerChecklist(idChecklist) {
         if (!this.clienteAtualFicha) return;
-        const chk = (this.clienteAtualFicha.historico || []).find(h => h.id === idChecklist);
+        const chk = (this.clienteAtualFicha.historico_checklists || this.clienteAtualFicha.historico || []).find(h => h.id === idChecklist);
         if (!chk) return;
 
         const dados = chk.dados_checklist || {};
@@ -536,6 +585,100 @@ const Clientes = {
                     <h4>4. RESPONSÁVEL PELA RECEPÇÃO</h4>
                     <p style="margin: 0; font-weight: 600;">${dados.mecanico_responsavel || chk.mecanico_responsavel || 'Não informado'}</p>
                 </div>
+            </body>
+            </html>
+        `);
+        janela.document.close();
+    },
+
+    imprimirOuVerOrdemServico(idOs) {
+        if (!this.clienteAtualFicha) return;
+        const os = (this.clienteAtualFicha.ordens_servico || []).find(o => o.id === idOs || String(o.id) === String(idOs));
+        if (!os) return;
+
+        const itens = Array.isArray(os.os_itens) ? os.os_itens : [];
+        const numOs = `#${String(os.id).padStart(4, '0')}`;
+        const dataOs = os.created_at ? new Date(os.created_at).toLocaleDateString('pt-BR') : '-';
+        const totalOs = Number(os.total || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        const janela = window.open('', '', 'width=900,height=800');
+        janela.document.write(`
+            <html>
+            <head>
+                <title>Ordem de Serviço ${numOs} - ${this.clienteAtualFicha.nome || ''}</title>
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 25px; line-height: 1.5; color: #0f172a; }
+                    .header { border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+                    .header h2 { margin: 0; color: #1e3a8a; font-size: 1.3rem; }
+                    .header span { color: #64748b; font-size: 0.9rem; font-weight: 600; }
+                    .box { border: 1px solid #e2e8f0; padding: 14px; margin-bottom: 15px; border-radius: 6px; background: #fafafa; }
+                    .box h4 { margin: 0 0 10px 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; color: #334155; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+                    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+                    .label { color: #64748b; font-size: 0.78rem; text-transform: uppercase; font-weight: 600; }
+                    .val { font-size: 0.95rem; font-weight: 600; color: #0f172a; margin-top: 2px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.9rem; }
+                    th, td { padding: 9px 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+                    th { background: #f1f5f9; color: #475569; font-size: 0.78rem; text-transform: uppercase; font-weight: 700; }
+                    .total-box { display: flex; justify-content: flex-end; align-items: center; gap: 14px; margin-top: 15px; font-size: 1.15rem; font-weight: 700; }
+                    .total-val { color: #16a34a; font-size: 1.3rem; }
+                    @media print { .no-print { display: none; } }
+                </style>
+            </head>
+            <body onload="window.print()">
+                <div class="header">
+                    <div>
+                        <h2>AUTOCAR BS — ORDEM DE SERVIÇO ${numOs}</h2>
+                        <small style="color: #64748b;">Comprovante de Peças e Serviços</small>
+                    </div>
+                    <span>Data: ${dataOs}</span>
+                </div>
+                <div class="box">
+                    <h4>1. DADOS DO CLIENTE & VEÍCULO</h4>
+                    <div class="grid">
+                        <div><div class="label">Cliente</div><div class="val">${this.clienteAtualFicha.nome || os.cliente || ''}</div></div>
+                        <div><div class="label">Telefone</div><div class="val">${this.clienteAtualFicha.telefone || '-'}</div></div>
+                        <div><div class="label">Veículo</div><div class="val">${os.veiculo || '-'}</div></div>
+                        <div><div class="label">Placa</div><div class="val" style="color:#2563eb;">${os.placa || '-'}</div></div>
+                    </div>
+                </div>
+                <div class="box">
+                    <h4>2. PEÇAS & SERVIÇOS EXECUTADOS</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 45px;">#</th>
+                                <th>Descrição do Item / Peça</th>
+                                <th style="width: 70px; text-align: center;">Qtd</th>
+                                <th style="width: 120px; text-align: right;">Unitário</th>
+                                <th style="width: 130px; text-align: right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itens.length === 0 ? '<tr><td colspan="5" style="text-align:center; padding:15px; color:#64748b;">Nenhum item discriminado.</td></tr>' : itens.map((it, i) => {
+                                const sub = Number((it.qtd || 1) * (it.preco_venda || 0));
+                                return `
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td>${it.nome_peca || '-'}</td>
+                                        <td style="text-align: center;">${it.qtd || 1}</td>
+                                        <td style="text-align: right;">${Number(it.preco_venda || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td style="text-align: right; font-weight: 600;">${sub.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                    <div class="total-box">
+                        <span>TOTAL DA OS:</span>
+                        <span class="total-val">${totalOs}</span>
+                    </div>
+                </div>
+                ${os.observacao ? `
+                <div class="box">
+                    <h4>3. OBSERVAÇÕES</h4>
+                    <p style="margin: 0;">${os.observacao}</p>
+                </div>
+                ` : ''}
             </body>
             </html>
         `);
