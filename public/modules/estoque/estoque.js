@@ -587,16 +587,10 @@ const Estoque = {
                         <span class="mobile-label">ESTOQUE:</span>
                         ${stockPillHtml}
                     </td>
-                    <td style="width:18%; text-align:right;">
+                    <td style="width:14%; text-align:right;">
                         <div class="actions-wrapper" style="justify-content:flex-end;">
-                            <button class="action-btn btn-action-view" onclick="Estoque.abrirFichaProduto(${p.id})" title="Visualizar Ficha Técnica (👁️)">
+                            <button class="action-btn btn-action-view" onclick="Estoque.abrirFichaProduto(${p.id})" title="Visualizar Ficha Técnica & Movimentação (👁️)">
                                 <i class="ph ph-eye"></i>
-                            </button>
-                            <button class="action-btn btn-action-in" onclick="Estoque.abrirEntrada(${p.id})" title="Entrada no Estoque (+)">
-                                <i class="ph ph-plus"></i>
-                            </button>
-                            <button class="action-btn btn-action-out" onclick="Estoque.abrirSaida(${p.id})" title="Baixa no Estoque (-)">
-                                <i class="ph ph-minus"></i>
                             </button>
                             <button class="action-btn btn-action-edit" onclick="Estoque.editarProduto(${p.id})" title="Editar Produto">
                                 <i class="ph ph-pencil-simple"></i>
@@ -755,11 +749,8 @@ const Estoque = {
                     </td>
                     <td style="width:15%; text-align:right;">
                         <div class="actions-wrapper" style="justify-content:flex-end;">
-                            <button class="action-btn btn-action-in" onclick="Estoque.abrirEntrada(${p.id})" title="Entrada / Repor Estoque (+)">
-                                <i class="ph ph-plus"></i>
-                            </button>
-                            <button class="action-btn btn-action-out" onclick="Estoque.abrirSaida(${p.id})" title="Baixa no Estoque (-)">
-                                <i class="ph ph-minus"></i>
+                            <button class="action-btn btn-action-view" onclick="Estoque.abrirFichaProduto(${p.id})" title="Visualizar Ficha Técnica & Repor (👁️)">
+                                <i class="ph ph-eye"></i>
                             </button>
                             <button class="action-btn btn-action-edit" onclick="Estoque.editarProduto(${p.id})" title="Editar Produto">
                                 <i class="ph ph-pencil-simple"></i>
@@ -1369,11 +1360,8 @@ const Estoque = {
                         </td>
                         <td style="width:10%; text-align:right;">
                             <div class="actions-wrapper" style="justify-content:flex-end;">
-                                <button class="action-btn btn-action-in" onclick="Estoque.abrirEntrada(${p.id})" title="Entrada no Estoque (+)">
-                                    <i class="ph ph-plus"></i>
-                                </button>
-                                <button class="action-btn btn-action-out" onclick="Estoque.abrirSaida(${p.id})" title="Baixa no Estoque (-)">
-                                    <i class="ph ph-minus"></i>
+                                <button class="action-btn btn-action-view" onclick="Estoque.abrirFichaProduto(${p.id})" title="Visualizar Ficha Técnica (👁️)">
+                                    <i class="ph ph-eye"></i>
                                 </button>
                                 <button class="action-btn btn-action-edit" onclick="Estoque.editarProduto(${p.id})" title="Editar Produto">
                                     <i class="ph ph-pencil-simple"></i>
