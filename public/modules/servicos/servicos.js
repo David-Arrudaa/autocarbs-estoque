@@ -9,7 +9,7 @@
 
 const Servicos = {
     paginaAtual: 1,
-    limitePorPagina: 15,
+    limitePorPagina: 25,
     totalRegistros: 0,
     totalPaginas: 1,
     termoBusca: '',
@@ -25,10 +25,7 @@ const Servicos = {
             this.inicializado = true;
             this.mostrarSubview('lista');
         }
-        await Promise.all([
-            this.carregarMetricas(),
-            this.carregar(1)
-        ]);
+        await this.carregar(1);
     },
 
     /**
@@ -51,25 +48,6 @@ const Servicos = {
     voltarParaLista() {
         this.idEdicao = null;
         this.mostrarSubview('lista');
-    },
-
-    /**
-     * Carrega as métricas do topo (Total de Serviços e Valor Hora Médio)
-     */
-    async carregarMetricas() {
-        try {
-            const res = await API.metricasServicos();
-            if (res && res.success && res.metricas) {
-                const m = res.metricas;
-                const elTotal = document.getElementById('kpi-total-servicos');
-                const elPreco = document.getElementById('kpi-preco-medio');
-
-                if (elTotal) elTotal.textContent = String(m.totalServicos || 0);
-                if (elPreco) elPreco.textContent = UI.formatarMoeda(m.precoMedio || 0);
-            }
-        } catch (err) {
-            console.warn('[Servicos] Falha ao carregar métricas:', err.message);
-        }
     },
 
     /**
@@ -335,10 +313,7 @@ const Servicos = {
             if (res && res.success) {
                 UI.toast(res.mensagem || 'Serviço salvo com sucesso!', 'success');
                 this.voltarParaLista();
-                await Promise.all([
-                    this.carregar(this.paginaAtual),
-                    this.carregarMetricas()
-                ]);
+                await this.carregar(this.paginaAtual);
             }
         } catch (err) {
             UI.toast(err.message || 'Erro ao salvar serviço.', 'error');
@@ -363,10 +338,7 @@ const Servicos = {
             const res = await API.excluirServico(id);
             if (res && res.success) {
                 UI.toast('Serviço excluído com sucesso!', 'success');
-                await Promise.all([
-                    this.carregar(this.paginaAtual),
-                    this.carregarMetricas()
-                ]);
+                await this.carregar(this.paginaAtual);
             }
         } catch (err) {
             UI.toast(err.message || 'Erro ao excluir serviço.', 'error');

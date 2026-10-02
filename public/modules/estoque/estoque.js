@@ -71,7 +71,7 @@ const Estoque = {
         // Suporte a navegação por histórico do navegador (botão Voltar/Avançar)
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.replace('#', '');
-            const abasValidas = ['produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao'];
+            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
             if (hash && abasValidas.includes(hash) && this.abaAtiva !== hash) {
                 this.alternarAba(hash);
             }
@@ -188,6 +188,18 @@ const Estoque = {
                     titulo: 'Cotação de Peças & Orçamentos', 
                     subtitulo: 'Cote com múltiplos fornecedores e gere orçamentos para clientes' 
                 },
+                servicos: {
+                    modulo: 'CADASTROS',
+                    submodulo: 'SERVIÇOS',
+                    titulo: 'Catálogo de Serviços',
+                    subtitulo: 'Tabela de serviços e mão de obra com precificação por hora'
+                },
+                os: {
+                    modulo: 'ORDENS DE SERVIÇO',
+                    submodulo: 'GESTÃO',
+                    titulo: 'Ordens de Serviço',
+                    subtitulo: 'Acompanhamento e emissão de ordens de serviço da oficina'
+                },
                 usuarios: { 
                     modulo: 'CONFIGURAÇÕES', 
                     submodulo: 'EQUIPE & ACESSOS', 
@@ -223,6 +235,14 @@ const Estoque = {
             if (window.Clientes && typeof Clientes.iniciar === 'function') {
                 Clientes.iniciar();
             }
+        } else if (aba === 'servicos') {
+            if (window.Servicos && typeof Servicos.iniciar === 'function') {
+                Servicos.iniciar();
+            }
+        } else if (aba === 'os') {
+            if (window.OS && typeof OS.iniciar === 'function') {
+                OS.iniciar();
+            }
         } else if (aba === 'reposicao') {
             this.renderizarTabelaReposicao();
         } else if (aba === 'saidas') {
@@ -256,7 +276,7 @@ const Estoque = {
         let aba = 'produtos';
         try {
             const hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
+            const abasValidas = ['dashboard', 'clientes', 'produtos', 'reposicao', 'servicos', 'os', 'saidas', 'relatorios', 'cotacao', 'usuarios'];
             if (hash && abasValidas.includes(hash)) {
                 aba = hash;
             } else {
