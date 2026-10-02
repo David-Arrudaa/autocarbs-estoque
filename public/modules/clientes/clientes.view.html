@@ -31,10 +31,17 @@
             <div class="clientes-search-box">
                 <i class="ph ph-magnifying-glass"></i>
                 <input 
-                    type="text" 
+                    type="search" 
                     id="input-busca-clientes" 
+                    name="cliente_filtro_busca_no_autofill"
                     placeholder="Buscar cliente por nome, CPF ou telefone..." 
-                    autocomplete="off"
+                    autocomplete="one-time-code"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                    data-form-type="other"
                 >
                 <button type="button" class="btn-clear-search" id="btn-limpar-busca-clientes" title="Limpar pesquisa" style="display:none;">
                     <i class="ph ph-x"></i>

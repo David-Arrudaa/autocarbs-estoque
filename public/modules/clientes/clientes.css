@@ -147,6 +147,14 @@
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
+.clientes-search-box input::-webkit-search-decoration,
+.clientes-search-box input::-webkit-search-cancel-button,
+.clientes-search-box input::-webkit-search-results-button,
+.clientes-search-box input::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    display: none;
+}
+
 .btn-clear-search {
     position: absolute;
     right: 10px;
