@@ -489,11 +489,36 @@
 /* Tabela Interna de Itens da OS (Peças e Serviços) */
 .os-items-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 6px;
     border: 1px solid #CBD5E1;
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible !important;
+}
+
+.os-items-table thead,
+.os-items-table tbody,
+.os-items-table tr,
+.os-items-table td {
+    overflow: visible !important;
+}
+
+#tabela-itens-servicos {
+    position: relative;
+    z-index: 50;
+}
+
+#tabela-itens-servicos tr {
+    position: relative;
+}
+
+#tabela-itens-servicos tr:focus-within {
+    z-index: 60;
+}
+
+#tabela-itens-servicos td {
+    position: relative;
 }
 
 .os-items-table th {
@@ -506,11 +531,28 @@
     border-bottom: 1px solid #CBD5E1;
 }
 
+.os-items-table th:first-child {
+    border-top-left-radius: 7px;
+}
+.os-items-table th:last-child {
+    border-top-right-radius: 7px;
+}
+
 .os-items-table td {
     padding: 6px 10px;
     font-size: 0.80rem;
     border-bottom: 1px solid #E2E8F0;
     vertical-align: middle;
+}
+
+.os-items-table tr:last-child td {
+    border-bottom: none;
+}
+.os-items-table tr:last-child td:first-child {
+    border-bottom-left-radius: 7px;
+}
+.os-items-table tr:last-child td:last-child {
+    border-bottom-right-radius: 7px;
 }
 
 .os-totais-box {
@@ -557,6 +599,11 @@
 .os-servico-search-container {
     position: relative;
     width: 100%;
+    z-index: 70;
+}
+
+.os-servico-search-container:focus-within {
+    z-index: 100;
 }
 
 .os-servico-input-wrapper {
@@ -621,14 +668,14 @@
     top: calc(100% + 4px);
     left: 0;
     width: 100%;
-    min-width: 320px;
-    max-height: 240px;
+    min-width: 380px;
+    max-height: 250px;
     overflow-y: auto;
     background: #FFFFFF;
-    border: 1px solid #CBD5E1;
+    border: 1px solid #94A3B8;
     border-radius: 8px;
-    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.14), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
-    z-index: 500;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(15, 23, 42, 0.10);
+    z-index: 99999 !important;
     padding: 4px;
     animation: fadeInOSDropdown 0.15s ease-out;
 }
