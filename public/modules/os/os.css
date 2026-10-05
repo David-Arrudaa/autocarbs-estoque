@@ -233,16 +233,24 @@
     vertical-align: middle;
 }
 
-.os-veiculo-nome-single {
-    font-size: 0.75rem;
-    font-weight: 400;
-    color: #64748B;
+.os-placa-badge {
     display: inline-block;
-    max-width: 320px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #334155;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    cursor: default;
+    transition: all 0.15s ease;
+}
+
+.os-placa-badge:hover {
+    background: #E2E8F0;
+    color: #0F172A;
 }
 
 .os-data-texto {

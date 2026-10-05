@@ -165,8 +165,9 @@ const OSModule = {
 
             const cliNome = os.cliente_nome ? (window.UI ? UI.escapeHtml(os.cliente_nome) : os.cliente_nome) : 'CLIENTE NÃO IDENTIFICADO';
             const modVeiculo = os.veiculo_modelo ? (window.UI ? UI.escapeHtml(os.veiculo_modelo) : os.veiculo_modelo) : '';
-            const placaVeiculo = os.veiculo_placa ? (window.UI ? UI.escapeHtml(os.veiculo_placa) : os.veiculo_placa) : '';
-            const veiculoTexto = [modVeiculo, placaVeiculo ? `(${placaVeiculo})` : ''].filter(Boolean).join(' ') || '-';
+            const placaVeiculo = (os.veiculo_placa || '').trim().toUpperCase();
+            const placaExibicao = placaVeiculo || (modVeiculo ? modVeiculo : '-');
+            const tooltipVeiculo = [modVeiculo, placaVeiculo].filter(Boolean).join(' • ') || 'Veículo não informado';
 
             return `
                 <tr>
@@ -176,8 +177,8 @@ const OSModule = {
                     <td>
                         <span class="os-cliente-nome-single" title="${cliNome}">${cliNome}</span>
                     </td>
-                    <td>
-                        <span class="os-veiculo-nome-single" title="${veiculoTexto}">${veiculoTexto}</span>
+                    <td style="text-align:center;">
+                        <span class="os-placa-badge" title="${tooltipVeiculo}">${placaExibicao}</span>
                     </td>
                     <td style="text-align:center;">
                         <span class="os-data-texto">${dataIni}</span>
