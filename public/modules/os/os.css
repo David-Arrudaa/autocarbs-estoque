@@ -183,28 +183,33 @@
 }
 
 #tabela-os-grid th {
-    padding: 10px 16px;
-    font-size: 0.70rem;
-    font-weight: 700;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: #64748B;
-    background: #F8FAFC;
-    border-bottom: 1px solid #E2E8F0;
-    white-space: nowrap;
+    padding: 11px 16px !important;
+    font-size: 0.70rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.6px !important;
+    text-transform: uppercase !important;
+    color: #64748B !important;
+    background: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    white-space: nowrap !important;
 }
 
 #tabela-os-grid td {
-    padding: 12px 16px;
-    font-size: 0.78rem;
-    border-bottom: 1px solid #F1F5F9;
-    vertical-align: middle;
-    white-space: nowrap;
-    transition: background 0.15s ease;
+    padding: 14px 16px !important;
+    font-size: 0.78rem !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    transition: background 0.15s ease !important;
+    background-color: #FFFFFF !important;
+}
+
+#tabela-os-grid tbody tr:nth-child(even) td {
+    background-color: #F8FAFC !important;
 }
 
 #tabela-os-grid tbody tr:hover td {
-    background: #F8FAFC;
+    background-color: #EFF6FF !important;
 }
 
 /* Tipografia Leve e Elegante */
