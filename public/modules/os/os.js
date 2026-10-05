@@ -23,6 +23,7 @@ const OSModule = {
     ordensCache: [],
     catalogoServicos: [],
     listenerClickForaRegistrado: false,
+    abaFormAtual: 'detalhes',
 
     /**
      * Inicialização do módulo quando a aba é acessada
@@ -77,6 +78,34 @@ const OSModule = {
     voltarParaLista() {
         this.idEdicao = null;
         this.mostrarSubview('lista');
+    },
+
+    /**
+     * Alterna entre as abas internas do formulário da OS
+     */
+    alternarAbaForm(aba) {
+        this.abaFormAtual = aba;
+        const abas = ['detalhes', 'pecas', 'servicos', 'laudo'];
+        abas.forEach(a => {
+            const btn = document.getElementById(`tab-btn-os-${a}`);
+            const pane = document.getElementById(`tab-pane-os-${a}`);
+            if (btn) {
+                if (a === aba) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+            if (pane) {
+                if (a === aba) pane.classList.remove('hidden');
+                else pane.classList.add('hidden');
+            }
+        });
+        this.atualizarBadgesAbas();
+    },
+
+    atualizarBadgesAbas() {
+        const badgePecas = document.getElementById('badge-tab-os-pecas');
+        const badgeServicos = document.getElementById('badge-tab-os-servicos');
+        if (badgePecas) badgePecas.textContent = (this.itensPecas || []).length;
+        if (badgeServicos) badgeServicos.textContent = (this.itensServicos || []).length;
     },
 
     /**
@@ -341,9 +370,14 @@ const OSModule = {
         this.setInputValue('os_laudo_tecnico', '');
         this.setInputValue('os_valor_desconto', '0,00');
 
+        const elDisp = document.getElementById('os_numero_display');
+        if (elDisp) elDisp.textContent = 'N° OS: Automático';
+
         this.renderizarLinhasServicos();
         this.renderizarLinhasPecas();
         this.recalcularTotais();
+        this.alternarAbaForm('detalhes');
+        this.atualizarBadgesAbas();
 
         this.mostrarSubview('cadastro');
 
@@ -395,9 +429,14 @@ const OSModule = {
             this.setInputValue('os_laudo_tecnico', os.laudo_tecnico || '');
             this.setInputValue('os_valor_desconto', Number(os.valor_desconto || 0).toFixed(2).replace('.', ','));
 
+            const elDisp = document.getElementById('os_numero_display');
+            if (elDisp) elDisp.textContent = `N° OS: ${os.numero || os.id}`;
+
             this.renderizarLinhasServicos();
             this.renderizarLinhasPecas();
             this.recalcularTotais();
+            this.alternarAbaForm('detalhes');
+            this.atualizarBadgesAbas();
 
             this.mostrarSubview('cadastro');
         } catch (err) {
@@ -666,6 +705,7 @@ const OSModule = {
     },
 
     renderizarLinhasServicos() {
+        this.atualizarBadgesAbas();
         const tbody = document.getElementById('tbody-itens-servicos');
         if (!tbody) return;
 
@@ -798,6 +838,7 @@ const OSModule = {
     },
 
     renderizarLinhasPecas() {
+        this.atualizarBadgesAbas();
         const tbody = document.getElementById('tbody-itens-pecas');
         if (!tbody) return;
 
