@@ -14,7 +14,7 @@
     /* =========================================================
        SUPERFÍCIES E FUNDOS ENTERPRISE (SÓBRIOS & PROFISSIONAIS)
        ========================================================= */
-    --bg-body: #F8FAFC;                   /* Fundo neutro limpo ardósia */
+    --bg-body: #EEF2F6;                   /* Fundo neutro com contraste nítido contra cards brancos */
     --bg-card: #FFFFFF;                   /* Cards brancos puros com separação nítida */
     --bg-sidebar: #FFFFFF;                /* Sidebar branca integrada com borda sutil */
     --bg-sidebar-footer: #F8FAFC;         /* Rodapé neutro discreto */
@@ -23,15 +23,15 @@
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
     --bg-surface-active: #FFFFFF;         /* Superfície ativa limpa elevada (cards, abas) */
     --bg-hover: #F1F5F9;                  /* Hover neutro suave */
-    --bg-table-th: #F8FAFC;              /* Cabeçalho de tabela sutil e limpo */
-    --bg-table-hover: #F1F5F9;            /* Hover de linha suave */
+    --bg-table-th: #E2E8F0;              /* Cabeçalho de tabela nítido e estruturado */
+    --bg-table-hover: #F8FAFC;            /* Hover de linha suave */
 
     /* =========================================================
        BORDAS CIRÚRGICAS DE 1PX (PADRÃO LINEAR / STRIPE)
        ========================================================= */
-    --border: #E2E8F0;                    /* Borda limpa e precisa */
-    --border-hover: #CBD5E1;              /* Foco interativo discreto */
-    --border-subtle: #F1F5F9;             /* Divisórias ultra-leves */
+    --border: #CBD5E1;                    /* Borda nítida e bem definida */
+    --border-hover: #94A3B8;              /* Foco interativo evidente */
+    --border-subtle: #E2E8F0;             /* Divisórias com boa visibilidade */
 
     /* =========================================================
        TIPOGRAFIA E TEXTOS

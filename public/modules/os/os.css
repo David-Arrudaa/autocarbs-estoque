@@ -166,9 +166,9 @@
 .os-table-card {
     background: var(--bg-card, #FFFFFF);
     border: 1px solid var(--border, #CBD5E1);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
 }
 
 .os-table-card .table-responsive {
@@ -183,21 +183,21 @@
 }
 
 #tabela-os-grid th {
-    padding: 11px 16px !important;
-    font-size: 0.70rem !important;
-    font-weight: 700 !important;
+    padding: 12px 16px !important;
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
     letter-spacing: 0.6px !important;
     text-transform: uppercase !important;
-    color: #64748B !important;
-    background: #F8FAFC !important;
-    border-bottom: 1px solid #E2E8F0 !important;
+    color: #1E293B !important;
+    background: #F1F5F9 !important;
+    border-bottom: 2px solid #CBD5E1 !important;
     white-space: nowrap !important;
 }
 
 #tabela-os-grid td {
     padding: 14px 16px !important;
-    font-size: 0.78rem !important;
-    border-bottom: 1px solid #E2E8F0 !important;
+    font-size: 0.80rem !important;
+    border-bottom: 1px solid #CBD5E1 !important;
     vertical-align: middle !important;
     white-space: nowrap !important;
     transition: background 0.15s ease !important;
@@ -413,9 +413,9 @@
 .os-form-card {
     background: var(--bg-card, #FFFFFF);
     border: 1px solid var(--border, #CBD5E1);
-    border-radius: 10px;
-    padding: 20px 22px;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    border-radius: 12px;
+    padding: 22px 24px;
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -424,18 +424,57 @@
 .os-section-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.88rem;
-    font-weight: 700;
+    gap: 10px;
+    font-size: 0.90rem;
+    font-weight: 800;
     color: #0F172A;
-    border-bottom: 1px solid #E2E8F0;
-    padding-bottom: 8px;
-    margin-bottom: 4px;
+    border-bottom: 2px solid #E2E8F0;
+    padding-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .os-section-header i {
-    color: var(--primary, #2563EB);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: #EFF6FF;
+    color: #2563EB;
+    border: 1px solid #DBEAFE;
     font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.os-section-header i.ph-package {
+    background: #ECFDF5;
+    color: #059669;
+    border-color: #A7F3D0;
+}
+
+.os-section-header i.ph-wrench {
+    background: #EFF6FF;
+    color: #2563EB;
+    border-color: #BFDBFE;
+}
+
+.os-section-header i.ph-calendar {
+    background: #FFFBEB;
+    color: #D97706;
+    border-color: #FDE68A;
+}
+
+.os-section-header i.ph-file-text {
+    background: #F5F3FF;
+    color: #7C3AED;
+    border-color: #DDD6FE;
+}
+
+.os-section-header i.ph-user {
+    background: #F0F9FF;
+    color: #0284C7;
+    border-color: #BAE6FD;
 }
 
 .os-form-grid {
@@ -459,8 +498,8 @@
 
 .os-form-group label {
     font-size: 0.74rem;
-    font-weight: 700;
-    color: #475569;
+    font-weight: 800;
+    color: #334155;
     text-transform: uppercase;
     letter-spacing: 0.4px;
 }
@@ -468,11 +507,12 @@
 .os-form-group input,
 .os-form-group select,
 .os-form-group textarea {
-    padding: 7px 10px;
-    background: #F8FAFC;
-    border: 1px solid #CBD5E1;
+    padding: 8px 12px;
+    background: #FFFFFF;
+    border: 1px solid #94A3B8;
     border-radius: 6px;
     font-size: 0.84rem;
+    font-weight: 500;
     color: #0F172A;
     outline: none;
     transition: all 0.15s ease;
@@ -482,8 +522,8 @@
 .os-form-group select:focus,
 .os-form-group textarea:focus {
     background: #FFFFFF;
-    border-color: var(--primary, #2563EB);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
 }
 
 /* Tabela Interna de Itens da OS (Peças e Serviços) */
@@ -495,6 +535,7 @@
     border: 1px solid #CBD5E1;
     border-radius: 8px;
     overflow: visible !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
 .os-items-table thead,
@@ -522,13 +563,14 @@
 }
 
 .os-items-table th {
-    background: #F1F5F9;
-    padding: 6px 10px;
-    font-size: 0.72rem;
-    font-weight: 700;
+    background: #E2E8F0;
+    padding: 9px 12px;
+    font-size: 0.74rem;
+    font-weight: 800;
     text-transform: uppercase;
-    color: #475569;
-    border-bottom: 1px solid #CBD5E1;
+    color: #1E293B;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #CBD5E1;
 }
 
 .os-items-table th:first-child {
@@ -539,10 +581,15 @@
 }
 
 .os-items-table td {
-    padding: 6px 10px;
-    font-size: 0.80rem;
+    padding: 10px 12px;
+    font-size: 0.82rem;
     border-bottom: 1px solid #E2E8F0;
     vertical-align: middle;
+    background: #FFFFFF;
+}
+
+.os-items-table tbody tr:hover td {
+    background: #F8FAFC;
 }
 
 .os-items-table tr:last-child td {
@@ -559,29 +606,41 @@
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 4px;
-    padding: 12px 16px;
-    background: #F8FAFC;
+    gap: 6px;
+    padding: 14px 20px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
     border: 1px solid #CBD5E1;
-    border-radius: 8px;
-    margin-top: 10px;
+    border-radius: 10px;
+    margin-top: 14px;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
 }
 
 .os-total-linha {
     display: flex;
     justify-content: space-between;
-    width: 260px;
-    font-size: 0.82rem;
-    color: #475569;
+    width: 280px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.os-total-linha strong {
+    color: #0F172A;
+    font-weight: 700;
 }
 
 .os-total-linha.destaque {
-    font-size: 1.05rem;
-    font-weight: 800;
+    font-size: 1.15rem;
+    font-weight: 900;
     color: #16A34A;
-    border-top: 1px solid #CBD5E1;
-    padding-top: 6px;
-    margin-top: 4px;
+    border-top: 2px solid #CBD5E1;
+    padding-top: 8px;
+    margin-top: 6px;
+}
+
+.os-total-linha.destaque strong {
+    color: #16A34A;
+    font-size: 1.30rem;
 }
 
 /* =========================================================
@@ -898,9 +957,9 @@
 .os-form-tabs-nav {
     display: flex;
     align-items: center;
-    gap: 4px;
-    border-bottom: 2px solid #E2E8F0;
-    margin-bottom: 16px;
+    gap: 6px;
+    border-bottom: 2px solid #CBD5E1;
+    margin-bottom: 18px;
     padding-bottom: 0;
     overflow-x: auto;
 }
@@ -908,15 +967,15 @@
 .os-form-tab-btn {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     padding: 10px 18px;
-    background: #F8FAFC;
+    background: #E2E8F0;
     border: 1px solid #CBD5E1;
     border-bottom: none;
     border-radius: 8px 8px 0 0;
-    font-size: 0.83rem;
+    font-size: 0.84rem;
     font-weight: 600;
-    color: #64748B;
+    color: #475569;
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
@@ -925,33 +984,49 @@
 }
 
 .os-form-tab-btn:hover {
-    background: #FFFFFF;
+    background: #F8FAFC;
     color: #0F172A;
 }
 
 .os-form-tab-btn.active {
     background: #FFFFFF;
-    color: #2563EB;
-    font-weight: 700;
+    color: #1E3A8A;
+    font-weight: 800;
     border-color: #CBD5E1;
     border-top: 3px solid #2563EB;
     border-bottom: 2px solid #FFFFFF;
-    box-shadow: 0 -2px 6px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 -3px 8px rgba(15, 23, 42, 0.08);
 }
 
+.os-form-tab-btn i {
+    font-size: 1.05rem;
+    transition: transform 0.15s ease;
+}
+
+.os-form-tab-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Ícones temáticos vivos para cada aba */
+.os-form-tab-btn[data-tab="detalhes"] i { color: #2563EB; }
+.os-form-tab-btn[data-tab="pecas"] i { color: #059669; }
+.os-form-tab-btn[data-tab="servicos"] i { color: #0284C7; }
+.os-form-tab-btn[data-tab="laudo"] i { color: #7C3AED; }
+
 .os-tab-badge {
-    background: #E2E8F0;
-    color: #475569;
+    background: #CBD5E1;
+    color: #1E293B;
     font-size: 0.68rem;
     font-weight: 700;
-    padding: 1px 7px;
+    padding: 2px 7px;
     border-radius: 999px;
     transition: all 0.15s ease;
 }
 
 .os-form-tab-btn.active .os-tab-badge {
-    background: #EFF6FF;
-    color: #2563EB;
+    background: #2563EB;
+    color: #FFFFFF;
+    font-weight: 800;
 }
 
 .os-form-tab-pane {
@@ -976,14 +1051,15 @@
     }
 }
 
-/* Banner de destaque do Nº da OS (igual ao padrão da referência) */
+/* Banner de destaque do Nº da OS (alto contraste corporativo) */
 .os-numero-hero-box {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-left: 4px solid #2563EB;
-    border-radius: 8px;
-    padding: 12px 18px;
-    margin-bottom: 4px;
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-left: 5px solid #2563EB;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.06);
 }
 
 .os-hero-title {
