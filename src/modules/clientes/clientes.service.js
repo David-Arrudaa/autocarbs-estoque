@@ -76,8 +76,36 @@ class ClientesService {
             } catch (_) {}
         }
 
+        // Higieniza e deduplica veículos por placa e clientes por ID
+        const mapaClientes = new Map();
+        clientesFinais.forEach(c => {
+            if (!c) return;
+            const clienteId = c.id;
+            if (mapaClientes.has(clienteId)) return;
+
+            const veiculosOriginais = Array.isArray(c.veiculos) ? c.veiculos : [];
+            const placasVistas = new Set();
+            const veiculosUnicos = [];
+
+            veiculosOriginais.forEach(v => {
+                const placaNorm = String(v.placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                const chave = placaNorm || String(v.modelo || '').trim().toUpperCase();
+                if (chave && !placasVistas.has(chave)) {
+                    placasVistas.add(chave);
+                    veiculosUnicos.push(v);
+                }
+            });
+
+            mapaClientes.set(clienteId, {
+                ...c,
+                veiculos: veiculosUnicos
+            });
+        });
+
+        const clientesDeduplicados = Array.from(mapaClientes.values());
+
         return {
-            clientes: clientesFinais,
+            clientes: clientesDeduplicados,
             paginacao: {
                 total: totalCount,
                 pagina: page,

@@ -1361,7 +1361,20 @@ const OSModule = {
         dropdown.innerHTML = clientes.map((c, idx) => {
             const nomeEsc = window.UI ? UI.escapeHtml(c.nome || '') : (c.nome || '');
             const telEsc = window.UI ? UI.escapeHtml(c.telefone || '') : (c.telefone || '');
-            const veiculos = Array.isArray(c.veiculos) ? c.veiculos : [];
+            
+            // Deduplica veículos por placa para não repetir
+            const veiculosOriginais = Array.isArray(c.veiculos) ? c.veiculos : [];
+            const placasVistas = new Set();
+            const veiculos = [];
+            veiculosOriginais.forEach(v => {
+                const placaNorm = String(v.placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                const chave = placaNorm || String(v.modelo || '').trim().toUpperCase();
+                if (chave && !placasVistas.has(chave)) {
+                    placasVistas.add(chave);
+                    veiculos.push(v);
+                }
+            });
+            c._veiculosDeduplicados = veiculos;
 
             let veiculosHtml = '';
             if (veiculos.length > 0) {
@@ -1407,7 +1420,9 @@ const OSModule = {
         const cliente = this.clientesEncontrados[clienteIdx];
         if (!cliente) return;
 
-        const veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
+        const veiculos = Array.isArray(cliente._veiculosDeduplicados) 
+            ? cliente._veiculosDeduplicados 
+            : (Array.isArray(cliente.veiculos) ? cliente.veiculos : []);
         const veiculo = veiculos[veiculoIdx] || veiculos[0] || null;
 
         this.setInputValue('os_cliente_id', cliente.id);
