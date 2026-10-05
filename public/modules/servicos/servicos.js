@@ -89,7 +89,8 @@ const Servicos = {
             if (res && res.success) {
                 this.totalRegistros = res.total || 0;
                 this.totalPaginas = res.totalPaginas || 1;
-                this.renderizarTabela(res.servicos || []);
+                this.servicosLista = res.servicos || [];
+                this.renderizarTabela(this.servicosLista);
                 this.atualizarPaginacao();
             }
         } catch (err) {
@@ -152,7 +153,7 @@ const Servicos = {
                             <button class="action-btn btn-action-edit" onclick="Servicos.editarServico('${s.id}')" title="Editar Serviço">
                                 <i class="ph ph-pencil-simple"></i>
                             </button>
-                            <button class="action-btn btn-action-del" onclick="Servicos.excluirServico('${s.id}', '${UI.escapeHtml(s.nome)}')" title="Excluir Serviço">
+                            <button class="action-btn btn-action-del" onclick="Servicos.excluirServico('${s.id}')" title="Excluir Serviço">
                                 <i class="ph ph-trash"></i>
                             </button>
                         </div>
@@ -332,11 +333,30 @@ const Servicos = {
     /**
      * Exclui um serviço com confirmação
      */
-    async excluirServico(id, nome) {
-        const confirmou = await Dialog.confirm(
-            `Tem certeza que deseja excluir o serviço <strong>"${nome}"</strong>?<br><span style="font-size:0.8rem; color:var(--text-secondary);">Esta ação não poderá ser desfeita.</span>`,
-            { titulo: 'Excluir Serviço', perigo: true }
-        );
+    async excluirServico(id, nomeParam) {
+        const servico = (this.servicosLista || []).find(s => String(s.id) === String(id));
+        const nome = servico ? servico.nome : (nomeParam || 'este serviço');
+
+        let confirmou = false;
+        const msg = `Tem certeza que deseja excluir o serviço "${nome}"? Esta ação não pode ser desfeita.`;
+
+        if (window.DialogModal && typeof DialogModal.confirm === 'function') {
+            confirmou = await DialogModal.confirm(msg, {
+                title: 'Excluir Serviço',
+                danger: true,
+                confirmText: 'Excluir',
+                cancelText: 'Cancelar'
+            });
+        } else if (window.Dialog && typeof Dialog.confirm === 'function') {
+            confirmou = await Dialog.confirm(msg, {
+                title: 'Excluir Serviço',
+                danger: true,
+                confirmText: 'Excluir',
+                cancelText: 'Cancelar'
+            });
+        } else {
+            confirmou = window.confirm(msg);
+        }
 
         if (!confirmou) return;
 
@@ -346,6 +366,8 @@ const Servicos = {
             if (res && res.success) {
                 UI.toast('Serviço excluído com sucesso!', 'success');
                 await this.carregar(this.paginaAtual);
+            } else {
+                throw new Error(res.message || res.mensagem || 'Erro ao excluir serviço.');
             }
         } catch (err) {
             UI.toast(err.message || 'Erro ao excluir serviço.', 'error');

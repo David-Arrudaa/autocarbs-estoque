@@ -189,6 +189,7 @@ const DialogModal = {
 // Exportação global
 window.DialogModal = DialogModal;
 window.Modal = DialogModal;
+window.Dialog = DialogModal;
 
 // Override transparente do alert e confirm nativos do navegador
 // para que qualquer chamada involuntária seja apresentada no modal elegante
