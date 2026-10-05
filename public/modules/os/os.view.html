@@ -178,9 +178,15 @@
                             <input 
                                 type="text" 
                                 id="os_cliente_nome" 
+                                name="os_cliente_search_no_autofill"
                                 placeholder="Digite nome, telefone ou placa..." 
                                 required
-                                autocomplete="off"
+                                autocomplete="one-time-code"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                data-lpignore="true"
+                                data-form-type="other"
                                 oninput="OSModule.aoDigitarCliente(this.value)"
                                 onkeydown="OSModule.aoTeclarBuscaCliente(event)"
                             >
@@ -193,7 +199,14 @@
                     </div>
                     <div class="col-3 os-form-group">
                         <label>WhatsApp / Telefone</label>
-                        <input type="text" id="os_cliente_telefone" placeholder="(15) 99999-9999">
+                        <input 
+                            type="text" 
+                            id="os_cliente_telefone" 
+                            name="os_tel_no_autofill" 
+                            placeholder="(15) 99999-9999"
+                            autocomplete="one-time-code"
+                            data-lpignore="true"
+                        >
                     </div>
                     <div class="col-3 os-form-group">
                         <label>Técnico / Responsável *</label>
