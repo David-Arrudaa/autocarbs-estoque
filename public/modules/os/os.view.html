@@ -160,14 +160,14 @@
                     <input type="hidden" id="os_numero" value="">
                 </div>
 
-                <!-- 1. Identificação Geral -->
+                <!-- 1. Identificação do Cliente -->
                 <div class="os-section-header">
                     <i class="ph ph-user"></i>
-                    <span>Identificação do Cliente & Veículo</span>
+                    <span>Identificação do Cliente</span>
                 </div>
 
                 <div class="os-form-grid">
-                    <div class="col-5 os-form-group">
+                    <div class="col-6 os-form-group">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                             <label style="margin:0;">Cliente *</label>
                             <span id="os-cliente-vinculado-badge" class="os-badge-vinculado hidden">
@@ -191,7 +191,7 @@
                             <div id="dropdown-cliente-results" class="os-cliente-results-dropdown hidden"></div>
                         </div>
                     </div>
-                    <div class="col-4 os-form-group">
+                    <div class="col-3 os-form-group">
                         <label>WhatsApp / Telefone</label>
                         <input type="text" id="os_cliente_telefone" placeholder="(15) 99999-9999">
                     </div>
@@ -199,8 +199,15 @@
                         <label>Técnico / Responsável *</label>
                         <input type="text" id="os_responsavel" value="AUTOCAR BS">
                     </div>
+                </div>
 
-                    <!-- Dados Técnicos do Veículo na Entrada -->
+                <!-- 2. Dados do Veículo na Entrada -->
+                <div class="os-section-header" style="margin-top:14px;">
+                    <i class="ph ph-car"></i>
+                    <span>Dados do Veículo (Entrada)</span>
+                </div>
+
+                <div class="os-form-grid">
                     <div class="col-4 os-form-group">
                         <label>Marca / Modelo do Veículo</label>
                         <input type="text" id="os_veiculo_modelo" placeholder="Ex: Ford Fiesta SE 1.6">
