@@ -1072,36 +1072,73 @@
 
 .os-cri-veiculos-list {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 5px;
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
-.os-cri-veiculo-tag {
-    font-size: 0.70rem;
-    font-weight: 600;
+.os-cri-veiculo-card {
     background: #F8FAFC;
-    color: #334155;
     border: 1px solid #CBD5E1;
-    padding: 2px 7px;
-    border-radius: 5px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    cursor: pointer;
     transition: all 0.15s ease;
 }
 
-.os-cri-veiculo-tag:hover {
-    background: #E0E7FF;
-    border-color: #818CF8;
-    color: #3730A3;
+.os-cri-veiculo-card:hover {
+    background: #EFF6FF;
+    border-color: #93C5FD;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08);
 }
 
-.os-cri-veiculo-placa {
-    font-family: monospace;
+.os-cri-veiculo-nome {
+    font-size: 0.77rem;
     font-weight: 700;
     color: #1E293B;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.os-cri-veiculo-props {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.71rem;
+    color: #475569;
+}
+
+.os-cri-prop {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.os-cri-prop strong {
+    color: #64748B;
+    font-size: 0.67rem;
+    text-transform: uppercase;
+}
+
+.os-cri-prop .placa-text {
+    font-family: monospace;
+    font-weight: 800;
+    color: #2563EB;
+    background: #EFF6FF;
+    padding: 0 4px;
+    border-radius: 3px;
+    border: 1px solid #DBEAFE;
+}
+
+.os-cri-prop .chassi-text {
+    font-family: monospace;
+    font-weight: 600;
+    color: #475569;
 }
 
 /* =========================================================

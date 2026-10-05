@@ -365,8 +365,10 @@ const OSModule = {
         this.setInputValue('os_cliente_nome', '');
         this.setInputValue('os_cliente_telefone', '');
         this.setInputValue('os_veiculo_modelo', '');
+        this.setInputValue('os_veiculo_ano', '');
         this.setInputValue('os_veiculo_placa', '');
         this.setInputValue('os_veiculo_km', '');
+        this.setInputValue('os_veiculo_chassi', '');
         this.setInputValue('os_responsavel', 'AUTOCAR BS');
         this.setInputValue('os_data_inicial', hoje);
         this.setInputValue('os_data_final', previsao);
@@ -427,8 +429,10 @@ const OSModule = {
             this.setInputValue('os_cliente_nome', os.cliente_nome || '');
             this.setInputValue('os_cliente_telefone', os.cliente_telefone || '');
             this.setInputValue('os_veiculo_modelo', os.veiculo_modelo || '');
+            this.setInputValue('os_veiculo_ano', os.veiculo_ano || '');
             this.setInputValue('os_veiculo_placa', os.veiculo_placa || '');
             this.setInputValue('os_veiculo_km', os.veiculo_km || '');
+            this.setInputValue('os_veiculo_chassi', os.veiculo_chassi || '');
             this.setInputValue('os_responsavel', os.responsavel || 'AUTOCAR BS');
             this.setInputValue('os_data_inicial', os.data_inicial ? os.data_inicial.split('T')[0] : '');
             this.setInputValue('os_data_final', os.data_final ? os.data_final.split('T')[0] : '');
@@ -960,8 +964,10 @@ const OSModule = {
             cliente_nome: clienteNome,
             cliente_telefone: this.getInputValue('os_cliente_telefone'),
             veiculo_modelo: this.getInputValue('os_veiculo_modelo'),
+            veiculo_ano: this.getInputValue('os_veiculo_ano'),
             veiculo_placa: this.getInputValue('os_veiculo_placa'),
             veiculo_km: this.getInputValue('os_veiculo_km'),
+            veiculo_chassi: this.getInputValue('os_veiculo_chassi'),
             responsavel: this.getInputValue('os_responsavel') || 'AUTOCAR BS',
             data_inicial: dataInicial,
             data_final: this.getInputValue('os_data_final'),
@@ -1147,8 +1153,8 @@ const OSModule = {
                     </div>
                     <div style="font-size:0.82rem; line-height:1.5;">
                         <div style="font-weight:700; color:#334155; margin-bottom:4px; text-transform:uppercase; font-size:0.72rem;">Dados do Veículo & Prazos</div>
-                        <div><strong>Veículo:</strong> ${mod} | <strong>Placa:</strong> ${placa}</div>
-                        <div><strong>KM Atual:</strong> ${km} | <strong>Garantia:</strong> ${garantia}</div>
+                        <div><strong>Veículo:</strong> ${mod}${os.veiculo_ano ? ` (${os.veiculo_ano})` : ''} | <strong>Placa:</strong> ${placa}</div>
+                        <div><strong>KM:</strong> ${km || '-'} ${os.veiculo_chassi ? `| <strong>Chassi:</strong> ${os.veiculo_chassi}` : ''} | <strong>Garantia:</strong> ${garantia}</div>
                         <div><strong>Entrada:</strong> ${dataIni} | <strong>Entrega:</strong> ${dataFim}</div>
                     </div>
                 </div>
@@ -1380,13 +1386,22 @@ const OSModule = {
             if (veiculos.length > 0) {
                 veiculosHtml = `
                     <div class="os-cri-veiculos-list">
-                        ${veiculos.map((v, vIdx) => `
-                            <span class="os-cri-veiculo-tag" onclick="event.stopPropagation(); OSModule.selecionarClienteIdx(${idx}, ${vIdx})" title="Vincular com este veículo">
-                                <i class="ph ph-car"></i>
-                                <span class="os-cri-veiculo-placa">${window.UI ? UI.escapeHtml(v.placa || '') : (v.placa || '')}</span>
-                                <span>${window.UI ? UI.escapeHtml(v.modelo || '') : (v.modelo || '')}</span>
-                            </span>
-                        `).join('')}
+                        ${veiculos.map((v, vIdx) => {
+                            const nomeCompletoVeiculo = [v.marca, v.modelo, v.ano].filter(Boolean).join(' ') || (v.modelo || 'Veículo');
+                            return `
+                                <div class="os-cri-veiculo-card" onclick="event.stopPropagation(); OSModule.selecionarClienteIdx(${idx}, ${vIdx})" title="Vincular este veículo à OS">
+                                    <div class="os-cri-veiculo-nome">
+                                        <i class="ph-bold ph-car" style="color: #2563EB;"></i>
+                                        <span>${window.UI ? UI.escapeHtml(nomeCompletoVeiculo) : nomeCompletoVeiculo}</span>
+                                    </div>
+                                    <div class="os-cri-veiculo-props">
+                                        <span class="os-cri-prop"><strong>PLACA:</strong> <span class="placa-text">${window.UI ? UI.escapeHtml(v.placa || '') : (v.placa || '')}</span></span>
+                                        ${v.km ? `<span class="os-cri-prop"><strong>KM:</strong> <span>${window.UI ? UI.escapeHtml(String(v.km)) : v.km}</span></span>` : ''}
+                                        ${v.chassi ? `<span class="os-cri-prop"><strong>CHASSI:</strong> <span class="chassi-text">${window.UI ? UI.escapeHtml(v.chassi) : v.chassi}</span></span>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
             } else {
@@ -1430,11 +1445,12 @@ const OSModule = {
         this.setInputValue('os_cliente_telefone', cliente.telefone || '');
 
         if (veiculo) {
-            this.setInputValue('os_veiculo_modelo', (veiculo.modelo || '').toUpperCase());
+            const marcaModelo = [veiculo.marca, veiculo.modelo].filter(Boolean).join(' ').trim().toUpperCase() || (veiculo.modelo || '').toUpperCase();
+            this.setInputValue('os_veiculo_modelo', marcaModelo);
+            this.setInputValue('os_veiculo_ano', veiculo.ano || '');
             this.setInputValue('os_veiculo_placa', (veiculo.placa || '').toUpperCase());
-            if (veiculo.km) {
-                this.setInputValue('os_veiculo_km', veiculo.km);
-            }
+            this.setInputValue('os_veiculo_km', veiculo.km || '');
+            this.setInputValue('os_veiculo_chassi', (veiculo.chassi || '').toUpperCase());
         }
 
         this.atualizarStatusVinculoCliente(true);
@@ -1450,8 +1466,10 @@ const OSModule = {
         this.setInputValue('os_cliente_nome', '');
         this.setInputValue('os_cliente_telefone', '');
         this.setInputValue('os_veiculo_modelo', '');
+        this.setInputValue('os_veiculo_ano', '');
         this.setInputValue('os_veiculo_placa', '');
         this.setInputValue('os_veiculo_km', '');
+        this.setInputValue('os_veiculo_chassi', '');
         this.atualizarStatusVinculoCliente(false);
         this.fecharDropdownCliente();
 
