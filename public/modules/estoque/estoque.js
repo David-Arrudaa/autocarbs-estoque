@@ -1481,7 +1481,23 @@ const Estoque = {
 
     voltarParaLista() {
         this.idEdicao = null;
+        const modais = ['modal-entrada', 'modal-saida', 'modal-senha-exclusao', 'modal-lista', 'modal-ficha-produto', 'modal-etiquetas'];
+        modais.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
         this.mostrarSubview('lista');
+    },
+
+    /**
+     * Disparado ao clicar no botão "Produtos / Estoque" na Sidebar:
+     * Retorna sempre para a lista principal do estoque
+     */
+    async aoClicarMenuProdutos() {
+        this.voltarParaLista();
+        if (typeof this.carregarEstoque === 'function') {
+            await this.carregarEstoque();
+        }
     },
 
     atualizarCalculoMargemForm() {

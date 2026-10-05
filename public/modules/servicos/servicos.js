@@ -21,10 +21,17 @@ const Servicos = {
      * Inicialização do módulo quando a aba é acessada
      */
     async iniciar() {
-        if (!this.inicializado) {
-            this.inicializado = true;
-            this.mostrarSubview('lista');
-        }
+        this.inicializado = true;
+        this.voltarParaLista();
+        await this.carregar(1);
+    },
+
+    /**
+     * Disparado ao clicar no botão "Serviços" no menu lateral:
+     * Retorna sempre para o catálogo principal de serviços e recarrega a listagem
+     */
+    async aoClicarMenu() {
+        this.voltarParaLista();
         await this.carregar(1);
     },
 

@@ -452,15 +452,30 @@ const Sidebar = {
             if (paneAtivo.dataset.module && window.ViewLoader) {
                 await ViewLoader.loadView(paneAtivo.dataset.module, paneAtivo.id);
             }
-            if (aba === 'clientes' && window.Clientes && typeof Clientes.iniciar === 'function') {
-                Clientes.iniciar();
-            } else if (aba === 'servicos' && window.Servicos && typeof Servicos.iniciar === 'function') {
-                Servicos.iniciar();
+            if (aba === 'clientes' && window.Clientes) {
+                if (typeof Clientes.aoClicarMenu === 'function') {
+                    await Clientes.aoClicarMenu();
+                } else if (typeof Clientes.iniciar === 'function') {
+                    await Clientes.iniciar();
+                }
+            } else if (aba === 'servicos' && window.Servicos) {
+                if (typeof Servicos.aoClicarMenu === 'function') {
+                    await Servicos.aoClicarMenu();
+                } else if (typeof Servicos.iniciar === 'function') {
+                    await Servicos.iniciar();
+                }
             } else if (aba === 'os' && window.OSModule) {
                 if (typeof OSModule.aoClicarMenuOS === 'function') {
                     await OSModule.aoClicarMenuOS();
                 } else if (typeof OSModule.iniciar === 'function') {
-                    OSModule.iniciar();
+                    await OSModule.iniciar();
+                }
+            } else if (aba === 'produtos' && window.Estoque) {
+                if (typeof Estoque.aoClicarMenuProdutos === 'function') {
+                    await Estoque.aoClicarMenuProdutos();
+                } else {
+                    if (typeof Estoque.voltarParaLista === 'function') Estoque.voltarParaLista();
+                    if (typeof Estoque.carregarEstoque === 'function') Estoque.carregarEstoque();
                 }
             } else if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
                 Estoque.carregarRelatorio();
@@ -470,10 +485,20 @@ const Sidebar = {
                 Estoque.renderizarTabelaRanking();
             } else if (aba === 'reposicao' && window.Estoque && typeof Estoque.renderizarTabelaReposicao === 'function') {
                 Estoque.renderizarTabelaReposicao();
-            } else if (aba === 'cotacao' && window.Cotacao && typeof Cotacao.iniciar === 'function') {
-                Cotacao.iniciar();
+            } else if (aba === 'cotacao' && window.Cotacao) {
+                if (typeof Cotacao.iniciar === 'function') {
+                    Cotacao.iniciar();
+                }
+                const m1 = document.getElementById('cot-laborModal');
+                const m2 = document.getElementById('cot-historyModal');
+                if (m1) m1.style.display = 'none';
+                if (m2) m2.style.display = 'none';
             } else if (aba === 'usuarios' && window.Usuarios && typeof Usuarios.carregarLista === 'function') {
                 Usuarios.carregarLista();
+                const mUser = document.getElementById('modal-novo-usuario');
+                const mPin = document.getElementById('modal-alterar-pin');
+                if (mUser) mUser.classList.add('hidden');
+                if (mPin) mPin.classList.add('hidden');
             }
         }
 
