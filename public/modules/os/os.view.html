@@ -168,8 +168,28 @@
 
                 <div class="os-form-grid">
                     <div class="col-6 os-form-group">
-                        <label>Cliente *</label>
-                        <input type="text" id="os_cliente_nome" placeholder="Digite o nome do cliente..." required>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <label style="margin:0;">Cliente *</label>
+                            <span id="os-cliente-vinculado-badge" class="os-badge-vinculado hidden">
+                                <i class="ph ph-check-circle"></i> Cadastrado
+                            </span>
+                        </div>
+                        <div class="os-cliente-search-container">
+                            <input 
+                                type="text" 
+                                id="os_cliente_nome" 
+                                placeholder="Digite nome, telefone ou placa..." 
+                                required
+                                autocomplete="off"
+                                oninput="OSModule.aoDigitarCliente(this.value)"
+                                onkeydown="OSModule.aoTeclarBuscaCliente(event)"
+                            >
+                            <input type="hidden" id="os_cliente_id" value="">
+                            <button type="button" class="btn-clear-cliente hidden" id="btn-limpar-cliente-os" onclick="OSModule.limparClienteSelecionado()" title="Limpar cliente selecionado">
+                                <i class="ph ph-x"></i>
+                            </button>
+                            <div id="dropdown-cliente-results" class="os-cliente-results-dropdown hidden"></div>
+                        </div>
                     </div>
                     <div class="col-6 os-form-group">
                         <label>WhatsApp / Telefone</label>

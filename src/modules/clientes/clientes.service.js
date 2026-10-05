@@ -47,24 +47,33 @@ class ClientesService {
         let clientesFinais = data || [];
         let totalCount = count || 0;
 
-        if (termoBusca && clientesFinais.length === 0) {
-            const safe = escaparIlike(termoBusca);
-            const { data: veiculosMatch } = await supabaseClientes
-                .from('veiculos')
-                .select('cliente_id')
-                .ilike('placa', `%${safe}%`);
+        // Se houver termo de busca, também verifica se o termo corresponde a alguma placa de veículo
+        if (termoBusca) {
+            try {
+                const safe = escaparIlike(termoBusca);
+                const { data: veiculosMatch } = await supabaseClientes
+                    .from('veiculos')
+                    .select('cliente_id')
+                    .ilike('placa', `%${safe}%`);
 
-            if (veiculosMatch && veiculosMatch.length > 0) {
-                const clientIds = [...new Set(veiculosMatch.map(v => v.cliente_id))];
-                const { data: clientesPorPlaca, count: countPlaca } = await supabaseClientes
-                    .from('clientes')
-                    .select('*, veiculos(*)', { count: 'exact' })
-                    .in('id', clientIds)
-                    .order('nome', { ascending: true });
+                if (veiculosMatch && veiculosMatch.length > 0) {
+                    const clientIds = [...new Set(veiculosMatch.map(v => v.cliente_id))];
+                    const existingIds = new Set(clientesFinais.map(c => c.id));
+                    const missingIds = clientIds.filter(id => !existingIds.has(id));
 
-                clientesFinais = clientesPorPlaca || [];
-                totalCount = countPlaca || clientesFinais.length;
-            }
+                    if (missingIds.length > 0) {
+                        const { data: clientesPorPlaca } = await supabaseClientes
+                            .from('clientes')
+                            .select('*, veiculos(*)')
+                            .in('id', missingIds);
+
+                        if (clientesPorPlaca && clientesPorPlaca.length > 0) {
+                            clientesFinais = [...clientesFinais, ...clientesPorPlaca];
+                            totalCount += clientesPorPlaca.length;
+                        }
+                    }
+                }
+            } catch (_) {}
         }
 
         return {

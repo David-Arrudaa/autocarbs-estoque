@@ -22,6 +22,8 @@ const OSModule = {
     inicializado: false,
     ordensCache: [],
     catalogoServicos: [],
+    clientesEncontrados: [],
+    timerBuscaCliente: null,
     listenerClickForaRegistrado: false,
     abaFormAtual: 'detalhes',
 
@@ -39,6 +41,9 @@ const OSModule = {
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.os-servico-search-container')) {
                     this.fecharTodosDropdownsServicos();
+                }
+                if (!e.target.closest('.os-cliente-search-container')) {
+                    this.fecharDropdownCliente();
                 }
             });
         }
@@ -356,6 +361,7 @@ const OSModule = {
 
         // Reseta campos do formulário
         this.setInputValue('os_numero', 'Automático');
+        this.setInputValue('os_cliente_id', '');
         this.setInputValue('os_cliente_nome', '');
         this.setInputValue('os_cliente_telefone', '');
         this.setInputValue('os_veiculo_modelo', '');
@@ -369,6 +375,8 @@ const OSModule = {
         this.setInputValue('os_descricao_problema', '');
         this.setInputValue('os_laudo_tecnico', '');
         this.setInputValue('os_valor_desconto', '0,00');
+        this.atualizarStatusVinculoCliente(false);
+        this.fecharDropdownCliente();
 
         const elDisp = document.getElementById('os_numero_display');
         if (elDisp) elDisp.textContent = 'N° OS: Automático';
@@ -415,6 +423,7 @@ const OSModule = {
             }
 
             this.setInputValue('os_numero', os.numero || os.id);
+            this.setInputValue('os_cliente_id', os.cliente_id || '');
             this.setInputValue('os_cliente_nome', os.cliente_nome || '');
             this.setInputValue('os_cliente_telefone', os.cliente_telefone || '');
             this.setInputValue('os_veiculo_modelo', os.veiculo_modelo || '');
@@ -428,6 +437,8 @@ const OSModule = {
             this.setInputValue('os_descricao_problema', os.descricao_problema || '');
             this.setInputValue('os_laudo_tecnico', os.laudo_tecnico || '');
             this.setInputValue('os_valor_desconto', Number(os.valor_desconto || 0).toFixed(2).replace('.', ','));
+            this.atualizarStatusVinculoCliente(!!os.cliente_id);
+            this.fecharDropdownCliente();
 
             const elDisp = document.getElementById('os_numero_display');
             if (elDisp) elDisp.textContent = `N° OS: ${os.numero || os.id}`;
@@ -945,6 +956,7 @@ const OSModule = {
 
         const payload = {
             id: this.idEdicao,
+            cliente_id: this.getInputValue('os_cliente_id') || null,
             cliente_nome: clienteNome,
             cliente_telefone: this.getInputValue('os_cliente_telefone'),
             veiculo_modelo: this.getInputValue('os_veiculo_modelo'),
@@ -1233,6 +1245,238 @@ const OSModule = {
         `;
 
         window.print();
+    },
+
+    /**
+     * =========================================================
+     * INTEGRAÇÃO & AUTOCOMPLETE COM BANCO DE DADOS DE CLIENTES
+     * =========================================================
+     */
+    atualizarStatusVinculoCliente(vinculado) {
+        const badge = document.getElementById('os-cliente-vinculado-badge');
+        const btnClear = document.getElementById('btn-limpar-cliente-os');
+        const nomeInput = document.getElementById('os_cliente_nome');
+        const temTexto = !!(nomeInput && nomeInput.value.trim());
+
+        if (badge) {
+            if (vinculado) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+        }
+        if (btnClear) {
+            if (vinculado || temTexto) btnClear.classList.remove('hidden');
+            else btnClear.classList.add('hidden');
+        }
+    },
+
+    fecharDropdownCliente() {
+        const dropdown = document.getElementById('dropdown-cliente-results');
+        if (dropdown) {
+            dropdown.innerHTML = '';
+            dropdown.classList.add('hidden');
+        }
+    },
+
+    aoDigitarCliente(valor) {
+        const q = String(valor || '').trim();
+        const btnClear = document.getElementById('btn-limpar-cliente-os');
+        if (btnClear) {
+            if (q.length > 0) btnClear.classList.remove('hidden');
+            else btnClear.classList.add('hidden');
+        }
+
+        if (q.length === 0) {
+            this.setInputValue('os_cliente_id', '');
+            this.atualizarStatusVinculoCliente(false);
+            this.fecharDropdownCliente();
+            return;
+        }
+
+        // Se o usuário alterar o texto, desmarca o ID do vínculo até ele selecionar um do banco
+        const cliIdEl = document.getElementById('os_cliente_id');
+        if (cliIdEl && cliIdEl.value) {
+            cliIdEl.value = '';
+            this.atualizarStatusVinculoCliente(false);
+        }
+
+        // Apenas pesquisa a partir de 3 caracteres
+        if (q.length < 3) {
+            this.fecharDropdownCliente();
+            return;
+        }
+
+        clearTimeout(this.timerBuscaCliente);
+        this.timerBuscaCliente = setTimeout(async () => {
+            await this.buscarClientesNoBanco(q);
+        }, 220);
+    },
+
+    async buscarClientesNoBanco(termo) {
+        const dropdown = document.getElementById('dropdown-cliente-results');
+        if (!dropdown) return;
+
+        dropdown.innerHTML = `
+            <div style="padding: 10px; text-align: center; font-size: 0.76rem; color: #64748B;">
+                <i class="ph ph-circle-notch ph-spin" style="margin-right: 4px; color: #2563EB;"></i> Buscando clientes e veículos...
+            </div>
+        `;
+        dropdown.classList.remove('hidden');
+
+        try {
+            const res = await API.listarClientes({ busca: termo, limite: 10 });
+            if (res && res.success) {
+                this.clientesEncontrados = res.clientes || [];
+                this.renderizarDropdownClientes(this.clientesEncontrados, termo);
+            } else {
+                dropdown.innerHTML = `
+                    <div style="padding: 8px; font-size: 0.74rem; color: #EF4444; text-align: center;">
+                        Falha ao consultar banco de clientes.
+                    </div>
+                `;
+            }
+        } catch (err) {
+            console.warn('Erro ao buscar clientes no banco:', err);
+            dropdown.innerHTML = `
+                <div style="padding: 8px; font-size: 0.74rem; color: #94A3B8; text-align: center;">
+                    Cliente avulso (pressione Tab para continuar).
+                </div>
+            `;
+        }
+    },
+
+    renderizarDropdownClientes(clientes, termo) {
+        const dropdown = document.getElementById('dropdown-cliente-results');
+        if (!dropdown) return;
+
+        if (!clientes || clientes.length === 0) {
+            dropdown.innerHTML = `
+                <div style="padding: 10px 12px; font-size: 0.76rem; color: #64748B; text-align: center; line-height: 1.4;">
+                    <i class="ph ph-user-plus" style="font-size: 1.1rem; color: #2563EB; display: block; margin-bottom: 3px;"></i>
+                    Nenhum cliente cadastrado com "<strong>${window.UI ? UI.escapeHtml(termo) : termo}</strong>".<br>
+                    <span style="font-size: 0.70rem; color: #94A3B8;">Você pode continuar preenchendo normalmente como cliente avulso.</span>
+                </div>
+            `;
+            return;
+        }
+
+        dropdown.innerHTML = clientes.map((c, idx) => {
+            const nomeEsc = window.UI ? UI.escapeHtml(c.nome || '') : (c.nome || '');
+            const telEsc = window.UI ? UI.escapeHtml(c.telefone || '') : (c.telefone || '');
+            const veiculos = Array.isArray(c.veiculos) ? c.veiculos : [];
+
+            let veiculosHtml = '';
+            if (veiculos.length > 0) {
+                veiculosHtml = `
+                    <div class="os-cri-veiculos-list">
+                        ${veiculos.map((v, vIdx) => `
+                            <span class="os-cri-veiculo-tag" onclick="event.stopPropagation(); OSModule.selecionarClienteIdx(${idx}, ${vIdx})" title="Vincular com este veículo">
+                                <i class="ph ph-car"></i>
+                                <span class="os-cri-veiculo-placa">${window.UI ? UI.escapeHtml(v.placa || '') : (v.placa || '')}</span>
+                                <span>${window.UI ? UI.escapeHtml(v.modelo || '') : (v.modelo || '')}</span>
+                            </span>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                veiculosHtml = `
+                    <div style="font-size: 0.68rem; color: #94A3B8; font-style: italic;">
+                        Nenhum veículo vinculado a este cadastro
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="os-cliente-result-item" data-idx="${idx}" onclick="OSModule.selecionarClienteIdx(${idx})">
+                    <div class="os-cri-header">
+                        <span class="os-cri-nome">
+                            <i class="ph-bold ph-user-check" style="color: #2563EB;"></i>
+                            ${nomeEsc}
+                        </span>
+                        ${telEsc ? `
+                            <span class="os-cri-telefone">
+                                <i class="ph ph-whatsapp-logo"></i> ${telEsc}
+                            </span>
+                        ` : ''}
+                    </div>
+                    ${veiculosHtml}
+                </div>
+            `;
+        }).join('');
+    },
+
+    selecionarClienteIdx(clienteIdx, veiculoIdx = 0) {
+        const cliente = this.clientesEncontrados[clienteIdx];
+        if (!cliente) return;
+
+        const veiculos = Array.isArray(cliente.veiculos) ? cliente.veiculos : [];
+        const veiculo = veiculos[veiculoIdx] || veiculos[0] || null;
+
+        this.setInputValue('os_cliente_id', cliente.id);
+        this.setInputValue('os_cliente_nome', (cliente.nome || '').toUpperCase());
+        this.setInputValue('os_cliente_telefone', cliente.telefone || '');
+
+        if (veiculo) {
+            this.setInputValue('os_veiculo_modelo', (veiculo.modelo || '').toUpperCase());
+            this.setInputValue('os_veiculo_placa', (veiculo.placa || '').toUpperCase());
+            if (veiculo.km) {
+                this.setInputValue('os_veiculo_km', veiculo.km);
+            }
+        }
+
+        this.atualizarStatusVinculoCliente(true);
+        this.fecharDropdownCliente();
+
+        if (window.UI) {
+            UI.toast(`Cliente ${cliente.nome} vinculado à OS com sucesso!`, 'success');
+        }
+    },
+
+    limparClienteSelecionado() {
+        this.setInputValue('os_cliente_id', '');
+        this.setInputValue('os_cliente_nome', '');
+        this.setInputValue('os_cliente_telefone', '');
+        this.setInputValue('os_veiculo_modelo', '');
+        this.setInputValue('os_veiculo_placa', '');
+        this.setInputValue('os_veiculo_km', '');
+        this.atualizarStatusVinculoCliente(false);
+        this.fecharDropdownCliente();
+
+        const input = document.getElementById('os_cliente_nome');
+        if (input) input.focus();
+    },
+
+    aoTeclarBuscaCliente(e) {
+        const dropdown = document.getElementById('dropdown-cliente-results');
+        if (!dropdown || dropdown.classList.contains('hidden')) return;
+
+        const items = Array.from(dropdown.querySelectorAll('.os-cliente-result-item'));
+        if (items.length === 0) return;
+
+        let currentIndex = items.findIndex(el => el.classList.contains('highlighted'));
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
+            currentIndex = (currentIndex + 1) % items.length;
+            items[currentIndex].classList.add('highlighted');
+            items[currentIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            items[currentIndex].classList.add('highlighted');
+            items[currentIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentIndex >= 0 && items[currentIndex]) {
+                const idx = parseInt(items[currentIndex].getAttribute('data-idx'), 10);
+                if (!isNaN(idx)) this.selecionarClienteIdx(idx);
+            } else if (items.length > 0) {
+                const idx = parseInt(items[0].getAttribute('data-idx'), 10);
+                if (!isNaN(idx)) this.selecionarClienteIdx(idx);
+            }
+        } else if (e.key === 'Escape') {
+            this.fecharDropdownCliente();
+        }
     }
 };
 
