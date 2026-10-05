@@ -435,10 +435,7 @@ const OSModule = {
         const novoIdx = this.itensServicos.length - 1;
         setTimeout(() => {
             const input = document.getElementById(`input-busca-servico-${novoIdx}`);
-            if (input) {
-                input.focus();
-                this.aoFocarBuscaServico(novoIdx);
-            }
+            if (input) input.focus();
         }, 60);
     },
 
@@ -487,7 +484,11 @@ const OSModule = {
     aoFocarBuscaServico(index) {
         const input = document.getElementById(`input-busca-servico-${index}`);
         const termo = input ? input.value : '';
-        this.renderizarDropdownServicos(index, termo);
+        if (String(termo || '').trim().length >= 3) {
+            this.renderizarDropdownServicos(index, termo);
+        } else {
+            this.fecharTodosDropdownsServicos();
+        }
     },
 
     aoDigitarBuscaServico(index, termo) {
@@ -517,6 +518,17 @@ const OSModule = {
             } else if (btnClear) {
                 btnClear.remove();
             }
+        }
+
+        // Exige no mínimo 3 caracteres para disparar a pesquisa e abrir a lista
+        const q = String(termo || '').trim();
+        if (q.length < 3) {
+            const dropdown = document.getElementById(`dropdown-servico-results-${index}`);
+            if (dropdown) {
+                dropdown.innerHTML = '';
+                dropdown.classList.add('hidden');
+            }
+            return;
         }
 
         this.renderizarDropdownServicos(index, termo);
@@ -562,29 +574,32 @@ const OSModule = {
         if (!dropdown) return;
 
         const q = String(termo || '').toLowerCase().trim();
-        let lista = [];
-
-        if (!q) {
-            lista = (this.catalogoServicos || []).slice(0, 15);
-        } else {
-            lista = (this.catalogoServicos || []).filter(s => {
-                const nome = (s.nome || '').toLowerCase();
-                const codigo = String(s.codigo || '').toLowerCase();
-                return nome.includes(q) || codigo.includes(q);
-            });
-            lista.sort((a, b) => {
-                const aName = (a.nome || '').toLowerCase();
-                const bName = (b.nome || '').toLowerCase();
-                const aStarts = aName.startsWith(q);
-                const bStarts = bName.startsWith(q);
-                if (aStarts && !bStarts) return -1;
-                if (!aStarts && bStarts) return 1;
-                return aName.localeCompare(bName);
-            });
-            lista = lista.slice(0, 15);
+        // Apenas a partir de 3 caracteres
+        if (q.length < 3) {
+            dropdown.innerHTML = '';
+            dropdown.classList.add('hidden');
+            return;
         }
 
-        if (lista.length === 0) {
+        const lista = (this.catalogoServicos || []).filter(s => {
+            const nome = (s.nome || '').toLowerCase();
+            const codigo = String(s.codigo || '').toLowerCase();
+            return nome.includes(q) || codigo.includes(q);
+        });
+
+        lista.sort((a, b) => {
+            const aName = (a.nome || '').toLowerCase();
+            const bName = (b.nome || '').toLowerCase();
+            const aStarts = aName.startsWith(q);
+            const bStarts = bName.startsWith(q);
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            return aName.localeCompare(bName);
+        });
+
+        const correspondencias = lista.slice(0, 15);
+
+        if (correspondencias.length === 0) {
             dropdown.innerHTML = `
                 <div class="os-search-no-results">
                     <i class="ph ph-magnifying-glass"></i>
@@ -595,9 +610,9 @@ const OSModule = {
             return;
         }
 
-        dropdown.innerHTML = lista.map((cat, i) => `
+        dropdown.innerHTML = correspondencias.map((cat, i) => `
             <div 
-                class="os-search-result-item ${i === 0 && q ? 'highlighted' : ''}" 
+                class="os-search-result-item ${i === 0 ? 'highlighted' : ''}" 
                 onclick="OSModule.selecionarServicoEncontrado(${index}, ${cat.id})"
                 data-id="${cat.id}"
                 data-index="${i}"
@@ -677,7 +692,7 @@ const OSModule = {
                                 type="text" 
                                 id="input-busca-servico-${idx}" 
                                 class="os-input-busca-servico"
-                                placeholder="Pesquisar serviço por nome ou código (ex: Troca de Óleo, Revisão)..." 
+                                placeholder="Buscar serviço por nome ou código (digite mín. 3 letras)..." 
                                 value="${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}"
                                 onfocus="OSModule.aoFocarBuscaServico(${idx})"
                                 oninput="OSModule.aoDigitarBuscaServico(${idx}, this.value)"
