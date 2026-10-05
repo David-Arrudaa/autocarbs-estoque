@@ -580,7 +580,7 @@ const Estoque = {
             tbody.innerHTML += `
                 <tr>
                     <td style="width:7%; text-align:center;">
-                        <span class="product-id-badge" title="Código Interno: #${p.id}">#${p.id}</span>
+                        <span class="product-id-badge" title="Código Interno: #${p.id}">${p.id}</span>
                     </td>
                     <td style="width:35%;">
                         <span class="mobile-label">PRODUTO:</span>
