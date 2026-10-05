@@ -171,7 +171,7 @@ const OSModule = {
             return `
                 <tr>
                     <td style="text-align:center;">
-                        <span class="badge-codigo-servico">${numeroOS}</span>
+                        <span class="badge-codigo-os">${numeroOS}</span>
                     </td>
                     <td>
                         <span class="os-cliente-nome-single" title="${cliNome}">${cliNome}</span>
