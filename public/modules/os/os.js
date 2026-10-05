@@ -22,6 +22,7 @@ const OSModule = {
     inicializado: false,
     ordensCache: [],
     catalogoServicos: [],
+    listenerClickForaRegistrado: false,
 
     /**
      * Inicialização do módulo quando a aba é acessada
@@ -31,6 +32,16 @@ const OSModule = {
             this.inicializado = true;
             this.mostrarSubview('lista');
         }
+
+        if (!this.listenerClickForaRegistrado) {
+            this.listenerClickForaRegistrado = true;
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.os-servico-search-container')) {
+                    this.fecharTodosDropdownsServicos();
+                }
+            });
+        }
+
         await Promise.all([
             this.carregar(1),
             this.carregarCatalogoServicos()
@@ -39,7 +50,7 @@ const OSModule = {
 
     async carregarCatalogoServicos() {
         try {
-            const res = await API.listarServicos({ limite: 200, ordenarPor: 'nome', ordem: 'asc' });
+            const res = await API.listarServicos({ limite: 1000, ordenarPor: 'nome', ordem: 'asc' });
             if (res && res.success) {
                 this.catalogoServicos = res.servicos || [];
             }
@@ -352,7 +363,17 @@ const OSModule = {
             const os = res.os;
             this.idEdicao = os.id;
             this.itensPecas = Array.isArray(os.itens_pecas) ? JSON.parse(JSON.stringify(os.itens_pecas)) : [];
-            this.itensServicos = Array.isArray(os.itens_servicos) ? JSON.parse(JSON.stringify(os.itens_servicos)) : [];
+            this.itensServicos = Array.isArray(os.itens_servicos) 
+                ? os.itens_servicos.map(s => ({
+                    servico_id: s.servico_id || null,
+                    codigo: s.codigo || '',
+                    nome: s.nome || '',
+                    preco: Number(s.preco) || 0,
+                    subtotal: Number(s.subtotal !== undefined ? s.subtotal : s.preco) || 0,
+                    descricao: s.descricao || '',
+                    mostrarDescricao: !!(s.descricao && s.descricao.trim()) || !!s.servico_id
+                }))
+                : [];
 
             const tituloEl = document.getElementById('os-form-titulo');
             if (tituloEl) {
@@ -404,10 +425,21 @@ const OSModule = {
             nome: '',
             preco: 0,
             subtotal: 0,
-            descricao: ''
+            descricao: '',
+            mostrarDescricao: false
         });
         this.renderizarLinhasServicos();
         this.recalcularTotais();
+
+        // Auto-foco no campo de busca de serviço da nova linha adicionada
+        const novoIdx = this.itensServicos.length - 1;
+        setTimeout(() => {
+            const input = document.getElementById(`input-busca-servico-${novoIdx}`);
+            if (input) {
+                input.focus();
+                this.aoFocarBuscaServico(novoIdx);
+            }
+        }, 60);
     },
 
     removerLinhaServico(index) {
@@ -416,13 +448,178 @@ const OSModule = {
         this.recalcularTotais();
     },
 
-    aoSelecionarServicoCatalogo(index, servicoId) {
+    limparServicoLinha(index) {
         if (!this.itensServicos[index]) return;
-        if (!servicoId) {
+        this.itensServicos[index].servico_id = null;
+        this.itensServicos[index].codigo = '';
+        this.itensServicos[index].nome = '';
+        this.itensServicos[index].preco = 0;
+        this.itensServicos[index].subtotal = 0;
+        this.itensServicos[index].descricao = '';
+        this.itensServicos[index].mostrarDescricao = false;
+        this.fecharTodosDropdownsServicos();
+        this.renderizarLinhasServicos();
+        this.recalcularTotais();
+        setTimeout(() => {
+            const input = document.getElementById(`input-busca-servico-${index}`);
+            if (input) input.focus();
+        }, 50);
+    },
+
+    toggleDescricaoServico(index) {
+        if (!this.itensServicos[index]) return;
+        this.itensServicos[index].mostrarDescricao = !this.itensServicos[index].mostrarDescricao;
+        this.renderizarLinhasServicos();
+        if (this.itensServicos[index].mostrarDescricao) {
+            setTimeout(() => {
+                const textarea = document.getElementById(`textarea-servico-desc-${index}`);
+                if (textarea) textarea.focus();
+            }, 50);
+        }
+    },
+
+    fecharTodosDropdownsServicos() {
+        document.querySelectorAll('.os-servico-results-dropdown').forEach(dd => {
+            dd.classList.add('hidden');
+        });
+    },
+
+    aoFocarBuscaServico(index) {
+        const input = document.getElementById(`input-busca-servico-${index}`);
+        const termo = input ? input.value : '';
+        this.renderizarDropdownServicos(index, termo);
+    },
+
+    aoDigitarBuscaServico(index, termo) {
+        if (!this.itensServicos[index]) return;
+        this.itensServicos[index].nome = termo;
+        if (!termo.trim()) {
             this.itensServicos[index].servico_id = null;
+        }
+
+        // Atualiza dinamicamente o botão de limpar sem perder foco do input
+        const container = document.getElementById(`os-servico-search-container-${index}`);
+        if (container) {
+            let btnClear = container.querySelector('.btn-clear-servico');
+            if (termo.trim()) {
+                if (!btnClear) {
+                    const wrapper = container.querySelector('.os-servico-input-wrapper');
+                    if (wrapper) {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn-clear-servico';
+                        btn.title = 'Limpar serviço selecionado';
+                        btn.onclick = () => OSModule.limparServicoLinha(index);
+                        btn.innerHTML = '<i class="ph ph-x"></i>';
+                        wrapper.appendChild(btn);
+                    }
+                }
+            } else if (btnClear) {
+                btnClear.remove();
+            }
+        }
+
+        this.renderizarDropdownServicos(index, termo);
+    },
+
+    aoTeclarBuscaServico(e, index) {
+        const dropdown = document.getElementById(`dropdown-servico-results-${index}`);
+        if (!dropdown || dropdown.classList.contains('hidden')) return;
+
+        const items = Array.from(dropdown.querySelectorAll('.os-search-result-item'));
+        if (items.length === 0) return;
+
+        let currentIndex = items.findIndex(el => el.classList.contains('highlighted'));
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
+            currentIndex = (currentIndex + 1) % items.length;
+            items[currentIndex].classList.add('highlighted');
+            items[currentIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            items[currentIndex].classList.add('highlighted');
+            items[currentIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentIndex >= 0 && items[currentIndex]) {
+                const id = items[currentIndex].getAttribute('data-id');
+                if (id) this.selecionarServicoEncontrado(index, id);
+            } else if (items.length > 0) {
+                const id = items[0].getAttribute('data-id');
+                if (id) this.selecionarServicoEncontrado(index, id);
+            }
+        } else if (e.key === 'Escape') {
+            this.fecharTodosDropdownsServicos();
+        }
+    },
+
+    renderizarDropdownServicos(index, termo) {
+        const dropdown = document.getElementById(`dropdown-servico-results-${index}`);
+        if (!dropdown) return;
+
+        const q = String(termo || '').toLowerCase().trim();
+        let lista = [];
+
+        if (!q) {
+            lista = (this.catalogoServicos || []).slice(0, 15);
+        } else {
+            lista = (this.catalogoServicos || []).filter(s => {
+                const nome = (s.nome || '').toLowerCase();
+                const codigo = String(s.codigo || '').toLowerCase();
+                return nome.includes(q) || codigo.includes(q);
+            });
+            lista.sort((a, b) => {
+                const aName = (a.nome || '').toLowerCase();
+                const bName = (b.nome || '').toLowerCase();
+                const aStarts = aName.startsWith(q);
+                const bStarts = bName.startsWith(q);
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+                return aName.localeCompare(bName);
+            });
+            lista = lista.slice(0, 15);
+        }
+
+        if (lista.length === 0) {
+            dropdown.innerHTML = `
+                <div class="os-search-no-results">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <span>Nenhum serviço encontrado no catálogo para "<strong>${window.UI ? UI.escapeHtml(termo) : termo}</strong>". Você pode prosseguir com este nome avulso.</span>
+                </div>
+            `;
+            dropdown.classList.remove('hidden');
             return;
         }
 
+        dropdown.innerHTML = lista.map((cat, i) => `
+            <div 
+                class="os-search-result-item ${i === 0 && q ? 'highlighted' : ''}" 
+                onclick="OSModule.selecionarServicoEncontrado(${index}, ${cat.id})"
+                data-id="${cat.id}"
+                data-index="${i}"
+            >
+                <div class="os-sri-left">
+                    <div class="os-sri-header">
+                        ${cat.codigo ? `<span class="os-sri-badge">[${window.UI ? UI.escapeHtml(cat.codigo) : cat.codigo}]</span>` : ''}
+                        <span class="os-sri-nome">${window.UI ? UI.escapeHtml(cat.nome) : cat.nome}</span>
+                    </div>
+                    ${cat.descricao ? `<div class="os-sri-desc-preview">${window.UI ? UI.escapeHtml(cat.descricao) : cat.descricao}</div>` : ''}
+                </div>
+                <div class="os-sri-right">
+                    <span class="os-sri-price">R$ ${Number(cat.preco || 0).toFixed(2).replace('.', ',')}</span>
+                </div>
+            </div>
+        `).join('');
+
+        dropdown.classList.remove('hidden');
+    },
+
+    selecionarServicoEncontrado(index, servicoId) {
+        if (!this.itensServicos[index]) return;
         const servico = this.catalogoServicos.find(s => String(s.id) === String(servicoId));
         if (!servico) return;
 
@@ -431,9 +628,12 @@ const OSModule = {
         this.itensServicos[index].nome = servico.nome || '';
         this.itensServicos[index].preco = Number(servico.preco) || 0;
         this.itensServicos[index].subtotal = Number(servico.preco) || 0;
-        // Puxa a descrição do catálogo como base, permitindo edição exclusiva nesta OS
+        // Puxa a descrição do catálogo mestre como base para o usuário editar nesta OS (nunca altera o catálogo original)
         this.itensServicos[index].descricao = servico.descricao || '';
+        // Abre automaticamente o campo de descrição nesta OS!
+        this.itensServicos[index].mostrarDescricao = true;
 
+        this.fecharTodosDropdownsServicos();
         this.renderizarLinhasServicos();
         this.recalcularTotais();
     },
@@ -459,7 +659,7 @@ const OSModule = {
                 <tr>
                     <td colspan="3" style="text-align:center; padding:18px; color:#94A3B8; font-size:0.80rem;">
                         <i class="ph ph-wrench" style="font-size:1.4rem; opacity:0.5; display:block; margin-bottom:4px;"></i>
-                        Nenhum serviço adicionado. Clique em "+ Adicionar Serviço" para incluir itens de mão de obra.
+                        Nenhum serviço adicionado. Clique em "+ Adicionar Serviço" para pesquisar e incluir mão de obra.
                     </td>
                 </tr>
             `;
@@ -469,45 +669,58 @@ const OSModule = {
         tbody.innerHTML = this.itensServicos.map((s, idx) => `
             <tr>
                 <td style="vertical-align:top; padding: 10px 12px;">
-                    <!-- Seletor do Catálogo de Serviços -->
-                    <div style="margin-bottom: 6px;">
-                        <select 
-                            onchange="OSModule.aoSelecionarServicoCatalogo(${idx}, this.value)"
-                            style="width:100%; padding:6px 10px; font-size:0.80rem; border:1px solid #CBD5E1; border-radius:6px; background:#F8FAFC; color:#0F172A; font-weight:600; cursor:pointer;"
-                        >
-                            <option value="">-- Selecione do Catálogo de Serviços (ou digite avulso abaixo) --</option>
-                            ${this.catalogoServicos.map(cat => `
-                                <option value="${cat.id}" ${String(s.servico_id || '') === String(cat.id) ? 'selected' : ''}>
-                                    ${cat.codigo ? `[${cat.codigo}] ` : ''}${window.UI ? UI.escapeHtml(cat.nome) : cat.nome} (R$ ${Number(cat.preco || 0).toFixed(2).replace('.', ',')})
-                                </option>
-                            `).join('')}
-                        </select>
-                    </div>
-
-                    <!-- Nome do Serviço -->
-                    <input 
-                        type="text" 
-                        placeholder="Nome do serviço ou mão de obra..." 
-                        value="${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}"
-                        oninput="OSModule.atualizarLinhaServico(${idx}, 'nome', this.value)"
-                        style="width:100%; padding:6px 10px; font-size:0.82rem; font-weight:600; text-transform:uppercase; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF;"
-                    >
-
-                    <!-- Campo de Descrição Específico desta OS (Nunca altera o catálogo mestre) -->
-                    <div style="margin-top: 8px; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 6px; padding: 8px 10px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
-                            <label style="font-size:0.70rem; font-weight:700; color:#334155; text-transform:uppercase; display:flex; align-items:center; gap:4px; margin:0;">
-                                <i class="ph ph-note-pencil" style="color:#2563EB;"></i> Descrição / Detalhes deste serviço para esta OS:
-                            </label>
-                            <span style="font-size:0.68rem; color:#64748B; font-weight:500;">(Altera apenas nesta OS • Não altera o cadastro original)</span>
+                    <!-- Barra de Pesquisa de Serviço (Autocomplete no Catálogo) -->
+                    <div class="os-servico-search-container" id="os-servico-search-container-${idx}">
+                        <div class="os-servico-input-wrapper">
+                            <i class="ph ph-magnifying-glass os-search-icon"></i>
+                            <input 
+                                type="text" 
+                                id="input-busca-servico-${idx}" 
+                                class="os-input-busca-servico"
+                                placeholder="Pesquisar serviço por nome ou código (ex: Troca de Óleo, Revisão)..." 
+                                value="${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}"
+                                onfocus="OSModule.aoFocarBuscaServico(${idx})"
+                                oninput="OSModule.aoDigitarBuscaServico(${idx}, this.value)"
+                                onkeydown="OSModule.aoTeclarBuscaServico(event, ${idx})"
+                                autocomplete="off"
+                            >
+                            ${s.nome ? `
+                                <button type="button" class="btn-clear-servico" onclick="OSModule.limparServicoLinha(${idx})" title="Limpar serviço selecionado">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            ` : ''}
                         </div>
-                        <textarea 
-                            rows="2" 
-                            placeholder="Descreva observações específicas para este veículo (ex: aplicado vedante Loctite, verificado desgaste de pastilhas)..."
-                            oninput="OSModule.atualizarLinhaServico(${idx}, 'descricao', this.value)"
-                            style="width:100%; padding:6px 8px; font-size:0.78rem; border:1px solid #CBD5E1; border-radius:5px; background:#FFFFFF; resize:vertical; line-height:1.4; color:#0F172A;"
-                        >${window.UI ? UI.escapeHtml(s.descricao || '') : (s.descricao || '')}</textarea>
+                        <div id="dropdown-servico-results-${idx}" class="os-servico-results-dropdown hidden"></div>
                     </div>
+
+                    <!-- Campo de Descrição Específico desta OS (Abre ao selecionar serviço ou via botão) -->
+                    ${s.mostrarDescricao ? `
+                        <div class="os-servico-desc-box">
+                            <div class="os-servico-desc-header">
+                                <span class="os-desc-title">
+                                    <i class="ph ph-note-pencil"></i> Descrição / Observações deste serviço nesta OS:
+                                </span>
+                                <span class="os-desc-notice">
+                                    <i class="ph ph-shield-check"></i> Altera apenas nesta OS • Não altera o cadastro original
+                                </span>
+                                <button type="button" class="btn-fechar-desc" onclick="OSModule.toggleDescricaoServico(${idx})" title="Ocultar campo de descrição">
+                                    <i class="ph ph-caret-up"></i>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="textarea-servico-desc-${idx}"
+                                rows="2" 
+                                placeholder="Descreva observações específicas para este veículo (ex: aplicado vedante Loctite, verificado desgaste de pastilhas)..."
+                                oninput="OSModule.atualizarLinhaServico(${idx}, 'descricao', this.value)"
+                            >${window.UI ? UI.escapeHtml(s.descricao || '') : (s.descricao || '')}</textarea>
+                        </div>
+                    ` : `
+                        <div style="margin-top: 4px;">
+                            <button type="button" class="btn-toggle-desc-link" onclick="OSModule.toggleDescricaoServico(${idx})">
+                                <i class="ph ph-plus-circle"></i> Adicionar detalhes/observações para esta OS
+                            </button>
+                        </div>
+                    `}
                 </td>
                 <td style="text-align:right; vertical-align:top; padding-top:12px;">
                     <input 
