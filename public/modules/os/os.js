@@ -21,6 +21,7 @@ const OSModule = {
     debounceTimeout: null,
     inicializado: false,
     ordensCache: [],
+    catalogoServicos: [],
 
     /**
      * Inicialização do módulo quando a aba é acessada
@@ -30,7 +31,19 @@ const OSModule = {
             this.inicializado = true;
             this.mostrarSubview('lista');
         }
-        await this.carregar(1);
+        await Promise.all([
+            this.carregar(1),
+            this.carregarCatalogoServicos()
+        ]);
+    },
+
+    async carregarCatalogoServicos() {
+        try {
+            const res = await API.listarServicos({ limite: 200, ordenarPor: 'nome', ordem: 'asc' });
+            if (res && res.success) {
+                this.catalogoServicos = res.servicos || [];
+            }
+        } catch (_) {}
     },
 
     /**
@@ -386,9 +399,12 @@ const OSModule = {
      */
     adicionarLinhaServico(item = null) {
         this.itensServicos.push(item || {
+            servico_id: null,
+            codigo: '',
             nome: '',
             preco: 0,
-            subtotal: 0
+            subtotal: 0,
+            descricao: ''
         });
         this.renderizarLinhasServicos();
         this.recalcularTotais();
@@ -396,6 +412,28 @@ const OSModule = {
 
     removerLinhaServico(index) {
         this.itensServicos.splice(index, 1);
+        this.renderizarLinhasServicos();
+        this.recalcularTotais();
+    },
+
+    aoSelecionarServicoCatalogo(index, servicoId) {
+        if (!this.itensServicos[index]) return;
+        if (!servicoId) {
+            this.itensServicos[index].servico_id = null;
+            return;
+        }
+
+        const servico = this.catalogoServicos.find(s => String(s.id) === String(servicoId));
+        if (!servico) return;
+
+        this.itensServicos[index].servico_id = servico.id;
+        this.itensServicos[index].codigo = servico.codigo || '';
+        this.itensServicos[index].nome = servico.nome || '';
+        this.itensServicos[index].preco = Number(servico.preco) || 0;
+        this.itensServicos[index].subtotal = Number(servico.preco) || 0;
+        // Puxa a descrição do catálogo como base, permitindo edição exclusiva nesta OS
+        this.itensServicos[index].descricao = servico.descricao || '';
+
         this.renderizarLinhasServicos();
         this.recalcularTotais();
     },
@@ -419,8 +457,9 @@ const OSModule = {
         if (this.itensServicos.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="3" style="text-align:center; padding:14px; color:#94A3B8; font-size:0.78rem;">
-                        Nenhum serviço adicionado. Clique em "+ Adicionar Serviço" para incluir mão de obra.
+                    <td colspan="3" style="text-align:center; padding:18px; color:#94A3B8; font-size:0.80rem;">
+                        <i class="ph ph-wrench" style="font-size:1.4rem; opacity:0.5; display:block; margin-bottom:4px;"></i>
+                        Nenhum serviço adicionado. Clique em "+ Adicionar Serviço" para incluir itens de mão de obra.
                     </td>
                 </tr>
             `;
@@ -429,24 +468,56 @@ const OSModule = {
 
         tbody.innerHTML = this.itensServicos.map((s, idx) => `
             <tr>
-                <td>
+                <td style="vertical-align:top; padding: 10px 12px;">
+                    <!-- Seletor do Catálogo de Serviços -->
+                    <div style="margin-bottom: 6px;">
+                        <select 
+                            onchange="OSModule.aoSelecionarServicoCatalogo(${idx}, this.value)"
+                            style="width:100%; padding:6px 10px; font-size:0.80rem; border:1px solid #CBD5E1; border-radius:6px; background:#F8FAFC; color:#0F172A; font-weight:600; cursor:pointer;"
+                        >
+                            <option value="">-- Selecione do Catálogo de Serviços (ou digite avulso abaixo) --</option>
+                            ${this.catalogoServicos.map(cat => `
+                                <option value="${cat.id}" ${String(s.servico_id || '') === String(cat.id) ? 'selected' : ''}>
+                                    ${cat.codigo ? `[${cat.codigo}] ` : ''}${window.UI ? UI.escapeHtml(cat.nome) : cat.nome} (R$ ${Number(cat.preco || 0).toFixed(2).replace('.', ',')})
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+
+                    <!-- Nome do Serviço -->
                     <input 
                         type="text" 
-                        placeholder="Ex: REVISÃO DE FREIOS / TROCA DE CORREIA DENTADA" 
+                        placeholder="Nome do serviço ou mão de obra..." 
                         value="${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}"
                         oninput="OSModule.atualizarLinhaServico(${idx}, 'nome', this.value)"
-                        style="width:100%; padding:5px 8px; font-size:0.82rem; font-weight:600; text-transform:uppercase;"
+                        style="width:100%; padding:6px 10px; font-size:0.82rem; font-weight:600; text-transform:uppercase; border:1px solid #CBD5E1; border-radius:6px; background:#FFFFFF;"
                     >
+
+                    <!-- Campo de Descrição Específico desta OS (Nunca altera o catálogo mestre) -->
+                    <div style="margin-top: 8px; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 6px; padding: 8px 10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
+                            <label style="font-size:0.70rem; font-weight:700; color:#334155; text-transform:uppercase; display:flex; align-items:center; gap:4px; margin:0;">
+                                <i class="ph ph-note-pencil" style="color:#2563EB;"></i> Descrição / Detalhes deste serviço para esta OS:
+                            </label>
+                            <span style="font-size:0.68rem; color:#64748B; font-weight:500;">(Altera apenas nesta OS • Não altera o cadastro original)</span>
+                        </div>
+                        <textarea 
+                            rows="2" 
+                            placeholder="Descreva observações específicas para este veículo (ex: aplicado vedante Loctite, verificado desgaste de pastilhas)..."
+                            oninput="OSModule.atualizarLinhaServico(${idx}, 'descricao', this.value)"
+                            style="width:100%; padding:6px 8px; font-size:0.78rem; border:1px solid #CBD5E1; border-radius:5px; background:#FFFFFF; resize:vertical; line-height:1.4; color:#0F172A;"
+                        >${window.UI ? UI.escapeHtml(s.descricao || '') : (s.descricao || '')}</textarea>
+                    </div>
                 </td>
-                <td style="text-align:right;">
+                <td style="text-align:right; vertical-align:top; padding-top:12px;">
                     <input 
                         type="text" 
                         value="${Number(s.preco || 0).toFixed(2).replace('.', ',')}"
                         oninput="OSModule.atualizarLinhaServico(${idx}, 'preco', this.value)"
-                        style="width:110px; text-align:right; padding:5px 8px; font-size:0.82rem; font-weight:700;"
+                        style="width:110px; text-align:right; padding:6px 8px; font-size:0.84rem; font-weight:700; border:1px solid #CBD5E1; border-radius:6px;"
                     >
                 </td>
-                <td style="text-align:center;">
+                <td style="text-align:center; vertical-align:top; padding-top:14px;">
                     <button type="button" class="action-btn btn-action-del" onclick="OSModule.removerLinhaServico(${idx})" title="Remover serviço">
                         <i class="ph ph-trash"></i>
                     </button>
@@ -748,8 +819,11 @@ const OSModule = {
         const linhasServicos = servicos.length > 0
             ? servicos.map(s => `
                 <tr>
-                    <td style="padding:6px 8px; border-bottom:1px solid #CBD5E1;">${window.UI ? UI.escapeHtml(s.nome) : s.nome}</td>
-                    <td style="padding:6px 8px; border-bottom:1px solid #CBD5E1; text-align:right;">${window.UI ? UI.formatarMoeda(s.preco || 0) : `R$ ${Number(s.preco || 0).toFixed(2)}`}</td>
+                    <td style="padding:6px 8px; border-bottom:1px solid #CBD5E1;">
+                        <div style="font-weight:600;">${window.UI ? UI.escapeHtml(s.nome) : s.nome}</div>
+                        ${s.descricao ? `<div style="font-size:0.72rem; color:#475569; margin-top:2px; font-style:italic;">${window.UI ? UI.escapeHtml(s.descricao) : s.descricao}</div>` : ''}
+                    </td>
+                    <td style="padding:6px 8px; border-bottom:1px solid #CBD5E1; text-align:right; vertical-align:top;">${window.UI ? UI.formatarMoeda(s.preco || 0) : `R$ ${Number(s.preco || 0).toFixed(2)}`}</td>
                 </tr>
             `).join('')
             : `<tr><td colspan="2" style="padding:8px; color:#64748B; font-style:italic;">Nenhum serviço discriminado.</td></tr>`;
