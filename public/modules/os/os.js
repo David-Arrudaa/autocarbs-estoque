@@ -34,6 +34,8 @@ const OSModule = {
         if (!this.inicializado) {
             this.inicializado = true;
             this.mostrarSubview('lista');
+        } else {
+            this.mostrarSubview('lista');
         }
 
         if (!this.listenerClickForaRegistrado) {
@@ -52,6 +54,42 @@ const OSModule = {
             this.carregar(1),
             this.carregarCatalogoServicos()
         ]);
+    },
+
+    /**
+     * Ação disparada quando o usuário clica no botão "Ordem de Serviço" na Sidebar:
+     * - Retorna sempre para a visualização da listagem de ordens.
+     * - Se houver uma OS sendo criada/editada com cliente informado, salva automaticamente.
+     * - Se o cliente não foi preenchido, descarta/apaga a ordem em andamento.
+     */
+    async aoClicarMenuOS() {
+        if (!this.inicializado) {
+            await this.iniciar();
+            return;
+        }
+
+        const viewCadastro = document.getElementById('view-os-cadastro');
+        const estaNoCadastro = viewCadastro && !viewCadastro.classList.contains('hidden');
+
+        if (estaNoCadastro) {
+            const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
+            if (cliNome) {
+                if (window.UI) UI.toast('Salvando Ordem de Serviço em andamento...', 'info');
+                const salvou = await this.salvar();
+                if (!salvou) {
+                    this.voltarParaLista(false);
+                    await this.carregar(1);
+                }
+            } else {
+                this.limparFormulario();
+                this.voltarParaLista(false);
+                if (window.UI) UI.toast('Ordem sem cliente foi descartada.', 'info');
+                await this.carregar(1);
+            }
+        } else {
+            this.voltarParaLista(false);
+            await this.carregar(1);
+        }
     },
 
     async carregarCatalogoServicos() {
@@ -80,15 +118,77 @@ const OSModule = {
         }
     },
 
-    voltarParaLista() {
-        this.idEdicao = null;
+    voltarParaLista(limpar = false) {
+        if (limpar) {
+            this.limparFormulario();
+        } else {
+            this.idEdicao = null;
+        }
         this.mostrarSubview('lista');
     },
 
     /**
+     * Reseta completamente os campos e estados do formulário da OS
+     */
+    limparFormulario() {
+        const hoje = new Date().toISOString().split('T')[0];
+        const previsao = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+        this.idEdicao = null;
+        this.itensPecas = [];
+        this.itensServicos = [];
+        this.setInputValue('os_numero', 'Automático');
+        this.setInputValue('os_cliente_id', '');
+        this.setInputValue('os_cliente_nome', '');
+        this.setInputValue('os_cliente_telefone', '');
+        this.setInputValue('os_veiculo_modelo', '');
+        this.setInputValue('os_veiculo_ano', '');
+        this.setInputValue('os_veiculo_placa', '');
+        this.setInputValue('os_veiculo_km', '');
+        this.setInputValue('os_veiculo_chassi', '');
+        this.setInputValue('os_responsavel', 'AUTOCAR BS');
+        this.setInputValue('os_data_inicial', hoje);
+        this.setInputValue('os_data_final', previsao);
+        this.setInputValue('os_status', 'orcamento');
+        this.setInputValue('os_termo_garantia', '90 dias');
+        this.setInputValue('os_descricao_problema', '');
+        this.setInputValue('os_laudo_tecnico', '');
+        this.setInputValue('os_valor_desconto', '0,00');
+        this.atualizarStatusVinculoCliente(false);
+        this.fecharDropdownCliente();
+
+        const elDisp = document.getElementById('os_numero_display');
+        if (elDisp) elDisp.textContent = 'N° OS: Automático';
+
+        this.renderizarLinhasServicos();
+        this.renderizarLinhasPecas();
+        this.recalcularTotais();
+        this.alternarAbaForm('detalhes');
+        this.atualizarBadgesAbas();
+        this.atualizarBloqueioAbas();
+    },
+
+    /**
      * Alterna entre as abas internas do formulário da OS
+     * Impede a troca para as abas de peças, serviços ou laudo caso o nome do cliente esteja vazio.
      */
     alternarAbaForm(aba) {
+        if (aba !== 'detalhes') {
+            const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
+            if (!cliNome) {
+                if (window.UI && typeof UI.toast === 'function') {
+                    UI.toast('Informe o nome do cliente antes de acessar as abas de peças, serviços ou laudo.', 'warning');
+                }
+                const inputCli = document.getElementById('os_cliente_nome');
+                if (inputCli) {
+                    inputCli.focus();
+                    inputCli.classList.add('input-error-pulse');
+                    setTimeout(() => inputCli.classList.remove('input-error-pulse'), 1600);
+                }
+                return;
+            }
+        }
+
         this.abaFormAtual = aba;
         const abas = ['detalhes', 'pecas', 'servicos', 'laudo'];
         abas.forEach(a => {
@@ -104,6 +204,27 @@ const OSModule = {
             }
         });
         this.atualizarBadgesAbas();
+        this.atualizarBloqueioAbas();
+    },
+
+    /**
+     * Atualiza o estado visual das abas bloqueadas quando não há cliente preenchido
+     */
+    atualizarBloqueioAbas() {
+        const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
+        const abasSecundarias = ['pecas', 'servicos', 'laudo'];
+        abasSecundarias.forEach(a => {
+            const btn = document.getElementById(`tab-btn-os-${a}`);
+            if (btn) {
+                if (!cliNome) {
+                    btn.classList.add('tab-os-bloqueada');
+                    btn.setAttribute('title', 'Informe o nome do cliente na aba Detalhes para liberar');
+                } else {
+                    btn.classList.remove('tab-os-bloqueada');
+                    btn.removeAttribute('title');
+                }
+            }
+        });
     },
 
     atualizarBadgesAbas() {
@@ -347,48 +468,12 @@ const OSModule = {
      * =========================================================
      */
     abrirCadastro() {
-        this.idEdicao = null;
-        this.itensPecas = [];
-        this.itensServicos = [];
-
         const tituloEl = document.getElementById('os-form-titulo');
         if (tituloEl) {
             tituloEl.innerHTML = `<i class="ph ph-clipboard-text"></i> <span>Nova Ordem de Serviço</span>`;
         }
 
-        const hoje = new Date().toISOString().split('T')[0];
-        const previsao = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-        // Reseta campos do formulário
-        this.setInputValue('os_numero', 'Automático');
-        this.setInputValue('os_cliente_id', '');
-        this.setInputValue('os_cliente_nome', '');
-        this.setInputValue('os_cliente_telefone', '');
-        this.setInputValue('os_veiculo_modelo', '');
-        this.setInputValue('os_veiculo_ano', '');
-        this.setInputValue('os_veiculo_placa', '');
-        this.setInputValue('os_veiculo_km', '');
-        this.setInputValue('os_veiculo_chassi', '');
-        this.setInputValue('os_responsavel', 'AUTOCAR BS');
-        this.setInputValue('os_data_inicial', hoje);
-        this.setInputValue('os_data_final', previsao);
-        this.setInputValue('os_status', 'orcamento');
-        this.setInputValue('os_termo_garantia', '90 dias');
-        this.setInputValue('os_descricao_problema', '');
-        this.setInputValue('os_laudo_tecnico', '');
-        this.setInputValue('os_valor_desconto', '0,00');
-        this.atualizarStatusVinculoCliente(false);
-        this.fecharDropdownCliente();
-
-        const elDisp = document.getElementById('os_numero_display');
-        if (elDisp) elDisp.textContent = 'N° OS: Automático';
-
-        this.renderizarLinhasServicos();
-        this.renderizarLinhasPecas();
-        this.recalcularTotais();
-        this.alternarAbaForm('detalhes');
-        this.atualizarBadgesAbas();
-
+        this.limparFormulario();
         this.mostrarSubview('cadastro');
 
         setTimeout(() => {
@@ -452,6 +537,7 @@ const OSModule = {
             this.recalcularTotais();
             this.alternarAbaForm('detalhes');
             this.atualizarBadgesAbas();
+            this.atualizarBloqueioAbas();
 
             this.mostrarSubview('cadastro');
         } catch (err) {
@@ -936,20 +1022,18 @@ const OSModule = {
      */
     async salvar() {
         const clienteNome = this.getInputValue('os_cliente_nome');
-        const dataInicial = this.getInputValue('os_data_inicial');
+        let dataInicial = this.getInputValue('os_data_inicial');
 
         if (!clienteNome) {
             if (window.UI) UI.toast('Por favor, informe o nome do cliente.', 'warning');
             const el = document.getElementById('os_cliente_nome');
             if (el) el.focus();
-            return;
+            return false;
         }
 
         if (!dataInicial) {
-            if (window.UI) UI.toast('Por favor, informe a data de entrada da OS.', 'warning');
-            const el = document.getElementById('os_data_inicial');
-            if (el) el.focus();
-            return;
+            dataInicial = new Date().toISOString().split('T')[0];
+            this.setInputValue('os_data_inicial', dataInicial);
         }
 
         const totalServicos = this.itensServicos.reduce((acc, s) => acc + (Number(s.preco) || 0), 0);
@@ -990,13 +1074,15 @@ const OSModule = {
             const res = await API.salvarOS(payload);
             if (res && res.success) {
                 if (window.UI) UI.toast(`Ordem de Serviço #${res.os.numero || res.os.id} salva com sucesso!`, 'success');
-                this.voltarParaLista();
+                this.voltarParaLista(false);
                 await this.carregar(1);
+                return true;
             } else {
                 throw new Error(res.message || 'Erro ao salvar Ordem de Serviço.');
             }
         } catch (err) {
             if (window.UI) UI.toast(err.message || 'Erro ao salvar OS.', 'error');
+            return false;
         } finally {
             if (btnTopo) btnTopo.disabled = false;
         }
@@ -1284,6 +1370,7 @@ const OSModule = {
 
     aoDigitarCliente(valor) {
         const q = String(valor || '').trim();
+        this.atualizarBloqueioAbas();
         const btnClear = document.getElementById('btn-limpar-cliente-os');
         if (btnClear) {
             if (q.length > 0) btnClear.classList.remove('hidden');
@@ -1455,6 +1542,7 @@ const OSModule = {
 
         this.atualizarStatusVinculoCliente(true);
         this.fecharDropdownCliente();
+        this.atualizarBloqueioAbas();
 
         if (window.UI) {
             UI.toast(`Cliente ${cliente.nome} vinculado à OS com sucesso!`, 'success');
@@ -1472,6 +1560,7 @@ const OSModule = {
         this.setInputValue('os_veiculo_chassi', '');
         this.atualizarStatusVinculoCliente(false);
         this.fecharDropdownCliente();
+        this.atualizarBloqueioAbas();
 
         const input = document.getElementById('os_cliente_nome');
         if (input) input.focus();

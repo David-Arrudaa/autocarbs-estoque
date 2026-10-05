@@ -1274,3 +1274,41 @@
 .os-tab-nav-actions.left-only {
     justify-content: flex-start;
 }
+
+/* Abas bloqueadas quando cliente não foi informado */
+.os-form-tab-btn.tab-os-bloqueada {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.os-form-tab-btn.tab-os-bloqueada:hover {
+    background: #E2E8F0;
+    color: #64748B;
+}
+
+.os-form-tab-btn.tab-os-bloqueada .os-tab-badge {
+    background: #CBD5E1;
+    color: #94A3B8;
+}
+
+/* Pulso de alerta no campo de cliente quando tenta trocar de aba sem preencher */
+@keyframes inputErrorPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        border-color: #EF4444;
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.35);
+        border-color: #EF4444;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        border-color: #EF4444;
+    }
+}
+
+.input-error-pulse {
+    animation: inputErrorPulse 0.8s ease-in-out 2;
+    border-color: #EF4444 !important;
+}
+

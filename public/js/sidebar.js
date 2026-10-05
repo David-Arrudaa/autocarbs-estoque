@@ -456,8 +456,12 @@ const Sidebar = {
                 Clientes.iniciar();
             } else if (aba === 'servicos' && window.Servicos && typeof Servicos.iniciar === 'function') {
                 Servicos.iniciar();
-            } else if (aba === 'os' && window.OSModule && typeof OSModule.iniciar === 'function') {
-                OSModule.iniciar();
+            } else if (aba === 'os' && window.OSModule) {
+                if (typeof OSModule.aoClicarMenuOS === 'function') {
+                    await OSModule.aoClicarMenuOS();
+                } else if (typeof OSModule.iniciar === 'function') {
+                    OSModule.iniciar();
+                }
             } else if (aba === 'relatorios' && window.Estoque && typeof Estoque.carregarRelatorio === 'function') {
                 Estoque.carregarRelatorio();
             } else if (aba === 'saidas' && window.Estoque && typeof Estoque.calcularCurvaABC === 'function') {
