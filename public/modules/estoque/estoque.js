@@ -1495,8 +1495,26 @@ const Estoque = {
      */
     async aoClicarMenuProdutos() {
         this.voltarParaLista();
-        if (typeof this.carregarEstoque === 'function') {
-            await this.carregarEstoque();
+        await this.carregarEstoque();
+    },
+
+    /**
+     * Recarrega a tabela de produtos e estatísticas/contadores
+     */
+    async carregarEstoque() {
+        const iconReload = document.getElementById('icon-reload-produtos');
+        if (iconReload) iconReload.classList.add('ph-spin');
+        try {
+            await Promise.all([
+                this.carregarTabela(this.page || 1),
+                this.carregarStats()
+            ]);
+        } catch (err) {
+            console.error('Erro ao recarregar estoque:', err);
+        } finally {
+            if (iconReload) {
+                setTimeout(() => iconReload.classList.remove('ph-spin'), 300);
+            }
         }
     },
 

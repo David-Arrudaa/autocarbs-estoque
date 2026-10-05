@@ -50,20 +50,7 @@ const Clientes = {
     },
 
     voltarParaLista() {
-        this.clienteAtualFicha = null;
-        this.clienteIdParaExcluir = null;
-        const modalDel = document.getElementById('modal-confirmacao-excluir-cliente');
-        if (modalDel) modalDel.classList.add('hidden');
         this.mostrarSubview('lista');
-    },
-
-    /**
-     * Disparado ao clicar no botão "Clientes" na Sidebar:
-     * Retorna sempre para a lista unificada de clientes
-     */
-    async aoClicarMenu() {
-        this.voltarParaLista();
-        await this.carregarLista(1);
     },
 
     /**

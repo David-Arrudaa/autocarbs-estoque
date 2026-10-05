@@ -52,7 +52,7 @@ const Sidebar = {
                     subtitulo: 'Controle físico de estoque, entradas, baixas e etiquetas',
                     moduloBreadcrumb: 'ESTOQUE',
                     submoduloBreadcrumb: 'PRODUTOS',
-                    mostrarBotaoCadastrar: true
+                    mostrarBotaoCadastrar: false
                 }
             }
         },

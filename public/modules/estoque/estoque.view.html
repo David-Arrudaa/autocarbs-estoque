@@ -10,32 +10,40 @@
 
 <!-- ABA 1: Estoque Geral (Produtos) -->
 <div class="tab-pane" id="tab-pane-produtos">
-    <div class="card table-container" style="flex:1;">
-        <!-- Barra de Ferramentas e Filtros Rápidos -->
-        <div class="inventory-toolbar">
-            <div class="search-box-erp">
-                <i class="ph ph-magnifying-glass"></i>
-                <input 
-                    type="search" 
-                    id="input-busca" 
-                    name="estoque_filtro_busca_no_autofill"
-                    placeholder="Pesquisar por descrição, marca, modelo ou código..." 
-                    onkeyup="Estoque.pesquisar()"
-                    autocomplete="one-time-code"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                    data-lpignore="true"
-                    data-1p-ignore="true"
-                    data-form-type="other"
-                >
-                <button type="button" class="btn-clear-search hidden" id="btn-clear-busca" onclick="Estoque.limparBusca()" title="Limpar pesquisa">
-                    <i class="ph ph-x"></i>
-                </button>
-                <button type="button" class="btn-search-barcode" onclick="ScannerModule.abrirScanner('busca')" title="Escanear Código de Barras (Câmera / Leitor)">
-                    <i class="ph ph-barcode"></i>
-                </button>
-            </div>
+    <!-- 1.1 Barra de Ferramentas & Pesquisa Rápida (Padrão Unificado Enterprise) -->
+    <div class="produtos-toolbar-card">
+        <div class="produtos-toolbar-left">
+            <button type="button" class="btn-novo-produto-hero" id="btn-novo-produto-toolbar" onclick="Estoque.abrirModalCadastro()">
+                <i class="ph-bold ph-plus"></i>
+                <span>Novo Produto</span>
+            </button>
+        </div>
+
+        <div class="produtos-search-box">
+            <i class="ph ph-magnifying-glass"></i>
+            <input 
+                type="search" 
+                id="input-busca" 
+                name="estoque_filtro_busca_no_autofill"
+                placeholder="Pesquisar por descrição, marca, modelo ou código..." 
+                onkeyup="Estoque.pesquisar()"
+                autocomplete="one-time-code"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                data-lpignore="true"
+                data-1p-ignore="true"
+                data-form-type="other"
+            >
+            <button type="button" class="btn-clear-search hidden" id="btn-clear-busca" onclick="Estoque.limparBusca()" title="Limpar pesquisa">
+                <i class="ph ph-x"></i>
+            </button>
+            <button type="button" class="btn-search-barcode" onclick="ScannerModule.abrirScanner('busca')" title="Escanear Código de Barras (Câmera / Leitor)">
+                <i class="ph ph-barcode"></i>
+            </button>
+        </div>
+
+        <div class="produtos-toolbar-filters">
             <div class="filter-chips">
                 <button type="button" class="chip-pill active" id="chip-filter-todos" onclick="Estoque.filtrarStatusGeral('todos')">
                     <span>Todos</span>
@@ -52,16 +60,22 @@
                     <span class="chip-count" id="chip-count-zerados">0</span>
                 </button>
             </div>
-            <div class="toolbar-actions" style="display:flex; align-items:center; gap:8px;">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.abrirModalEtiquetas()" title="Gerar Etiquetas de Prateleira com Código de Barras e Preço" style="white-space:nowrap; padding: 6px 12px; font-weight: 700;">
-                    <i class="ph ph-barcode" style="font-size:1.1rem; color:var(--primary);"></i>
-                    <span>ETIQUETAS</span>
-                </button>
-            </div>
+
+            <button type="button" class="btn btn-secondary btn-sm btn-etiquetas-toolbar" onclick="Estoque.abrirModalEtiquetas()" title="Gerar Etiquetas de Prateleira com Código de Barras e Preço">
+                <i class="ph ph-barcode"></i>
+                <span>ETIQUETAS</span>
+            </button>
+
+            <button type="button" class="btn btn-secondary btn-sm" onclick="Estoque.carregarEstoque()" title="Recarregar produtos">
+                <i class="ph ph-arrows-clockwise" id="icon-reload-produtos"></i>
+            </button>
         </div>
-        
-        <div class="table-wrapper">
-            <table class="erp-table" id="table-estoque-geral">
+    </div>
+    
+    <!-- 1.2 Tabela Principal de Produtos (Padrão Unificado Enterprise) -->
+    <div class="produtos-table-card">
+        <div class="table-responsive">
+            <table class="erp-modern-table" id="table-estoque-geral">
                 <thead>
                     <tr>
                         <th style="width:7%; text-align:center;">Cód.</th>
