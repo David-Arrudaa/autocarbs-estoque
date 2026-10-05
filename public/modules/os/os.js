@@ -67,7 +67,7 @@ const OSModule = {
         if (tbody) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="9" style="text-align:center; padding: 32px; color: var(--text-secondary);">
+                    <td colspan="7" style="text-align:center; padding: 32px; color: var(--text-secondary);">
                         <i class="ph ph-circle-notch ph-spin" style="font-size:1.8rem; color:var(--primary); display:block; margin-bottom:8px;"></i>
                         <span>Carregando ordens de serviço...</span>
                     </td>
@@ -99,7 +99,7 @@ const OSModule = {
             if (tbody) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align:center; padding: 24px; color: var(--danger, #EF4444);">
+                        <td colspan="7" style="text-align:center; padding: 24px; color: var(--danger, #EF4444);">
                             <i class="ph ph-warning-circle" style="font-size:1.6rem; display:block; margin-bottom:6px;"></i>
                             <span>Não foi possível carregar as ordens de serviço. Verifique a conexão.</span>
                         </td>
@@ -137,7 +137,7 @@ const OSModule = {
     },
 
     /**
-     * Renderiza a tabela moderna compacta de ordens de serviço
+     * Renderiza a tabela moderna compacta e limpa de ordens de serviço
      */
     renderizarTabela(ordens) {
         const tbody = document.getElementById('tbody-os');
@@ -146,7 +146,7 @@ const OSModule = {
         if (ordens.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="9" style="text-align:center; padding: 40px 16px; color: var(--text-secondary);">
+                    <td colspan="7" style="text-align:center; padding: 40px 16px; color: var(--text-secondary);">
                         <i class="ph ph-clipboard-text" style="font-size:2.2rem; opacity:0.35; display:block; margin-bottom:8px;"></i>
                         <strong>Nenhuma ordem de serviço encontrada.</strong>
                         <p style="font-size:0.8rem; margin-top:4px; opacity:0.8;">Crie uma nova OS ou altere os filtros de pesquisa e datas.</p>
@@ -162,13 +162,11 @@ const OSModule = {
             const statusLabel = this.obterLabelStatus(statusKey);
             const valorTotalFormatado = window.UI ? UI.formatarMoeda(os.valor_total || 0) : `R$ ${(os.valor_total || 0).toFixed(2)}`;
             const dataIni = this.formatarDataBR(os.data_inicial);
-            const dataFim = this.formatarDataBR(os.data_final);
 
             const cliNome = os.cliente_nome ? (window.UI ? UI.escapeHtml(os.cliente_nome) : os.cliente_nome) : 'CLIENTE NÃO IDENTIFICADO';
             const modVeiculo = os.veiculo_modelo ? (window.UI ? UI.escapeHtml(os.veiculo_modelo) : os.veiculo_modelo) : '';
             const placaVeiculo = os.veiculo_placa ? (window.UI ? UI.escapeHtml(os.veiculo_placa) : os.veiculo_placa) : '';
-            const responsavel = os.responsavel ? (window.UI ? UI.escapeHtml(os.responsavel) : os.responsavel) : 'AUTOCAR BS';
-            const garantia = os.termo_garantia ? (window.UI ? UI.escapeHtml(os.termo_garantia) : os.termo_garantia) : '90 dias';
+            const veiculoTexto = [modVeiculo, placaVeiculo ? `(${placaVeiculo})` : ''].filter(Boolean).join(' ') || '-';
 
             return `
                 <tr>
@@ -176,22 +174,13 @@ const OSModule = {
                         <span class="badge-codigo-servico">${numeroOS}</span>
                     </td>
                     <td>
-                        <div class="os-cliente-celula">
-                            <span class="os-cliente-nome">${cliNome}</span>
-                            <div class="os-veiculo-info">
-                                ${modVeiculo ? `<span>${modVeiculo}</span>` : ''}
-                                ${placaVeiculo ? `<span class="os-veiculo-placa">${placaVeiculo}</span>` : ''}
-                            </div>
-                        </div>
+                        <span class="os-cliente-nome-single" title="${cliNome}">${cliNome}</span>
                     </td>
                     <td>
-                        <span style="font-size:0.78rem; font-weight:600; color:#475569;">${responsavel}</span>
+                        <span class="os-veiculo-nome-single" title="${veiculoTexto}">${veiculoTexto}</span>
                     </td>
                     <td style="text-align:center;">
                         <span class="os-data-texto">${dataIni}</span>
-                    </td>
-                    <td style="text-align:center;">
-                        <span class="os-data-texto">${dataFim}</span>
                     </td>
                     <td style="text-align:right;">
                         <span class="os-valor-total">${valorTotalFormatado}</span>
@@ -200,9 +189,6 @@ const OSModule = {
                         <span class="badge-status-os status-${statusKey}">
                             ${statusLabel}
                         </span>
-                    </td>
-                    <td style="text-align:center;">
-                        <span class="badge-garantia-os">${garantia}</span>
                     </td>
                     <td style="text-align:right;">
                         <div class="actions-wrapper" style="justify-content:flex-end; gap:4px;">

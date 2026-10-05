@@ -176,38 +176,52 @@
     width: 100%;
 }
 
-/* Células e Estrutura Específica de OS */
-.os-cliente-celula {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+#tabela-os-grid th {
+    padding: 8px 12px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-secondary, #64748B);
+    background: #F8FAFC;
+    border-bottom: 1px solid var(--border, #CBD5E1);
+    white-space: nowrap;
 }
 
-.os-cliente-nome {
+#tabela-os-grid td {
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    border-bottom: 1px solid #E2E8F0;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#tabela-os-grid tbody tr:hover {
+    background: rgba(37, 99, 235, 0.04);
+}
+
+.os-cliente-nome-single {
     font-size: 0.82rem;
     font-weight: 700;
     color: #0F172A;
-    letter-spacing: 0.1px;
+    display: inline-block;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
-.os-veiculo-info {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.72rem;
-    color: #64748B;
-    font-weight: 600;
-}
-
-.os-veiculo-placa {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-    font-weight: 700;
-    background: #F1F5F9;
-    border: 1px solid #CBD5E1;
-    padding: 1px 5px;
-    border-radius: 4px;
-    color: #334155;
-    letter-spacing: 0.5px;
+.os-veiculo-nome-single {
+    font-size: 0.80rem;
+    font-weight: 500;
+    color: #475569;
+    display: inline-block;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
 .os-data-texto {
@@ -218,8 +232,8 @@
 }
 
 .os-valor-total {
-    font-weight: 800;
-    font-size: 0.88rem;
+    font-weight: 700;
+    font-size: 0.86rem;
     color: var(--success, #16A34A);
     font-variant-numeric: tabular-nums;
 }
