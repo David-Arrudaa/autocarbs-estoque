@@ -1,0 +1,232 @@
+[
+  {
+    "id": 1358,
+    "numero": "1358",
+    "cliente_id": null,
+    "cliente_nome": "TESTE CLIENTE AUTOMACAO",
+    "cliente_telefone": "1599887766",
+    "veiculo_modelo": "BMW 320I SPORT",
+    "veiculo_placa": "BMW3E20",
+    "veiculo_km": "45000",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-05",
+    "data_final": "2026-10-10",
+    "valor_pecas": 420,
+    "valor_servicos": 350,
+    "valor_desconto": 50,
+    "valor_total": 720,
+    "status": "em_andamento",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "",
+    "laudo_tecnico": "",
+    "itens_pecas": [
+      {
+        "nome": "OLEO MOTUL 5W30 5L",
+        "qtd": 1,
+        "preco": 420
+      }
+    ],
+    "itens_servicos": [
+      {
+        "preco": 350,
+        "nome": "TROCA DE OLEO MOTOR E FILTROS"
+      }
+    ],
+    "observacoes": "",
+    "created_at": "2026-10-05T13:41:03.964Z",
+    "updated_at": "2026-10-05T13:41:03.964Z"
+  },
+  {
+    "id": 1357,
+    "numero": "1357",
+    "cliente_id": null,
+    "cliente_nome": "TESTE CLIENTE AUTOMACAO",
+    "cliente_telefone": "1599887766",
+    "veiculo_modelo": "BMW 320I SPORT",
+    "veiculo_placa": "BMW3E20",
+    "veiculo_km": "45000",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-05",
+    "data_final": "2026-10-10",
+    "valor_pecas": 420,
+    "valor_servicos": 350,
+    "valor_desconto": 50,
+    "valor_total": 720,
+    "status": "em_andamento",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "",
+    "laudo_tecnico": "",
+    "itens_pecas": [
+      {
+        "nome": "OLEO MOTUL 5W30 5L",
+        "qtd": 1,
+        "preco": 420
+      }
+    ],
+    "itens_servicos": [
+      {
+        "preco": 350,
+        "nome": "TROCA DE OLEO MOTOR E FILTROS"
+      }
+    ],
+    "observacoes": "",
+    "created_at": "2026-10-05T13:40:03.358Z",
+    "updated_at": "2026-10-05T13:40:03.358Z"
+  },
+  {
+    "id": 1356,
+    "numero": "1356",
+    "cliente_id": 204,
+    "cliente_nome": "MARCELO MOREIRA",
+    "cliente_telefone": "15991383274",
+    "veiculo_modelo": "HONDA CIVIC 2.0 LXR",
+    "veiculo_placa": "BRA2E19",
+    "veiculo_km": "85400",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-02",
+    "data_final": "2026-10-09",
+    "valor_pecas": 0,
+    "valor_servicos": 0,
+    "valor_desconto": 0,
+    "valor_total": 0,
+    "status": "orcamento",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "Ruído metálico na suspensão dianteira ao passar em desníveis e verificação de freios.",
+    "laudo_tecnico": "Constatada folga na bieleta dianteira e desgaste de pastilhas.",
+    "itens_pecas": [],
+    "itens_servicos": [],
+    "observacoes": "Veículo liberado para elaboração de orçamento.",
+    "created_at": "2026-10-02T10:00:00.000Z",
+    "updated_at": "2026-10-02T10:00:00.000Z"
+  },
+  {
+    "id": 1355,
+    "numero": "1355",
+    "cliente_id": 204,
+    "cliente_nome": "MARCELO MOREIRA",
+    "cliente_telefone": "15991383274",
+    "veiculo_modelo": "TOYOTA COROLLA 2.0 XEI",
+    "veiculo_placa": "FGH3J45",
+    "veiculo_km": "62100",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-02",
+    "data_final": "2026-10-09",
+    "valor_pecas": 0,
+    "valor_servicos": 0,
+    "valor_desconto": 0,
+    "valor_total": 0,
+    "status": "orcamento",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "Revisão preventiva de 60 mil km e troca de óleo/filtros.",
+    "laudo_tecnico": "Preventiva básica.",
+    "itens_pecas": [],
+    "itens_servicos": [],
+    "observacoes": "",
+    "created_at": "2026-10-02T10:30:00.000Z",
+    "updated_at": "2026-10-02T10:30:00.000Z"
+  },
+  {
+    "id": 1353,
+    "numero": "1353",
+    "cliente_id": 201,
+    "cliente_nome": "MATEUS SHALAR DE ARRUDA DOS SANTOS",
+    "cliente_telefone": "15997533232",
+    "veiculo_modelo": "VW GOLF 1.4 TSI",
+    "veiculo_placa": "MKX8A22",
+    "veiculo_km": "98000",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-02",
+    "data_final": "2026-10-09",
+    "valor_pecas": 450,
+    "valor_servicos": 740,
+    "valor_desconto": 0,
+    "valor_total": 1190,
+    "status": "em_andamento",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "Luz da bateria acesa no painel e oscilação na marcha lenta.",
+    "laudo_tecnico": "Desgaste nos rolamentos e escovas do alternador.",
+    "itens_pecas": [
+      {
+        "nome": "Regulador de Tensão Bosch",
+        "qtd": 1,
+        "preco": 450,
+        "subtotal": 450
+      }
+    ],
+    "itens_servicos": [
+      {
+        "nome": "DESMONTAGEM E REPARO NO ALTERNADOR",
+        "preco": 740,
+        "subtotal": 740
+      }
+    ],
+    "observacoes": "Aguardando finalização do teste elétrico de bancada.",
+    "created_at": "2026-10-02T11:15:00.000Z",
+    "updated_at": "2026-10-02T14:20:00.000Z"
+  },
+  {
+    "id": 1352,
+    "numero": "1352",
+    "cliente_id": 201,
+    "cliente_nome": "MATEUS SHALAR DE ARRUDA DOS SANTOS",
+    "cliente_telefone": "15997533232",
+    "veiculo_modelo": "CHEVROLET ONIX 1.0 TURBO",
+    "veiculo_placa": "ONX4B11",
+    "veiculo_km": "45200",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-02",
+    "data_final": "2026-10-09",
+    "valor_pecas": 0,
+    "valor_servicos": 0,
+    "valor_desconto": 0,
+    "valor_total": 0,
+    "status": "orcamento",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "Checklist de ar-condicionado e higienização de cabine.",
+    "laudo_tecnico": "",
+    "itens_pecas": [],
+    "itens_servicos": [],
+    "observacoes": "",
+    "created_at": "2026-10-02T11:45:00.000Z",
+    "updated_at": "2026-10-02T11:45:00.000Z"
+  },
+  {
+    "id": 1351,
+    "numero": "1351",
+    "cliente_id": 203,
+    "cliente_nome": "RAQUEL SOARES DA SILVA E SILVA",
+    "cliente_telefone": "15981444480",
+    "veiculo_modelo": "HYUNDAI HB20 1.6",
+    "veiculo_placa": "HBZ9C88",
+    "veiculo_km": "73000",
+    "responsavel": "AUTOCAR BS",
+    "data_inicial": "2026-10-01",
+    "data_final": "2026-10-09",
+    "valor_pecas": 230,
+    "valor_servicos": 250,
+    "valor_desconto": 0,
+    "valor_total": 480,
+    "status": "faturado",
+    "termo_garantia": "90 dias",
+    "descricao_problema": "Ar condicionado parou de gelar repentinamente.",
+    "laudo_tecnico": "Substituição da válvula de serviço e recarga de gás R134a.",
+    "itens_pecas": [
+      {
+        "nome": "Carga de Gás Ecológico R134a + Contraste UV",
+        "qtd": 1,
+        "preco": 230,
+        "subtotal": 230
+      }
+    ],
+    "itens_servicos": [
+      {
+        "nome": "SUBS. VALVULA DE SERVIÇO AR COND.",
+        "preco": 250,
+        "subtotal": 250
+      }
+    ],
+    "observacoes": "Veículo testado e entregue com laudo térmico de 4.2°C no difusor.",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T17:30:00.000Z"
+  }
+]

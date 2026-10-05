@@ -32,17 +32,18 @@
     </style>
 
     <!-- Folha de Estilos Modular (com cache-bust) -->
-    <link rel="stylesheet" href="css/variables.css?v=155.0">
-    <link rel="stylesheet" href="css/style.css?v=155.0">
-    <link rel="stylesheet" href="modules/auth/auth.css?v=155.0">
-    <link rel="stylesheet" href="modules/clientes/clientes.css?v=155.0">
-    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=155.0">
-    <link rel="stylesheet" href="modules/equipe/equipe.css?v=155.0">
-    <link rel="stylesheet" href="modules/scanner/scanner.css?v=155.0">
-    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=155.0">
-    <link rel="stylesheet" href="modules/estoque/estoque.css?v=155.0">
-    <link rel="stylesheet" href="modules/servicos/servicos.css?v=155.0">
-    <link rel="stylesheet" href="modals/dialog.css?v=155.0">
+    <link rel="stylesheet" href="css/variables.css?v=156.0">
+    <link rel="stylesheet" href="css/style.css?v=156.0">
+    <link rel="stylesheet" href="modules/auth/auth.css?v=156.0">
+    <link rel="stylesheet" href="modules/clientes/clientes.css?v=156.0">
+    <link rel="stylesheet" href="modules/cotacao/cotacao.css?v=156.0">
+    <link rel="stylesheet" href="modules/equipe/equipe.css?v=156.0">
+    <link rel="stylesheet" href="modules/scanner/scanner.css?v=156.0">
+    <link rel="stylesheet" href="modules/relatorios/relatorios.css?v=156.0">
+    <link rel="stylesheet" href="modules/estoque/estoque.css?v=156.0">
+    <link rel="stylesheet" href="modules/servicos/servicos.css?v=156.0">
+    <link rel="stylesheet" href="modules/os/os.css?v=156.0">
+    <link rel="stylesheet" href="modals/dialog.css?v=156.0">
 </head>
 <body>
 
@@ -439,57 +440,9 @@
                     <!-- Injetado dinamicamente via ViewLoader (modules/servicos/servicos.view.html) -->
                 </div>
 
-                <!-- 5. ABA ORDENS DE SERVIÇO (Módulo Modular / Em Estruturação) -->
-                <div class="tab-pane hidden" id="tab-pane-os">
-                    <div class="module-placeholder-wrapper">
-                        <div class="module-placeholder-card">
-                            <div class="placeholder-hero">
-                                <div class="placeholder-hero-icon">
-                                    <i class="ph ph-clipboard-text"></i>
-                                </div>
-                                <div class="placeholder-hero-content">
-                                    <span class="placeholder-hero-tag"><i class="ph ph-sparkle"></i> Operação de Oficina</span>
-                                    <h2>Ordens de Serviço (OS) & Pátio</h2>
-                                    <p>Acompanhamento completo do ciclo de atendimento: entrada, diagnóstico, checklist fotográfico, aprovação de orçamento e entrega.</p>
-                                </div>
-                            </div>
-                            <div class="placeholder-roadmap-box">
-                                <div class="placeholder-roadmap-title">
-                                    <i class="ph ph-compass"></i> Recursos em Estruturação
-                                </div>
-                                <div class="placeholder-grid">
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-kanban"></i>
-                                            <span>Painel Visual de Status</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Quadro Kanban: Em Diagnóstico, Aguardando Peças, Em Execução, Teste Final e Faturado.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-camera"></i>
-                                            <span>Checklist com Registro Fotográfico</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Vistoria de entrada com nível de combustível, km, estado do veículo e fotos de avarias.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-link"></i>
-                                            <span>Integração Peças & Cotação</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Importe cotações vencedoras e baixe peças do estoque direto para a OS com 1 clique.</span>
-                                    </div>
-                                    <div class="placeholder-feature-item">
-                                        <div class="placeholder-feature-head">
-                                            <i class="ph ph-file-pdf"></i>
-                                            <span>Ordem de Serviço em PDF</span>
-                                        </div>
-                                        <span class="placeholder-feature-desc">Impressão formalizada com discriminação de peças, mão de obra, termos e assinatura.</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 5. ABA ORDENS DE SERVIÇO (Módulo Modular) -->
+                <div class="tab-pane hidden" id="tab-pane-os" data-module="os">
+                    <!-- Injetado dinamicamente via ViewLoader (modules/os/os.view.html) -->
                 </div>
 
                 <!-- 6. ABA COTAÇÃO DE PEÇAS & ORÇAMENTOS (Módulo Modular) -->
@@ -518,18 +471,19 @@
     <div id="relatorio-documento-impressao" class="print-document-only"></div>
 
     <!-- Scripts da Aplicação em Ordem de Dependência (com cache-bust) -->
-    <script src="js/core/view-loader.js?v=155.0"></script>
-    <script src="js/ui.js?v=155.0"></script>
-    <script src="modals/dialog.js?v=155.0"></script>
-    <script src="js/sidebar.js?v=155.0"></script>
-    <script src="js/api.js?v=155.0"></script>
-    <script src="modules/auth/auth.js?v=155.0"></script>
-    <script src="modules/clientes/clientes.js?v=155.0"></script>
-    <script src="modules/servicos/servicos.js?v=155.0"></script>
-    <script src="modules/cotacao/cotacao.js?v=155.0"></script>
-    <script src="modules/equipe/equipe.js?v=155.0"></script>
-    <script src="modules/scanner/scanner.js?v=155.0"></script>
-    <script src="modules/estoque/estoque.js?v=155.0"></script>
-    <script src="js/app.js?v=155.0"></script>
+    <script src="js/core/view-loader.js?v=156.0"></script>
+    <script src="js/ui.js?v=156.0"></script>
+    <script src="modals/dialog.js?v=156.0"></script>
+    <script src="js/sidebar.js?v=156.0"></script>
+    <script src="js/api.js?v=156.0"></script>
+    <script src="modules/auth/auth.js?v=156.0"></script>
+    <script src="modules/clientes/clientes.js?v=156.0"></script>
+    <script src="modules/servicos/servicos.js?v=156.0"></script>
+    <script src="modules/os/os.js?v=156.0"></script>
+    <script src="modules/cotacao/cotacao.js?v=156.0"></script>
+    <script src="modules/equipe/equipe.js?v=156.0"></script>
+    <script src="modules/scanner/scanner.js?v=156.0"></script>
+    <script src="modules/estoque/estoque.js?v=156.0"></script>
+    <script src="js/app.js?v=156.0"></script>
 </body>
 </html>

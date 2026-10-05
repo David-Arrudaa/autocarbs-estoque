@@ -305,6 +305,44 @@ const API = {
 
     async metricasServicos() {
         return this.request('/servicos/metricas/resumo', { method: 'GET' });
+    },
+
+    // ─── MÓDULO DE ORDENS DE SERVIÇO (OS) ───────────────────────────────
+    async listarOS(params = {}) {
+        const qs = new URLSearchParams();
+        if (params.busca) qs.set('busca', params.busca);
+        if (params.status) qs.set('status', params.status);
+        if (params.dataInicial) qs.set('dataInicial', params.dataInicial);
+        if (params.dataFinal) qs.set('dataFinal', params.dataFinal);
+        if (params.pagina) qs.set('pagina', params.pagina);
+        if (params.limite) qs.set('limite', params.limite);
+        if (params.ordenarPor) qs.set('ordenarPor', params.ordenarPor);
+        if (params.ordem) qs.set('ordem', params.ordem);
+        const queryStr = qs.toString() ? `?${qs.toString()}` : '';
+        return this.request(`/os${queryStr}`, { method: 'GET' });
+    },
+
+    async obterOS(id) {
+        return this.request(`/os/${id}`, { method: 'GET' });
+    },
+
+    async salvarOS(dados) {
+        if (dados.id) {
+            return this.request(`/os/${dados.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(dados)
+            });
+        }
+        return this.request('/os', {
+            method: 'POST',
+            body: JSON.stringify(dados)
+        });
+    },
+
+    async excluirOS(id) {
+        return this.request(`/os/${id}`, {
+            method: 'DELETE'
+        });
     }
 };
 

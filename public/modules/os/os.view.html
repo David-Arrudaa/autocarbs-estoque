@@ -1,0 +1,288 @@
+<!-- =========================================================
+     AUTOCAR BS - ERP OFICINA
+     Módulo: Ordens de Serviço (os.view.html)
+     Arquitetura de Navegação em Páginas Reais (Subviews)
+     ========================================================= -->
+
+<div class="os-module-container">
+
+    <!-- =========================================================
+         SUBVIEW 1: LISTAGEM DE ORDENS DE SERVIÇO
+         ========================================================= -->
+    <div id="view-os-lista" class="os-subview">
+
+        <!-- 1.1 Barra de Ferramentas, Busca & Filtros Rápidos -->
+        <div class="os-toolbar-card">
+            <div class="os-toolbar-left">
+                <button type="button" class="btn-nova-os-hero" onclick="OSModule.abrirCadastro()">
+                    <i class="ph-bold ph-plus"></i>
+                    <span>Nova OS</span>
+                </button>
+
+                <div class="os-search-box">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input 
+                        type="search" 
+                        id="input-busca-os" 
+                        placeholder="Buscar por cliente, placa, modelo ou nº OS..." 
+                        onkeyup="OSModule.pesquisar()"
+                        autocomplete="off"
+                    >
+                    <button type="button" class="btn-clear-search hidden" id="btn-limpar-busca-os" onclick="OSModule.limparBusca()" title="Limpar pesquisa">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="os-toolbar-filters">
+                <select id="filtro-status-os" class="select-filtro-os" onchange="OSModule.filtrarStatus(this.value)">
+                    <option value="todos">Todos os Status</option>
+                    <option value="orcamento">Orçamento</option>
+                    <option value="aberto">Aberto / Entrada</option>
+                    <option value="em_andamento">Em Andamento</option>
+                    <option value="aguardando_pecas">Aguardando Peças</option>
+                    <option value="faturado">Faturado</option>
+                    <option value="finalizado">Finalizado</option>
+                    <option value="cancelado">Cancelado</option>
+                </select>
+
+                <div style="display:flex; align-items:center; gap:4px;">
+                    <span class="label-data-filtro">De:</span>
+                    <input type="date" id="filtro-data-inicial" class="input-filtro-data" onchange="OSModule.filtrarPeriodo()">
+                    <span class="label-data-filtro">Até:</span>
+                    <input type="date" id="filtro-data-final" class="input-filtro-data" onchange="OSModule.filtrarPeriodo()">
+                </div>
+
+                <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.carregar()" title="Recarregar dados">
+                    <i class="ph ph-arrows-clockwise" id="icon-reload-os"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 1.2 Tabela Principal de Ordens de Serviço (Padrão Serviços Compacto) -->
+        <div class="os-table-card">
+            <div class="table-responsive">
+                <table class="erp-modern-table" id="tabela-os-grid">
+                    <thead>
+                        <tr>
+                            <th style="width: 85px; text-align: center;">N° OS</th>
+                            <th style="min-width: 230px;">Cliente & Veículo</th>
+                            <th style="width: 140px;">Responsável</th>
+                            <th style="width: 110px; text-align: center;">Data Inicial</th>
+                            <th style="width: 110px; text-align: center;">Dados Finais</th>
+                            <th style="width: 125px; text-align: right;">Valor Total</th>
+                            <th style="width: 135px; text-align: center;">Status</th>
+                            <th style="width: 100px; text-align: center;">T. Garantia</th>
+                            <th style="width: 195px; text-align: right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-os">
+                        <!-- Linhas geradas dinamicamente via OSModule.renderizarTabela -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginação -->
+            <div class="pagination-erp" id="container-paginacao-os">
+                <div class="pagination-count" id="os-pagination-counter">
+                    Carregando ordens de serviço...
+                </div>
+                <div class="pagination-controls">
+                    <button class="btn-page" id="btn-os-prev" onclick="OSModule.mudarPagina(-1)">
+                        <i class="ph ph-caret-left"></i> Anterior
+                    </button>
+                    <span class="page-info" id="os-page-info">Página 1</span>
+                    <button class="btn-page" id="btn-os-next" onclick="OSModule.mudarPagina(1)">
+                        Próxima <i class="ph ph-caret-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- FIM SUBVIEW 1: LISTAGEM -->
+
+    <!-- =========================================================
+         SUBVIEW 2: CADASTRO / EDIÇÃO DE ORDEM DE SERVIÇO (PÁGINA COMPLETA)
+         ========================================================= -->
+    <div id="view-os-cadastro" class="os-subview hidden">
+        
+        <!-- Topbar da Página de OS -->
+        <div class="os-page-topbar">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.voltarParaLista()">
+                <i class="ph ph-arrow-left"></i>
+                <span>Voltar para Ordens</span>
+            </button>
+            <div class="os-topbar-titulo">
+                <h3 id="os-form-titulo">
+                    <i class="ph ph-clipboard-text"></i>
+                    <span>Nova Ordem de Serviço</span>
+                </h3>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="OSModule.salvar()" id="btn-salvar-os-topo">
+                <i class="ph ph-floppy-disk"></i>
+                <span id="texto-btn-salvar-os-topo">SALVAR ORDEM</span>
+            </button>
+        </div>
+
+        <!-- Formulário Estruturado de OS -->
+        <div class="os-form-card">
+            
+            <!-- 1. Identificação Geral -->
+            <div class="os-section-header">
+                <i class="ph ph-user"></i>
+                <span>1. Identificação do Cliente & Veículo</span>
+            </div>
+
+            <div class="os-form-grid">
+                <div class="col-2 os-form-group">
+                    <label>N° OS</label>
+                    <input type="text" id="os_numero" readonly placeholder="Automático" style="font-weight:700; color:#2563EB;">
+                </div>
+                <div class="col-6 os-form-group">
+                    <label>Cliente *</label>
+                    <input type="text" id="os_cliente_nome" placeholder="Digite o nome do cliente..." required>
+                </div>
+                <div class="col-4 os-form-group">
+                    <label>WhatsApp / Telefone</label>
+                    <input type="text" id="os_cliente_telefone" placeholder="(15) 99999-9999">
+                </div>
+
+                <div class="col-4 os-form-group">
+                    <label>Modelo do Veículo</label>
+                    <input type="text" id="os_veiculo_modelo" placeholder="Ex: Honda Civic 2.0 LXR">
+                </div>
+                <div class="col-3 os-form-group">
+                    <label>Placa</label>
+                    <input type="text" id="os_veiculo_placa" placeholder="Ex: BRA2E19" style="text-transform:uppercase; font-family:monospace; font-weight:700;">
+                </div>
+                <div class="col-2 os-form-group">
+                    <label>KM Atual</label>
+                    <input type="text" id="os_veiculo_km" placeholder="Ex: 85.000">
+                </div>
+                <div class="col-3 os-form-group">
+                    <label>Responsável / Mecânico</label>
+                    <input type="text" id="os_responsavel" value="AUTOCAR BS">
+                </div>
+            </div>
+
+            <!-- 2. Prazos e Status -->
+            <div class="os-section-header" style="margin-top:10px;">
+                <i class="ph ph-calendar"></i>
+                <span>2. Prazos, Status & Termo de Garantia</span>
+            </div>
+
+            <div class="os-form-grid">
+                <div class="col-3 os-form-group">
+                    <label>Data de Entrada *</label>
+                    <input type="date" id="os_data_inicial" required>
+                </div>
+                <div class="col-3 os-form-group">
+                    <label>Previsão de Entrega</label>
+                    <input type="date" id="os_data_final">
+                </div>
+                <div class="col-3 os-form-group">
+                    <label>Status da OS</label>
+                    <select id="os_status">
+                        <option value="orcamento">Orçamento</option>
+                        <option value="aberto">Aberto / Entrada</option>
+                        <option value="em_andamento">Em Andamento</option>
+                        <option value="aguardando_pecas">Aguardando Peças</option>
+                        <option value="faturado">Faturado</option>
+                        <option value="finalizado">Finalizado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-3 os-form-group">
+                    <label>Termo de Garantia</label>
+                    <input type="text" id="os_termo_garantia" value="90 dias" placeholder="Ex: 90 dias">
+                </div>
+
+                <div class="col-6 os-form-group">
+                    <label>Descrição do Problema / Reclamação do Cliente</label>
+                    <textarea id="os_descricao_problema" rows="2" placeholder="Descreva os sintomas relatados pelo cliente..."></textarea>
+                </div>
+                <div class="col-6 os-form-group">
+                    <label>Laudo Técnico / Diagnóstico da Oficina</label>
+                    <textarea id="os_laudo_tecnico" rows="2" placeholder="Diagnóstico técnico elaborado pelo mecânico..."></textarea>
+                </div>
+            </div>
+
+            <!-- 3. Discriminação de Serviços & Mão de Obra -->
+            <div class="os-section-header" style="margin-top:10px;">
+                <i class="ph ph-wrench"></i>
+                <span>3. Serviços & Mão de Obra</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.adicionarLinhaServico()" style="margin-left:auto; padding:3px 10px; font-size:0.75rem;">
+                    <i class="ph-bold ph-plus"></i> Adicionar Serviço
+                </button>
+            </div>
+
+            <table class="os-items-table" id="tabela-itens-servicos">
+                <thead>
+                    <tr>
+                        <th>Descrição do Serviço</th>
+                        <th style="width: 140px; text-align: right;">Valor (R$)</th>
+                        <th style="width: 50px; text-align: center;">Remover</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-itens-servicos">
+                    <!-- Linhas adicionadas dinamicamente -->
+                </tbody>
+            </table>
+
+            <!-- 4. Discriminação de Peças Aplicadas -->
+            <div class="os-section-header" style="margin-top:14px;">
+                <i class="ph ph-package"></i>
+                <span>4. Peças & Insumos Utilizados</span>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.adicionarLinhaPeca()" style="margin-left:auto; padding:3px 10px; font-size:0.75rem;">
+                    <i class="ph-bold ph-plus"></i> Adicionar Peça
+                </button>
+            </div>
+
+            <table class="os-items-table" id="tabela-itens-pecas">
+                <thead>
+                    <tr>
+                        <th>Descrição da Peça</th>
+                        <th style="width: 90px; text-align: center;">Qtd</th>
+                        <th style="width: 130px; text-align: right;">Unitário (R$)</th>
+                        <th style="width: 130px; text-align: right;">Subtotal (R$)</th>
+                        <th style="width: 50px; text-align: center;">Remover</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-itens-pecas">
+                    <!-- Linhas adicionadas dinamicamente -->
+                </tbody>
+            </table>
+
+            <!-- 5. Totais e Fechamento Financeiro -->
+            <div class="os-totais-box">
+                <div class="os-total-linha">
+                    <span>Total Serviços:</span>
+                    <strong id="display-total-servicos">R$ 0,00</strong>
+                </div>
+                <div class="os-total-linha">
+                    <span>Total Peças:</span>
+                    <strong id="display-total-pecas">R$ 0,00</strong>
+                </div>
+                <div class="os-total-linha">
+                    <span>Desconto (R$):</span>
+                    <input type="text" id="os_valor_desconto" value="0,00" onkeyup="OSModule.recalcularTotais()" style="width:90px; text-align:right; padding:2px 6px; font-weight:700;">
+                </div>
+                <div class="os-total-linha destaque">
+                    <span>VALOR TOTAL:</span>
+                    <strong id="display-total-geral">R$ 0,00</strong>
+                </div>
+            </div>
+
+            <!-- Botões de Ação Rodapé -->
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+                <button type="button" class="btn btn-secondary" onclick="OSModule.voltarParaLista()">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="OSModule.salvar()">SALVAR ORDEM DE SERVIÇO</button>
+            </div>
+
+        </div>
+
+    </div>
+    <!-- FIM SUBVIEW 2: CADASTRO -->
+
+</div>

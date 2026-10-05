@@ -1,0 +1,487 @@
+/* =========================================================
+   AUTOCAR BS - ERP OFICINA
+   Módulo: Ordens de Serviço (os.css)
+   Padrão Visual Enterprise Compacto com Navegação por Subviews
+   ========================================================= */
+
+.os-module-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 14px;
+}
+
+.os-subview {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    animation: fadeInOSSubview 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInOSSubview {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================================
+   1. TOOLBAR / BARRA DE FILTROS & AÇÕES
+   ========================================================= */
+.os-toolbar-card {
+    background: var(--bg-card, #FFFFFF);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.os-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-nova-os-hero {
+    background: #16A34A;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(22, 163, 74, 0.2);
+}
+
+.btn-nova-os-hero:hover {
+    background: #15803D;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.28);
+}
+
+.os-search-box {
+    flex: 1;
+    min-width: 240px;
+    max-width: 380px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.os-search-box i.ph-magnifying-glass {
+    position: absolute;
+    left: 12px;
+    color: var(--text-secondary, #64748B);
+    font-size: 1.05rem;
+    pointer-events: none;
+}
+
+.os-search-box input {
+    width: 100%;
+    padding: 7px 34px 7px 36px;
+    background: var(--bg-input, #F8FAFC);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 8px;
+    color: var(--text-primary, #0F172A);
+    font-size: 0.84rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.os-search-box input:focus {
+    border-color: var(--primary, #2563EB);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background: #FFFFFF;
+}
+
+.os-toolbar-filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.select-filtro-os {
+    padding: 7px 10px;
+    background: var(--bg-input, #F8FAFC);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 8px;
+    color: var(--text-primary, #0F172A);
+    font-size: 0.80rem;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.select-filtro-os:focus {
+    border-color: var(--primary, #2563EB);
+}
+
+.input-filtro-data {
+    padding: 6px 8px;
+    background: var(--bg-input, #F8FAFC);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 8px;
+    color: var(--text-primary, #0F172A);
+    font-size: 0.78rem;
+    font-weight: 600;
+    outline: none;
+    width: 125px;
+}
+
+.input-filtro-data:focus {
+    border-color: var(--primary, #2563EB);
+}
+
+.label-data-filtro {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary, #64748B);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-right: -4px;
+}
+
+/* =========================================================
+   2. TABELA MODERNA & COMPACTA DE ORDENS DE SERVIÇO
+   ========================================================= */
+.os-table-card {
+    background: var(--bg-card, #FFFFFF);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.os-table-card .table-responsive {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* Células e Estrutura Específica de OS */
+.os-cliente-celula {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.os-cliente-nome {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0F172A;
+    letter-spacing: 0.1px;
+}
+
+.os-veiculo-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.os-veiculo-placa {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-weight: 700;
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: #334155;
+    letter-spacing: 0.5px;
+}
+
+.os-data-texto {
+    font-size: 0.78rem;
+    color: #334155;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+}
+
+.os-valor-total {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: var(--success, #16A34A);
+    font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   3. BADGES DE STATUS DE OS
+   ========================================================= */
+.badge-status-os {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.badge-status-os.status-orcamento {
+    background: #FFFBEB;
+    color: #B45309;
+    border: 1px solid #FDE68A;
+}
+
+.badge-status-os.status-aberto {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    border: 1px solid #BFDBFE;
+}
+
+.badge-status-os.status-em_andamento {
+    background: #EEF2FF;
+    color: #4F46E5;
+    border: 1px solid #C7D2FE;
+}
+
+.badge-status-os.status-aguardando_pecas {
+    background: #FFF7ED;
+    color: #C2410C;
+    border: 1px solid #FFEDD5;
+}
+
+.badge-status-os.status-faturado,
+.badge-status-os.status-finalizado {
+    background: #F0FDF4;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+}
+
+.badge-status-os.status-cancelado {
+    background: #F1F5F9;
+    color: #64748B;
+    border: 1px solid #CBD5E1;
+}
+
+.badge-garantia-os {
+    display: inline-block;
+    font-size: 0.74rem;
+    color: #64748B;
+    font-weight: 600;
+}
+
+/* =========================================================
+   4. BOTÕES DE AÇÃO EXCLUSIVOS DE OS
+   ========================================================= */
+.btn-action-wa {
+    background: #FFFFFF !important;
+    border: 1px solid #86EFAC !important;
+    color: #15803D !important;
+    box-shadow: 0 1px 2px rgba(22, 163, 74, 0.08) !important;
+}
+.btn-action-wa:hover {
+    background: #DCFCE7 !important;
+    border-color: #22C55E !important;
+    color: #166534 !important;
+    transform: translateY(-1px) !important;
+}
+
+.btn-action-print {
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #334155 !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+}
+.btn-action-print:hover {
+    background: #F1F5F9 !important;
+    border-color: #94A3B8 !important;
+    color: #0F172A !important;
+    transform: translateY(-1px) !important;
+}
+
+/* =========================================================
+   5. SUBVIEW 2: FORMULÁRIO DE ORDEM DE SERVIÇO
+   ========================================================= */
+.os-page-topbar {
+    background: var(--bg-card, #FFFFFF);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 10px;
+    padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.os-topbar-titulo h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0F172A;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.os-topbar-titulo h3 i {
+    color: #16A34A;
+    font-size: 1.25rem;
+}
+
+.os-form-card {
+    background: var(--bg-card, #FFFFFF);
+    border: 1px solid var(--border, #CBD5E1);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.os-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0F172A;
+    border-bottom: 1px solid #E2E8F0;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.os-section-header i {
+    color: var(--primary, #2563EB);
+    font-size: 1.1rem;
+}
+
+.os-form-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 14px;
+}
+
+.col-12 { grid-column: span 12; }
+.col-8  { grid-column: span 8; }
+.col-6  { grid-column: span 6; }
+.col-4  { grid-column: span 4; }
+.col-3  { grid-column: span 3; }
+.col-2  { grid-column: span 2; }
+
+.os-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.os-form-group label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.os-form-group input,
+.os-form-group select,
+.os-form-group textarea {
+    padding: 7px 10px;
+    background: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 0.84rem;
+    color: #0F172A;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.os-form-group input:focus,
+.os-form-group select:focus,
+.os-form-group textarea:focus {
+    background: #FFFFFF;
+    border-color: var(--primary, #2563EB);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Tabela Interna de Itens da OS (Peças e Serviços) */
+.os-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.os-items-table th {
+    background: #F1F5F9;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #475569;
+    border-bottom: 1px solid #CBD5E1;
+}
+
+.os-items-table td {
+    padding: 6px 10px;
+    font-size: 0.80rem;
+    border-bottom: 1px solid #E2E8F0;
+    vertical-align: middle;
+}
+
+.os-totais-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    padding: 12px 16px;
+    background: #F8FAFC;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.os-total-linha {
+    display: flex;
+    justify-content: space-between;
+    width: 260px;
+    font-size: 0.82rem;
+    color: #475569;
+}
+
+.os-total-linha.destaque {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #16A34A;
+    border-top: 1px solid #CBD5E1;
+    padding-top: 6px;
+    margin-top: 4px;
+}
+
+/* =========================================================
+   6. RESPONSIVIDADE
+   ========================================================= */
+@media (max-width: 900px) {
+    .col-8, .col-6, .col-4, .col-3, .col-2 {
+        grid-column: span 12;
+    }
+}
