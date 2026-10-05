@@ -5,6 +5,10 @@
 
 /* Nota: O Design System e todas as variáveis de cores são centralizadas em variables.css */
 
+html {
+    scrollbar-gutter: stable;
+}
+
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
