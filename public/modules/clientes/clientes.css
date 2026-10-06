@@ -196,10 +196,35 @@
     width: 100%;
 }
 
-/* Tabela de Clientes utiliza o Padrão Oficial ERP unificado definido em style.css */
+/* Tabela de Clientes: Conforto visual e espaçamento ergonômico de linhas */
 .clientes-table-card .table-responsive {
     overflow-x: auto;
     width: 100%;
+}
+
+.clientes-table-card table td,
+#tabela-clientes td {
+    padding: 12px 14px !important;
+    font-size: 0.88rem !important;
+    vertical-align: middle !important;
+    line-height: 1.45 !important;
+}
+
+.clientes-table-card table th,
+#tabela-clientes th {
+    padding: 10px 14px !important;
+    font-size: 0.78rem !important;
+}
+
+#tabela-clientes .servico-nome-titulo {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.15px;
+}
+
+#tabela-clientes .badge-codigo {
+    font-size: 0.78rem !important;
+    padding: 3px 8px !important;
 }
 
 /* =========================================================

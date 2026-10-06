@@ -5753,15 +5753,13 @@ i.ph, i[class*="ph-"] {
     z-index: 5;
 }
 
-/* 3. Células das Linhas (Alta Densidade - 6px vertical) */
+/* 3. Células das Linhas */
 .erp-modern-table td,
 .erp-table td,
 .table-wrapper > table td,
 .servicos-table-card table td,
-.clientes-table-card table td,
 #table-estoque-geral td,
 #table-estoque-reposicao td,
-#tabela-clientes td,
 #tabela-servicos-grid td,
 #table-usuarios td {
     padding: 6px 12px !important;
@@ -5770,6 +5768,34 @@ i.ph, i[class*="ph-"] {
     vertical-align: middle !important;
     line-height: 1.35 !important;
     box-sizing: border-box !important;
+}
+
+/* Ergonomia Visual e Conforto na Tabela de Clientes */
+#tabela-clientes td,
+.clientes-table-card table td {
+    padding: 12px 14px !important;
+    font-size: 0.88rem !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    vertical-align: middle !important;
+    line-height: 1.45 !important;
+    box-sizing: border-box !important;
+}
+
+#tabela-clientes th,
+.clientes-table-card table th {
+    padding: 10px 14px !important;
+    font-size: 0.78rem !important;
+}
+
+#tabela-clientes .servico-nome-titulo {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    color: #0F172A !important;
+}
+
+#tabela-clientes .badge-codigo {
+    font-size: 0.78rem !important;
+    padding: 3px 8px !important;
 }
 
 /* 4. Linhas e Efeito Hover Elegante */
