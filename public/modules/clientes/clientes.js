@@ -512,7 +512,7 @@ const Clientes = {
                                 <td style="font-size: 0.88rem;">${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</td>
                                 <td style="font-weight: 700; color: #16a34a; font-size: 0.95rem;">${totalValor}</td>
                                 <td style="text-align: right; white-space: nowrap;">
-                                    <button type="button" class="btn-action-view" onclick="Clientes.imprimirOuVerOrdemServico(${os.id})" title="Visualizar Ordem de Serviço">
+                                    <button type="button" class="btn-action-view" onclick="Clientes.abrirOrdemServico(${os.id})" title="Abrir Ordem de Serviço">
                                         <i class="ph ph-eye"></i>
                                     </button>
                                 </td>
@@ -605,6 +605,37 @@ const Clientes = {
             </html>
         `);
         janela.document.close();
+    },
+
+    async abrirOrdemServico(idOs) {
+        if (!idOs) return;
+        try {
+            if (window.Sidebar && typeof Sidebar.atualizarNavegacao === 'function') {
+                await Sidebar.atualizarNavegacao('os');
+            } else {
+                document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+                const paneOS = document.getElementById('tab-pane-os');
+                const btnOS = document.getElementById('tab-btn-os');
+                if (paneOS) {
+                    paneOS.classList.remove('hidden');
+                    if (paneOS.dataset.module && window.ViewLoader) {
+                        await ViewLoader.loadView(paneOS.dataset.module, paneOS.id);
+                    }
+                }
+                if (btnOS) btnOS.classList.add('active');
+            }
+
+            if (window.OSModule) {
+                if (!OSModule.inicializado && typeof OSModule.iniciar === 'function') {
+                    await OSModule.iniciar();
+                }
+                await OSModule.editarOS(idOs);
+            }
+        } catch (err) {
+            console.error('[Clientes] Erro ao abrir ordem de serviço:', err);
+        }
     },
 
     imprimirOuVerOrdemServico(idOs) {
