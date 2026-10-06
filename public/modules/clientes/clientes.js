@@ -64,13 +64,27 @@ const Clientes = {
         const formCliente = document.getElementById('form-cliente-erp');
         const btnAddVeiculo = document.getElementById('btn-adicionar-veiculo-lista');
 
-        // Busca instantânea com debounce
+        // Busca instantânea com debounce e remoção de caracteres especiais
         if (inputBusca && !inputBusca.dataset.hasListener) {
             inputBusca.dataset.hasListener = 'true';
             inputBusca.addEventListener('input', (e) => {
-                const val = e.target.value;
+                const cursorPos = e.target.selectionStart;
+                const valorOriginal = e.target.value;
+                // Remove qualquer caractere especial (hífen, pontos, barras, etc.),
+                // permitindo apenas letras, números e espaços
+                const valorLimpo = valorOriginal.replace(/[^a-zA-Z0-9À-ÿ\s]/g, '');
+                if (valorOriginal !== valorLimpo) {
+                    e.target.value = valorLimpo;
+                    if (cursorPos !== null) {
+                        const diferenca = valorOriginal.length - valorLimpo.length;
+                        const novaPos = Math.max(0, cursorPos - diferenca);
+                        e.target.setSelectionRange(novaPos, novaPos);
+                    }
+                }
+
+                const val = e.target.value.trim();
                 if (btnLimparBusca) {
-                    btnLimparBusca.style.display = val ? 'flex' : 'none';
+                    btnLimparBusca.style.display = e.target.value ? 'flex' : 'none';
                 }
                 clearTimeout(this.timerBusca);
                 this.timerBusca = setTimeout(() => {

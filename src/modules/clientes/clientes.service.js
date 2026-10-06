@@ -51,10 +51,21 @@ class ClientesService {
         if (termoBusca) {
             try {
                 const safe = escaparIlike(termoBusca);
+                const limpoPlaca = termoBusca.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+                let condicoesPlaca = [`placa.ilike.%${safe}%`];
+                if (limpoPlaca && limpoPlaca !== termoBusca.toUpperCase()) {
+                    condicoesPlaca.push(`placa.ilike.%${escaparIlike(limpoPlaca)}%`);
+                }
+                if (limpoPlaca.length >= 3) {
+                    const comHifen = limpoPlaca.slice(0, 3) + '-' + limpoPlaca.slice(3);
+                    condicoesPlaca.push(`placa.ilike.%${escaparIlike(comHifen)}%`);
+                }
+
                 const { data: veiculosMatch } = await supabaseClientes
                     .from('veiculos')
                     .select('cliente_id')
-                    .ilike('placa', `%${safe}%`);
+                    .or(condicoesPlaca.join(','));
 
                 if (veiculosMatch && veiculosMatch.length > 0) {
                     const clientIds = [...new Set(veiculosMatch.map(v => v.cliente_id))];
