@@ -41,6 +41,23 @@ class AuditoriaService {
             console.warn('[Auditoria] Erro de rede ou conexão:', err.message);
         }
     }
+
+    /**
+     * Alias com tolerância a falhas para registrarLog
+     */
+    async registrarLog(params = {}) {
+        try {
+            return await this.registrar({
+                usuario: params.usuario || (params.usuario_id ? { id: params.usuario_id } : null),
+                acao: params.acao,
+                tabela: params.tabela,
+                registroId: params.registro_id || params.registroId,
+                detalhes: params.detalhes || params.dados_novos || params.dados_anteriores
+            });
+        } catch (err) {
+            console.warn('[Auditoria] Erro ao registrarLog:', err?.message);
+        }
+    }
 }
 
 module.exports = new AuditoriaService();

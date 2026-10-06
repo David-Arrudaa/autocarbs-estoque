@@ -238,13 +238,15 @@ class ClientesService {
             if (errInsert) throw errInsert;
             clienteIdFinal = novoCliente.id;
 
-            auditoriaService.registrarLog({
-                usuario_id: usuarioSessao?.id,
-                acao: 'CRIAR_CLIENTE',
-                tabela: 'clientes',
-                registro_id: clienteIdFinal,
-                dados_novos: { nome, cpf, telefone }
-            });
+            try {
+                auditoriaService.registrar({
+                    usuario: usuarioSessao,
+                    acao: 'CRIAR_CLIENTE',
+                    tabela: 'clientes',
+                    registroId: clienteIdFinal,
+                    detalhes: { nome, cpf, telefone }
+                });
+            } catch (_) {}
         } else {
             // UPDATE
             const { error: errUpdate } = await supabaseClientes
@@ -260,13 +262,15 @@ class ClientesService {
                 .delete()
                 .eq('cliente_id', clienteIdFinal);
 
-            auditoriaService.registrarLog({
-                usuario_id: usuarioSessao?.id,
-                acao: 'ATUALIZAR_CLIENTE',
-                tabela: 'clientes',
-                registro_id: clienteIdFinal,
-                dados_novos: { nome, cpf, telefone }
-            });
+            try {
+                auditoriaService.registrar({
+                    usuario: usuarioSessao,
+                    acao: 'ATUALIZAR_CLIENTE',
+                    tabela: 'clientes',
+                    registroId: clienteIdFinal,
+                    detalhes: { nome, cpf, telefone }
+                });
+            } catch (_) {}
         }
 
         // Insere veículos vinculados
@@ -315,13 +319,15 @@ class ClientesService {
 
         if (error) throw error;
 
-        auditoriaService.registrarLog({
-            usuario_id: usuarioSessao?.id,
-            acao: 'EXCLUIR_CLIENTE',
-            tabela: 'clientes',
-            registro_id: id,
-            dados_anteriores: { nome: cliente.nome, cpf: cliente.cpf }
-        });
+        try {
+            auditoriaService.registrar({
+                usuario: usuarioSessao,
+                acao: 'EXCLUIR_CLIENTE',
+                tabela: 'clientes',
+                registroId: id,
+                detalhes: { nome: cliente.nome, cpf: cliente.cpf }
+            });
+        } catch (_) {}
 
         return { success: true, id };
     }
