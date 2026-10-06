@@ -788,12 +788,6 @@ const Clientes = {
             const res = await API.salvarCliente(dados);
             if (!res.success) throw new Error(res.mensagem || 'Falha ao salvar cliente.');
 
-            if (window.UI && typeof UI.mostrarToast === 'function') {
-                UI.mostrarToast(res.mensagem || 'Cliente salvo com sucesso!', 'sucesso');
-            } else {
-                alert(res.mensagem || 'Cliente salvo com sucesso!');
-            }
-
             this.voltarParaLista();
             await this.carregarLista(this.paginaAtual);
 
@@ -912,12 +906,6 @@ const Clientes = {
             if (modal) modal.classList.add('hidden');
 
             this.clienteIdParaExcluir = null;
-
-            if (window.UI && typeof UI.mostrarToast === 'function') {
-                UI.mostrarToast('Cliente excluído com sucesso!', 'sucesso');
-            } else {
-                alert('Cliente excluído com sucesso!');
-            }
 
             await this.carregarLista(this.paginaAtual);
 
