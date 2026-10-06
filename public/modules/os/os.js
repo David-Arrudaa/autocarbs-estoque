@@ -74,7 +74,6 @@ const OSModule = {
         if (estaNoCadastro) {
             const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
             if (cliNome) {
-                if (window.UI) UI.toast('Salvando Ordem de Serviço em andamento...', 'info');
                 const salvou = await this.salvar();
                 if (!salvou) {
                     this.voltarParaLista(false);
@@ -83,7 +82,6 @@ const OSModule = {
             } else {
                 this.limparFormulario();
                 this.voltarParaLista(false);
-                if (window.UI) UI.toast('Ordem sem cliente foi descartada.', 'info');
                 await this.carregar(1);
             }
         } else {
@@ -176,9 +174,6 @@ const OSModule = {
         if (aba !== 'detalhes') {
             const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
             if (!cliNome) {
-                if (window.UI && typeof UI.toast === 'function') {
-                    UI.toast('Informe o nome do cliente antes de acessar as abas de peças, serviços ou laudo.', 'warning');
-                }
                 const inputCli = document.getElementById('os_cliente_nome');
                 if (inputCli) {
                     inputCli.focus();
@@ -1025,9 +1020,12 @@ const OSModule = {
         let dataInicial = this.getInputValue('os_data_inicial');
 
         if (!clienteNome) {
-            if (window.UI) UI.toast('Por favor, informe o nome do cliente.', 'warning');
             const el = document.getElementById('os_cliente_nome');
-            if (el) el.focus();
+            if (el) {
+                el.focus();
+                el.classList.add('input-error-pulse');
+                setTimeout(() => el.classList.remove('input-error-pulse'), 1600);
+            }
             return false;
         }
 
@@ -1073,7 +1071,6 @@ const OSModule = {
         try {
             const res = await API.salvarOS(payload);
             if (res && res.success) {
-                if (window.UI) UI.toast(`Ordem de Serviço #${res.os.numero || res.os.id} salva com sucesso!`, 'success');
                 this.voltarParaLista(false);
                 await this.carregar(1);
                 return true;
@@ -1081,7 +1078,7 @@ const OSModule = {
                 throw new Error(res.message || 'Erro ao salvar Ordem de Serviço.');
             }
         } catch (err) {
-            if (window.UI) UI.toast(err.message || 'Erro ao salvar OS.', 'error');
+            console.error('Erro ao salvar OS:', err);
             return false;
         } finally {
             if (btnTopo) btnTopo.disabled = false;
@@ -1104,13 +1101,12 @@ const OSModule = {
         try {
             const res = await API.excluirOS(id);
             if (res && res.success) {
-                if (window.UI) UI.toast(`OS #${numero} excluída com sucesso.`, 'success');
                 await this.carregar(this.paginaAtual);
             } else {
                 throw new Error(res.message || 'Erro ao excluir OS.');
             }
         } catch (err) {
-            if (window.UI) UI.toast(err.message || 'Erro ao excluir OS.', 'error');
+            console.error('Erro ao excluir OS:', err);
         }
     },
 
@@ -1543,10 +1539,6 @@ const OSModule = {
         this.atualizarStatusVinculoCliente(true);
         this.fecharDropdownCliente();
         this.atualizarBloqueioAbas();
-
-        if (window.UI) {
-            UI.toast(`Cliente ${cliente.nome} vinculado à OS com sucesso!`, 'success');
-        }
     },
 
     limparClienteSelecionado() {

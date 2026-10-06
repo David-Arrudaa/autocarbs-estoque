@@ -106,53 +106,19 @@ const UI = {
     },
 
     /**
-     * Sistema de notificações Toast (não bloqueia a thread como alert())
+     * Sistema de notificações Toast
+     * Desativado conforme solicitação do usuário: não exibir avisos/toasts visuais flutuantes em nenhum lugar
      * @param {string} mensagem - Texto da notificação
      * @param {'success'|'error'|'warning'|'info'} tipo - Tipo do toast
-     * @param {number} duracao - Tempo em ms (padrão: 3500ms)
+     * @param {number} duracao - Tempo em ms
      */
     toast(mensagem, tipo = 'info', duracao = 3500) {
-        let container = document.getElementById('toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'toast-container';
-            container.setAttribute('aria-live', 'polite');
-            container.setAttribute('role', 'status');
-            document.body.appendChild(container);
+        if (tipo === 'error') {
+            console.error(`[Aviso ${tipo}]:`, mensagem);
+        } else {
+            console.log(`[Aviso ${tipo}]:`, mensagem);
         }
-
-        const icons = {
-            success: 'ph-check-circle',
-            error:   'ph-x-circle',
-            warning: 'ph-warning',
-            info:    'ph-info'
-        };
-        const iconClass = icons[tipo] || icons.info;
-
-        const item = document.createElement('div');
-        item.className = `toast-item toast-${tipo}`;
-        item.innerHTML = `<i class="ph ${iconClass}"></i><span>${this.escapeHtml(mensagem)}</span>`;
-
-        // Fecha ao clicar
-        item.onclick = () => {
-            item.classList.remove('toast-show');
-            setTimeout(() => item.remove(), 250);
-        };
-
-        container.appendChild(item);
-
-        // Animação de entrada
-        requestAnimationFrame(() => {
-            item.classList.add('toast-show');
-        });
-
-        // Remoção automática
-        setTimeout(() => {
-            if (item.parentElement) {
-                item.classList.remove('toast-show');
-                setTimeout(() => item.remove(), 260);
-            }
-        }, duracao);
+        return;
     },
 
     /**
