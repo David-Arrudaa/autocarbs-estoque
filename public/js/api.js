@@ -28,7 +28,7 @@ const API = {
         }
     },
 
-    async request(endpoint, options = {}) {
+    async request(endpoint, options = {}, retentativas = 1) {
         const url = `${this.BASE_URL}${endpoint}`;
         const headers = {
             'Content-Type': 'application/json',
@@ -63,6 +63,14 @@ const API = {
 
             return data;
         } catch (err) {
+            // Se for falha de rede/conexão transitória em requisição GET ou segura, tenta mais 1 vez após 400ms
+            const ehMetodoSeguro = !options.method || options.method === 'GET';
+            const ehErroConexao = err.name === 'TypeError' || (err.message && err.message.toLowerCase().includes('failed to fetch'));
+            if (ehMetodoSeguro && ehErroConexao && retentativas > 0) {
+                await new Promise(r => setTimeout(r, 400));
+                return this.request(endpoint, options, retentativas - 1);
+            }
+
             console.error(`Erro na requisição [${endpoint}]:`, err);
             throw err;
         }

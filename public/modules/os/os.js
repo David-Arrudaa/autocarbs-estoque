@@ -58,9 +58,7 @@ const OSModule = {
 
     /**
      * Ação disparada quando o usuário clica no botão "Ordem de Serviço" na Sidebar:
-     * - Retorna sempre para a visualização da listagem de ordens.
-     * - Se houver uma OS sendo criada/editada com cliente informado, salva automaticamente.
-     * - Se o cliente não foi preenchido, descarta/apaga a ordem em andamento.
+     * - Retorna sempre para a visualização da listagem de ordens de forma limpa e atualizada.
      */
     async aoClicarMenuOS() {
         if (!this.inicializado) {
@@ -72,22 +70,10 @@ const OSModule = {
         const estaNoCadastro = viewCadastro && !viewCadastro.classList.contains('hidden');
 
         if (estaNoCadastro) {
-            const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
-            if (cliNome) {
-                const salvou = await this.salvar();
-                if (!salvou) {
-                    this.voltarParaLista(false);
-                    await this.carregar(1);
-                }
-            } else {
-                this.limparFormulario();
-                this.voltarParaLista(false);
-                await this.carregar(1);
-            }
-        } else {
             this.voltarParaLista(false);
-            await this.carregar(1);
         }
+
+        await this.carregar(1);
     },
 
     async carregarCatalogoServicos() {
@@ -123,6 +109,10 @@ const OSModule = {
             this.idEdicao = null;
         }
         this.mostrarSubview('lista');
+        if (this.ordensCache && this.ordensCache.length > 0) {
+            this.renderizarTabela(this.ordensCache);
+            this.atualizarPaginacao();
+        }
     },
 
     /**
@@ -238,7 +228,8 @@ const OSModule = {
         if (iconReload) iconReload.classList.add('ph-spin');
 
         const tbody = document.getElementById('tbody-os');
-        if (tbody) {
+        // Só exibe spinner de tela cheia se ainda não tivermos nenhum registro em cache
+        if (tbody && (!this.ordensCache || this.ordensCache.length === 0)) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align:center; padding: 32px; color: var(--text-secondary);">
@@ -269,13 +260,22 @@ const OSModule = {
                 this.atualizarPaginacao();
             }
         } catch (err) {
-            if (window.UI) UI.toast(err.message || 'Erro ao carregar ordens de serviço.', 'error');
-            if (tbody) {
+            console.error('[OSModule] Erro ao carregar ordens de serviço:', err);
+            // Se já tínhamos ordens em cache, mantém a tabela visível sem quebrar a visão do usuário
+            if (this.ordensCache && this.ordensCache.length > 0) {
+                this.renderizarTabela(this.ordensCache);
+                this.atualizarPaginacao();
+            } else if (tbody) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="7" style="text-align:center; padding: 24px; color: var(--danger, #EF4444);">
                             <i class="ph ph-warning-circle" style="font-size:1.6rem; display:block; margin-bottom:6px;"></i>
                             <span>Não foi possível carregar as ordens de serviço. Verifique a conexão.</span>
+                            <div style="margin-top: 10px;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.carregar(${this.paginaAtual})">
+                                    <i class="ph ph-arrow-clockwise"></i> Tentar novamente
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
