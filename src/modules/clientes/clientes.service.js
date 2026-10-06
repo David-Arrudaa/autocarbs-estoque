@@ -8,6 +8,7 @@
 
 const { supabase, supabaseClientes } = require('../../config/supabase');
 const auditoriaService = require('../auditoria/auditoria.service');
+const osService = require('../os/os.service');
 
 function escaparIlike(valor) {
     return String(valor).replace(/[\\%_]/g, (c) => `\\${c}`);
@@ -152,40 +153,51 @@ class ClientesService {
             historico_checklists = checklists || [];
         } catch (_) {}
 
-        // 2. Busca histórico de Ordens de Serviço (OS) no banco principal
+        // 2. Busca histórico de Ordens de Serviço (OS) através do osService
         let ordens_servico = [];
         try {
-            // Busca por nome do cliente
-            const { data: osPorNome } = await supabase
-                .from('ordens_servico')
-                .select('*, os_itens(*)')
-                .ilike('cliente', `%${escaparIlike(cliente.nome)}%`)
-                .order('created_at', { ascending: false })
-                .limit(50);
+            const todasOSRes = await osService.listar({ limite: 1000 });
+            const todasOS = todasOSRes?.ordens || [];
 
-            ordens_servico = osPorNome || [];
+            const clienteIdStr = String(cliente.id);
+            const nomeClienteNorm = (cliente.nome || '').trim().toUpperCase();
+            const placasCliente = new Set(
+                (cliente.veiculos || [])
+                    .map(v => (v.placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase())
+                    .filter(Boolean)
+            );
 
-            // Se o cliente possui placas vinculadas, complementa com OS encontradas por placa
-            const placas = (cliente.veiculos || []).map(v => (v.placa || '').replace(/[^a-zA-Z0-9]/g, '')).filter(Boolean);
-            if (placas.length > 0) {
-                for (const p of placas) {
-                    const { data: osPorPlaca } = await supabase
-                        .from('ordens_servico')
-                        .select('*, os_itens(*)')
-                        .ilike('placa', `%${escaparIlike(p)}%`)
-                        .order('created_at', { ascending: false })
-                        .limit(20);
-
-                    if (osPorPlaca && osPorPlaca.length > 0) {
-                        for (const itemOs of osPorPlaca) {
-                            if (!ordens_servico.some(existente => existente.id === itemOs.id)) {
-                                ordens_servico.push(itemOs);
-                            }
-                        }
+            ordens_servico = todasOS.filter(os => {
+                // Match por cliente_id
+                if (os.cliente_id && String(os.cliente_id) === clienteIdStr) {
+                    return true;
+                }
+                // Match por nome do cliente
+                const osNome = (os.cliente_nome || '').trim().toUpperCase();
+                if (osNome && nomeClienteNorm) {
+                    if (osNome.includes(nomeClienteNorm) || nomeClienteNorm.includes(osNome)) {
+                        return true;
                     }
                 }
-            }
-        } catch (_) {}
+                // Match por placa vinculada aos veículos do cliente
+                const placaOs = (os.veiculo_placa || '').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+                if (placaOs && placasCliente.has(placaOs)) {
+                    return true;
+                }
+                return false;
+            }).map(os => ({
+                ...os,
+                veiculo: os.veiculo_modelo || os.veiculo || 'VEÍCULO NÃO INFORMADO',
+                placa: os.veiculo_placa || os.placa || '-',
+                total: os.valor_total !== undefined ? os.valor_total : (os.total || 0),
+                os_itens: Array.isArray(os.os_itens) && os.os_itens.length > 0
+                    ? os.os_itens
+                    : [...(os.itens_pecas || []).map(p => ({ descricao: p.nome || p.descricao, quantidade: p.qtd || 1, valor_unitario: p.preco || 0, valor_total: (p.qtd || 1) * (p.preco || 0) })),
+                       ...(os.itens_servicos || []).map(s => ({ descricao: s.nome || s.descricao, quantidade: 1, valor_unitario: s.preco || 0, valor_total: s.preco || 0 }))]
+            }));
+        } catch (err) {
+            console.error('[ClientesService] Erro ao buscar OS vinculadas:', err.message);
+        }
 
         return {
             ...cliente,

@@ -492,12 +492,12 @@ const Clientes = {
                     `;
                 } else {
                     tbodyOs.innerHTML = ordensServico.map(os => {
-                        const numOs = `#${String(os.id).padStart(4, '0')}`;
-                        const dataOs = os.created_at ? new Date(os.created_at).toLocaleDateString('pt-BR') : '-';
-                        const carroDesc = os.veiculo || 'VEÍCULO NÃO INFORMADO';
-                        const placa = os.placa || '-';
-                        const totalItens = Array.isArray(os.os_itens) ? os.os_itens.length : 0;
-                        const totalValor = Number(os.total || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                        const numOs = `#${String(os.numero || os.id).padStart(4, '0')}`;
+                        const dataOs = os.data_inicial ? (os.data_inicial.includes('-') ? os.data_inicial.split('-').reverse().join('/') : os.data_inicial) : (os.created_at ? new Date(os.created_at).toLocaleDateString('pt-BR') : '-');
+                        const carroDesc = os.veiculo_modelo || os.veiculo || 'VEÍCULO NÃO INFORMADO';
+                        const placa = os.veiculo_placa || os.placa || '-';
+                        const totalItens = (os.itens_servicos?.length || 0) + (os.itens_pecas?.length || 0) || (Array.isArray(os.os_itens) ? os.os_itens.length : 0);
+                        const totalValor = Number(os.valor_total !== undefined ? os.valor_total : (os.total || 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
                         return `
                             <tr>
@@ -612,10 +612,38 @@ const Clientes = {
         const os = (this.clienteAtualFicha.ordens_servico || []).find(o => o.id === idOs || String(o.id) === String(idOs));
         if (!os) return;
 
-        const itens = Array.isArray(os.os_itens) ? os.os_itens : [];
-        const numOs = `#${String(os.id).padStart(4, '0')}`;
-        const dataOs = os.created_at ? new Date(os.created_at).toLocaleDateString('pt-BR') : '-';
-        const totalOs = Number(os.total || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const itensPecas = Array.isArray(os.itens_pecas) ? os.itens_pecas.map(p => ({
+            descricao: p.nome || p.descricao || 'Peça',
+            quantidade: p.qtd || 1,
+            unitario: Number(p.preco || 0),
+            subtotal: (Number(p.qtd || 1)) * (Number(p.preco || 0))
+        })) : [];
+
+        const itensServicos = Array.isArray(os.itens_servicos) ? os.itens_servicos.map(s => ({
+            descricao: s.nome || s.descricao || 'Serviço',
+            quantidade: 1,
+            unitario: Number(s.preco || 0),
+            subtotal: Number(s.preco || 0)
+        })) : [];
+
+        const itensLegados = Array.isArray(os.os_itens) ? os.os_itens.map(it => ({
+            descricao: it.nome_peca || it.descricao || '-',
+            quantidade: it.qtd || 1,
+            unitario: Number(it.preco_venda || 0),
+            subtotal: Number((it.qtd || 1) * (it.preco_venda || 0))
+        })) : [];
+
+        const itens = (itensPecas.length > 0 || itensServicos.length > 0)
+            ? [...itensPecas, ...itensServicos]
+            : itensLegados;
+
+        const numOs = `#${String(os.numero || os.id).padStart(4, '0')}`;
+        const dataOs = os.data_inicial ? (os.data_inicial.includes('-') ? os.data_inicial.split('-').reverse().join('/') : os.data_inicial) : (os.created_at ? new Date(os.created_at).toLocaleDateString('pt-BR') : '-');
+        const totalValNum = Number(os.valor_total !== undefined ? os.valor_total : (os.total || 0));
+        const totalOs = totalValNum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const carro = os.veiculo_modelo || os.veiculo || '-';
+        const placa = os.veiculo_placa || os.placa || '-';
+        const obs = os.descricao_problema || os.observacoes || os.observacao || '';
 
         const janela = window.open('', '', 'width=900,height=800');
         janela.document.write(`
@@ -653,8 +681,8 @@ const Clientes = {
                     <div class="grid">
                         <div><div class="label">Cliente</div><div class="val">${this.clienteAtualFicha.nome || os.cliente || ''}</div></div>
                         <div><div class="label">Telefone</div><div class="val">${this.clienteAtualFicha.telefone || '-'}</div></div>
-                        <div><div class="label">Veículo</div><div class="val">${os.veiculo || '-'}</div></div>
-                        <div><div class="label">Placa</div><div class="val" style="color:#2563eb;">${os.placa || '-'}</div></div>
+                        <div><div class="label">Veículo</div><div class="val">${carro}</div></div>
+                        <div><div class="label">Placa</div><div class="val" style="color:#2563eb;">${placa}</div></div>
                     </div>
                 </div>
                 <div class="box">
@@ -671,14 +699,13 @@ const Clientes = {
                         </thead>
                         <tbody>
                             ${itens.length === 0 ? '<tr><td colspan="5" style="text-align:center; padding:15px; color:#64748b;">Nenhum item discriminado.</td></tr>' : itens.map((it, i) => {
-                                const sub = Number((it.qtd || 1) * (it.preco_venda || 0));
                                 return `
                                     <tr>
                                         <td>${i + 1}</td>
-                                        <td>${it.nome_peca || '-'}</td>
-                                        <td style="text-align: center;">${it.qtd || 1}</td>
-                                        <td style="text-align: right;">${Number(it.preco_venda || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                                        <td style="text-align: right; font-weight: 600;">${sub.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td>${UI.escapeHtml(it.descricao || '-')}</td>
+                                        <td style="text-align: center;">${it.quantidade}</td>
+                                        <td style="text-align: right;">${Number(it.unitario || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td style="text-align: right; font-weight: 600;">${Number(it.subtotal || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                     </tr>
                                 `;
                             }).join('')}
@@ -689,10 +716,10 @@ const Clientes = {
                         <span class="total-val">${totalOs}</span>
                     </div>
                 </div>
-                ${os.observacao ? `
+                ${obs ? `
                 <div class="box">
                     <h4>3. OBSERVAÇÕES</h4>
-                    <p style="margin: 0;">${os.observacao}</p>
+                    <p style="margin: 0;">${UI.escapeHtml(obs)}</p>
                 </div>
                 ` : ''}
             </body>
