@@ -1335,17 +1335,19 @@
 
 .os-document-sheet {
     background: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    border-radius: 4px;
-    padding: 34px 42px;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 32px 38px;
     width: 100%;
     max-width: 820px;
-    box-shadow: 0 4px 22px rgba(15, 23, 42, 0.08);
-    font-family: Arial, Helvetica, sans-serif;
-    color: #000000;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #0F172A;
     box-sizing: border-box;
-    font-size: 10.5px;
+    font-size: 10px;
     line-height: 1.45;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
 }
 
 /* 1. Cabeçalho */
@@ -1368,10 +1370,10 @@
     font-weight: 900;
     font-style: italic;
     letter-spacing: -0.5px;
-    color: #000000;
+    color: #0F172A;
     line-height: 1;
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
 }
 
 .os-doc-header-logo .brand-title span {
@@ -1380,67 +1382,72 @@
 
 .os-doc-header-logo .brand-subtitle-box {
     display: inline-block;
-    border: 1px solid #991B1B;
-    padding: 2px 5px;
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    padding: 2px 6px;
+    border-radius: 3px;
     margin-top: 5px;
     font-size: 8px;
     font-weight: 800;
     color: #991B1B;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
     line-height: 1.1;
 }
 
 .os-doc-header-logo .brand-desc {
-    font-size: 7.2px;
-    color: #4B5563;
+    font-size: 7.5px;
+    color: #64748B;
     text-transform: uppercase;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
     margin-top: 3px;
     font-weight: 600;
 }
 
 .os-doc-header-empresa {
     flex: 1;
-    font-size: 10.5px;
+    font-size: 10px;
     line-height: 1.45;
-    color: #000000;
-    padding: 0 12px;
+    color: #334155;
+    padding: 0 16px;
 }
 
 .os-doc-header-empresa .empresa-nome {
     font-weight: 800;
-    font-size: 13.5px;
-    color: #000000;
+    font-size: 13px;
+    color: #0F172A;
     margin-bottom: 2px;
 }
 
 .os-doc-header-meta {
-    flex: 0 0 130px;
+    flex: 0 0 145px;
     text-align: right;
-    font-size: 11px;
+    font-size: 10.5px;
     line-height: 1.4;
-    color: #000000;
+    color: #0F172A;
 }
 
 .os-doc-header-meta .os-num-linha {
-    font-weight: 800;
-    font-size: 12.5px;
+    font-weight: 900;
+    font-size: 13px;
+    color: #0F172A;
 }
 
 .os-doc-header-meta .os-emissao-label {
-    margin-top: 6px;
-    font-size: 10.5px;
+    margin-top: 3px;
+    font-size: 9.5px;
+    color: #64748B;
 }
 
 .os-doc-header-meta .os-emissao-data {
-    font-weight: 500;
-    font-size: 10.5px;
+    font-weight: 600;
+    font-size: 10px;
+    color: #0F172A;
 }
 
 .os-doc-divisor {
-    border-bottom: 1px solid #D1D5DB;
-    margin: 12px 0 14px 0;
+    border-bottom: 1px solid #E2E8F0;
+    margin: 10px 0 12px 0;
 }
 
 /* 2. Cliente e Responsável */
@@ -1448,7 +1455,7 @@
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
-    gap: 24px;
+    gap: 20px;
     width: 100% !important;
 }
 
@@ -1457,20 +1464,23 @@
     max-width: 50%;
     font-size: 10.5px;
     line-height: 1.45;
-    color: #000000;
+    color: #334155;
 }
 
 .os-doc-col-titulo {
     font-weight: 800;
-    font-size: 11.5px;
+    font-size: 10px;
     text-transform: uppercase;
-    margin-bottom: 4px;
-    color: #000000;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+    color: #64748B;
 }
 
 .os-doc-col-info .cli-nome {
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 12px;
     text-transform: uppercase;
+    color: #0F172A;
 }
 
 /* 3. Metadados e Veículo */
@@ -1480,25 +1490,33 @@
     justify-content: space-between !important;
     align-items: center !important;
     width: 100% !important;
-    font-size: 10.5px;
-    margin-bottom: 14px;
+    font-size: 10px;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-bottom: 10px;
 }
 
 .os-doc-info-strip strong {
-    font-weight: 800;
-    color: #000000;
+    font-weight: 700;
+    color: #64748B;
 }
 
 .os-doc-veiculo-bloco {
-    font-size: 10.5px;
-    line-height: 1.5;
-    margin-bottom: 14px;
-    color: #000000;
+    font-size: 10px;
+    line-height: 1.45;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 7px 12px;
+    margin-bottom: 12px;
+    color: #0F172A;
 }
 
 .os-doc-veiculo-bloco strong {
-    font-weight: 800;
-    color: #000000;
+    font-weight: 700;
+    color: #0F172A;
 }
 
 /* 4. Tabelas de Itens (Produtos e Serviços) */
@@ -1508,47 +1526,40 @@
     max-width: 100% !important;
     border-collapse: collapse;
     font-size: 10px;
-    margin-bottom: 14px;
-    border: 1px solid #D1D5DB;
+    margin-bottom: 12px;
+    border: 1px solid #E2E8F0;
     box-sizing: border-box !important;
 }
 
 .os-doc-tabela-pdf thead th {
-    background: #FFFFFF;
+    background: #F1F5F9;
     font-weight: 700;
-    padding: 5px 8px;
-    border-right: 1px solid #D1D5DB;
-    border-bottom: 1px solid #D1D5DB;
-    color: #000000;
+    font-size: 9.5px;
+    padding: 6px 8px;
+    border: 1px solid #E2E8F0;
+    color: #1E293B;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     box-sizing: border-box;
-}
-
-.os-doc-tabela-pdf thead th:last-child {
-    border-right: none;
 }
 
 .os-doc-tabela-pdf tbody td {
-    padding: 5px 8px;
-    border-right: 1px solid #D1D5DB;
-    border-bottom: 1px solid #D1D5DB;
-    color: #000000;
+    padding: 6px 8px;
+    border: 1px solid #E2E8F0;
+    color: #0F172A;
     vertical-align: top;
     box-sizing: border-box;
-}
-
-.os-doc-tabela-pdf tbody td:last-child {
-    border-right: none;
 }
 
 .os-doc-tabela-pdf .item-nome {
     font-weight: 600;
     text-transform: uppercase;
-    color: #000000;
+    color: #0F172A;
 }
 
 .os-doc-tabela-pdf .item-desc {
-    font-size: 9.5px;
-    color: #4B5563;
+    font-size: 9px;
+    color: #64748B;
     margin-top: 2px;
     font-style: italic;
     line-height: 1.35;
@@ -1559,19 +1570,19 @@
     text-align: right;
     font-weight: 800;
     font-size: 10.5px;
-    border-top: 1px solid #D1D5DB;
-    background: #FFFFFF;
-    color: #000000;
+    border: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    color: #0F172A;
     box-sizing: border-box;
 }
 
 /* 5. Valor Total Geral */
 .os-doc-valor-total-destaque {
     text-align: right;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 900;
-    color: #000000;
-    margin: 12px 0 20px 0;
+    color: #0F172A;
+    margin: 8px 0 16px 0;
 }
 
 /* 6. Assinaturas */
@@ -1581,36 +1592,31 @@
     max-width: 100% !important;
     border-collapse: collapse;
     font-size: 10px;
-    border: 1px solid #D1D5DB;
-    margin-top: 16px;
+    border: 1px solid #E2E8F0;
+    margin-top: 10px;
     box-sizing: border-box !important;
 }
 
 .os-doc-tabela-assinaturas thead th {
-    background: #FFFFFF;
-    border-right: 1px solid #D1D5DB;
-    border-bottom: 1px solid #D1D5DB;
-    font-weight: 600;
-    padding: 4px 6px;
-    text-align: left;
-    color: #000000;
+    background: #F1F5F9;
+    border: 1px solid #E2E8F0;
+    font-weight: 700;
+    font-size: 9.5px;
+    padding: 5px 8px;
+    text-align: center;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
     box-sizing: border-box;
-}
-
-.os-doc-tabela-assinaturas thead th:last-child {
-    border-right: none;
 }
 
 .os-doc-tabela-assinaturas tbody td {
-    height: 48px;
-    border-right: 1px solid #D1D5DB;
+    height: 44px;
+    border: 1px solid #E2E8F0;
     vertical-align: bottom;
-    padding: 4px 6px;
+    padding: 4px 8px;
+    background: #FFFFFF;
     box-sizing: border-box;
-}
-
-.os-doc-tabela-assinaturas tbody td:last-child {
-    border-right: none;
 }
 
 @media print {
@@ -1625,6 +1631,8 @@
     #relatorio-documento-impressao,
     #relatorio-documento-impressao * {
         visibility: visible;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
     #relatorio-documento-impressao {
         position: absolute;
@@ -1634,6 +1642,9 @@
         margin: 0 !important;
         padding: 0 !important;
         display: block !important;
+        background: #FFFFFF !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
     #relatorio-documento-impressao .os-document-sheet {
         box-shadow: none !important;
@@ -1643,6 +1654,8 @@
         padding: 8mm 10mm 8mm 10mm !important;
         margin: 0 !important;
         box-sizing: border-box !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
     #relatorio-documento-impressao table,
     .os-doc-tabela-pdf,
@@ -1665,11 +1678,11 @@
     }
     .os-doc-header-empresa {
         flex: 1 !important;
-        padding: 0 12px !important;
+        padding: 0 16px !important;
         text-align: left !important;
     }
     .os-doc-header-meta {
-        flex: 0 0 130px !important;
+        flex: 0 0 145px !important;
         text-align: right !important;
     }
     .os-doc-grid-dupla {

@@ -1377,41 +1377,43 @@ const OSModule = {
         const formatarMoeda = (val) => window.UI ? UI.formatarMoeda(val) : `R$ ${Number(val || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
         const linhasPecas = pecas.length > 0
-            ? pecas.map(p => {
+            ? pecas.map((p, idx) => {
                 const qtd = Number(p.qtd || 1);
                 const preco = Number(p.preco || 0);
                 const subt = qtd * preco;
+                const bg = idx % 2 === 1 ? '#FAFBFD' : '#FFFFFF';
                 return `
-                    <tr>
-                        <td style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; text-align: left; vertical-align: top;">
-                            <span class="item-nome" style="font-weight: 600; text-transform: uppercase;">${window.UI ? UI.escapeHtml(p.nome) : p.nome}</span>
+                    <tr style="background: ${bg};">
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: left; vertical-align: top;">
+                            <span class="item-nome" style="font-weight: 600; text-transform: uppercase; color: #0F172A;">${window.UI ? UI.escapeHtml(p.nome) : p.nome}</span>
                         </td>
-                        <td style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; text-align: center; vertical-align: top;">${qtd}</td>
-                        <td style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; text-align: right; vertical-align: top;">${preco.toFixed(2)}</td>
-                        <td style="padding: 5px 8px; border-bottom: 1px solid #D1D5DB; text-align: right; vertical-align: top;">${formatarMoeda(subt)}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: center; vertical-align: top; color: #334155;">${qtd}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: right; vertical-align: top; color: #334155;">${preco.toFixed(2)}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: right; vertical-align: top; font-weight: 600; color: #0F172A;">${formatarMoeda(subt)}</td>
                     </tr>
                 `;
             }).join('')
-            : `<tr><td colspan="4" style="text-align: center; color: #6B7280; font-style: italic; padding: 8px; border-bottom: 1px solid #D1D5DB;">Nenhum produto discriminado.</td></tr>`;
+            : `<tr><td colspan="4" style="text-align: center; color: #64748B; font-style: italic; padding: 10px; border: 1px solid #E2E8F0; background: #FAFBFD;">Nenhum produto discriminado.</td></tr>`;
 
         const linhasServicos = servicos.length > 0
-            ? servicos.map(s => {
+            ? servicos.map((s, idx) => {
                 const qtd = Number(s.qtd || 1);
                 const preco = Number(s.preco || 0);
                 const subt = qtd * preco;
+                const bg = idx % 2 === 1 ? '#FAFBFD' : '#FFFFFF';
                 return `
-                    <tr>
-                        <td style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; text-align: left; vertical-align: top;">
-                            <div class="item-nome" style="font-weight: 600; text-transform: uppercase;">${window.UI ? UI.escapeHtml(s.nome) : s.nome}</div>
-                            ${s.descricao ? `<div class="item-desc" style="font-size: 9.5px; color: #4B5563; margin-top: 2px; font-style: italic; line-height: 1.35;">${window.UI ? UI.escapeHtml(s.descricao) : s.descricao}</div>` : ''}
+                    <tr style="background: ${bg};">
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: left; vertical-align: top;">
+                            <div class="item-nome" style="font-weight: 600; text-transform: uppercase; color: #0F172A;">${window.UI ? UI.escapeHtml(s.nome) : s.nome}</div>
+                            ${s.descricao ? `<div class="item-desc" style="font-size: 9px; color: #64748B; margin-top: 2px; font-style: italic; line-height: 1.35;">${window.UI ? UI.escapeHtml(s.descricao) : s.descricao}</div>` : ''}
                         </td>
-                        <td style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; text-align: center; vertical-align: top;">${qtd}</td>
-                        <td style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; text-align: right; vertical-align: top;">${preco.toFixed(2)}</td>
-                        <td style="padding: 5px 8px; border-bottom: 1px solid #D1D5DB; text-align: right; vertical-align: top;">${formatarMoeda(subt)}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: center; vertical-align: top; color: #334155;">${qtd}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: right; vertical-align: top; color: #334155;">${preco.toFixed(2)}</td>
+                        <td style="padding: 6px 8px; border: 1px solid #E2E8F0; text-align: right; vertical-align: top; font-weight: 600; color: #0F172A;">${formatarMoeda(subt)}</td>
                     </tr>
                 `;
             }).join('')
-            : `<tr><td colspan="4" style="text-align: center; color: #6B7280; font-style: italic; padding: 8px; border-bottom: 1px solid #D1D5DB;">Nenhum serviço discriminado.</td></tr>`;
+            : `<tr><td colspan="4" style="text-align: center; color: #64748B; font-style: italic; padding: 10px; border: 1px solid #E2E8F0; background: #FAFBFD;">Nenhum serviço discriminado.</td></tr>`;
 
         const uLogadoDoc = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
         let responsavelNome = (os.criado_por || os.usuario_criacao || (os.responsavel && os.responsavel !== 'AUTOCAR BS' ? os.responsavel : '') || '').trim();
@@ -1421,142 +1423,153 @@ const OSModule = {
         responsavelNome = responsavelNome.toUpperCase();
 
         return `
-            <!-- 1. Cabeçalho Empresa & Identificação da OS (3 colunas lado a lado) -->
+            <!-- 1. Cabeçalho Empresa & Identificação da OS (3 colunas com acabamento premium) -->
             <div class="os-doc-header" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; width: 100% !important; margin-bottom: 12px !important;">
                 <div class="os-doc-header-logo" style="flex: 0 0 250px; max-width: 255px;">
-                    <div class="brand-title">AUTOCAR <span>BS</span></div>
-                    <div class="brand-subtitle-box">ESPECIALISTAS EM VOLKSWAGEN E AUDI</div>
-                    <div class="brand-desc">MECÂNICA E REVISÕES PREVENTIVAS MULTIMARCAS</div>
+                    <div class="brand-title" style="font-size: 26px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; color: #0F172A; line-height: 1;">AUTOCAR <span style="color: #DC2626;">BS</span></div>
+                    <div class="brand-subtitle-box" style="display: inline-block; background: #FEF2F2; border: 1px solid #FCA5A5; padding: 2px 6px; border-radius: 3px; font-size: 8px; font-weight: 800; color: #991B1B; letter-spacing: 0.4px; margin-top: 5px; text-transform: uppercase;">ESPECIALISTAS EM VOLKSWAGEN E AUDI</div>
+                    <div class="brand-desc" style="font-size: 7.5px; color: #64748B; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 3px;">MECÂNICA E REVISÕES PREVENTIVAS MULTIMARCAS</div>
                 </div>
 
-                <div class="os-doc-header-empresa" style="flex: 1; padding: 0 12px; font-size: 10.5px; line-height: 1.45;">
-                    <div class="empresa-nome" style="font-weight: 800; font-size: 13.5px; color: #000000; margin-bottom: 2px;">AUTOCAR BS</div>
-                    <div>27.259.708/0001-18</div>
-                    <div>15 DE NOVEMBRO, 2569 - LOTEAMENTO MODENA - TATUI - SP</div>
-                    <div>E-mail: autocarbstatui@gmail.com - Fone: (15) 99666-1359</div>
+                <div class="os-doc-header-empresa" style="flex: 1; padding: 0 16px; font-size: 10px; line-height: 1.45; color: #334155;">
+                    <div class="empresa-nome" style="font-weight: 800; font-size: 13px; color: #0F172A; margin-bottom: 2px;">AUTOCAR BS</div>
+                    <div>CNPJ: 27.259.708/0001-18</div>
+                    <div>15 DE NOVEMBRO, 2569 - LOTEAMENTO MODENA - TATUÍ - SP</div>
+                    <div>E-mail: autocarbstatui@gmail.com &bull; Fone: (15) 99666-1359</div>
                 </div>
 
-                <div class="os-doc-header-meta" style="flex: 0 0 130px; text-align: right; font-size: 11px; line-height: 1.4;">
-                    <div class="os-num-linha" style="font-weight: 800; font-size: 12.5px;">N° OS: ${numeroOS}</div>
-                    <div class="os-emissao-label" style="margin-top: 6px;">Emissão:</div>
-                    <div class="os-emissao-data" style="font-weight: 500;">${dataEmissao}</div>
+                <div class="os-doc-header-meta" style="flex: 0 0 145px; text-align: right;">
+                    <div style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px 10px; text-align: right;">
+                        <div class="os-num-linha" style="font-weight: 900; font-size: 13px; color: #0F172A; letter-spacing: -0.2px;">N° OS: ${numeroOS}</div>
+                        <div class="os-emissao-label" style="margin-top: 3px; font-size: 9.5px; color: #64748B;">Emissão:</div>
+                        <div class="os-emissao-data" style="font-weight: 600; font-size: 10px; color: #0F172A;">${dataEmissao}</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="os-doc-divisor" style="border-bottom: 1px solid #D1D5DB; margin: 12px 0 14px 0;"></div>
+            <div class="os-doc-divisor" style="border-bottom: 1px solid #E2E8F0; margin: 10px 0 12px 0;"></div>
 
             <!-- 2. Dados do Cliente e Responsável (2 colunas lado a lado) -->
-            <div class="os-doc-grid-dupla" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; gap: 24px !important; width: 100% !important;">
+            <div class="os-doc-grid-dupla" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; gap: 20px !important; width: 100% !important; margin-bottom: 12px;">
                 <div class="os-doc-col-info" style="flex: 1 1 50%; max-width: 50%; font-size: 10.5px; line-height: 1.45;">
-                    <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 11.5px; margin-bottom: 4px;">CLIENTE</div>
-                    <div class="cli-nome" style="font-weight: 700;">${cliNome}</div>
-                    ${cliEndereco && cliEndereco !== 'Não informado' ? `<div>${cliEndereco}</div>` : ''}
-                    <div>Celular: ${tel}</div>
+                    <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 10px; color: #64748B; letter-spacing: 0.5px; margin-bottom: 3px; text-transform: uppercase;">CLIENTE</div>
+                    <div class="cli-nome" style="font-weight: 800; font-size: 12px; color: #0F172A;">${cliNome}</div>
+                    ${cliEndereco && cliEndereco !== 'Não informado' ? `<div style="color: #475569; margin-top: 2px;">${cliEndereco}</div>` : ''}
+                    <div style="color: #334155; margin-top: 2px;"><strong>Celular:</strong> ${tel}</div>
                 </div>
 
                 <div class="os-doc-col-info" style="flex: 1 1 50%; max-width: 50%; font-size: 10.5px; line-height: 1.45;">
-                    <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 11.5px; margin-bottom: 4px;">RESPONSÁVEL</div>
-                    <div class="cli-nome" style="font-weight: 700;">${responsavelNome}</div>
+                    <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 10px; color: #64748B; letter-spacing: 0.5px; margin-bottom: 3px; text-transform: uppercase;">RESPONSÁVEL</div>
+                    <div class="cli-nome" style="font-weight: 800; font-size: 12px; color: #0F172A;">${responsavelNome}</div>
                 </div>
             </div>
 
-            <div class="os-doc-divisor" style="border-bottom: 1px solid #D1D5DB; margin: 14px 0 12px 0;"></div>
-
-            <!-- 3. Parâmetros da OS e Dados do Veículo -->
-            <div class="os-doc-info-strip" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; font-size: 10.5px; margin-bottom: 14px;">
-                <div><strong>STATUS OS:</strong> <span>${statusLabel}</span></div>
-                <div><strong>DATA INICIAL:</strong> <span>${dataIni}</span></div>
-                <div><strong>DATA FINAL:</strong> <span>${dataFim}</span></div>
-                <div><strong>GARANTIA:</strong> <span>${garantia}</span></div>
+            <!-- 3. Parâmetros da OS (Faixa Estilizada) -->
+            <div class="os-doc-info-strip" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; width: 100% !important; font-size: 10px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 6px 12px; margin-bottom: 10px;">
+                <div><strong style="color: #64748B; font-weight: 700;">STATUS OS:</strong> <span style="font-weight: 700; color: #0F172A; text-transform: uppercase;">${statusLabel}</span></div>
+                <div><strong style="color: #64748B; font-weight: 700;">DATA INICIAL:</strong> <span style="font-weight: 600; color: #0F172A;">${dataIni}</span></div>
+                <div><strong style="color: #64748B; font-weight: 700;">DATA FINAL:</strong> <span style="font-weight: 600; color: #0F172A;">${dataFim}</span></div>
+                <div><strong style="color: #64748B; font-weight: 700;">GARANTIA:</strong> <span style="font-weight: 600; color: #0F172A;">${garantia}</span></div>
             </div>
 
-            <div class="os-doc-veiculo-bloco" style="font-size: 10.5px; line-height: 1.5; margin-bottom: 14px;">
-                <div><strong>DESCRIÇÃO:</strong></div>
-                <div style="margin-bottom: 2px;">${mod}${os.veiculo_ano ? ` (${os.veiculo_ano})` : ''}</div>
-                <div><strong>PLACA:</strong> ${placa}</div>
-                <div><strong>CHASSI:</strong> ${chassi}</div>
-                <div><strong>KM:</strong> ${km}</div>
+            <!-- Card dos Dados do Veículo -->
+            <div class="os-doc-veiculo-bloco" style="font-size: 10px; line-height: 1.45; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; padding: 7px 12px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                    <div><span style="color: #64748B; font-weight: 700;">VEÍCULO:</span> <strong style="font-size: 11.5px; color: #0F172A;">${mod}${os.veiculo_ano ? ` (${os.veiculo_ano})` : ''}</strong></div>
+                    <div><span style="color: #64748B; font-weight: 700;">PLACA:</span> <strong style="font-size: 11.5px; color: #0F172A; letter-spacing: 0.5px;">${placa}</strong></div>
+                </div>
+                <div style="display: flex; gap: 24px; color: #475569;">
+                    <div><strong>KM:</strong> ${km}</div>
+                    <div><strong>CHASSI:</strong> ${chassi}</div>
+                </div>
             </div>
 
-            <!-- Sintomas ou Laudo (se preenchidos, texto limpo idêntico ao padrão oficial) -->
+            <!-- Sintomas ou Laudo (se preenchidos) -->
             ${os.descricao_problema ? `
-                <div style="font-size: 10.5px; line-height: 1.45; margin-bottom: 10px;">
-                    <strong>SINTOMAS / RECLAMAÇÃO DO CLIENTE:</strong>
-                    <div style="margin-top: 2px; color: #1F2937;">${window.UI ? UI.escapeHtml(os.descricao_problema) : os.descricao_problema}</div>
+                <div style="font-size: 10px; line-height: 1.4; margin-bottom: 8px; background: #F8FAFC; border-left: 3px solid #CBD5E1; border-radius: 3px; padding: 5px 10px;">
+                    <strong style="color: #475569; font-size: 9.5px; text-transform: uppercase;">Sintomas / Reclamação do Cliente:</strong>
+                    <div style="margin-top: 2px; color: #0F172A;">${window.UI ? UI.escapeHtml(os.descricao_problema) : os.descricao_problema}</div>
                 </div>
             ` : ''}
 
             ${os.laudo_tecnico ? `
-                <div style="font-size: 10.5px; line-height: 1.45; margin-bottom: 12px;">
-                    <strong>DIAGNÓSTICO & LAUDO TÉCNICO:</strong>
-                    <div style="margin-top: 2px; color: #1F2937;">${window.UI ? UI.escapeHtml(os.laudo_tecnico) : os.laudo_tecnico}</div>
+                <div style="font-size: 10px; line-height: 1.4; margin-bottom: 10px; background: #F8FAFC; border-left: 3px solid #3B82F6; border-radius: 3px; padding: 5px 10px;">
+                    <strong style="color: #1E40AF; font-size: 9.5px; text-transform: uppercase;">Diagnóstico & Laudo Técnico:</strong>
+                    <div style="margin-top: 2px; color: #0F172A;">${window.UI ? UI.escapeHtml(os.laudo_tecnico) : os.laudo_tecnico}</div>
                 </div>
             ` : ''}
 
             <!-- 4. Tabela de Peças & Produtos -->
-            <table class="os-doc-tabela-pdf" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; margin-bottom: 14px; border: 1px solid #D1D5DB; box-sizing: border-box !important;">
+            <table class="os-doc-tabela-pdf" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; margin-bottom: 12px; border: 1px solid #E2E8F0; box-sizing: border-box !important;">
                 <thead>
-                    <tr>
-                        <th style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: left;">Produto</th>
-                        <th style="width: 80px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: center;">Quantidade</th>
-                        <th style="width: 100px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Preço unit.</th>
-                        <th style="width: 105px; padding: 5px 8px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Sub-total</th>
+                    <tr style="background: #F1F5F9;">
+                        <th style="padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: left; text-transform: uppercase; letter-spacing: 0.3px;">Produto</th>
+                        <th style="width: 80px; padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">Qtd</th>
+                        <th style="width: 100px; padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: right; text-transform: uppercase; letter-spacing: 0.3px;">Preço unit.</th>
+                        <th style="width: 105px; padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: right; text-transform: uppercase; letter-spacing: 0.3px;">Sub-total</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${linhasPecas}
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="4" class="linha-total-tabela" style="padding: 6px 8px; text-align: right; font-weight: 800; font-size: 10.5px; border-top: 1px solid #D1D5DB; background: #FFFFFF;">
-                            Total: &nbsp; ${formatarMoeda(totalPecas)}
+                    <tr style="background: #F8FAFC;">
+                        <td colspan="4" class="linha-total-tabela" style="padding: 6px 8px; text-align: right; font-weight: 800; font-size: 10.5px; border: 1px solid #E2E8F0; color: #0F172A;">
+                            Total Produtos: &nbsp; ${formatarMoeda(totalPecas)}
                         </td>
                     </tr>
                 </tfoot>
             </table>
 
             <!-- 5. Tabela de Serviços & Mão de Obra -->
-            <table class="os-doc-tabela-pdf" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; margin-bottom: 14px; border: 1px solid #D1D5DB; box-sizing: border-box !important;">
+            <table class="os-doc-tabela-pdf" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; margin-bottom: 12px; border: 1px solid #E2E8F0; box-sizing: border-box !important;">
                 <thead>
-                    <tr>
-                        <th style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: left;">Serviço</th>
-                        <th style="width: 80px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: center;">Quantidade</th>
-                        <th style="width: 100px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Preço unit.</th>
-                        <th style="width: 105px; padding: 5px 8px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Sub-total</th>
+                    <tr style="background: #F1F5F9;">
+                        <th style="padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: left; text-transform: uppercase; letter-spacing: 0.3px;">Serviço</th>
+                        <th style="width: 80px; padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">Qtd</th>
+                        <th style="width: 100px; padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: right; text-transform: uppercase; letter-spacing: 0.3px;">Preço unit.</th>
+                        <th style="width: 105px; padding: 6px 8px; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #1E293B; text-align: right; text-transform: uppercase; letter-spacing: 0.3px;">Sub-total</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${linhasServicos}
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="4" class="linha-total-tabela" style="padding: 6px 8px; text-align: right; font-weight: 800; font-size: 10.5px; border-top: 1px solid #D1D5DB; background: #FFFFFF;">
-                            Total: &nbsp; ${formatarMoeda(totalServicos)}
+                    <tr style="background: #F8FAFC;">
+                        <td colspan="4" class="linha-total-tabela" style="padding: 6px 8px; text-align: right; font-weight: 800; font-size: 10.5px; border: 1px solid #E2E8F0; color: #0F172A;">
+                            Total Serviços: &nbsp; ${formatarMoeda(totalServicos)}
                         </td>
                     </tr>
                 </tfoot>
             </table>
 
-            <!-- 6. Total Geral -->
-            <div class="os-doc-valor-total-destaque" style="text-align: right; font-size: 16px; font-weight: 900; color: #000000; margin: 12px 0 20px 0;">
-                ${totalDesconto > 0 ? `<div style="font-size: 11px; font-weight: 600; color: #DC2626; margin-bottom: 4px;">Desconto: -${formatarMoeda(totalDesconto)}</div>` : ''}
-                Valor Total: ${formatarMoeda(totalGeral)}
+            <!-- 6. Card de Resumo Financeiro / Valor Total -->
+            <div style="display: flex; justify-content: flex-end; width: 100%; margin: 8px 0 16px 0;">
+                <div style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 6px; padding: 8px 16px; min-width: 220px; text-align: right;">
+                    ${totalDesconto > 0 ? `<div style="font-size: 10px; font-weight: 600; color: #DC2626; margin-bottom: 2px;">Desconto Aplicado: -${formatarMoeda(totalDesconto)}</div>` : ''}
+                    <div style="font-size: 9.5px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.4px;">Valor Total da OS</div>
+                    <div style="font-size: 17px; font-weight: 900; color: #0F172A; letter-spacing: -0.3px; margin-top: 1px;">${formatarMoeda(totalGeral)}</div>
+                </div>
             </div>
 
-            <!-- 7. Tabela de Assinaturas (modelo PDF oficial) -->
-            <table class="os-doc-tabela-assinaturas" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; border: 1px solid #D1D5DB; margin-top: 16px; box-sizing: border-box !important;">
+            <!-- 7. Tabela de Assinaturas (modelo PDF oficial com acabamento refinado) -->
+            <table class="os-doc-tabela-assinaturas" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; border: 1px solid #E2E8F0; margin-top: 10px; box-sizing: border-box !important;">
                 <thead>
-                    <tr>
-                        <th style="width: 14%; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 600; padding: 4px 6px; text-align: left;">Data</th>
-                        <th style="width: 43%; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 600; padding: 4px 6px; text-align: left;">Assinatura do Cliente</th>
-                        <th style="width: 43%; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 600; padding: 4px 6px; text-align: left;">Assinatura do Técnico Responsável</th>
+                    <tr style="background: #F1F5F9;">
+                        <th style="width: 16%; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #334155; padding: 5px 8px; text-align: left; text-transform: uppercase; letter-spacing: 0.3px;">Data</th>
+                        <th style="width: 42%; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #334155; padding: 5px 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">Assinatura do Cliente</th>
+                        <th style="width: 42%; border: 1px solid #E2E8F0; font-weight: 700; font-size: 9.5px; color: #334155; padding: 5px 8px; text-align: center; text-transform: uppercase; letter-spacing: 0.3px;">Assinatura do Técnico Responsável</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="height: 48px; border-right: 1px solid #D1D5DB; vertical-align: bottom; padding: 4px 6px;"></td>
-                        <td style="height: 48px; border-right: 1px solid #D1D5DB; vertical-align: bottom; padding: 4px 6px;"></td>
-                        <td style="height: 48px; vertical-align: bottom; padding: 4px 6px;"></td>
+                        <td style="height: 44px; border: 1px solid #E2E8F0; vertical-align: bottom; padding: 4px 8px; font-size: 9.5px; color: #64748B; background: #FFFFFF;">___/___/______</td>
+                        <td style="height: 44px; border: 1px solid #E2E8F0; vertical-align: bottom; padding: 4px 8px; background: #FFFFFF; text-align: center;">
+                            <div style="border-top: 1px dashed #CBD5E1; margin: 0 16px; padding-top: 2px; font-size: 9px; color: #64748B;">Assinatura</div>
+                        </td>
+                        <td style="height: 44px; border: 1px solid #E2E8F0; vertical-align: bottom; padding: 4px 8px; background: #FFFFFF; text-align: center;">
+                            <div style="border-top: 1px dashed #CBD5E1; margin: 0 16px; padding-top: 2px; font-size: 9px; color: #64748B;">Assinatura</div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
