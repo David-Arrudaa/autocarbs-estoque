@@ -221,7 +221,7 @@ const Estoque = {
             if (elBreadSub) elBreadSub.innerText = info.submodulo;
 
             if (btnHeaderCadastrar) {
-                btnHeaderCadastrar.style.display = (aba === 'produtos') ? 'inline-flex' : 'none';
+                btnHeaderCadastrar.style.display = 'none';
             }
 
             // Fecha a sidebar no mobile se estiver aberta
@@ -1473,8 +1473,8 @@ const Estoque = {
         } else {
             if (viewProduto) viewProduto.classList.add('hidden');
             if (viewLista) viewLista.classList.remove('hidden');
-            if (btnHeaderCadastrar && this.abaAtiva === 'produtos') {
-                btnHeaderCadastrar.style.display = 'inline-flex';
+            if (btnHeaderCadastrar) {
+                btnHeaderCadastrar.style.display = 'none';
             }
         }
     },
