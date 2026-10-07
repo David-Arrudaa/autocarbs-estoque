@@ -16,8 +16,8 @@
        ========================================================= */
     --bg-body: #EEF2F6;                   /* Fundo neutro com contraste nítido contra cards brancos */
     --bg-card: #FFFFFF;                   /* Cards brancos puros com separação nítida */
-    --bg-sidebar: #FFFFFF;                /* Sidebar branca integrada com borda sutil */
-    --bg-sidebar-footer: #F8FAFC;         /* Rodapé neutro discreto */
+    --bg-sidebar: #0F172A;                /* Fundo azul ardósia profundo (Slate 900 / Navy do login) */
+    --bg-sidebar-footer: #080D1A;         /* Rodapé escuro sutil (Slate 950) */
     --bg-header: #FFFFFF;                 /* Topbar branco limpo */
     --bg-input: #FFFFFF;                  /* Fundo branco de caixas de entrada de texto */
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
