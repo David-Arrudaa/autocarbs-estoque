@@ -1425,13 +1425,10 @@ const OSModule = {
         return `
             <!-- 1. Cabeçalho Empresa & Identificação da OS (3 colunas com acabamento premium) -->
             <div class="os-doc-header" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; width: 100% !important; margin-bottom: 12px !important;">
-                <div class="os-doc-header-logo" style="flex: 0 0 200px; max-width: 210px; display: flex; align-items: flex-start;">
-                    <img src="img/logo-autocar-bs.png" alt="AUTOCAR BS" style="max-width: 185px; max-height: 75px; object-fit: contain; display: block;" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';" />
-                    <div style="display: none;">
-                        <div class="brand-title" style="font-size: 26px; font-weight: 900; font-style: italic; letter-spacing: -0.5px; color: #0F172A; line-height: 1;">AUTOCAR <span style="color: #DC2626;">BS</span></div>
-                        <div class="brand-subtitle-box" style="display: inline-block; background: #FEF2F2; border: 1px solid #FCA5A5; padding: 2px 6px; border-radius: 3px; font-size: 8px; font-weight: 800; color: #991B1B; letter-spacing: 0.4px; margin-top: 5px; text-transform: uppercase;">ESPECIALISTAS EM VOLKSWAGEN E AUDI</div>
-                        <div class="brand-desc" style="font-size: 7.5px; color: #64748B; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 3px;">MECÂNICA E REVISÕES PREVENTIVAS MULTIMARCAS</div>
-                    </div>
+                <div class="os-doc-header-logo" style="flex: 0 0 240px; max-width: 250px;">
+                    <img src="img/logo-autocar-bs.png" alt="AUTOCAR BS" style="width: 215px; max-width: 100%; height: auto; object-fit: contain; display: block;" />
+                    <div class="brand-subtitle-box" style="display: inline-block; background: #FEF2F2; border: 1px solid #FCA5A5; padding: 2px 6px; border-radius: 3px; font-size: 8px; font-weight: 800; color: #991B1B; letter-spacing: 0.4px; margin-top: 5px; text-transform: uppercase;">ESPECIALISTAS EM VOLKSWAGEN E AUDI</div>
+                    <div class="brand-desc" style="font-size: 7.5px; color: #64748B; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; margin-top: 3px;">MECÂNICA E REVISÕES PREVENTIVAS MULTIMARCAS</div>
                 </div>
 
                 <div class="os-doc-header-empresa" style="flex: 1; padding: 0 16px; font-size: 10px; line-height: 1.45; color: #334155;">

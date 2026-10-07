@@ -1361,13 +1361,14 @@
 }
 
 .os-doc-header-logo {
-    flex: 0 0 200px;
-    max-width: 210px;
+    flex: 0 0 240px;
+    max-width: 250px;
 }
 
 .os-doc-header-logo img {
-    max-width: 185px;
-    max-height: 75px;
+    width: 215px;
+    max-width: 100%;
+    height: auto;
     object-fit: contain;
     display: block;
 }
@@ -1680,8 +1681,14 @@
         width: 100% !important;
     }
     .os-doc-header-logo {
-        flex: 0 0 250px !important;
-        max-width: 255px !important;
+        flex: 0 0 240px !important;
+        max-width: 250px !important;
+    }
+    .os-doc-header-logo img {
+        width: 215px !important;
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
     }
     .os-doc-header-empresa {
         flex: 1 !important;
