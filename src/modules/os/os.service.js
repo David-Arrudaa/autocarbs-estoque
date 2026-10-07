@@ -230,12 +230,24 @@ class OSService {
 
         if (dados.id) {
             // Edição: PRESERVA permanentemente quem criou a OS originalmente
-            const index = lista.findIndex(os => String(os.id) === String(dados.id));
-            if (index === -1) {
+            let registroAntigo = null;
+            let index = lista.findIndex(os => String(os.id) === String(dados.id));
+
+            if (index !== -1) {
+                registroAntigo = lista[index];
+            } else if (!this.usarFallback) {
+                try {
+                    const { data } = await supabase.from('ordens_servico').select('*').eq('id', dados.id).maybeSingle();
+                    if (data) {
+                        registroAntigo = this.normalizarRegistro(data);
+                    }
+                } catch (_) {}
+            }
+
+            if (!registroAntigo) {
                 throw new Error('Ordem de serviço não encontrada para edição.');
             }
 
-            const registroAntigo = lista[index];
             const criadorOriginal = (registroAntigo.criado_por || registroAntigo.usuario_criacao || registroAntigo.responsavel || usuarioNome || 'AUTOCAR BS').trim().toUpperCase();
 
             const atualizado = {
@@ -254,7 +266,11 @@ class OSService {
                 updated_at: agora
             };
 
-            lista[index] = atualizado;
+            if (index !== -1) {
+                lista[index] = atualizado;
+            } else {
+                lista.unshift(atualizado);
+            }
             this.salvarArquivoJSON(lista);
 
             if (!this.usarFallback) {
@@ -342,28 +358,44 @@ class OSService {
      * Exclui uma OS
      */
     async excluir(id, usuarioId = null) {
+        let encontrado = false;
+        let idRemovido = id;
+        let detalhes = { id };
+
+        // 1. Tenta remover do arquivo local JSON
         const lista = this.lerArquivoJSON();
         const index = lista.findIndex(os => String(os.id) === String(id) || String(os.numero) === String(id));
 
-        if (index === -1) {
-            throw new Error('Ordem de serviço não encontrada para exclusão.');
+        if (index !== -1) {
+            const removido = lista.splice(index, 1)[0];
+            this.salvarArquivoJSON(lista);
+            idRemovido = removido.id;
+            detalhes = { numero: removido.numero, cliente: removido.cliente_nome };
+            encontrado = true;
         }
 
-        const removido = lista.splice(index, 1)[0];
-        this.salvarArquivoJSON(lista);
-
+        // 2. Tenta remover do Supabase
         if (!this.usarFallback) {
             try {
-                await supabase.from('ordens_servico').delete().eq('id', removido.id);
-            } catch (_) {}
+                const { error } = await supabase.from('ordens_servico').delete().eq('id', id);
+                if (!error) {
+                    encontrado = true;
+                }
+            } catch (err) {
+                console.warn('[OSService] Erro ao excluir do Supabase:', err.message);
+            }
+        }
+
+        if (!encontrado) {
+            throw new Error('Ordem de serviço não encontrada para exclusão.');
         }
 
         auditoriaService.registrar({
             usuario: { id: usuarioId },
             acao: 'EXCLUSAO',
             tabela: 'ordens_servico',
-            registroId: removido.id,
-            detalhes: { numero: removido.numero, cliente: removido.cliente_nome }
+            registroId: idRemovido,
+            detalhes
         }).catch(() => {});
 
         return true;

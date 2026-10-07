@@ -1147,10 +1147,15 @@ const OSModule = {
             if (res && res.success) {
                 await this.carregar(this.paginaAtual);
             } else {
-                throw new Error(res.message || 'Erro ao excluir OS.');
+                throw new Error(res.mensagem || res.message || 'Erro ao excluir OS.');
             }
         } catch (err) {
             console.error('Erro ao excluir OS:', err);
+            if (window.DialogModal && typeof DialogModal.alert === 'function') {
+                DialogModal.alert(err.message || 'Erro ao excluir ordem de serviço.');
+            } else {
+                alert(err.message || 'Erro ao excluir ordem de serviço.');
+            }
         }
     },
 
