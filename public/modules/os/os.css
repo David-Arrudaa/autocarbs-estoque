@@ -1361,8 +1361,15 @@
 }
 
 .os-doc-header-logo {
-    flex: 0 0 250px;
-    max-width: 255px;
+    flex: 0 0 200px;
+    max-width: 210px;
+}
+
+.os-doc-header-logo img {
+    max-width: 185px;
+    max-height: 75px;
+    object-fit: contain;
+    display: block;
 }
 
 .os-doc-header-logo .brand-title {

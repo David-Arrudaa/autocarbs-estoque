@@ -2,7 +2,7 @@
   {
     "id": 1351,
     "numero": "1351",
-    "cliente_id": 3,
+    "cliente_id": "3",
     "cliente_nome": "DAVID VINICIUS CAMARGO DE ARRUDA",
     "cliente_telefone": "(15) 99682-0177",
     "veiculo_modelo": "VW SPACEFOX",
@@ -19,12 +19,16 @@
     "valor_total": 0,
     "status": "orcamento",
     "termo_garantia": "90 dias",
-    "descricao_problema": "",
-    "laudo_tecnico": "",
+    "descricao_problema": "troca oleo e filtro",
+    "laudo_tecnico": "teste",
     "itens_pecas": [],
     "itens_servicos": [],
     "observacoes": "",
     "created_at": "2026-10-07T19:02:01.960Z",
-    "updated_at": "2026-10-07T19:02:01.960Z"
+    "updated_at": "2026-10-07T20:38:41.333Z",
+    "criado_por": "DAVID ARRUDA",
+    "usuario_criacao": "DAVID ARRUDA",
+    "usuario_id": "1d62045e-cc67-4aab-8f25-329143467fef",
+    "usuario_nome": "DAVID ARRUDA"
   }
 ]
