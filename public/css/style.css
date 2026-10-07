@@ -4359,6 +4359,10 @@ input.no-uppercase {
         overflow-y: visible !important;
     }
 
+    table {
+        min-width: 0 !important;
+    }
+
     /* Oculta 100% da interface do ERP e de qualquer elemento que não seja o documento impresso */
     body > *:not(#relatorio-documento-impressao) {
         display: none !important;

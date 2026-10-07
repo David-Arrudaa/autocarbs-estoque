@@ -1194,7 +1194,7 @@ const OSModule = {
         if (!container) return;
 
         container.innerHTML = `
-            <div class="os-document-sheet" style="box-shadow: none !important; border: none !important; padding: 10mm 14mm !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box !important;">
+            <div class="os-document-sheet" style="box-shadow: none !important; border: none !important; padding: 8mm 10mm !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box !important;">
                 ${this.gerarHTMLDocumentoOS(os, clienteDados)}
             </div>
         `;
@@ -1455,13 +1455,13 @@ const OSModule = {
             ` : ''}
 
             <!-- 4. Tabela de Peças & Produtos -->
-            <table class="os-doc-tabela-pdf" style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 14px; border: 1px solid #D1D5DB;">
+            <table class="os-doc-tabela-pdf" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; margin-bottom: 14px; border: 1px solid #D1D5DB; box-sizing: border-box !important;">
                 <thead>
                     <tr>
                         <th style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: left;">Produto</th>
-                        <th style="width: 90px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: center;">Quantidade</th>
-                        <th style="width: 110px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Preço unit.</th>
-                        <th style="width: 110px; padding: 5px 8px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Sub-total</th>
+                        <th style="width: 80px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: center;">Quantidade</th>
+                        <th style="width: 100px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Preço unit.</th>
+                        <th style="width: 105px; padding: 5px 8px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Sub-total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1477,13 +1477,13 @@ const OSModule = {
             </table>
 
             <!-- 5. Tabela de Serviços & Mão de Obra -->
-            <table class="os-doc-tabela-pdf" style="width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 14px; border: 1px solid #D1D5DB;">
+            <table class="os-doc-tabela-pdf" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; margin-bottom: 14px; border: 1px solid #D1D5DB; box-sizing: border-box !important;">
                 <thead>
                     <tr>
                         <th style="padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: left;">Serviço</th>
-                        <th style="width: 90px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: center;">Quantidade</th>
-                        <th style="width: 110px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Preço unit.</th>
-                        <th style="width: 110px; padding: 5px 8px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Sub-total</th>
+                        <th style="width: 80px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: center;">Quantidade</th>
+                        <th style="width: 100px; padding: 5px 8px; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Preço unit.</th>
+                        <th style="width: 105px; padding: 5px 8px; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 700; text-align: right;">Sub-total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1505,7 +1505,7 @@ const OSModule = {
             </div>
 
             <!-- 7. Tabela de Assinaturas (modelo PDF oficial) -->
-            <table class="os-doc-tabela-assinaturas" style="width: 100%; border-collapse: collapse; font-size: 10px; border: 1px solid #D1D5DB; margin-top: 16px;">
+            <table class="os-doc-tabela-assinaturas" style="width: 100% !important; min-width: 0 !important; max-width: 100% !important; border-collapse: collapse; font-size: 10px; border: 1px solid #D1D5DB; margin-top: 16px; box-sizing: border-box !important;">
                 <thead>
                     <tr>
                         <th style="width: 14%; border-right: 1px solid #D1D5DB; border-bottom: 1px solid #D1D5DB; background: #FFFFFF; font-weight: 600; padding: 4px 6px; text-align: left;">Data</th>

@@ -1503,11 +1503,14 @@
 
 /* 4. Tabelas de Itens (Produtos e Serviços) */
 .os-doc-tabela-pdf {
-    width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     border-collapse: collapse;
     font-size: 10px;
     margin-bottom: 14px;
     border: 1px solid #D1D5DB;
+    box-sizing: border-box !important;
 }
 
 .os-doc-tabela-pdf thead th {
@@ -1517,6 +1520,7 @@
     border-right: 1px solid #D1D5DB;
     border-bottom: 1px solid #D1D5DB;
     color: #000000;
+    box-sizing: border-box;
 }
 
 .os-doc-tabela-pdf thead th:last-child {
@@ -1529,6 +1533,7 @@
     border-bottom: 1px solid #D1D5DB;
     color: #000000;
     vertical-align: top;
+    box-sizing: border-box;
 }
 
 .os-doc-tabela-pdf tbody td:last-child {
@@ -1557,6 +1562,7 @@
     border-top: 1px solid #D1D5DB;
     background: #FFFFFF;
     color: #000000;
+    box-sizing: border-box;
 }
 
 /* 5. Valor Total Geral */
@@ -1570,11 +1576,14 @@
 
 /* 6. Assinaturas */
 .os-doc-tabela-assinaturas {
-    width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
     border-collapse: collapse;
     font-size: 10px;
     border: 1px solid #D1D5DB;
     margin-top: 16px;
+    box-sizing: border-box !important;
 }
 
 .os-doc-tabela-assinaturas thead th {
@@ -1585,6 +1594,7 @@
     padding: 4px 6px;
     text-align: left;
     color: #000000;
+    box-sizing: border-box;
 }
 
 .os-doc-tabela-assinaturas thead th:last-child {
@@ -1596,6 +1606,7 @@
     border-right: 1px solid #D1D5DB;
     vertical-align: bottom;
     padding: 4px 6px;
+    box-sizing: border-box;
 }
 
 .os-doc-tabela-assinaturas tbody td:last-child {
@@ -1629,8 +1640,16 @@
         border: none !important;
         max-width: 100% !important;
         width: 100% !important;
-        padding: 10mm 14mm 10mm 14mm !important;
+        padding: 8mm 10mm 8mm 10mm !important;
         margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    #relatorio-documento-impressao table,
+    .os-doc-tabela-pdf,
+    .os-doc-tabela-assinaturas {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
         box-sizing: border-box !important;
     }
     .os-doc-header {
