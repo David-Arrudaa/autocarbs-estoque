@@ -1194,7 +1194,7 @@ const OSModule = {
         if (!container) return;
 
         container.innerHTML = `
-            <div class="os-document-sheet" style="box-shadow: none !important; border: none !important; padding: 0 !important; max-width: 100% !important; width: 100% !important;">
+            <div class="os-document-sheet" style="box-shadow: none !important; border: none !important; padding: 10mm 14mm !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box !important;">
                 ${this.gerarHTMLDocumentoOS(os, clienteDados)}
             </div>
         `;

@@ -1603,6 +1603,11 @@
 }
 
 @media print {
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+
     body * {
         visibility: hidden;
     }
@@ -1624,8 +1629,9 @@
         border: none !important;
         max-width: 100% !important;
         width: 100% !important;
-        padding: 0 !important;
+        padding: 10mm 14mm 10mm 14mm !important;
         margin: 0 !important;
+        box-sizing: border-box !important;
     }
     .os-doc-header {
         display: flex !important;
