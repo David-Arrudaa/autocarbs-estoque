@@ -665,9 +665,9 @@ body {
 }
 
 .top-header {
-    background: #FFFFFF;
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    background: var(--bg-header);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     padding: 12px 24px;
     height: 60px;
     box-sizing: border-box;
@@ -688,23 +688,23 @@ body {
 
 .sidebar-toggle-btn {
     display: none !important;
-    background: #FFFFFF;
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     font-size: 1.25rem;
-    color: var(--text-secondary);
+    color: #CBD5E1;
     padding: 7px 9px;
     border-radius: 6px;
     cursor: pointer;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-card);
+    box-shadow: none;
 }
 
 .sidebar-toggle-btn:hover {
-    background: var(--bg-hover);
-    border-color: var(--border-hover);
-    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #FFFFFF;
 }
 
 .page-title-box {
@@ -726,7 +726,7 @@ body {
 
 .breadcrumb-module {
     background: transparent !important;
-    color: #64748B !important;
+    color: #94A3B8 !important;
     border: none !important;
     padding: 0 !important;
     border-radius: 0 !important;
@@ -736,13 +736,13 @@ body {
 }
 
 .breadcrumb-separator {
-    color: #94A3B8 !important;
+    color: #64748B !important;
     font-size: 0.65rem !important;
-    opacity: 0.7 !important;
+    opacity: 0.8 !important;
 }
 
 .breadcrumb-submodule {
-    color: #334155 !important;
+    color: #60A5FA !important;
     font-weight: 700 !important;
     letter-spacing: 0.6px !important;
 }
@@ -751,7 +751,7 @@ body {
     margin: 0;
     font-size: 1.25rem !important;
     font-weight: 800 !important;
-    color: #0F172A;
+    color: #FFFFFF;
     letter-spacing: -0.3px;
     border-left: none !important;
     padding-left: 0 !important;
@@ -798,27 +798,27 @@ body {
 }
 
 .stat-pill {
-    background: #F4F6FB;
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 6px 14px;
     border-radius: 20px;
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 0.82rem;
-    color: var(--text-secondary);
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    color: #CBD5E1;
+    box-shadow: none;
 }
 
 .stat-pill strong {
-    color: var(--text-primary);
+    color: #FFFFFF;
     font-size: 0.88rem;
 }
 
 .icon-btn-inline {
     background: transparent;
     border: none;
-    color: var(--text-secondary);
+    color: #94A3B8;
     cursor: pointer;
     font-size: 1rem;
     padding: 2px 4px;
@@ -829,7 +829,7 @@ body {
 }
 
 .icon-btn-inline:hover {
-    color: var(--text-primary);
+    color: #FFFFFF;
 }
 
 .header-actions {

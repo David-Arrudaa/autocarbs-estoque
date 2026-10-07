@@ -18,7 +18,7 @@
     --bg-card: #FFFFFF;                   /* Cards brancos puros com separação nítida */
     --bg-sidebar: #0F172A;                /* Fundo azul ardósia profundo (Slate 900 / Navy do login) */
     --bg-sidebar-footer: #080D1A;         /* Rodapé escuro sutil (Slate 950) */
-    --bg-header: #FFFFFF;                 /* Topbar branco limpo */
+    --bg-header: #0F172A;                 /* Topbar dark navy corporativo integrado */
     --bg-input: #FFFFFF;                  /* Fundo branco de caixas de entrada de texto */
     --bg-surface-elevated: #FFFFFF;       /* Modais e painéis elevados */
     --bg-surface-active: #FFFFFF;         /* Superfície ativa limpa elevada (cards, abas) */
