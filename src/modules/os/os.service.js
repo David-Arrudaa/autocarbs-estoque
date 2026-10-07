@@ -74,7 +74,9 @@ class OSService {
             veiculo_placa: (os.veiculo_placa || os.placa || '').trim().toUpperCase(),
             veiculo_km: String(os.veiculo_km || os.km || ''),
             veiculo_chassi: (os.veiculo_chassi || os.chassi || '').trim().toUpperCase(),
-            responsavel: (os.responsavel || 'AUTOCAR BS').trim().toUpperCase(),
+            responsavel: (os.responsavel || os.usuario_nome || 'AUTOCAR BS').trim().toUpperCase(),
+            usuario_id: os.usuario_id || null,
+            usuario_nome: os.usuario_nome || (os.responsavel && os.responsavel !== 'AUTOCAR BS' ? os.responsavel : null),
             data_inicial: os.data_inicial || (os.created_at ? os.created_at.split('T')[0] : new Date().toISOString().split('T')[0]),
             data_final: os.data_final || '',
             valor_pecas: Number(os.valor_pecas) || 0,
@@ -210,9 +212,12 @@ class OSService {
     /**
      * Cria ou atualiza uma Ordem de Serviço
      */
-    async salvar(dados, usuarioId = null) {
+    async salvar(dados, usuarioInfo = null) {
         const agora = new Date().toISOString();
         const lista = this.lerArquivoJSON();
+
+        const usuarioId = (usuarioInfo && usuarioInfo.id) ? usuarioInfo.id : (typeof usuarioInfo === 'string' || typeof usuarioInfo === 'number' ? usuarioInfo : null);
+        const usuarioNome = (usuarioInfo && usuarioInfo.nome) ? usuarioInfo.nome.trim().toUpperCase() : null;
 
         // Cálculo de totais
         const itensPecas = Array.isArray(dados.itens_pecas) ? dados.itens_pecas : [];
@@ -231,11 +236,19 @@ class OSService {
             }
 
             const registroAntigo = lista[index];
+            let respEdicao = (dados.responsavel || '').trim();
+            if (!respEdicao || respEdicao.toUpperCase() === 'AUTOCAR BS') {
+                respEdicao = registroAntigo.responsavel || registroAntigo.usuario_nome || usuarioNome || 'AUTOCAR BS';
+            }
+
             const atualizado = {
                 ...registroAntigo,
                 ...dados,
                 id: registroAntigo.id,
                 numero: String(dados.numero || registroAntigo.numero || registroAntigo.id),
+                responsavel: respEdicao.toUpperCase(),
+                usuario_nome: registroAntigo.usuario_nome || usuarioNome || respEdicao.toUpperCase(),
+                usuario_id: registroAntigo.usuario_id || usuarioId || null,
                 valor_pecas: valorPecas,
                 valor_servicos: valorServicos,
                 valor_desconto: valorDesconto,
@@ -267,6 +280,11 @@ class OSService {
             const novoId = maxId + 1;
             const numeroOS = String(dados.numero || novoId);
 
+            let respNova = (dados.responsavel || '').trim();
+            if (!respNova || respNova.toUpperCase() === 'AUTOCAR BS') {
+                respNova = usuarioNome || (dados.usuario_nome ? dados.usuario_nome.trim() : '') || 'AUTOCAR BS';
+            }
+
             const novaOS = {
                 id: novoId,
                 numero: numeroOS,
@@ -278,7 +296,9 @@ class OSService {
                 veiculo_placa: (dados.veiculo_placa || '').trim().toUpperCase(),
                 veiculo_km: (dados.veiculo_km || '').trim(),
                 veiculo_chassi: (dados.veiculo_chassi || '').trim().toUpperCase(),
-                responsavel: (dados.responsavel || 'AUTOCAR BS').trim(),
+                responsavel: respNova.toUpperCase(),
+                usuario_id: usuarioId || dados.usuario_id || null,
+                usuario_nome: usuarioNome || dados.usuario_nome || respNova.toUpperCase(),
                 data_inicial: dados.data_inicial || agora.split('T')[0],
                 data_final: dados.data_final || '',
                 valor_pecas: valorPecas,

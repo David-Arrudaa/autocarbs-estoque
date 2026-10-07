@@ -104,6 +104,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 function atualizarPerfilUsuario(usuario) {
     if (!usuario) return;
     window.usuarioLogado = usuario;
+    try {
+        localStorage.setItem('autocar_usuario_logado', JSON.stringify(usuario));
+    } catch (_) {}
+
     const elName = document.getElementById('user-display-name');
     const elRole = document.getElementById('user-display-role');
     if (elName) elName.innerText = usuario.nome || 'Operador AutoCar';
@@ -131,6 +135,23 @@ function atualizarPerfilUsuario(usuario) {
         elGroupUsuarios.style.display = 'block';
     }
 }
+
+function obterUsuarioLogado() {
+    if (window.usuarioLogado && window.usuarioLogado.nome) return window.usuarioLogado;
+    try {
+        const salvo = localStorage.getItem('autocar_usuario_logado');
+        if (salvo) {
+            const u = JSON.parse(salvo);
+            if (u && u.nome) {
+                window.usuarioLogado = u;
+                return u;
+            }
+        }
+    } catch (_) {}
+    return null;
+}
+
+window.obterUsuarioLogado = obterUsuarioLogado;
 
 function mostrarTelaLogin() {
     if (window.AuthModule) {
@@ -246,6 +267,7 @@ async function fazerLogout() {
     try {
         localStorage.removeItem('autocar_token');
         localStorage.removeItem('autocar_has_session');
+        localStorage.removeItem('autocar_usuario_logado');
         document.documentElement.classList.remove('has-active-session');
         sessionStorage.clear();
     } catch (_) {}

@@ -145,7 +145,11 @@ const OSModule = {
         this.setInputValue('os_veiculo_placa', '');
         this.setInputValue('os_veiculo_km', '');
         this.setInputValue('os_veiculo_chassi', '');
-        this.setInputValue('os_responsavel', 'AUTOCAR BS');
+
+        const uLogado = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
+        const nomeResponsavelPadrao = (uLogado.nome ? uLogado.nome.trim().toUpperCase() : '') || 'AUTOCAR BS';
+        this.setInputValue('os_responsavel', nomeResponsavelPadrao);
+
         this.setInputValue('os_data_inicial', hoje);
         this.setInputValue('os_data_final', previsao);
         this.setInputValue('os_status', 'orcamento');
@@ -527,7 +531,14 @@ const OSModule = {
             this.setInputValue('os_veiculo_placa', os.veiculo_placa || '');
             this.setInputValue('os_veiculo_km', os.veiculo_km || '');
             this.setInputValue('os_veiculo_chassi', os.veiculo_chassi || '');
-            this.setInputValue('os_responsavel', os.responsavel || 'AUTOCAR BS');
+
+            let respEdicao = (os.responsavel || '').trim();
+            if (!respEdicao || respEdicao.toUpperCase() === 'AUTOCAR BS') {
+                const uLog = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
+                respEdicao = os.usuario_nome || (uLog.nome ? uLog.nome.trim() : '') || 'AUTOCAR BS';
+            }
+            this.setInputValue('os_responsavel', respEdicao.toUpperCase());
+
             this.setInputValue('os_data_inicial', os.data_inicial ? os.data_inicial.split('T')[0] : '');
             this.setInputValue('os_data_final', os.data_final ? os.data_final.split('T')[0] : '');
             this.setInputValue('os_status', os.status || 'orcamento');
@@ -1054,6 +1065,12 @@ const OSModule = {
         const desconto = parseFloat(descStr.replace(/\./g, '').replace(',', '.')) || 0;
         const totalGeral = Math.max(0, (totalServicos + totalPecas) - desconto);
 
+        const uLogado = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
+        let respSalvar = this.getInputValue('os_responsavel').trim();
+        if (!respSalvar || respSalvar.toUpperCase() === 'AUTOCAR BS') {
+            respSalvar = (uLogado.nome ? uLogado.nome.trim() : '') || 'AUTOCAR BS';
+        }
+
         const payload = {
             id: this.idEdicao,
             cliente_id: this.getInputValue('os_cliente_id') || null,
@@ -1064,7 +1081,9 @@ const OSModule = {
             veiculo_placa: this.getInputValue('os_veiculo_placa'),
             veiculo_km: this.getInputValue('os_veiculo_km'),
             veiculo_chassi: this.getInputValue('os_veiculo_chassi'),
-            responsavel: this.getInputValue('os_responsavel') || 'AUTOCAR BS',
+            responsavel: respSalvar.toUpperCase(),
+            usuario_id: uLogado.id || null,
+            usuario_nome: (uLogado.nome ? uLogado.nome.trim().toUpperCase() : '') || respSalvar.toUpperCase(),
             data_inicial: dataInicial,
             data_final: this.getInputValue('os_data_final'),
             status: this.getInputValue('os_status') || 'orcamento',
@@ -1378,6 +1397,13 @@ const OSModule = {
             }).join('')
             : `<tr><td colspan="4" style="text-align: center; color: #6B7280; font-style: italic; padding: 8px; border-bottom: 1px solid #D1D5DB;">Nenhum serviço discriminado.</td></tr>`;
 
+        const uLogadoDoc = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
+        let responsavelNome = (os.responsavel || '').trim();
+        if (!responsavelNome || responsavelNome.toUpperCase() === 'AUTOCAR BS') {
+            responsavelNome = os.usuario_nome || (uLogadoDoc.nome ? uLogadoDoc.nome.trim() : '') || 'AUTOCAR BS';
+        }
+        responsavelNome = responsavelNome.toUpperCase();
+
         return `
             <!-- 1. Cabeçalho Empresa & Identificação da OS (3 colunas lado a lado) -->
             <div class="os-doc-header" style="display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; width: 100% !important; margin-bottom: 12px !important;">
@@ -1415,7 +1441,7 @@ const OSModule = {
 
                 <div class="os-doc-col-info" style="flex: 1 1 50%; max-width: 50%; font-size: 10.5px; line-height: 1.45;">
                     <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 11.5px; margin-bottom: 4px;">RESPONSÁVEL</div>
-                    <div class="cli-nome" style="font-weight: 700;">AUTOCAR BS</div>
+                    <div class="cli-nome" style="font-weight: 700;">${responsavelNome}</div>
                     <div>Telefone: (15) 99666-1359</div>
                     <div>Email: autocarbstatui@gmail.com</div>
                 </div>

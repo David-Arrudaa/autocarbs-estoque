@@ -55,7 +55,7 @@ class OSController {
     async salvar(req, res, next) {
         try {
             const dados = req.body;
-            const usuarioId = req.usuario?.id || null;
+            const usuarioInfo = req.usuario || req.user || null;
 
             if (!dados.cliente_nome) {
                 return res.status(400).json({
@@ -64,7 +64,7 @@ class OSController {
                 });
             }
 
-            const os = await osService.salvar(dados, usuarioId);
+            const os = await osService.salvar(dados, usuarioInfo);
 
             return res.json({
                 success: true,

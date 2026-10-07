@@ -113,6 +113,7 @@ function autenticarRequisicao(req, res, next) {
     }
 
     req.user = sessaoValida;
+    req.usuario = sessaoValida;
     next();
 }
 
