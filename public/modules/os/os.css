@@ -1319,10 +1319,10 @@
 }
 
 /* =========================================================
-   6. SUBVIEW 3: VISUALIZAÇÃO COMPLETA DA OS (PADRÃO PDF/A4)
+   6. SUBVIEW 3: VISUALIZAÇÃO COMPLETA DA OS (PADRÃO PDF/A4 OFICIAL)
    ========================================================= */
 .os-view-topbar {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .os-document-preview-wrapper {
@@ -1334,278 +1334,281 @@
 
 .os-document-sheet {
     background: #FFFFFF;
-    border: 1px solid #CBD5E1;
-    border-radius: 8px;
-    padding: 36px 42px;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    padding: 38px 46px;
     width: 100%;
-    max-width: 1040px;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #0F172A;
+    max-width: 840px;
+    box-shadow: 0 4px 22px rgba(15, 23, 42, 0.08);
+    font-family: Arial, Helvetica, sans-serif, 'Inter';
+    color: #000000;
     box-sizing: border-box;
+    font-size: 11px;
+    line-height: 1.45;
 }
 
-/* Cabeçalho do documento */
+/* 1. Cabeçalho */
 .os-doc-header {
     display: grid;
-    grid-template-columns: 1fr 1.3fr 1fr;
-    align-items: center;
-    gap: 16px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid #0F172A;
+    grid-template-columns: 240px 1fr 140px;
+    align-items: flex-start;
+    gap: 14px;
 }
 
 .os-doc-header-logo .brand-title {
-    font-size: 1.85rem;
+    font-size: 26px;
     font-weight: 900;
-    letter-spacing: -0.6px;
-    color: #0F172A;
-    line-height: 1.1;
+    font-style: italic;
+    letter-spacing: -0.5px;
+    color: #000000;
+    line-height: 1;
     margin: 0;
+    font-family: Arial, sans-serif;
 }
 
 .os-doc-header-logo .brand-title span {
-    color: #2563EB;
+    color: #DC2626;
 }
 
-.os-doc-header-logo .brand-subtitle {
-    font-size: 0.70rem;
+.os-doc-header-logo .brand-subtitle-box {
+    display: inline-block;
+    border: 1px solid #9CA3AF;
+    padding: 2px 5px;
+    margin-top: 5px;
+    font-size: 8px;
     font-weight: 800;
-    color: #DC2626;
+    color: #991B1B;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-top: 4px;
+    letter-spacing: 0.3px;
+    line-height: 1.1;
 }
 
 .os-doc-header-logo .brand-desc {
-    font-size: 0.65rem;
-    font-weight: 600;
-    color: #64748B;
+    font-size: 7.2px;
+    color: #4B5563;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-top: 2px;
+    letter-spacing: 0.2px;
+    margin-top: 3px;
+    font-weight: 600;
 }
 
 .os-doc-header-empresa {
-    text-align: center;
-    font-size: 0.78rem;
-    line-height: 1.45;
-    color: #334155;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #000000;
+    padding-left: 8px;
 }
 
-.os-doc-header-empresa strong {
-    font-size: 0.90rem;
-    color: #0F172A;
-    display: block;
+.os-doc-header-empresa .empresa-nome {
+    font-weight: 800;
+    font-size: 13px;
+    color: #000000;
     margin-bottom: 2px;
 }
 
 .os-doc-header-meta {
     text-align: right;
-    font-size: 0.82rem;
-    line-height: 1.5;
-    color: #334155;
+    font-size: 11px;
+    line-height: 1.4;
+    color: #000000;
 }
 
-.os-doc-header-meta .meta-os-num {
-    font-size: 1.45rem;
-    font-weight: 900;
-    color: #2563EB;
-    letter-spacing: -0.5px;
+.os-doc-header-meta .os-num-linha {
+    font-weight: 800;
+    font-size: 12px;
 }
 
-.os-doc-header-meta .meta-emissao {
-    font-size: 0.80rem;
-    color: #64748B;
-    margin-top: 2px;
+.os-doc-header-meta .os-emissao-label {
+    margin-top: 8px;
+    font-size: 11px;
 }
 
-/* Seção Cliente & Responsável */
+.os-doc-header-meta .os-emissao-data {
+    font-weight: 500;
+    font-size: 11px;
+}
+
+.os-doc-divisor {
+    border-bottom: 1px solid #D1D5DB;
+    margin: 14px 0;
+}
+
+/* 2. Cliente e Responsável */
 .os-doc-grid-dupla {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    padding: 16px 0;
-    border-bottom: 1px solid #E2E8F0;
+    gap: 24px;
 }
 
 .os-doc-col-info {
-    font-size: 0.82rem;
-    line-height: 1.55;
-    color: #334155;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #000000;
 }
 
 .os-doc-col-titulo {
-    font-size: 0.75rem;
     font-weight: 800;
+    font-size: 12px;
     text-transform: uppercase;
-    color: #0F172A;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-    padding-bottom: 4px;
-    border-bottom: 1px dashed #CBD5E1;
-}
-
-.os-doc-col-info strong.nome-destaque {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #0F172A;
-    display: block;
-    margin-bottom: 2px;
-}
-
-/* Barra de Metadados da OS (Status, Prazos, Garantia) */
-.os-doc-meta-strip {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin: 16px 0 10px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 24px;
-    font-size: 0.78rem;
-    color: #334155;
-}
-
-.os-doc-meta-item {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-.os-doc-meta-item strong {
-    font-weight: 700;
-    color: #0F172A;
-    text-transform: uppercase;
-    font-size: 0.72rem;
-}
-
-/* Dados do Veículo */
-.os-doc-veiculo-strip {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-left: 3px solid #2563EB;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 20px;
-    font-size: 0.80rem;
-    color: #334155;
-}
-
-.os-doc-veiculo-item strong {
-    font-weight: 700;
-    color: #0F172A;
-    text-transform: uppercase;
-    font-size: 0.72rem;
-    margin-right: 4px;
-}
-
-/* Observações / Sintomas / Diagnóstico */
-.os-doc-box-obs {
-    margin-bottom: 14px;
-    font-size: 0.80rem;
-    border: 1px solid #E2E8F0;
-    border-radius: 6px;
-    padding: 10px 14px;
-    background: #FAFAFA;
-}
-
-.os-doc-box-obs strong {
-    display: block;
-    font-size: 0.74rem;
-    text-transform: uppercase;
-    color: #475569;
-    letter-spacing: 0.4px;
     margin-bottom: 4px;
+    color: #000000;
 }
 
-.os-doc-box-obs .obs-texto {
-    color: #1E293B;
-    line-height: 1.45;
-}
-
-/* Tabelas de Itens e Serviços */
-.os-doc-secao-tabela {
-    margin: 22px 0;
-}
-
-.os-doc-secao-titulo {
-    font-size: 0.82rem;
-    font-weight: 800;
+.os-doc-col-info .cli-nome {
+    font-weight: 700;
     text-transform: uppercase;
-    color: #0F172A;
-    letter-spacing: 0.4px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
 }
 
-.os-doc-tabela {
+/* 3. Metadados e Veículo */
+.os-doc-info-strip {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.os-doc-info-strip .info-item strong {
+    font-weight: 800;
+    color: #000000;
+}
+
+.os-doc-veiculo-bloco {
+    font-size: 11px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+    color: #000000;
+}
+
+.os-doc-veiculo-bloco strong {
+    font-weight: 800;
+    color: #000000;
+}
+
+/* 4. Tabelas de Itens (Produtos e Serviços) */
+.os-doc-tabela-pdf {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.82rem;
-    border: 1px solid #CBD5E1;
+    font-size: 10.5px;
+    margin-bottom: 14px;
+    border: 1px solid #D1D5DB;
 }
 
-.os-doc-tabela th {
-    background: #F1F5F9;
-    color: #475569;
-    font-size: 0.72rem;
+.os-doc-tabela-pdf thead th {
+    background: #F9FAFB;
     font-weight: 700;
+    padding: 6px 8px;
+    border-right: 1px solid #D1D5DB;
+    border-bottom: 1px solid #D1D5DB;
+    color: #000000;
+}
+
+.os-doc-tabela-pdf thead th:last-child {
+    border-right: none;
+}
+
+.os-doc-tabela-pdf tbody td {
+    padding: 6px 8px;
+    border-right: 1px solid #D1D5DB;
+    border-bottom: 1px solid #D1D5DB;
+    color: #000000;
+    vertical-align: top;
+}
+
+.os-doc-tabela-pdf tbody td:last-child {
+    border-right: none;
+}
+
+.os-doc-tabela-pdf .item-nome {
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
-    padding: 8px 10px;
-    border: 1px solid #CBD5E1;
-    text-align: left;
+    color: #000000;
 }
 
-.os-doc-tabela td {
-    padding: 7px 10px;
-    border: 1px solid #E2E8F0;
-    color: #1E293B;
+.os-doc-tabela-pdf .item-desc {
+    font-size: 9.5px;
+    color: #4B5563;
+    margin-top: 3px;
+    font-style: italic;
+    line-height: 1.35;
 }
 
-.os-doc-tabela tr:nth-child(even) td {
-    background: #FAFAFA;
+.os-doc-tabela-pdf tfoot td.linha-total-tabela {
+    padding: 6px 8px;
+    text-align: right;
+    font-weight: 800;
+    font-size: 11px;
+    border-top: 1px solid #D1D5DB;
+    background: #FFFFFF;
+    color: #000000;
 }
 
-.os-doc-tabela tr.linha-total td {
-    background: #F8FAFC;
-    font-weight: 700;
-    border-top: 1px solid #CBD5E1;
-}
-
-/* Caixa de Totalização */
-.os-doc-total-box {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin-top: 22px;
-    gap: 4px;
-}
-
-.os-doc-total-box .linha-sub {
-    font-size: 0.82rem;
-    color: #475569;
-}
-
-.os-doc-total-box .linha-geral {
-    font-size: 1.25rem;
+/* 5. Valor Total Geral */
+.os-doc-valor-total-destaque {
+    text-align: right;
+    font-size: 16px;
     font-weight: 900;
-    color: #0F172A;
-    margin-top: 6px;
-    padding-top: 6px;
-    border-top: 2px solid #0F172A;
+    color: #000000;
+    margin: 12px 0 20px 0;
 }
 
-.os-doc-total-box .linha-geral span.valor {
-    color: #16A34A;
-    margin-left: 6px;
+/* 6. Assinaturas */
+.os-doc-tabela-assinaturas {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+    border: 1px solid #D1D5DB;
+    margin-top: 18px;
+}
+
+.os-doc-tabela-assinaturas thead th {
+    background: #F9FAFB;
+    border-right: 1px solid #D1D5DB;
+    border-bottom: 1px solid #D1D5DB;
+    font-weight: 600;
+    padding: 4px 6px;
+    text-align: left;
+    color: #000000;
+}
+
+.os-doc-tabela-assinaturas thead th:last-child {
+    border-right: none;
+}
+
+.os-doc-tabela-assinaturas tbody td {
+    height: 48px;
+    border-right: 1px solid #D1D5DB;
+    vertical-align: bottom;
+    padding: 4px 6px;
+}
+
+.os-doc-tabela-assinaturas tbody td:last-child {
+    border-right: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #relatorio-documento-impressao,
+    #relatorio-documento-impressao * {
+        visibility: visible;
+    }
+    #relatorio-documento-impressao {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .os-document-sheet {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+        padding: 20px 24px !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1614,7 +1617,7 @@
         text-align: left;
     }
     .os-doc-header-empresa {
-        text-align: left;
+        padding-left: 0;
     }
     .os-doc-header-meta {
         text-align: left;
