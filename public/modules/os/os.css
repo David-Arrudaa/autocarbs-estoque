@@ -355,10 +355,16 @@
     transform: translateY(-1px) !important;
 }
 
-#tabela-os-grid .action-btn.btn-action-edit:hover {
+#tabela-os-grid .action-btn.btn-action-view:hover {
     background: #EFF6FF !important;
     border-color: #93C5FD !important;
     color: #2563EB !important;
+}
+
+#tabela-os-grid .action-btn.btn-action-edit:hover {
+    background: #F8FAFC !important;
+    border-color: #94A3B8 !important;
+    color: #0F172A !important;
 }
 
 #tabela-os-grid .action-btn.btn-action-print:hover {
@@ -1310,5 +1316,314 @@
 .input-error-pulse {
     animation: inputErrorPulse 0.8s ease-in-out 2;
     border-color: #EF4444 !important;
+}
+
+/* =========================================================
+   6. SUBVIEW 3: VISUALIZAÇÃO COMPLETA DA OS (PADRÃO PDF/A4)
+   ========================================================= */
+.os-view-topbar {
+    margin-bottom: 6px;
+}
+
+.os-document-preview-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 0 40px 0;
+}
+
+.os-document-sheet {
+    background: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    padding: 36px 42px;
+    width: 100%;
+    max-width: 1040px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #0F172A;
+    box-sizing: border-box;
+}
+
+/* Cabeçalho do documento */
+.os-doc-header {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr 1fr;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #0F172A;
+}
+
+.os-doc-header-logo .brand-title {
+    font-size: 1.85rem;
+    font-weight: 900;
+    letter-spacing: -0.6px;
+    color: #0F172A;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.os-doc-header-logo .brand-title span {
+    color: #2563EB;
+}
+
+.os-doc-header-logo .brand-subtitle {
+    font-size: 0.70rem;
+    font-weight: 800;
+    color: #DC2626;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 4px;
+}
+
+.os-doc-header-logo .brand-desc {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+}
+
+.os-doc-header-empresa {
+    text-align: center;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: #334155;
+}
+
+.os-doc-header-empresa strong {
+    font-size: 0.90rem;
+    color: #0F172A;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.os-doc-header-meta {
+    text-align: right;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #334155;
+}
+
+.os-doc-header-meta .meta-os-num {
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #2563EB;
+    letter-spacing: -0.5px;
+}
+
+.os-doc-header-meta .meta-emissao {
+    font-size: 0.80rem;
+    color: #64748B;
+    margin-top: 2px;
+}
+
+/* Seção Cliente & Responsável */
+.os-doc-grid-dupla {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    padding: 16px 0;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.os-doc-col-info {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: #334155;
+}
+
+.os-doc-col-titulo {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #0F172A;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed #CBD5E1;
+}
+
+.os-doc-col-info strong.nome-destaque {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0F172A;
+    display: block;
+    margin-bottom: 2px;
+}
+
+/* Barra de Metadados da OS (Status, Prazos, Garantia) */
+.os-doc-meta-strip {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 16px 0 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    font-size: 0.78rem;
+    color: #334155;
+}
+
+.os-doc-meta-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.os-doc-meta-item strong {
+    font-weight: 700;
+    color: #0F172A;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+}
+
+/* Dados do Veículo */
+.os-doc-veiculo-strip {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-left: 3px solid #2563EB;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    font-size: 0.80rem;
+    color: #334155;
+}
+
+.os-doc-veiculo-item strong {
+    font-weight: 700;
+    color: #0F172A;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    margin-right: 4px;
+}
+
+/* Observações / Sintomas / Diagnóstico */
+.os-doc-box-obs {
+    margin-bottom: 14px;
+    font-size: 0.80rem;
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    background: #FAFAFA;
+}
+
+.os-doc-box-obs strong {
+    display: block;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    color: #475569;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+}
+
+.os-doc-box-obs .obs-texto {
+    color: #1E293B;
+    line-height: 1.45;
+}
+
+/* Tabelas de Itens e Serviços */
+.os-doc-secao-tabela {
+    margin: 22px 0;
+}
+
+.os-doc-secao-titulo {
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #0F172A;
+    letter-spacing: 0.4px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.os-doc-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    border: 1px solid #CBD5E1;
+}
+
+.os-doc-tabela th {
+    background: #F1F5F9;
+    color: #475569;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 8px 10px;
+    border: 1px solid #CBD5E1;
+    text-align: left;
+}
+
+.os-doc-tabela td {
+    padding: 7px 10px;
+    border: 1px solid #E2E8F0;
+    color: #1E293B;
+}
+
+.os-doc-tabela tr:nth-child(even) td {
+    background: #FAFAFA;
+}
+
+.os-doc-tabela tr.linha-total td {
+    background: #F8FAFC;
+    font-weight: 700;
+    border-top: 1px solid #CBD5E1;
+}
+
+/* Caixa de Totalização */
+.os-doc-total-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 22px;
+    gap: 4px;
+}
+
+.os-doc-total-box .linha-sub {
+    font-size: 0.82rem;
+    color: #475569;
+}
+
+.os-doc-total-box .linha-geral {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #0F172A;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 2px solid #0F172A;
+}
+
+.os-doc-total-box .linha-geral span.valor {
+    color: #16A34A;
+    margin-left: 6px;
+}
+
+@media (max-width: 768px) {
+    .os-doc-header {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    .os-doc-header-empresa {
+        text-align: left;
+    }
+    .os-doc-header-meta {
+        text-align: left;
+    }
+    .os-doc-grid-dupla {
+        grid-template-columns: 1fr;
+    }
+    .os-document-sheet {
+        padding: 18px 16px;
+    }
 }
 

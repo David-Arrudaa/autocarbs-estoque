@@ -71,7 +71,7 @@
                             <th style="width: 95px; text-align: center;">Data</th>
                             <th style="width: 120px; text-align: right;">Valor Total</th>
                             <th style="width: 125px; text-align: center;">Status</th>
-                            <th style="width: 145px; text-align: right;">Ações</th>
+                            <th style="width: 170px; text-align: right;">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-os">
@@ -417,5 +417,48 @@
 
     </div>
     <!-- FIM SUBVIEW 2: CADASTRO -->
+
+    <!-- =========================================================
+         SUBVIEW 3: VISUALIZAÇÃO COMPLETA DA ORDEM DE SERVIÇO (ESTILO PDF/A4)
+         ========================================================= -->
+    <div id="view-os-visualizacao" class="os-subview hidden">
+        
+        <!-- Topbar da Visualização da OS -->
+        <div class="os-page-topbar os-view-topbar">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.voltarParaLista()">
+                <i class="ph ph-arrow-left"></i>
+                <span>Voltar para Ordens</span>
+            </button>
+            <div class="os-topbar-titulo">
+                <h3 id="os-view-titulo-topo">
+                    <i class="ph ph-file-text"></i>
+                    <span>Ordem de Serviço Nº <strong id="os-view-num-topo">--</strong></span>
+                </h3>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-os-view-editar" onclick="OSModule.editarOSAtual()" title="Editar esta OS">
+                    <i class="ph ph-pencil-simple"></i>
+                    <span>Editar</span>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-os-view-imprimir" onclick="OSModule.imprimirOSAtual()" title="Imprimir Ordem de Serviço">
+                    <i class="ph ph-printer"></i>
+                    <span>Imprimir</span>
+                </button>
+                <button type="button" class="btn btn-sm" id="btn-os-view-wa" onclick="OSModule.whatsappOSAtual()" style="background:#16A34A; color:#FFFFFF; border:none;" title="Enviar WhatsApp ao Cliente">
+                    <i class="ph ph-whatsapp-logo"></i>
+                    <span>WhatsApp</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Documento Completo Renderizado -->
+        <div class="os-document-preview-wrapper">
+            <div class="os-document-sheet" id="os-view-documento-corpo">
+                <!-- Conteúdo dinâmico injetado via OSModule.renderizarVisualizacaoOS -->
+            </div>
+        </div>
+
+    </div>
+    <!-- FIM SUBVIEW 3: VISUALIZAÇÃO -->
 
 </div>

@@ -91,13 +91,21 @@ const OSModule = {
     mostrarSubview(subview) {
         const viewLista = document.getElementById('view-os-lista');
         const viewCadastro = document.getElementById('view-os-cadastro');
+        const viewVisualizacao = document.getElementById('view-os-visualizacao');
 
-        if (subview === 'cadastro') {
+        if (subview === 'visualizacao') {
             if (viewLista) viewLista.classList.add('hidden');
+            if (viewCadastro) viewCadastro.classList.add('hidden');
+            if (viewVisualizacao) viewVisualizacao.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (subview === 'cadastro') {
+            if (viewLista) viewLista.classList.add('hidden');
+            if (viewVisualizacao) viewVisualizacao.classList.add('hidden');
             if (viewCadastro) viewCadastro.classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
             if (viewCadastro) viewCadastro.classList.add('hidden');
+            if (viewVisualizacao) viewVisualizacao.classList.add('hidden');
             if (viewLista) viewLista.classList.remove('hidden');
         }
     },
@@ -108,10 +116,13 @@ const OSModule = {
         } else {
             this.idEdicao = null;
         }
+        this.osVisualizandoId = null;
         this.mostrarSubview('lista');
         if (this.ordensCache && this.ordensCache.length > 0) {
             this.renderizarTabela(this.ordensCache);
             this.atualizarPaginacao();
+        } else {
+            this.carregar();
         }
     },
 
@@ -367,7 +378,10 @@ const OSModule = {
                     </td>
                     <td style="text-align:right;">
                         <div class="actions-wrapper" style="justify-content:flex-end; gap:4px;">
-                            <button class="action-btn btn-action-edit" onclick="OSModule.editarOS('${os.id}')" title="Visualizar / Editar OS">
+                            <button class="action-btn btn-action-view" onclick="OSModule.visualizarOS('${os.id}')" title="Visualizar OS Completa">
+                                <i class="ph ph-eye"></i>
+                            </button>
+                            <button class="action-btn btn-action-edit" onclick="OSModule.editarOS('${os.id}')" title="Editar OS">
                                 <i class="ph ph-pencil-simple"></i>
                             </button>
                             <button class="action-btn btn-action-print" onclick="OSModule.imprimirOS('${os.id}')" title="Imprimir Ordem de Serviço">
@@ -1333,6 +1347,348 @@ const OSModule = {
         `;
 
         window.print();
+    },
+
+    /**
+     * =========================================================
+     * VISUALIZAÇÃO COMPLETA DA ORDEM DE SERVIÇO (ESTILO PDF/A4)
+     * =========================================================
+     */
+    async visualizarOS(id) {
+        this.osVisualizandoId = id;
+        this.mostrarSubview('visualizacao');
+
+        const numTopo = document.getElementById('os-view-num-topo');
+        if (numTopo) numTopo.innerText = id;
+
+        const container = document.getElementById('os-view-documento-corpo');
+        if (container) {
+            container.innerHTML = `
+                <div style="padding: 48px; text-align: center; color: #64748B;">
+                    <i class="ph ph-circle-notch ph-spin" style="font-size: 2.2rem; color: #2563EB;"></i>
+                    <div style="margin-top: 10px; font-weight: 600; font-size: 0.92rem;">Carregando Ordem de Serviço completa...</div>
+                </div>
+            `;
+        }
+
+        let os = this.ordensCache.find(o => String(o.id) === String(id));
+        try {
+            const res = await API.obterOS(id);
+            if (res && res.os) {
+                os = res.os;
+            }
+        } catch (err) {
+            console.warn('Erro ao carregar OS detalhada:', err);
+        }
+
+        if (!os) {
+            if (container) {
+                container.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: #EF4444;">
+                        <i class="ph ph-warning-circle" style="font-size: 2.2rem;"></i>
+                        <p style="margin-top: 8px; font-weight: 700;">Não foi possível carregar os detalhes desta Ordem de Serviço.</p>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.voltarParaLista()">Voltar para a Lista</button>
+                    </div>
+                `;
+            }
+            return;
+        }
+
+        // Tenta obter dados estendidos do cliente caso exista cliente_id
+        let clienteDados = null;
+        if (os.cliente_id) {
+            try {
+                const resCli = await API.obterCliente(os.cliente_id);
+                if (resCli && resCli.cliente) {
+                    clienteDados = resCli.cliente;
+                }
+            } catch (_) {}
+        }
+
+        this.renderizarVisualizacaoOS(os, clienteDados);
+    },
+
+    editarOSAtual() {
+        if (!this.osVisualizandoId) return;
+        this.editarOS(this.osVisualizandoId);
+    },
+
+    imprimirOSAtual() {
+        if (!this.osVisualizandoId) return;
+        this.imprimirOS(this.osVisualizandoId);
+    },
+
+    abrirWhatsAppAtual() {
+        if (!this.osVisualizandoId) return;
+        this.abrirWhatsApp(this.osVisualizandoId);
+    },
+
+    whatsappOSAtual() {
+        this.abrirWhatsAppAtual();
+    },
+
+    renderizarVisualizacaoOS(os, clienteDados = null) {
+        const container = document.getElementById('os-view-documento-corpo');
+        if (!container) return;
+
+        const numeroOS = os.numero || os.id;
+        const numTopo = document.getElementById('os-view-num-topo');
+        if (numTopo) numTopo.innerText = numeroOS;
+
+        const cliNome = (os.cliente_nome || (clienteDados && clienteDados.nome) || 'Não Informado').toUpperCase();
+        const tel = (clienteDados && clienteDados.telefone) || os.cliente_telefone || 'Não informado';
+
+        let cliEndereco = 'Não informado';
+        if (clienteDados) {
+            const partes = [
+                clienteDados.endereco || [clienteDados.logradouro, clienteDados.numero].filter(Boolean).join(', '),
+                clienteDados.bairro,
+                [clienteDados.cidade, clienteDados.estado].filter(Boolean).join(' - ')
+            ].filter(Boolean);
+            if (partes.length > 0) cliEndereco = partes.join(', ');
+        } else if (os.cliente_endereco) {
+            cliEndereco = os.cliente_endereco;
+        }
+
+        const cliEmail = (clienteDados && clienteDados.email) || os.cliente_email || 'Não informado';
+        const mod = (os.veiculo_modelo || 'Não informado').toUpperCase();
+        const placa = (os.veiculo_placa || 'Sem placa').toUpperCase();
+        const km = os.veiculo_km || '-';
+        const chassi = os.veiculo_chassi || '-';
+        const statusLabel = this.obterLabelStatus(os.status).toUpperCase();
+        const statusKey = os.status || 'aberto';
+        const dataIni = this.formatarDataBR(os.data_inicial) || '-';
+        const dataFim = this.formatarDataBR(os.data_final) || '-';
+        const dataEmissao = this.formatarDataBR(os.data_inicial || os.created_at) || this.formatarDataBR(new Date().toISOString());
+        const garantia = os.termo_garantia || '90 dias';
+
+        const servicos = Array.isArray(os.itens_servicos) ? os.itens_servicos : [];
+        const pecas = Array.isArray(os.itens_pecas) ? os.itens_pecas : [];
+
+        const totalPecas = Number(os.valor_pecas || 0);
+        const totalServicos = Number(os.valor_servicos || 0);
+        const totalDesconto = Number(os.valor_desconto || 0);
+        const totalGeral = Number(os.valor_total || (totalPecas + totalServicos - totalDesconto));
+
+        const formatarMoeda = (val) => window.UI ? UI.formatarMoeda(val) : `R$ ${Number(val || 0).toFixed(2)}`;
+
+        const linhasServicos = servicos.length > 0
+            ? servicos.map(s => {
+                const qtd = Number(s.qtd || 1);
+                const preco = Number(s.preco || 0);
+                const subt = qtd * preco;
+                return `
+                    <tr>
+                        <td>
+                            <strong style="color:#0F172A;">${window.UI ? UI.escapeHtml(s.nome) : s.nome}</strong>
+                            ${s.descricao ? `<div style="font-size:0.72rem; color:#64748B; margin-top:2px; font-style:italic;">${window.UI ? UI.escapeHtml(s.descricao) : s.descricao}</div>` : ''}
+                        </td>
+                        <td style="text-align:center;">${qtd}</td>
+                        <td style="text-align:right;">${formatarMoeda(preco)}</td>
+                        <td style="text-align:right; font-weight:600;">${formatarMoeda(subt)}</td>
+                    </tr>
+                `;
+            }).join('')
+            : `<tr><td colspan="4" style="text-align:center; color:#94A3B8; font-style:italic; padding:12px;">Nenhum serviço discriminado.</td></tr>`;
+
+        const linhasPecas = pecas.length > 0
+            ? pecas.map(p => {
+                const qtd = Number(p.qtd || 1);
+                const preco = Number(p.preco || 0);
+                const subt = qtd * preco;
+                return `
+                    <tr>
+                        <td>
+                            <strong style="color:#0F172A;">${window.UI ? UI.escapeHtml(p.nome) : p.nome}</strong>
+                        </td>
+                        <td style="text-align:center;">${qtd}</td>
+                        <td style="text-align:right;">${formatarMoeda(preco)}</td>
+                        <td style="text-align:right; font-weight:600;">${formatarMoeda(subt)}</td>
+                    </tr>
+                `;
+            }).join('')
+            : `<tr><td colspan="4" style="text-align:center; color:#94A3B8; font-style:italic; padding:12px;">Nenhuma peça discriminada.</td></tr>`;
+
+        container.innerHTML = `
+            <!-- 1. Cabeçalho Empresa & Identificação da OS -->
+            <div class="os-doc-header">
+                <div class="os-doc-header-logo">
+                    <h2 class="brand-title">AUTOCAR <span>BS</span></h2>
+                    <div class="brand-subtitle">Especialistas em VOLKSWAGEN E AUDI</div>
+                    <div class="brand-desc">Mecânica e Revisões Preventivas Multimarcas</div>
+                </div>
+
+                <div class="os-doc-header-empresa">
+                    <strong>AUTOCAR BS</strong>
+                    <div>CNPJ: 27.259.708/0001-18</div>
+                    <div>15 DE NOVEMBRO, 2569 - LOTEAMENTO MODENA - TATUÍ - SP</div>
+                    <div>E-mail: autocarbstatui@gmail.com • Fone: (15) 99666-1359</div>
+                </div>
+
+                <div class="os-doc-header-meta">
+                    <div><span style="font-size:0.75rem; text-transform:uppercase; color:#64748B; font-weight:700;">ORDEM DE SERVIÇO</span></div>
+                    <div class="meta-os-num">N° ${numeroOS}</div>
+                    <div class="meta-emissao"><strong>Emissão:</strong> ${dataEmissao}</div>
+                    <div style="margin-top:4px;">
+                        <span class="badge-status-os status-${statusKey}">
+                            ${statusLabel}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Dados do Cliente e Responsável -->
+            <div class="os-doc-grid-dupla">
+                <div class="os-doc-col-info">
+                    <div class="os-doc-col-titulo">Cliente</div>
+                    <strong class="nome-destaque">${cliNome}</strong>
+                    <div><strong>Endereço:</strong> ${cliEndereco}</div>
+                    <div><strong>E-mail:</strong> ${cliEmail}</div>
+                    <div><strong>Contato:</strong> ${tel}</div>
+                </div>
+
+                <div class="os-doc-col-info">
+                    <div class="os-doc-col-titulo">Responsável</div>
+                    <strong class="nome-destaque">${os.responsavel || 'AUTOCAR BS'}</strong>
+                    <div><strong>Contato:</strong> (15) 99666-1359</div>
+                    <div><strong>E-mail:</strong> autocarbstatui@gmail.com</div>
+                    <div><strong>Garantia dos Serviços:</strong> ${garantia}</div>
+                </div>
+            </div>
+
+            <!-- 3. Parâmetros da OS e Dados do Veículo -->
+            <div class="os-doc-meta-strip">
+                <div class="os-doc-meta-item">
+                    <strong>STATUS OS:</strong> <span>${statusLabel}</span>
+                </div>
+                <div class="os-doc-meta-item">
+                    <strong>DATA INICIAL:</strong> <span>${dataIni}</span>
+                </div>
+                <div class="os-doc-meta-item">
+                    <strong>DADOS FINAIS:</strong> <span>${dataFim}</span>
+                </div>
+                <div class="os-doc-meta-item">
+                    <strong>GARANTIA:</strong> <span>${garantia}</span>
+                </div>
+                <div class="os-doc-meta-item">
+                    <strong>TERMO GARANTIA:</strong> <span>${os.termo_garantia || '90 dias'}</span>
+                </div>
+            </div>
+
+            <div class="os-doc-veiculo-strip">
+                <div class="os-doc-veiculo-item" style="flex: 1 1 280px;">
+                    <strong>DESCRIÇÃO:</strong> <span>${mod}${os.veiculo_ano ? ` (${os.veiculo_ano})` : ''}</span>
+                </div>
+                <div class="os-doc-veiculo-item">
+                    <strong>KM:</strong> <span>${km}</span>
+                </div>
+                <div class="os-doc-veiculo-item">
+                    <strong>PLACA:</strong> <span style="font-weight:700; color:#2563EB;">${placa}</span>
+                </div>
+                <div class="os-doc-veiculo-item">
+                    <strong>CHASSI:</strong> <span>${chassi}</span>
+                </div>
+            </div>
+
+            <!-- 4. Sintomas e Laudo Técnico (se preenchidos) -->
+            ${os.descricao_problema ? `
+                <div class="os-doc-box-obs">
+                    <strong>Sintomas / Reclamação do Cliente:</strong>
+                    <div class="obs-texto">${window.UI ? UI.escapeHtml(os.descricao_problema) : os.descricao_problema}</div>
+                </div>
+            ` : ''}
+
+            ${os.laudo_tecnico ? `
+                <div class="os-doc-box-obs">
+                    <strong>Diagnóstico & Laudo Técnico:</strong>
+                    <div class="obs-texto">${window.UI ? UI.escapeHtml(os.laudo_tecnico) : os.laudo_tecnico}</div>
+                </div>
+            ` : ''}
+
+            <!-- 5. Tabela de Peças & Produtos -->
+            <div class="os-doc-secao-tabela">
+                <div class="os-doc-secao-titulo">
+                    <i class="ph ph-package" style="color:#2563EB;"></i>
+                    <span>Produtos & Peças</span>
+                </div>
+                <table class="os-doc-tabela">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th style="width: 70px; text-align: center;">Quantidade</th>
+                            <th style="width: 120px; text-align: right;">Preço Unitário</th>
+                            <th style="width: 130px; text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${linhasPecas}
+                        ${pecas.length > 0 ? `
+                            <tr class="linha-total">
+                                <td colspan="3" style="text-align:right;">Total Peças:</td>
+                                <td style="text-align:right; font-weight:700; color:#0F172A;">${formatarMoeda(totalPecas)}</td>
+                            </tr>
+                        ` : ''}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 6. Tabela de Serviços & Mão de Obra -->
+            <div class="os-doc-secao-tabela">
+                <div class="os-doc-secao-titulo">
+                    <i class="ph ph-wrench" style="color:#2563EB;"></i>
+                    <span>Serviços & Mão de Obra</span>
+                </div>
+                <table class="os-doc-tabela">
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th style="width: 70px; text-align: center;">Quantidade</th>
+                            <th style="width: 120px; text-align: right;">Preço Unitário</th>
+                            <th style="width: 130px; text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${linhasServicos}
+                        ${servicos.length > 0 ? `
+                            <tr class="linha-total">
+                                <td colspan="3" style="text-align:right;">Total Serviços:</td>
+                                <td style="text-align:right; font-weight:700; color:#0F172A;">${formatarMoeda(totalServicos)}</td>
+                            </tr>
+                        ` : ''}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 7. Fechamento Financeiro / Totais -->
+            <div class="os-doc-total-box">
+                <div class="linha-sub">Total Serviços: <strong>${formatarMoeda(totalServicos)}</strong></div>
+                <div class="linha-sub">Total Peças: <strong>${formatarMoeda(totalPecas)}</strong></div>
+                ${totalDesconto > 0 ? `<div class="linha-sub" style="color:#DC2626;">Desconto: <strong>-${formatarMoeda(totalDesconto)}</strong></div>` : ''}
+                <div class="linha-geral">
+                    <span>Valor Total:</span>
+                    <span class="valor">${formatarMoeda(totalGeral)}</span>
+                </div>
+            </div>
+
+            <!-- 8. Termo de Garantia e Assinaturas (como no documento oficial) -->
+            <div style="margin-top:36px; border-top:1px dashed #CBD5E1; padding-top:16px; font-size:0.75rem; color:#64748B;">
+                <p style="margin:0 0 26px 0; line-height:1.5;">
+                    Declaro ter recebido os serviços e peças discriminados nesta Ordem de Serviço em perfeitas condições de funcionamento, com termo de garantia de <strong>${garantia}</strong> a partir da data de entrega.
+                </p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; text-align:center;">
+                    <div>
+                        <div style="border-top:1px solid #475569; width:80%; margin:0 auto; padding-top:4px;">
+                            <strong>AUTOCAR BS</strong><br>Responsável Técnico
+                        </div>
+                    </div>
+                    <div>
+                        <div style="border-top:1px solid #475569; width:80%; margin:0 auto; padding-top:4px;">
+                            <strong>${cliNome}</strong><br>Assinatura do Cliente
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
     },
 
     /**
