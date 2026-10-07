@@ -532,7 +532,7 @@ const OSModule = {
             this.setInputValue('os_veiculo_km', os.veiculo_km || '');
             this.setInputValue('os_veiculo_chassi', os.veiculo_chassi || '');
 
-            let respEdicao = (os.responsavel || '').trim();
+            let respEdicao = (os.criado_por || os.usuario_criacao || os.responsavel || '').trim();
             if (!respEdicao || respEdicao.toUpperCase() === 'AUTOCAR BS') {
                 const uLog = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
                 respEdicao = os.usuario_nome || (uLog.nome ? uLog.nome.trim() : '') || 'AUTOCAR BS';
@@ -1071,6 +1071,15 @@ const OSModule = {
             respSalvar = (uLogado.nome ? uLogado.nome.trim() : '') || 'AUTOCAR BS';
         }
 
+        let criadorOriginal = null;
+        if (this.idEdicao) {
+            const osAntiga = this.ordensCache.find(o => String(o.id) === String(this.idEdicao));
+            if (osAntiga) {
+                criadorOriginal = osAntiga.criado_por || osAntiga.usuario_criacao || (osAntiga.responsavel && osAntiga.responsavel !== 'AUTOCAR BS' ? osAntiga.responsavel : null);
+            }
+        }
+        const respFinal = (criadorOriginal || respSalvar).toUpperCase();
+
         const payload = {
             id: this.idEdicao,
             cliente_id: this.getInputValue('os_cliente_id') || null,
@@ -1081,9 +1090,11 @@ const OSModule = {
             veiculo_placa: this.getInputValue('os_veiculo_placa'),
             veiculo_km: this.getInputValue('os_veiculo_km'),
             veiculo_chassi: this.getInputValue('os_veiculo_chassi'),
-            responsavel: respSalvar.toUpperCase(),
+            responsavel: respFinal,
+            criado_por: respFinal,
+            usuario_criacao: respFinal,
             usuario_id: uLogado.id || null,
-            usuario_nome: (uLogado.nome ? uLogado.nome.trim().toUpperCase() : '') || respSalvar.toUpperCase(),
+            usuario_nome: (uLogado.nome ? uLogado.nome.trim().toUpperCase() : '') || respFinal,
             data_inicial: dataInicial,
             data_final: this.getInputValue('os_data_final'),
             status: this.getInputValue('os_status') || 'orcamento',
@@ -1398,8 +1409,8 @@ const OSModule = {
             : `<tr><td colspan="4" style="text-align: center; color: #6B7280; font-style: italic; padding: 8px; border-bottom: 1px solid #D1D5DB;">Nenhum serviço discriminado.</td></tr>`;
 
         const uLogadoDoc = (window.obterUsuarioLogado && window.obterUsuarioLogado()) || window.usuarioLogado || {};
-        let responsavelNome = (os.responsavel || '').trim();
-        if (!responsavelNome || responsavelNome.toUpperCase() === 'AUTOCAR BS') {
+        let responsavelNome = (os.criado_por || os.usuario_criacao || (os.responsavel && os.responsavel !== 'AUTOCAR BS' ? os.responsavel : '') || '').trim();
+        if (!responsavelNome) {
             responsavelNome = os.usuario_nome || (uLogadoDoc.nome ? uLogadoDoc.nome.trim() : '') || 'AUTOCAR BS';
         }
         responsavelNome = responsavelNome.toUpperCase();
@@ -1434,16 +1445,13 @@ const OSModule = {
                 <div class="os-doc-col-info" style="flex: 1 1 50%; max-width: 50%; font-size: 10.5px; line-height: 1.45;">
                     <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 11.5px; margin-bottom: 4px;">CLIENTE</div>
                     <div class="cli-nome" style="font-weight: 700;">${cliNome}</div>
-                    <div>${cliEndereco}</div>
-                    <div>E-mail: ${cliEmail}</div>
+                    ${cliEndereco && cliEndereco !== 'Não informado' ? `<div>${cliEndereco}</div>` : ''}
                     <div>Celular: ${tel}</div>
                 </div>
 
                 <div class="os-doc-col-info" style="flex: 1 1 50%; max-width: 50%; font-size: 10.5px; line-height: 1.45;">
                     <div class="os-doc-col-titulo" style="font-weight: 800; font-size: 11.5px; margin-bottom: 4px;">RESPONSÁVEL</div>
                     <div class="cli-nome" style="font-weight: 700;">${responsavelNome}</div>
-                    <div>Telefone: (15) 99666-1359</div>
-                    <div>Email: autocarbstatui@gmail.com</div>
                 </div>
             </div>
 

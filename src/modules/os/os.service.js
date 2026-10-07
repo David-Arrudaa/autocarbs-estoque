@@ -229,26 +229,24 @@ class OSService {
         const valorTotal = Math.max(0, (Number(dados.valor_total) || (valorPecas + valorServicos)) - valorDesconto);
 
         if (dados.id) {
-            // Edição
+            // Edição: PRESERVA permanentemente quem criou a OS originalmente
             const index = lista.findIndex(os => String(os.id) === String(dados.id));
             if (index === -1) {
                 throw new Error('Ordem de serviço não encontrada para edição.');
             }
 
             const registroAntigo = lista[index];
-            let respEdicao = (dados.responsavel || '').trim();
-            if (!respEdicao || respEdicao.toUpperCase() === 'AUTOCAR BS') {
-                respEdicao = registroAntigo.responsavel || registroAntigo.usuario_nome || usuarioNome || 'AUTOCAR BS';
-            }
+            const criadorOriginal = (registroAntigo.criado_por || registroAntigo.usuario_criacao || registroAntigo.responsavel || usuarioNome || 'AUTOCAR BS').trim().toUpperCase();
 
             const atualizado = {
                 ...registroAntigo,
                 ...dados,
                 id: registroAntigo.id,
                 numero: String(dados.numero || registroAntigo.numero || registroAntigo.id),
-                responsavel: respEdicao.toUpperCase(),
-                usuario_nome: registroAntigo.usuario_nome || usuarioNome || respEdicao.toUpperCase(),
-                usuario_id: registroAntigo.usuario_id || usuarioId || null,
+                criado_por: criadorOriginal,
+                usuario_criacao: criadorOriginal,
+                responsavel: criadorOriginal,
+                atualizado_por: usuarioNome || null,
                 valor_pecas: valorPecas,
                 valor_servicos: valorServicos,
                 valor_desconto: valorDesconto,
@@ -284,6 +282,7 @@ class OSService {
             if (!respNova || respNova.toUpperCase() === 'AUTOCAR BS') {
                 respNova = usuarioNome || (dados.usuario_nome ? dados.usuario_nome.trim() : '') || 'AUTOCAR BS';
             }
+            const nomeCriador = (usuarioNome || respNova).toUpperCase();
 
             const novaOS = {
                 id: novoId,
@@ -296,9 +295,11 @@ class OSService {
                 veiculo_placa: (dados.veiculo_placa || '').trim().toUpperCase(),
                 veiculo_km: (dados.veiculo_km || '').trim(),
                 veiculo_chassi: (dados.veiculo_chassi || '').trim().toUpperCase(),
-                responsavel: respNova.toUpperCase(),
+                responsavel: nomeCriador,
+                criado_por: nomeCriador,
+                usuario_criacao: nomeCriador,
                 usuario_id: usuarioId || dados.usuario_id || null,
-                usuario_nome: usuarioNome || dados.usuario_nome || respNova.toUpperCase(),
+                usuario_nome: nomeCriador,
                 data_inicial: dados.data_inicial || agora.split('T')[0],
                 data_final: dados.data_final || '',
                 valor_pecas: valorPecas,
