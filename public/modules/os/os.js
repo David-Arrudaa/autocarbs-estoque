@@ -22,6 +22,11 @@ const OSModule = {
     inicializado: false,
     ordensCache: [],
     catalogoServicos: [],
+    catalogoProdutos: [],
+    timerBuscaProdutoRapido: null,
+    timerBuscaServicoRapido: null,
+    produtoSelecionadoTemp: null,
+    servicoSelecionadoTemp: null,
     clientesEncontrados: [],
     timerBuscaCliente: null,
     listenerClickForaRegistrado: false,
@@ -47,12 +52,16 @@ const OSModule = {
                 if (!e.target.closest('.os-cliente-search-container')) {
                     this.fecharDropdownCliente();
                 }
+                if (!e.target.closest('.os-quick-add-bar')) {
+                    this.fecharDropdownsRapidos();
+                }
             });
         }
 
         await Promise.all([
             this.carregar(1),
-            this.carregarCatalogoServicos()
+            this.carregarCatalogoServicos(),
+            this.carregarCatalogoProdutos()
         ]);
     },
 
@@ -81,6 +90,15 @@ const OSModule = {
             const res = await API.listarServicos({ limite: 1000, ordenarPor: 'nome', ordem: 'asc' });
             if (res && res.success) {
                 this.catalogoServicos = res.servicos || [];
+            }
+        } catch (_) {}
+    },
+
+    async carregarCatalogoProdutos() {
+        try {
+            const res = await API.listarProdutos(1, 200);
+            if (res && res.success && Array.isArray(res.data)) {
+                this.catalogoProdutos = res.data;
             }
         } catch (_) {}
     },
@@ -170,6 +188,27 @@ const OSModule = {
         this.setInputValue('os_valor_desconto', '0,00');
         this.atualizarStatusVinculoCliente(false);
         this.fecharDropdownCliente();
+
+        this.itensPecas = [];
+        this.itensServicos = [];
+        this.produtoSelecionadoTemp = null;
+        this.servicoSelecionadoTemp = null;
+
+        const inpProd = document.getElementById('input-busca-produto-rapido');
+        if (inpProd) inpProd.value = '';
+        const inpPrecoP = document.getElementById('input-preco-produto-rapido');
+        if (inpPrecoP) inpPrecoP.value = '';
+        const inpQtdP = document.getElementById('input-qtd-produto-rapido');
+        if (inpQtdP) inpQtdP.value = '1';
+
+        const inpServ = document.getElementById('input-busca-servico-rapido');
+        if (inpServ) inpServ.value = '';
+        const inpPrecoS = document.getElementById('input-preco-servico-rapido');
+        if (inpPrecoS) inpPrecoS.value = '';
+        const inpQtdS = document.getElementById('input-qtd-servico-rapido');
+        if (inpQtdS) inpQtdS.value = '1';
+
+        this.fecharDropdownsRapidos();
 
         const elDisp = document.getElementById('os_numero_display');
         if (elDisp) elDisp.textContent = 'N° OS: Automático';
@@ -590,130 +629,162 @@ const OSModule = {
         return el ? el.value.trim() : '';
     },
 
-    /**
-     * Itens: Discriminação de Serviços
-     */
-    adicionarLinhaServico(item = null) {
-        this.itensServicos.push(item || {
-            servico_id: null,
-            codigo: '',
-            nome: '',
-            preco: 0,
-            subtotal: 0,
-            descricao: '',
-            mostrarDescricao: false
-        });
-        this.renderizarLinhasServicos();
-        this.recalcularTotais();
+    fecharDropdownsRapidos() {
+        const ddProd = document.getElementById('dropdown-produtos-rapido');
+        if (ddProd) ddProd.classList.add('hidden');
 
-        // Auto-foco no campo de busca de serviço da nova linha adicionada
-        const novoIdx = this.itensServicos.length - 1;
-        setTimeout(() => {
-            const input = document.getElementById(`input-busca-servico-${novoIdx}`);
-            if (input) input.focus();
-        }, 60);
-    },
-
-    removerLinhaServico(index) {
-        this.itensServicos.splice(index, 1);
-        this.renderizarLinhasServicos();
-        this.recalcularTotais();
-    },
-
-    limparServicoLinha(index) {
-        if (!this.itensServicos[index]) return;
-        this.itensServicos[index].servico_id = null;
-        this.itensServicos[index].codigo = '';
-        this.itensServicos[index].nome = '';
-        this.itensServicos[index].preco = 0;
-        this.itensServicos[index].subtotal = 0;
-        this.itensServicos[index].descricao = '';
-        this.itensServicos[index].mostrarDescricao = false;
-        this.fecharTodosDropdownsServicos();
-        this.renderizarLinhasServicos();
-        this.recalcularTotais();
-        setTimeout(() => {
-            const input = document.getElementById(`input-busca-servico-${index}`);
-            if (input) input.focus();
-        }, 50);
-    },
-
-    toggleDescricaoServico(index) {
-        if (!this.itensServicos[index]) return;
-        this.itensServicos[index].mostrarDescricao = !this.itensServicos[index].mostrarDescricao;
-        this.renderizarLinhasServicos();
-        if (this.itensServicos[index].mostrarDescricao) {
-            setTimeout(() => {
-                const textarea = document.getElementById(`textarea-servico-desc-${index}`);
-                if (textarea) textarea.focus();
-            }, 50);
-        }
+        const ddServ = document.getElementById('dropdown-servicos-rapido');
+        if (ddServ) ddServ.classList.add('hidden');
     },
 
     fecharTodosDropdownsServicos() {
-        document.querySelectorAll('.os-servico-results-dropdown').forEach(dd => {
-            dd.classList.add('hidden');
-        });
+        this.fecharDropdownsRapidos();
     },
 
-    aoFocarBuscaServico(index) {
-        const input = document.getElementById(`input-busca-servico-${index}`);
+    // ========================================================
+    // PEÇAS & INSUMOS (PADRÃO IMAGEM 3 COM BUSCA NO BANCO)
+    // ========================================================
+    aoFocarBuscaProdutoRapido() {
+        const input = document.getElementById('input-busca-produto-rapido');
         const termo = input ? input.value : '';
-        if (String(termo || '').trim().length >= 3) {
-            this.renderizarDropdownServicos(index, termo);
-        } else {
-            this.fecharTodosDropdownsServicos();
+        if (String(termo || '').trim().length >= 1) {
+            this.buscarProdutosRapido(termo);
         }
     },
 
-    aoDigitarBuscaServico(index, termo) {
-        if (!this.itensServicos[index]) return;
-        this.itensServicos[index].nome = termo;
-        if (!termo.trim()) {
-            this.itensServicos[index].servico_id = null;
-        }
-
-        // Atualiza dinamicamente o botão de limpar sem perder foco do input
-        const container = document.getElementById(`os-servico-search-container-${index}`);
-        if (container) {
-            let btnClear = container.querySelector('.btn-clear-servico');
-            if (termo.trim()) {
-                if (!btnClear) {
-                    const wrapper = container.querySelector('.os-servico-input-wrapper');
-                    if (wrapper) {
-                        const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'btn-clear-servico';
-                        btn.title = 'Limpar serviço selecionado';
-                        btn.onclick = () => OSModule.limparServicoLinha(index);
-                        btn.innerHTML = '<i class="ph ph-x"></i>';
-                        wrapper.appendChild(btn);
-                    }
-                }
-            } else if (btnClear) {
-                btnClear.remove();
-            }
-        }
-
-        // Exige no mínimo 3 caracteres para disparar a pesquisa e abrir a lista
+    aoDigitarBuscaProdutoRapido(termo) {
+        clearTimeout(this.timerBuscaProdutoRapido);
+        this.produtoSelecionadoTemp = null;
         const q = String(termo || '').trim();
-        if (q.length < 3) {
-            const dropdown = document.getElementById(`dropdown-servico-results-${index}`);
-            if (dropdown) {
-                dropdown.innerHTML = '';
-                dropdown.classList.add('hidden');
+        if (!q) {
+            const dd = document.getElementById('dropdown-produtos-rapido');
+            if (dd) {
+                dd.innerHTML = '';
+                dd.classList.add('hidden');
             }
             return;
         }
 
-        this.renderizarDropdownServicos(index, termo);
+        this.buscarProdutosRapido(termo);
     },
 
-    aoTeclarBuscaServico(e, index) {
-        const dropdown = document.getElementById(`dropdown-servico-results-${index}`);
-        if (!dropdown || dropdown.classList.contains('hidden')) return;
+    async buscarProdutosRapido(termo) {
+        const dd = document.getElementById('dropdown-produtos-rapido');
+        if (!dd) return;
 
-        const items = Array.from(dropdown.querySelectorAll('.os-search-result-item'));
+        const q = String(termo || '').toLowerCase().trim();
+
+        // 1. Filtro instantâneo no catálogo em memória
+        let filtrados = (this.catalogoProdutos || []).filter(p => {
+            const tipo = String(p.tipo || '').toLowerCase();
+            const modelo = String(p.modelo || '').toLowerCase();
+            const marca = String(p.marca || '').toLowerCase();
+            const cod = String(p.codigo || '').toLowerCase();
+            const desc = `${tipo} ${modelo} ${marca}`.trim();
+            return desc.includes(q) || cod.includes(q);
+        });
+
+        if (filtrados.length > 0) {
+            this.renderizarDropdownProdutosRapido(filtrados.slice(0, 15));
+        }
+
+        // 2. Consulta debounced no banco de dados
+        clearTimeout(this.timerBuscaProdutoRapido);
+        this.timerBuscaProdutoRapido = setTimeout(async () => {
+            try {
+                const res = await API.listarProdutos(1, 25, termo);
+                if (res && res.success && Array.isArray(res.data)) {
+                    res.data.forEach(novoItem => {
+                        if (!this.catalogoProdutos.some(p => p.id === novoItem.id)) {
+                            this.catalogoProdutos.push(novoItem);
+                        }
+                    });
+                    this.renderizarDropdownProdutosRapido(res.data.slice(0, 15));
+                }
+            } catch (_) {}
+        }, 220);
+    },
+
+    renderizarDropdownProdutosRapido(lista) {
+        const dd = document.getElementById('dropdown-produtos-rapido');
+        if (!dd) return;
+
+        if (!lista || lista.length === 0) {
+            dd.innerHTML = `
+                <div class="os-quick-dropdown-empty">
+                    Nenhum produto cadastrado com esse nome. Você pode digitar o preço e adicionar como item avulso.
+                </div>
+            `;
+            dd.classList.remove('hidden');
+            return;
+        }
+
+        dd.innerHTML = lista.map((p, idx) => {
+            const tipo = p.tipo || '';
+            const modelo = p.modelo || '';
+            const marca = p.marca || '';
+            const nomeCompleto = `${tipo} ${modelo} ${marca}`.trim() || p.nome || 'PRODUTO';
+            const cod = p.codigo ? `[${p.codigo}] ` : '';
+            const precoVenda = Number(p.venda || p.vendaUnit || p.precoVenda || p.preco || 0);
+            const estoqueQtd = Number(p.qtd || p.estoque || 0);
+
+            return `
+                <div 
+                    class="os-quick-dropdown-item ${idx === 0 ? 'highlighted' : ''}"
+                    onclick="OSModule.selecionarProdutoRapido(${JSON.stringify(p).replace(/"/g, '&quot;')})"
+                    data-index="${idx}"
+                >
+                    <div class="item-main">
+                        <div class="item-title">${cod}${window.UI ? UI.escapeHtml(nomeCompleto) : nomeCompleto}</div>
+                        <div class="item-subtitle">${p.marca ? p.marca + ' • ' : ''}Estoque: ${estoqueQtd} un.</div>
+                    </div>
+                    <div class="item-price">R$ ${precoVenda.toFixed(2).replace('.', ',')}</div>
+                </div>
+            `;
+        }).join('');
+
+        dd.classList.remove('hidden');
+    },
+
+    selecionarProdutoRapido(p) {
+        const tipo = p.tipo || '';
+        const modelo = p.modelo || '';
+        const marca = p.marca || '';
+        const nomeCompleto = (`${tipo} ${modelo} ${marca}`.trim() || p.nome || 'PRODUTO').toUpperCase();
+        const precoVenda = Number(p.venda || p.vendaUnit || p.precoVenda || p.preco || 0);
+
+        const inpDesc = document.getElementById('input-busca-produto-rapido');
+        const inpPreco = document.getElementById('input-preco-produto-rapido');
+        const inpQtd = document.getElementById('input-qtd-produto-rapido');
+
+        if (inpDesc) inpDesc.value = nomeCompleto;
+        if (inpPreco) inpPreco.value = precoVenda.toFixed(2).replace('.', ',');
+        if (inpQtd && (!inpQtd.value || parseInt(inpQtd.value, 10) <= 0)) inpQtd.value = '1';
+
+        this.produtoSelecionadoTemp = {
+            id: p.id,
+            codigo: p.codigo || '',
+            nome: nomeCompleto,
+            preco: precoVenda
+        };
+
+        const dd = document.getElementById('dropdown-produtos-rapido');
+        if (dd) dd.classList.add('hidden');
+
+        if (inpQtd) inpQtd.focus();
+    },
+
+    aoTeclarBuscaProdutoRapido(e) {
+        const dd = document.getElementById('dropdown-produtos-rapido');
+        if (!dd || dd.classList.contains('hidden')) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.adicionarPecaRapida();
+            }
+            return;
+        }
+
+        const items = Array.from(dd.querySelectorAll('.os-quick-dropdown-item'));
         if (items.length === 0) return;
 
         let currentIndex = items.findIndex(el => el.classList.contains('highlighted'));
@@ -732,244 +803,71 @@ const OSModule = {
             items[currentIndex].scrollIntoView({ block: 'nearest' });
         } else if (e.key === 'Enter') {
             e.preventDefault();
-            if (currentIndex >= 0 && items[currentIndex]) {
-                const id = items[currentIndex].getAttribute('data-id');
-                if (id) this.selecionarServicoEncontrado(index, id);
-            } else if (items.length > 0) {
-                const id = items[0].getAttribute('data-id');
-                if (id) this.selecionarServicoEncontrado(index, id);
+            const target = currentIndex >= 0 ? items[currentIndex] : items[0];
+            if (target) {
+                target.click();
+            } else {
+                this.adicionarPecaRapida();
             }
         } else if (e.key === 'Escape') {
-            this.fecharTodosDropdownsServicos();
+            dd.classList.add('hidden');
         }
     },
 
-    renderizarDropdownServicos(index, termo) {
-        const dropdown = document.getElementById(`dropdown-servico-results-${index}`);
-        if (!dropdown) return;
+    adicionarPecaRapida() {
+        const inpDesc = document.getElementById('input-busca-produto-rapido');
+        const inpPreco = document.getElementById('input-preco-produto-rapido');
+        const inpQtd = document.getElementById('input-qtd-produto-rapido');
 
-        const q = String(termo || '').toLowerCase().trim();
-        // Apenas a partir de 3 caracteres
-        if (q.length < 3) {
-            dropdown.innerHTML = '';
-            dropdown.classList.add('hidden');
+        const nome = (inpDesc ? inpDesc.value : '').trim().toUpperCase();
+        if (!nome) {
+            if (window.UI) UI.toast('Digite ou selecione o nome do produto/peça.', 'warning');
+            if (inpDesc) inpDesc.focus();
             return;
         }
 
-        const lista = (this.catalogoServicos || []).filter(s => {
-            const nome = (s.nome || '').toLowerCase();
-            const codigo = String(s.codigo || '').toLowerCase();
-            return nome.includes(q) || codigo.includes(q);
+        const precoStr = (inpPreco ? inpPreco.value : '').trim();
+        const preco = parseFloat(precoStr.replace(/\./g, '').replace(',', '.')) || 0;
+        const qtd = Math.max(1, parseInt(inpQtd ? inpQtd.value : 1, 10) || 1);
+        const subtotal = qtd * preco;
+
+        this.itensPecas.push({
+            produto_id: this.produtoSelecionadoTemp ? this.produtoSelecionadoTemp.id : null,
+            codigo: this.produtoSelecionadoTemp ? this.produtoSelecionadoTemp.codigo : '',
+            nome: nome,
+            qtd: qtd,
+            preco: preco,
+            subtotal: subtotal
         });
 
-        lista.sort((a, b) => {
-            const aName = (a.nome || '').toLowerCase();
-            const bName = (b.nome || '').toLowerCase();
-            const aStarts = aName.startsWith(q);
-            const bStarts = bName.startsWith(q);
-            if (aStarts && !bStarts) return -1;
-            if (!aStarts && bStarts) return 1;
-            return aName.localeCompare(bName);
-        });
+        this.produtoSelecionadoTemp = null;
+        if (inpDesc) inpDesc.value = '';
+        if (inpPreco) inpPreco.value = '';
+        if (inpQtd) inpQtd.value = '1';
 
-        const correspondencias = lista.slice(0, 15);
+        const dd = document.getElementById('dropdown-produtos-rapido');
+        if (dd) dd.classList.add('hidden');
 
-        if (correspondencias.length === 0) {
-            dropdown.innerHTML = `
-                <div class="os-search-no-results">
-                    <i class="ph ph-magnifying-glass"></i>
-                    <span>Nenhum serviço encontrado no catálogo para "<strong>${window.UI ? UI.escapeHtml(termo) : termo}</strong>". Você pode prosseguir com este nome avulso.</span>
-                </div>
-            `;
-            dropdown.classList.remove('hidden');
-            return;
-        }
-
-        dropdown.innerHTML = correspondencias.map((cat, i) => `
-            <div 
-                class="os-search-result-item ${i === 0 ? 'highlighted' : ''}" 
-                onclick="OSModule.selecionarServicoEncontrado(${index}, ${cat.id})"
-                data-id="${cat.id}"
-                data-index="${i}"
-            >
-                <div class="os-sri-left">
-                    <div class="os-sri-header">
-                        ${cat.codigo ? `<span class="os-sri-badge">[${window.UI ? UI.escapeHtml(cat.codigo) : cat.codigo}]</span>` : ''}
-                        <span class="os-sri-nome">${window.UI ? UI.escapeHtml(cat.nome) : cat.nome}</span>
-                    </div>
-                    ${cat.descricao ? `<div class="os-sri-desc-preview">${window.UI ? UI.escapeHtml(cat.descricao) : cat.descricao}</div>` : ''}
-                </div>
-                <div class="os-sri-right">
-                    <span class="os-sri-price">R$ ${Number(cat.preco || 0).toFixed(2).replace('.', ',')}</span>
-                </div>
-            </div>
-        `).join('');
-
-        dropdown.classList.remove('hidden');
-    },
-
-    selecionarServicoEncontrado(index, servicoId) {
-        if (!this.itensServicos[index]) return;
-        const servico = this.catalogoServicos.find(s => String(s.id) === String(servicoId));
-        if (!servico) return;
-
-        this.itensServicos[index].servico_id = servico.id;
-        this.itensServicos[index].codigo = servico.codigo || '';
-        this.itensServicos[index].nome = servico.nome || '';
-        this.itensServicos[index].preco = Number(servico.preco) || 0;
-        this.itensServicos[index].subtotal = Number(servico.preco) || 0;
-        // Puxa a descrição do catálogo mestre como base para o usuário editar nesta OS (nunca altera o catálogo original)
-        this.itensServicos[index].descricao = servico.descricao || '';
-        // Abre automaticamente o campo de descrição nesta OS!
-        this.itensServicos[index].mostrarDescricao = true;
-
-        this.fecharTodosDropdownsServicos();
-        this.renderizarLinhasServicos();
-        this.recalcularTotais();
-    },
-
-    atualizarLinhaServico(index, campo, valor) {
-        if (!this.itensServicos[index]) return;
-        if (campo === 'preco') {
-            const num = parseFloat(String(valor).replace(/\./g, '').replace(',', '.')) || 0;
-            this.itensServicos[index].preco = num;
-            this.itensServicos[index].subtotal = num;
-        } else {
-            this.itensServicos[index][campo] = valor;
-        }
-        this.recalcularTotais();
-    },
-
-    renderizarLinhasServicos() {
-        this.atualizarBadgesAbas();
-        const tbody = document.getElementById('tbody-itens-servicos');
-        if (!tbody) return;
-
-        if (this.itensServicos.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3" style="text-align:center; padding:18px; color:#94A3B8; font-size:0.80rem;">
-                        <i class="ph ph-wrench" style="font-size:1.4rem; opacity:0.5; display:block; margin-bottom:4px;"></i>
-                        Nenhum serviço adicionado. Clique em "+ Adicionar Serviço" para pesquisar e incluir mão de obra.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = this.itensServicos.map((s, idx) => `
-            <tr>
-                <td style="vertical-align:top; padding: 10px 12px;">
-                    <!-- Barra de Pesquisa de Serviço (Autocomplete no Catálogo) -->
-                    <div class="os-servico-search-container" id="os-servico-search-container-${idx}">
-                        <div class="os-servico-input-wrapper">
-                            <i class="ph ph-magnifying-glass os-search-icon"></i>
-                            <input 
-                                type="text" 
-                                id="input-busca-servico-${idx}" 
-                                class="os-input-busca-servico"
-                                placeholder="Buscar serviço por nome ou código (digite mín. 3 letras)..." 
-                                value="${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}"
-                                onfocus="OSModule.aoFocarBuscaServico(${idx})"
-                                oninput="OSModule.aoDigitarBuscaServico(${idx}, this.value)"
-                                onkeydown="OSModule.aoTeclarBuscaServico(event, ${idx})"
-                                autocomplete="off"
-                            >
-                            ${s.nome ? `
-                                <button type="button" class="btn-clear-servico" onclick="OSModule.limparServicoLinha(${idx})" title="Limpar serviço selecionado">
-                                    <i class="ph ph-x"></i>
-                                </button>
-                            ` : ''}
-                        </div>
-                        <div id="dropdown-servico-results-${idx}" class="os-servico-results-dropdown hidden"></div>
-                    </div>
-
-                    <!-- Campo de Descrição Específico desta OS (Abre ao selecionar serviço ou via botão) -->
-                    ${s.mostrarDescricao ? `
-                        <div class="os-servico-desc-box">
-                            <div class="os-servico-desc-header">
-                                <span class="os-desc-title">
-                                    <i class="ph ph-note-pencil"></i> Descrição / Observações deste serviço nesta OS:
-                                </span>
-                                <span class="os-desc-notice">
-                                    <i class="ph ph-shield-check"></i> Altera apenas nesta OS • Não altera o cadastro original
-                                </span>
-                                <button type="button" class="btn-fechar-desc" onclick="OSModule.toggleDescricaoServico(${idx})" title="Ocultar campo de descrição">
-                                    <i class="ph ph-caret-up"></i>
-                                </button>
-                            </div>
-                            <textarea 
-                                id="textarea-servico-desc-${idx}"
-                                rows="2" 
-                                placeholder="Descreva observações específicas para este veículo (ex: aplicado vedante Loctite, verificado desgaste de pastilhas)..."
-                                oninput="OSModule.atualizarLinhaServico(${idx}, 'descricao', this.value)"
-                            >${window.UI ? UI.escapeHtml(s.descricao || '') : (s.descricao || '')}</textarea>
-                        </div>
-                    ` : `
-                        <div style="margin-top: 4px;">
-                            <button type="button" class="btn-toggle-desc-link" onclick="OSModule.toggleDescricaoServico(${idx})">
-                                <i class="ph ph-plus-circle"></i> Adicionar detalhes/observações para esta OS
-                            </button>
-                        </div>
-                    `}
-                </td>
-                <td style="text-align:right; vertical-align:top; padding-top:12px;">
-                    <input 
-                        type="text" 
-                        value="${Number(s.preco || 0).toFixed(2).replace('.', ',')}"
-                        oninput="OSModule.atualizarLinhaServico(${idx}, 'preco', this.value)"
-                        style="width:110px; text-align:right; padding:6px 8px; font-size:0.84rem; font-weight:700; border:1px solid #CBD5E1; border-radius:6px;"
-                    >
-                </td>
-                <td style="text-align:center; vertical-align:top; padding-top:14px;">
-                    <button type="button" class="action-btn btn-action-del" onclick="OSModule.removerLinhaServico(${idx})" title="Remover serviço">
-                        <i class="ph ph-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-    },
-
-    /**
-     * Itens: Discriminação de Peças
-     */
-    adicionarLinhaPeca(item = null) {
-        this.itensPecas.push(item || {
-            nome: '',
-            qtd: 1,
-            preco: 0,
-            subtotal: 0
-        });
         this.renderizarLinhasPecas();
         this.recalcularTotais();
+
+        if (inpDesc) inpDesc.focus();
+    },
+
+    adicionarLinhaPeca(item = null) {
+        if (item) {
+            this.itensPecas.push(item);
+            this.renderizarLinhasPecas();
+            this.recalcularTotais();
+        } else {
+            const input = document.getElementById('input-busca-produto-rapido');
+            if (input) input.focus();
+        }
     },
 
     removerLinhaPeca(index) {
         this.itensPecas.splice(index, 1);
         this.renderizarLinhasPecas();
-        this.recalcularTotais();
-    },
-
-    atualizarLinhaPeca(index, campo, valor) {
-        if (!this.itensPecas[index]) return;
-        if (campo === 'qtd') {
-            const qtd = Math.max(1, parseInt(valor, 10) || 1);
-            this.itensPecas[index].qtd = qtd;
-            this.itensPecas[index].subtotal = qtd * (Number(this.itensPecas[index].preco) || 0);
-        } else if (campo === 'preco') {
-            const preco = parseFloat(String(valor).replace(/\./g, '').replace(',', '.')) || 0;
-            this.itensPecas[index].preco = preco;
-            this.itensPecas[index].subtotal = (Number(this.itensPecas[index].qtd) || 1) * preco;
-        } else {
-            this.itensPecas[index][campo] = valor;
-        }
-
-        // Atualiza a célula de subtotal visualmente
-        const subtotalEl = document.getElementById(`subtotal-peca-${index}`);
-        if (subtotalEl && window.UI) {
-            subtotalEl.textContent = UI.formatarMoeda(this.itensPecas[index].subtotal || 0);
-        }
-
         this.recalcularTotais();
     },
 
@@ -981,62 +879,331 @@ const OSModule = {
         if (this.itensPecas.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="5" style="text-align:center; padding:14px; color:#94A3B8; font-size:0.78rem;">
-                        Nenhuma peça adicionada. Clique em "+ Adicionar Peça" para incluir insumos ou peças trocadas.
+                    <td colspan="5" style="text-align:center; padding:18px; color:#94A3B8; font-size:0.80rem;">
+                        Nenhuma peça adicionada. Digite na barra acima para pesquisar no estoque e adicionar.
                     </td>
                 </tr>
             `;
+            const subTotPecas = document.getElementById('display-subtotal-tabela-pecas');
+            if (subTotPecas) subTotPecas.textContent = 'R$ 0,00';
             return;
         }
 
+        let totalPecasCalc = 0;
+
         tbody.innerHTML = this.itensPecas.map((p, idx) => {
-            const subtotal = (Number(p.qtd) || 1) * (Number(p.preco) || 0);
+            const qtd = Number(p.qtd || 1);
+            const preco = Number(p.preco || 0);
+            const subtotal = qtd * preco;
+            totalPecasCalc += subtotal;
+
             return `
                 <tr>
-                    <td>
-                        <input 
-                            type="text" 
-                            placeholder="Ex: JOGO DE PASTILHAS DE FREIO DIANTEIRA" 
-                            value="${window.UI ? UI.escapeHtml(p.nome || '') : (p.nome || '')}"
-                            oninput="OSModule.atualizarLinhaPeca(${idx}, 'nome', this.value)"
-                            style="width:100%; padding:5px 8px; font-size:0.82rem; font-weight:600;"
-                        >
+                    <td style="font-weight:600; color:#1E293B; text-transform:uppercase;">
+                        ${window.UI ? UI.escapeHtml(p.nome || '') : (p.nome || '')}
+                    </td>
+                    <td style="text-align:center; font-weight:700; color:#334155;">
+                        ${qtd}
+                    </td>
+                    <td style="text-align:right; font-weight:600; color:#334155;">
+                        ${preco.toFixed(2).replace('.', ',')}
                     </td>
                     <td style="text-align:center;">
-                        <input 
-                            type="number" 
-                            min="1" 
-                            value="${p.qtd || 1}"
-                            oninput="OSModule.atualizarLinhaPeca(${idx}, 'qtd', this.value)"
-                            style="width:65px; text-align:center; padding:5px 8px; font-size:0.82rem; font-weight:700;"
-                        >
-                    </td>
-                    <td style="text-align:right;">
-                        <input 
-                            type="text" 
-                            value="${Number(p.preco || 0).toFixed(2).replace('.', ',')}"
-                            oninput="OSModule.atualizarLinhaPeca(${idx}, 'preco', this.value)"
-                            style="width:100px; text-align:right; padding:5px 8px; font-size:0.82rem; font-weight:700;"
-                        >
-                    </td>
-                    <td style="text-align:right; font-weight:700; color:#16A34A;" id="subtotal-peca-${idx}">
-                        ${window.UI ? UI.formatarMoeda(subtotal) : `R$ ${subtotal.toFixed(2)}`}
-                    </td>
-                    <td style="text-align:center;">
-                        <button type="button" class="action-btn btn-action-del" onclick="OSModule.removerLinhaPeca(${idx})" title="Remover peça">
+                        <button type="button" class="btn-quick-del" onclick="OSModule.removerLinhaPeca(${idx})" title="Remover peça">
                             <i class="ph ph-trash"></i>
                         </button>
+                    </td>
+                    <td style="text-align:right; font-weight:700; color:#1E293B;">
+                        ${window.UI ? UI.formatarMoeda(subtotal) : `R$ ${subtotal.toFixed(2)}`}
                     </td>
                 </tr>
             `;
         }).join('');
+
+        const subTotPecas = document.getElementById('display-subtotal-tabela-pecas');
+        if (subTotPecas) subTotPecas.textContent = window.UI ? UI.formatarMoeda(totalPecasCalc) : `R$ ${totalPecasCalc.toFixed(2)}`;
+    },
+
+    // ========================================================
+    // SERVIÇOS & MÃO DE OBRA (PADRÃO IMAGEM 4 COM BUSCA NO BANCO)
+    // ========================================================
+    aoFocarBuscaServicoRapido() {
+        const input = document.getElementById('input-busca-servico-rapido');
+        const termo = input ? input.value : '';
+        if (String(termo || '').trim().length >= 1) {
+            this.buscarServicosRapido(termo);
+        }
+    },
+
+    aoDigitarBuscaServicoRapido(termo) {
+        clearTimeout(this.timerBuscaServicoRapido);
+        this.servicoSelecionadoTemp = null;
+        const q = String(termo || '').trim();
+        if (!q) {
+            const dd = document.getElementById('dropdown-servicos-rapido');
+            if (dd) {
+                dd.innerHTML = '';
+                dd.classList.add('hidden');
+            }
+            return;
+        }
+
+        this.buscarServicosRapido(termo);
+    },
+
+    async buscarServicosRapido(termo) {
+        const dd = document.getElementById('dropdown-servicos-rapido');
+        if (!dd) return;
+
+        const q = String(termo || '').toLowerCase().trim();
+
+        // 1. Filtro instantâneo no catálogo em memória
+        let filtrados = (this.catalogoServicos || []).filter(s => {
+            const nome = String(s.nome || '').toLowerCase();
+            const cod = String(s.codigo || '').toLowerCase();
+            return nome.includes(q) || cod.includes(q);
+        });
+
+        if (filtrados.length > 0) {
+            this.renderizarDropdownServicosRapido(filtrados.slice(0, 15));
+        }
+
+        // 2. Consulta debounced no banco de dados
+        clearTimeout(this.timerBuscaServicoRapido);
+        this.timerBuscaServicoRapido = setTimeout(async () => {
+            try {
+                const res = await API.listarServicos({ busca: termo, limite: 25 });
+                if (res && res.success && Array.isArray(res.servicos)) {
+                    res.servicos.forEach(novoItem => {
+                        if (!this.catalogoServicos.some(s => s.id === novoItem.id)) {
+                            this.catalogoServicos.push(novoItem);
+                        }
+                    });
+                    this.renderizarDropdownServicosRapido(res.servicos.slice(0, 15));
+                }
+            } catch (_) {}
+        }, 220);
+    },
+
+    renderizarDropdownServicosRapido(lista) {
+        const dd = document.getElementById('dropdown-servicos-rapido');
+        if (!dd) return;
+
+        if (!lista || lista.length === 0) {
+            dd.innerHTML = `
+                <div class="os-quick-dropdown-empty">
+                    Nenhum serviço cadastrado com esse nome. Você pode digitar o preço e adicionar como serviço avulso.
+                </div>
+            `;
+            dd.classList.remove('hidden');
+            return;
+        }
+
+        dd.innerHTML = lista.map((s, idx) => {
+            const nome = s.nome || 'SERVIÇO';
+            const cod = s.codigo ? `[${s.codigo}] ` : '';
+            const preco = Number(s.preco || 0);
+
+            return `
+                <div 
+                    class="os-quick-dropdown-item ${idx === 0 ? 'highlighted' : ''}"
+                    onclick="OSModule.selecionarServicoRapido(${JSON.stringify(s).replace(/"/g, '&quot;')})"
+                    data-index="${idx}"
+                >
+                    <div class="item-main">
+                        <div class="item-title">${cod}${window.UI ? UI.escapeHtml(nome) : nome}</div>
+                        ${s.categoria ? `<div class="item-subtitle">${s.categoria}</div>` : ''}
+                    </div>
+                    <div class="item-price">R$ ${preco.toFixed(2).replace('.', ',')}</div>
+                </div>
+            `;
+        }).join('');
+
+        dd.classList.remove('hidden');
+    },
+
+    selecionarServicoRapido(s) {
+        const nome = String(s.nome || 'SERVIÇO').toUpperCase();
+        const preco = Number(s.preco || 0);
+
+        const inpDesc = document.getElementById('input-busca-servico-rapido');
+        const inpPreco = document.getElementById('input-preco-servico-rapido');
+        const inpQtd = document.getElementById('input-qtd-servico-rapido');
+
+        if (inpDesc) inpDesc.value = nome;
+        if (inpPreco) inpPreco.value = preco.toFixed(2).replace('.', ',');
+        if (inpQtd && (!inpQtd.value || parseInt(inpQtd.value, 10) <= 0)) inpQtd.value = '1';
+
+        this.servicoSelecionadoTemp = {
+            id: s.id,
+            codigo: s.codigo || '',
+            nome: nome,
+            preco: preco,
+            descricao: s.descricao || ''
+        };
+
+        const dd = document.getElementById('dropdown-servicos-rapido');
+        if (dd) dd.classList.add('hidden');
+
+        if (inpQtd) inpQtd.focus();
+    },
+
+    aoTeclarBuscaServicoRapido(e) {
+        const dd = document.getElementById('dropdown-servicos-rapido');
+        if (!dd || dd.classList.contains('hidden')) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.adicionarServicoRapido();
+            }
+            return;
+        }
+
+        const items = Array.from(dd.querySelectorAll('.os-quick-dropdown-item'));
+        if (items.length === 0) return;
+
+        let currentIndex = items.findIndex(el => el.classList.contains('highlighted'));
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
+            currentIndex = (currentIndex + 1) % items.length;
+            items[currentIndex].classList.add('highlighted');
+            items[currentIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            items[currentIndex].classList.add('highlighted');
+            items[currentIndex].scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const target = currentIndex >= 0 ? items[currentIndex] : items[0];
+            if (target) {
+                target.click();
+            } else {
+                this.adicionarServicoRapido();
+            }
+        } else if (e.key === 'Escape') {
+            dd.classList.add('hidden');
+        }
+    },
+
+    adicionarServicoRapido() {
+        const inpDesc = document.getElementById('input-busca-servico-rapido');
+        const inpPreco = document.getElementById('input-preco-servico-rapido');
+        const inpQtd = document.getElementById('input-qtd-servico-rapido');
+
+        const nome = (inpDesc ? inpDesc.value : '').trim().toUpperCase();
+        if (!nome) {
+            if (window.UI) UI.toast('Digite ou selecione o nome do serviço.', 'warning');
+            if (inpDesc) inpDesc.focus();
+            return;
+        }
+
+        const precoStr = (inpPreco ? inpPreco.value : '').trim();
+        const preco = parseFloat(precoStr.replace(/\./g, '').replace(',', '.')) || 0;
+        const qtd = Math.max(1, parseInt(inpQtd ? inpQtd.value : 1, 10) || 1);
+        const subtotal = qtd * preco;
+
+        this.itensServicos.push({
+            servico_id: this.servicoSelecionadoTemp ? this.servicoSelecionadoTemp.id : null,
+            codigo: this.servicoSelecionadoTemp ? this.servicoSelecionadoTemp.codigo : '',
+            nome: nome,
+            qtd: qtd,
+            preco: preco,
+            subtotal: subtotal,
+            descricao: this.servicoSelecionadoTemp ? this.servicoSelecionadoTemp.descricao : ''
+        });
+
+        this.servicoSelecionadoTemp = null;
+        if (inpDesc) inpDesc.value = '';
+        if (inpPreco) inpPreco.value = '';
+        if (inpQtd) inpQtd.value = '1';
+
+        const dd = document.getElementById('dropdown-servicos-rapido');
+        if (dd) dd.classList.add('hidden');
+
+        this.renderizarLinhasServicos();
+        this.recalcularTotais();
+
+        if (inpDesc) inpDesc.focus();
+    },
+
+    adicionarLinhaServico(item = null) {
+        if (item) {
+            this.itensServicos.push(item);
+            this.renderizarLinhasServicos();
+            this.recalcularTotais();
+        } else {
+            const input = document.getElementById('input-busca-servico-rapido');
+            if (input) input.focus();
+        }
+    },
+
+    removerLinhaServico(index) {
+        this.itensServicos.splice(index, 1);
+        this.renderizarLinhasServicos();
+        this.recalcularTotais();
+    },
+
+    renderizarLinhasServicos() {
+        this.atualizarBadgesAbas();
+        const tbody = document.getElementById('tbody-itens-servicos');
+        if (!tbody) return;
+
+        if (this.itensServicos.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:18px; color:#94A3B8; font-size:0.80rem;">
+                        Nenhum serviço adicionado. Digite na barra acima para pesquisar serviços e adicionar.
+                    </td>
+                </tr>
+            `;
+            const subTotServicos = document.getElementById('display-subtotal-tabela-servicos');
+            if (subTotServicos) subTotServicos.textContent = 'R$ 0,00';
+            return;
+        }
+
+        let totalServicosCalc = 0;
+
+        tbody.innerHTML = this.itensServicos.map((s, idx) => {
+            const qtd = Number(s.qtd || 1);
+            const preco = Number(s.preco || 0);
+            const subtotal = qtd * preco;
+            totalServicosCalc += subtotal;
+
+            return `
+                <tr>
+                    <td style="font-weight:600; color:#1E293B; text-transform:uppercase;">
+                        ${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}
+                    </td>
+                    <td style="text-align:center; font-weight:700; color:#334155;">
+                        ${qtd}
+                    </td>
+                    <td style="text-align:right; font-weight:600; color:#334155;">
+                        ${preco.toFixed(2).replace('.', ',')}
+                    </td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-quick-del" onclick="OSModule.removerLinhaServico(${idx})" title="Remover serviço">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </td>
+                    <td style="text-align:right; font-weight:700; color:#1E293B;">
+                        ${window.UI ? UI.formatarMoeda(subtotal) : `R$ ${subtotal.toFixed(2)}`}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        const subTotServicos = document.getElementById('display-subtotal-tabela-servicos');
+        if (subTotServicos) subTotServicos.textContent = window.UI ? UI.formatarMoeda(totalServicosCalc) : `R$ ${totalServicosCalc.toFixed(2)}`;
     },
 
     /**
      * Recalcula os totais (Serviços + Peças - Desconto)
      */
     recalcularTotais() {
-        const totalServicos = this.itensServicos.reduce((acc, s) => acc + (Number(s.preco) || 0), 0);
+        const totalServicos = this.itensServicos.reduce((acc, s) => acc + ((Number(s.qtd) || 1) * (Number(s.preco) || 0)), 0);
         const totalPecas = this.itensPecas.reduce((acc, p) => acc + ((Number(p.qtd) || 1) * (Number(p.preco) || 0)), 0);
 
         const descStr = this.getInputValue('os_valor_desconto');
@@ -1050,6 +1217,12 @@ const OSModule = {
         if (elTotServicos) elTotServicos.textContent = window.UI ? UI.formatarMoeda(totalServicos) : `R$ ${totalServicos.toFixed(2)}`;
         if (elTotPecas) elTotPecas.textContent = window.UI ? UI.formatarMoeda(totalPecas) : `R$ ${totalPecas.toFixed(2)}`;
         if (elTotGeral) elTotGeral.textContent = window.UI ? UI.formatarMoeda(totalGeral) : `R$ ${totalGeral.toFixed(2)}`;
+
+        const subTotPecas = document.getElementById('display-subtotal-tabela-pecas');
+        if (subTotPecas) subTotPecas.textContent = window.UI ? UI.formatarMoeda(totalPecas) : `R$ ${totalPecas.toFixed(2)}`;
+
+        const subTotServicos = document.getElementById('display-subtotal-tabela-servicos');
+        if (subTotServicos) subTotServicos.textContent = window.UI ? UI.formatarMoeda(totalServicos) : `R$ ${totalServicos.toFixed(2)}`;
     },
 
     /**

@@ -296,25 +296,71 @@
                 <div class="os-section-header">
                     <i class="ph ph-package"></i>
                     <span>Peças & Insumos Utilizados</span>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.adicionarLinhaPeca()" style="margin-left:auto; padding:4px 12px; font-size:0.78rem;">
-                        <i class="ph-bold ph-plus"></i> Adicionar Peça
-                    </button>
                 </div>
 
-                <table class="os-items-table" id="tabela-itens-pecas">
+                <!-- Barra de Inserção Rápida de Peças (Padrão Imagem 3) -->
+                <div class="os-quick-add-bar">
+                    <div class="os-quick-col-desc">
+                        <label for="input-busca-produto-rapido">Produto</label>
+                        <div class="os-search-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="input-busca-produto-rapido" 
+                                placeholder="Digite o nome do produto" 
+                                autocomplete="off"
+                                oninput="OSModule.aoDigitarBuscaProdutoRapido(this.value)"
+                                onfocus="OSModule.aoFocarBuscaProdutoRapido()"
+                                onkeydown="OSModule.aoTeclarBuscaProdutoRapido(event)"
+                            >
+                            <div id="dropdown-produtos-rapido" class="os-quick-dropdown hidden"></div>
+                        </div>
+                    </div>
+                    <div class="os-quick-col-preco">
+                        <label for="input-preco-produto-rapido">Preço</label>
+                        <input 
+                            type="text" 
+                            id="input-preco-produto-rapido" 
+                            placeholder="Preço"
+                            onkeydown="if(event.key==='Enter') OSModule.adicionarPecaRapida()"
+                        >
+                    </div>
+                    <div class="os-quick-col-qtd">
+                        <label for="input-qtd-produto-rapido">quantidade</label>
+                        <input 
+                            type="number" 
+                            id="input-qtd-produto-rapido" 
+                            value="1" 
+                            min="1" 
+                            placeholder="quantidade"
+                            onkeydown="if(event.key==='Enter') OSModule.adicionarPecaRapida()"
+                        >
+                    </div>
+                    <div class="os-quick-col-btn">
+                        <button type="button" class="btn-quick-add" onclick="OSModule.adicionarPecaRapida()">
+                            +adicionar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Peças no Padrão da Imagem 3 -->
+                <table class="os-items-table os-quick-table" id="tabela-itens-pecas">
                     <thead>
                         <tr>
-                            <th>Descrição da Peça</th>
-                            <th style="width: 90px; text-align: center;">Qtd</th>
-                            <th style="width: 130px; text-align: right;">Unitário (R$)</th>
-                            <th style="width: 130px; text-align: right;">Subtotal (R$)</th>
-                            <th style="width: 50px; text-align: center;">Remover</th>
+                            <th style="text-align: left;">Produto</th>
+                            <th style="text-align: center; width: 110px;">quantidade</th>
+                            <th style="text-align: right; width: 130px;">Preço unitário.</th>
+                            <th style="text-align: center; width: 80px;">Ações</th>
+                            <th style="text-align: right; width: 130px;">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-itens-pecas">
                         <!-- Linhas adicionadas dinamicamente -->
                     </tbody>
                 </table>
+
+                <div class="os-quick-table-total">
+                    Total: <strong id="display-subtotal-tabela-pecas">R$ 0,00</strong>
+                </div>
 
                 <!-- Navegação entre abas -->
                 <div class="os-tab-nav-actions">
@@ -334,23 +380,71 @@
                 <div class="os-section-header">
                     <i class="ph ph-wrench"></i>
                     <span>Serviços & Mão de Obra</span>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.adicionarLinhaServico()" style="margin-left:auto; padding:4px 12px; font-size:0.78rem;">
-                        <i class="ph-bold ph-plus"></i> Adicionar Serviço
-                    </button>
                 </div>
 
-                <table class="os-items-table" id="tabela-itens-servicos">
+                <!-- Barra de Inserção Rápida de Serviços (Padrão Imagem 4) -->
+                <div class="os-quick-add-bar">
+                    <div class="os-quick-col-desc">
+                        <label for="input-busca-servico-rapido">Serviço</label>
+                        <div class="os-search-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="input-busca-servico-rapido" 
+                                placeholder="Digite o nome do serviço" 
+                                autocomplete="off"
+                                oninput="OSModule.aoDigitarBuscaServicoRapido(this.value)"
+                                onfocus="OSModule.aoFocarBuscaServicoRapido()"
+                                onkeydown="OSModule.aoTeclarBuscaServicoRapido(event)"
+                            >
+                            <div id="dropdown-servicos-rapido" class="os-quick-dropdown hidden"></div>
+                        </div>
+                    </div>
+                    <div class="os-quick-col-preco">
+                        <label for="input-preco-servico-rapido">Preço</label>
+                        <input 
+                            type="text" 
+                            id="input-preco-servico-rapido" 
+                            placeholder="Preço"
+                            onkeydown="if(event.key==='Enter') OSModule.adicionarServicoRapido()"
+                        >
+                    </div>
+                    <div class="os-quick-col-qtd">
+                        <label for="input-qtd-servico-rapido">quantidade</label>
+                        <input 
+                            type="number" 
+                            id="input-qtd-servico-rapido" 
+                            value="1" 
+                            min="1" 
+                            placeholder="quantidade"
+                            onkeydown="if(event.key==='Enter') OSModule.adicionarServicoRapido()"
+                        >
+                    </div>
+                    <div class="os-quick-col-btn">
+                        <button type="button" class="btn-quick-add" onclick="OSModule.adicionarServicoRapido()">
+                            +adicionar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Serviços no Padrão da Imagem 4 -->
+                <table class="os-items-table os-quick-table" id="tabela-itens-servicos">
                     <thead>
                         <tr>
-                            <th>Descrição do Serviço</th>
-                            <th style="width: 140px; text-align: right;">Valor (R$)</th>
-                            <th style="width: 50px; text-align: center;">Remover</th>
+                            <th style="text-align: left;">Serviço</th>
+                            <th style="text-align: center; width: 110px;">quantidade</th>
+                            <th style="text-align: right; width: 130px;">Preço</th>
+                            <th style="text-align: center; width: 80px;">Ações</th>
+                            <th style="text-align: right; width: 130px;">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-itens-servicos">
                         <!-- Linhas adicionadas dinamicamente -->
                     </tbody>
                 </table>
+
+                <div class="os-quick-table-total">
+                    Total: <strong id="display-subtotal-tabela-servicos">R$ 0,00</strong>
+                </div>
 
                 <!-- Navegação entre abas -->
                 <div class="os-tab-nav-actions">
