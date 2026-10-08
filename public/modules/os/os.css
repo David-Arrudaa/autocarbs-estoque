@@ -1619,10 +1619,8 @@
 }
 
 .os-doc-tabela-assinaturas tbody td {
-    height: 44px;
+    height: 52px;
     border: 1px solid #E2E8F0;
-    vertical-align: bottom;
-    padding: 4px 8px;
     background: #FFFFFF;
     box-sizing: border-box;
 }

@@ -1563,13 +1563,9 @@ const OSModule = {
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="height: 44px; border: 1px solid #E2E8F0; vertical-align: bottom; padding: 4px 8px; font-size: 9.5px; color: #64748B; background: #FFFFFF;">___/___/______</td>
-                        <td style="height: 44px; border: 1px solid #E2E8F0; vertical-align: bottom; padding: 4px 8px; background: #FFFFFF; text-align: center;">
-                            <div style="border-top: 1px dashed #CBD5E1; margin: 0 16px; padding-top: 2px; font-size: 9px; color: #64748B;">Assinatura</div>
-                        </td>
-                        <td style="height: 44px; border: 1px solid #E2E8F0; vertical-align: bottom; padding: 4px 8px; background: #FFFFFF; text-align: center;">
-                            <div style="border-top: 1px dashed #CBD5E1; margin: 0 16px; padding-top: 2px; font-size: 9px; color: #64748B;">Assinatura</div>
-                        </td>
+                        <td style="height: 52px; border: 1px solid #E2E8F0; background: #FFFFFF;"></td>
+                        <td style="height: 52px; border: 1px solid #E2E8F0; background: #FFFFFF;"></td>
+                        <td style="height: 52px; border: 1px solid #E2E8F0; background: #FFFFFF;"></td>
                     </tr>
                 </tbody>
             </table>
