@@ -116,6 +116,7 @@ const OSModule = {
         } else {
             this.idEdicao = null;
         }
+        this.veioDaVisualizacao = false;
         this.osVisualizandoId = null;
         this.mostrarSubview('lista');
         if (this.ordensCache && this.ordensCache.length > 0) {
@@ -123,6 +124,15 @@ const OSModule = {
             this.atualizarPaginacao();
         } else {
             this.carregar();
+        }
+    },
+
+    voltarDoFormulario() {
+        if (this.veioDaVisualizacao && this.osVisualizandoId) {
+            this.veioDaVisualizacao = false;
+            this.visualizarOS(this.osVisualizandoId);
+        } else {
+            this.voltarParaLista(true);
         }
     },
 
@@ -486,6 +496,7 @@ const OSModule = {
             tituloEl.innerHTML = `<i class="ph ph-clipboard-text"></i> <span>Nova Ordem de Serviço</span>`;
         }
 
+        this.veioDaVisualizacao = false;
         this.limparFormulario();
         this.mostrarSubview('cadastro');
 
@@ -1115,8 +1126,19 @@ const OSModule = {
         try {
             const res = await API.salvarOS(payload);
             if (res && res.success) {
-                this.voltarParaLista(false);
-                await this.carregar(1);
+                const idParaVisualizar = (res.os && res.os.id) || this.idEdicao || payload.id;
+                const osSalva = res.os || null;
+                this.idEdicao = null;
+                this.veioDaVisualizacao = false;
+
+                // Atualiza listagem de ordens em segundo plano para manter o cache sincronizado
+                this.carregar(this.paginaAtual || 1).catch(() => {});
+
+                if (idParaVisualizar) {
+                    await this.visualizarOS(idParaVisualizar, osSalva);
+                } else {
+                    this.voltarParaLista(false);
+                }
                 return true;
             } else {
                 throw new Error(res.message || 'Erro ao salvar Ordem de Serviço.');
@@ -1242,7 +1264,7 @@ const OSModule = {
      * VISUALIZAÇÃO COMPLETA DA ORDEM DE SERVIÇO (ESTILO PDF/A4)
      * =========================================================
      */
-    async visualizarOS(id) {
+    async visualizarOS(id, osPrecarregada = null) {
         this.osVisualizandoId = id;
         this.mostrarSubview('visualizacao');
 
@@ -1259,14 +1281,16 @@ const OSModule = {
             `;
         }
 
-        let os = this.ordensCache.find(o => String(o.id) === String(id));
-        try {
-            const res = await API.obterOS(id);
-            if (res && res.os) {
-                os = res.os;
+        let os = osPrecarregada || this.ordensCache.find(o => String(o.id) === String(id));
+        if (!os || !os.itens_servicos || !os.itens_pecas) {
+            try {
+                const res = await API.obterOS(id);
+                if (res && res.os) {
+                    os = res.os;
+                }
+            } catch (err) {
+                console.warn('Erro ao carregar OS detalhada:', err);
             }
-        } catch (err) {
-            console.warn('Erro ao carregar OS detalhada:', err);
         }
 
         if (!os) {
@@ -1298,6 +1322,7 @@ const OSModule = {
 
     editarOSAtual() {
         if (!this.osVisualizandoId) return;
+        this.veioDaVisualizacao = true;
         this.editarOS(this.osVisualizandoId);
     },
 
