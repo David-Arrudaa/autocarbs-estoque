@@ -165,6 +165,7 @@ const OSModule = {
         this.setInputValue('os_status', 'orcamento');
         this.setInputValue('os_termo_garantia', '90 dias');
         this.setInputValue('os_descricao_problema', '');
+        this.setInputValue('os_relatorio_tecnico', '');
         this.setInputValue('os_laudo_tecnico', '');
         this.setInputValue('os_valor_desconto', '0,00');
         this.atualizarStatusVinculoCliente(false);
@@ -183,10 +184,11 @@ const OSModule = {
 
     /**
      * Alterna entre as abas internas do formulário da OS
-     * Impede a troca para as abas de peças, serviços ou laudo caso o nome do cliente esteja vazio.
+     * Impede a troca para as abas de peças, serviços ou relatório caso o nome do cliente esteja vazio.
      */
     alternarAbaForm(aba) {
-        if (aba !== 'detalhes') {
+        const abaNormalizada = (aba === 'laudo') ? 'relatorio' : aba;
+        if (abaNormalizada !== 'detalhes') {
             const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
             if (!cliNome) {
                 const inputCli = document.getElementById('os_cliente_nome');
@@ -199,17 +201,17 @@ const OSModule = {
             }
         }
 
-        this.abaFormAtual = aba;
-        const abas = ['detalhes', 'pecas', 'servicos', 'laudo'];
+        this.abaFormAtual = abaNormalizada;
+        const abas = ['detalhes', 'pecas', 'servicos', 'relatorio'];
         abas.forEach(a => {
-            const btn = document.getElementById(`tab-btn-os-${a}`);
-            const pane = document.getElementById(`tab-pane-os-${a}`);
+            const btn = document.getElementById(`tab-btn-os-${a}`) || (a === 'relatorio' ? document.getElementById('tab-btn-os-laudo') : null);
+            const pane = document.getElementById(`tab-pane-os-${a}`) || (a === 'relatorio' ? document.getElementById('tab-pane-os-laudo') : null);
             if (btn) {
-                if (a === aba) btn.classList.add('active');
+                if (a === abaNormalizada) btn.classList.add('active');
                 else btn.classList.remove('active');
             }
             if (pane) {
-                if (a === aba) pane.classList.remove('hidden');
+                if (a === abaNormalizada) pane.classList.remove('hidden');
                 else pane.classList.add('hidden');
             }
         });
@@ -222,9 +224,9 @@ const OSModule = {
      */
     atualizarBloqueioAbas() {
         const cliNome = (this.getInputValue('os_cliente_nome') || '').trim();
-        const abasSecundarias = ['pecas', 'servicos', 'laudo'];
+        const abasSecundarias = ['pecas', 'servicos', 'relatorio'];
         abasSecundarias.forEach(a => {
-            const btn = document.getElementById(`tab-btn-os-${a}`);
+            const btn = document.getElementById(`tab-btn-os-${a}`) || (a === 'relatorio' ? document.getElementById('tab-btn-os-laudo') : null);
             if (btn) {
                 if (!cliNome) {
                     btn.classList.add('tab-os-bloqueada');
@@ -555,7 +557,9 @@ const OSModule = {
             this.setInputValue('os_status', os.status || 'orcamento');
             this.setInputValue('os_termo_garantia', os.termo_garantia || '90 dias');
             this.setInputValue('os_descricao_problema', os.descricao_problema || '');
-            this.setInputValue('os_laudo_tecnico', os.laudo_tecnico || '');
+            const relatorioCarregado = os.relatorio_tecnico || os.laudo_tecnico || '';
+            this.setInputValue('os_relatorio_tecnico', relatorioCarregado);
+            this.setInputValue('os_laudo_tecnico', relatorioCarregado);
             this.setInputValue('os_valor_desconto', Number(os.valor_desconto || 0).toFixed(2).replace('.', ','));
             this.atualizarStatusVinculoCliente(!!os.cliente_id);
             this.fecharDropdownCliente();
@@ -1111,7 +1115,8 @@ const OSModule = {
             status: this.getInputValue('os_status') || 'orcamento',
             termo_garantia: this.getInputValue('os_termo_garantia') || '90 dias',
             descricao_problema: this.getInputValue('os_descricao_problema'),
-            laudo_tecnico: this.getInputValue('os_laudo_tecnico'),
+            laudo_tecnico: this.getInputValue('os_relatorio_tecnico') || this.getInputValue('os_laudo_tecnico') || '',
+            relatorio_tecnico: this.getInputValue('os_relatorio_tecnico') || this.getInputValue('os_laudo_tecnico') || '',
             itens_servicos: this.itensServicos,
             itens_pecas: this.itensPecas,
             valor_servicos: totalServicos,
@@ -1509,7 +1514,7 @@ const OSModule = {
                 </div>
             </div>
 
-            <!-- Sintomas ou Laudo (se preenchidos) -->
+            <!-- Sintomas ou Relatório (se preenchidos) -->
             ${os.descricao_problema ? `
                 <div style="font-size: 10px; line-height: 1.4; margin-bottom: 8px; background: #F8FAFC; border-left: 3px solid #CBD5E1; border-radius: 3px; padding: 5px 10px;">
                     <strong style="color: #475569; font-size: 9.5px; text-transform: uppercase;">Sintomas / Reclamação do Cliente:</strong>
@@ -1517,10 +1522,10 @@ const OSModule = {
                 </div>
             ` : ''}
 
-            ${os.laudo_tecnico ? `
+            ${(os.relatorio_tecnico || os.laudo_tecnico) ? `
                 <div style="font-size: 10px; line-height: 1.4; margin-bottom: 10px; background: #F8FAFC; border-left: 3px solid #3B82F6; border-radius: 3px; padding: 5px 10px;">
-                    <strong style="color: #1E40AF; font-size: 9.5px; text-transform: uppercase;">Diagnóstico & Laudo Técnico:</strong>
-                    <div style="margin-top: 2px; color: #0F172A;">${window.UI ? UI.escapeHtml(os.laudo_tecnico) : os.laudo_tecnico}</div>
+                    <strong style="color: #1E40AF; font-size: 9.5px; text-transform: uppercase;">Diagnóstico & Relatório Técnico:</strong>
+                    <div style="margin-top: 2px; color: #0F172A;">${window.UI ? UI.escapeHtml(os.relatorio_tecnico || os.laudo_tecnico) : (os.relatorio_tecnico || os.laudo_tecnico)}</div>
                 </div>
             ` : ''}
 

@@ -142,9 +142,9 @@
                     <span>Serviços</span>
                     <span class="os-tab-badge" id="badge-tab-os-servicos">0</span>
                 </button>
-                <button type="button" class="os-form-tab-btn" id="tab-btn-os-laudo" onclick="OSModule.alternarAbaForm('laudo')">
+                <button type="button" class="os-form-tab-btn" id="tab-btn-os-relatorio" data-tab="relatorio" onclick="OSModule.alternarAbaForm('relatorio')">
                     <i class="ph ph-file-text"></i>
-                    <span>Laudo & Anotações</span>
+                    <span>Relatório & Anotações</span>
                 </button>
             </div>
 
@@ -357,24 +357,24 @@
                     <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.alternarAbaForm('pecas')">
                         <i class="ph ph-arrow-left"></i> <span>Voltar: Peças</span>
                     </button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.alternarAbaForm('laudo')">
-                        <span>Avançar para Laudo</span> <i class="ph ph-arrow-right"></i>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="OSModule.alternarAbaForm('relatorio')">
+                        <span>Avançar para Relatório</span> <i class="ph ph-arrow-right"></i>
                     </button>
                 </div>
             </div>
 
             <!-- ==========================================
-                 ABA 4: LAUDO & ANOTAÇÕES TÉCNICAS
+                 ABA 4: RELATÓRIO & ANOTAÇÕES TÉCNICAS
                  ========================================== -->
-            <div class="os-form-tab-pane hidden" id="tab-pane-os-laudo">
+            <div class="os-form-tab-pane hidden" id="tab-pane-os-relatorio">
                 <div class="os-section-header">
                     <i class="ph ph-file-text"></i>
-                    <span>Laudo Técnico & Diagnóstico da Oficina</span>
+                    <span>Relatório Técnico & Diagnóstico da Oficina</span>
                 </div>
 
                 <div class="os-form-group">
-                    <label>Laudo Técnico Detalhado / Diagnóstico do Mecânico</label>
-                    <textarea id="os_laudo_tecnico" rows="6" placeholder="Descreva os testes realizados, diagnósticos mecânicos/eletrônicos e observações técnicas..."></textarea>
+                    <label>Relatório Técnico Detalhado / Diagnóstico do Mecânico</label>
+                    <textarea id="os_relatorio_tecnico" rows="6" placeholder="Descreva os testes realizados, diagnósticos mecânicos/eletrônicos e observações técnicas..."></textarea>
                 </div>
 
                 <!-- Navegação entre abas -->

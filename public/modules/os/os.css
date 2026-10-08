@@ -1215,7 +1215,8 @@
 .os-form-tab-btn[data-tab="detalhes"] i { color: #2563EB; }
 .os-form-tab-btn[data-tab="pecas"] i { color: #059669; }
 .os-form-tab-btn[data-tab="servicos"] i { color: #0284C7; }
-.os-form-tab-btn[data-tab="laudo"] i { color: #7C3AED; }
+.os-form-tab-btn[data-tab="laudo"] i,
+.os-form-tab-btn[data-tab="relatorio"] i { color: #7C3AED; }
 
 .os-tab-badge {
     background: #CBD5E1;

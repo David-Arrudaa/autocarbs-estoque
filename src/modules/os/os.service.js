@@ -86,7 +86,8 @@ class OSService {
             status: (os.status || 'aberto').toLowerCase(),
             termo_garantia: os.termo_garantia || '90 dias',
             descricao_problema: os.descricao_problema || os.observacao || '',
-            laudo_tecnico: os.laudo_tecnico || '',
+            laudo_tecnico: os.relatorio_tecnico || os.laudo_tecnico || '',
+            relatorio_tecnico: os.relatorio_tecnico || os.laudo_tecnico || '',
             itens_pecas: Array.isArray(os.itens_pecas) ? os.itens_pecas : [],
             itens_servicos: Array.isArray(os.itens_servicos) ? os.itens_servicos : [],
             observacoes: os.observacoes || '',
@@ -250,6 +251,7 @@ class OSService {
 
             const criadorOriginal = (registroAntigo.criado_por || registroAntigo.usuario_criacao || registroAntigo.responsavel || usuarioNome || 'AUTOCAR BS').trim().toUpperCase();
 
+            const relatorioTextoEdicao = dados.relatorio_tecnico !== undefined ? dados.relatorio_tecnico : (dados.laudo_tecnico !== undefined ? dados.laudo_tecnico : (registroAntigo.relatorio_tecnico || registroAntigo.laudo_tecnico || ''));
             const atualizado = {
                 ...registroAntigo,
                 ...dados,
@@ -259,6 +261,8 @@ class OSService {
                 usuario_criacao: criadorOriginal,
                 responsavel: criadorOriginal,
                 atualizado_por: usuarioNome || null,
+                laudo_tecnico: String(relatorioTextoEdicao || '').trim(),
+                relatorio_tecnico: String(relatorioTextoEdicao || '').trim(),
                 valor_pecas: valorPecas,
                 valor_servicos: valorServicos,
                 valor_desconto: valorDesconto,
@@ -300,6 +304,8 @@ class OSService {
             }
             const nomeCriador = (usuarioNome || respNova).toUpperCase();
 
+            const relatorioTextoNovo = (dados.relatorio_tecnico !== undefined ? dados.relatorio_tecnico : (dados.laudo_tecnico || '')).trim();
+
             const novaOS = {
                 id: novoId,
                 numero: numeroOS,
@@ -325,7 +331,8 @@ class OSService {
                 status: dados.status || 'orcamento',
                 termo_garantia: dados.termo_garantia || '90 dias',
                 descricao_problema: (dados.descricao_problema || '').trim(),
-                laudo_tecnico: (dados.laudo_tecnico || '').trim(),
+                laudo_tecnico: relatorioTextoNovo,
+                relatorio_tecnico: relatorioTextoNovo,
                 itens_pecas: itensPecas,
                 itens_servicos: itensServicos,
                 observacoes: (dados.observacoes || '').trim(),
