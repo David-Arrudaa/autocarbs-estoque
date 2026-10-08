@@ -1,25 +1,5 @@
 [
   {
-    "id": 1281,
-    "codigo": "1281",
-    "nome": "SUBS. JUNTA CARTER",
-    "preco": 1125,
-    "descricao": "",
-    "ativo": true,
-    "created_at": "2026-03-20T10:00:00Z",
-    "updated_at": "2026-10-06T11:31:41.116Z"
-  },
-  {
-    "id": 1280,
-    "codigo": "1280",
-    "nome": "SUBS. RETENTOR DO EIXO COMPRESSOR",
-    "preco": 100,
-    "descricao": "",
-    "ativo": true,
-    "created_at": "2026-03-20T10:05:00Z",
-    "updated_at": "2026-03-20T10:05:00Z"
-  },
-  {
     "id": 1279,
     "codigo": "1279",
     "nome": "DESMONTAGEM E REPARO NO ALTERNADOR",
