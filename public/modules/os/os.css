@@ -1900,6 +1900,64 @@
     transform: scale(0.95);
 }
 
+/* Botão azul de editar na tabela (Imagens 3 e 4) */
+.btn-quick-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #3B82F6;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-quick-edit:hover {
+    background: #2563EB;
+}
+
+.btn-quick-edit:active {
+    transform: scale(0.95);
+}
+
+/* Inputs editáveis inline dentro das tabelas de Peças e Serviços */
+.os-table-inline-input {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #1E293B;
+    width: 100%;
+    outline: none;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+}
+
+.os-table-inline-input:hover {
+    background: #FFFFFF;
+    border-color: #CBD5E1;
+}
+
+.os-table-inline-input:focus {
+    background: #FFFFFF;
+    border-color: #2563EB;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.os-table-inline-input.text-center {
+    text-align: center;
+}
+
+.os-table-inline-input.text-right {
+    text-align: right;
+}
+
 /* Totalizador no rodapé da tabela (Imagens 3 e 4) */
 .os-quick-table-total {
     display: flex;

@@ -871,6 +871,37 @@ const OSModule = {
         this.recalcularTotais();
     },
 
+    atualizarLinhaPeca(index, campo, valor) {
+        if (!this.itensPecas[index]) return;
+        if (campo === 'nome') {
+            this.itensPecas[index].nome = String(valor || '').toUpperCase();
+        } else if (campo === 'qtd') {
+            const qtd = Math.max(1, parseInt(valor, 10) || 1);
+            this.itensPecas[index].qtd = qtd;
+            this.itensPecas[index].subtotal = qtd * (Number(this.itensPecas[index].preco) || 0);
+        } else if (campo === 'preco') {
+            const preco = parseFloat(String(valor).replace(/\./g, '').replace(',', '.')) || 0;
+            this.itensPecas[index].preco = preco;
+            this.itensPecas[index].subtotal = (Number(this.itensPecas[index].qtd) || 1) * preco;
+        }
+
+        const subtotalEl = document.getElementById(`subtotal-peca-${index}`);
+        if (subtotalEl) {
+            const sub = Number(this.itensPecas[index].subtotal || 0);
+            subtotalEl.textContent = window.UI ? UI.formatarMoeda(sub) : `R$ ${sub.toFixed(2)}`;
+        }
+
+        this.recalcularTotais();
+    },
+
+    focarEdicaoPeca(index) {
+        const inputNome = document.getElementById(`input-peca-nome-${index}`);
+        if (inputNome) {
+            inputNome.focus();
+            inputNome.select();
+        }
+    },
+
     renderizarLinhasPecas() {
         this.atualizarBadgesAbas();
         const tbody = document.getElementById('tbody-itens-pecas');
@@ -899,21 +930,50 @@ const OSModule = {
 
             return `
                 <tr>
-                    <td style="font-weight:600; color:#1E293B; text-transform:uppercase;">
-                        ${window.UI ? UI.escapeHtml(p.nome || '') : (p.nome || '')}
-                    </td>
-                    <td style="text-align:center; font-weight:700; color:#334155;">
-                        ${qtd}
-                    </td>
-                    <td style="text-align:right; font-weight:600; color:#334155;">
-                        ${preco.toFixed(2).replace('.', ',')}
+                    <td>
+                        <input 
+                            type="text" 
+                            id="input-peca-nome-${idx}"
+                            class="os-table-inline-input"
+                            value="${window.UI ? UI.escapeHtml(p.nome || '') : (p.nome || '')}"
+                            oninput="OSModule.atualizarLinhaPeca(${idx}, 'nome', this.value)"
+                            title="Clique para editar o nome da peça"
+                        >
                     </td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn-quick-del" onclick="OSModule.removerLinhaPeca(${idx})" title="Remover peça">
-                            <i class="ph ph-trash"></i>
-                        </button>
+                        <input 
+                            type="number" 
+                            min="1"
+                            id="input-peca-qtd-${idx}"
+                            class="os-table-inline-input text-center"
+                            value="${qtd}"
+                            oninput="OSModule.atualizarLinhaPeca(${idx}, 'qtd', this.value)"
+                            style="width: 70px; text-align: center;"
+                            title="Clique para editar a quantidade"
+                        >
                     </td>
-                    <td style="text-align:right; font-weight:700; color:#1E293B;">
+                    <td style="text-align:right;">
+                        <input 
+                            type="text" 
+                            id="input-peca-preco-${idx}"
+                            class="os-table-inline-input text-right"
+                            value="${preco.toFixed(2).replace('.', ',')}"
+                            oninput="OSModule.atualizarLinhaPeca(${idx}, 'preco', this.value)"
+                            style="width: 95px; text-align: right;"
+                            title="Clique para editar o preço unitário"
+                        >
+                    </td>
+                    <td style="text-align:center;">
+                        <div style="display:inline-flex; gap:6px; align-items:center; justify-content:center;">
+                            <button type="button" class="btn-quick-edit" onclick="OSModule.focarEdicaoPeca(${idx})" title="Editar peça">
+                                <i class="ph ph-pencil-simple"></i>
+                            </button>
+                            <button type="button" class="btn-quick-del" onclick="OSModule.removerLinhaPeca(${idx})" title="Remover peça">
+                                <i class="ph ph-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td style="text-align:right; font-weight:700; color:#1E293B;" id="subtotal-peca-${idx}">
                         ${window.UI ? UI.formatarMoeda(subtotal) : `R$ ${subtotal.toFixed(2)}`}
                     </td>
                 </tr>
@@ -1146,6 +1206,37 @@ const OSModule = {
         this.recalcularTotais();
     },
 
+    atualizarLinhaServico(index, campo, valor) {
+        if (!this.itensServicos[index]) return;
+        if (campo === 'nome') {
+            this.itensServicos[index].nome = String(valor || '').toUpperCase();
+        } else if (campo === 'qtd') {
+            const qtd = Math.max(1, parseInt(valor, 10) || 1);
+            this.itensServicos[index].qtd = qtd;
+            this.itensServicos[index].subtotal = qtd * (Number(this.itensServicos[index].preco) || 0);
+        } else if (campo === 'preco') {
+            const preco = parseFloat(String(valor).replace(/\./g, '').replace(',', '.')) || 0;
+            this.itensServicos[index].preco = preco;
+            this.itensServicos[index].subtotal = (Number(this.itensServicos[index].qtd) || 1) * preco;
+        }
+
+        const subtotalEl = document.getElementById(`subtotal-servico-${index}`);
+        if (subtotalEl) {
+            const sub = Number(this.itensServicos[index].subtotal || 0);
+            subtotalEl.textContent = window.UI ? UI.formatarMoeda(sub) : `R$ ${sub.toFixed(2)}`;
+        }
+
+        this.recalcularTotais();
+    },
+
+    focarEdicaoServico(index) {
+        const inputNome = document.getElementById(`input-servico-nome-${index}`);
+        if (inputNome) {
+            inputNome.focus();
+            inputNome.select();
+        }
+    },
+
     renderizarLinhasServicos() {
         this.atualizarBadgesAbas();
         const tbody = document.getElementById('tbody-itens-servicos');
@@ -1174,21 +1265,50 @@ const OSModule = {
 
             return `
                 <tr>
-                    <td style="font-weight:600; color:#1E293B; text-transform:uppercase;">
-                        ${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}
-                    </td>
-                    <td style="text-align:center; font-weight:700; color:#334155;">
-                        ${qtd}
-                    </td>
-                    <td style="text-align:right; font-weight:600; color:#334155;">
-                        ${preco.toFixed(2).replace('.', ',')}
+                    <td>
+                        <input 
+                            type="text" 
+                            id="input-servico-nome-${idx}"
+                            class="os-table-inline-input"
+                            value="${window.UI ? UI.escapeHtml(s.nome || '') : (s.nome || '')}"
+                            oninput="OSModule.atualizarLinhaServico(${idx}, 'nome', this.value)"
+                            title="Clique para editar o nome do serviço"
+                        >
                     </td>
                     <td style="text-align:center;">
-                        <button type="button" class="btn-quick-del" onclick="OSModule.removerLinhaServico(${idx})" title="Remover serviço">
-                            <i class="ph ph-trash"></i>
-                        </button>
+                        <input 
+                            type="number" 
+                            min="1"
+                            id="input-servico-qtd-${idx}"
+                            class="os-table-inline-input text-center"
+                            value="${qtd}"
+                            oninput="OSModule.atualizarLinhaServico(${idx}, 'qtd', this.value)"
+                            style="width: 70px; text-align: center;"
+                            title="Clique para editar a quantidade"
+                        >
                     </td>
-                    <td style="text-align:right; font-weight:700; color:#1E293B;">
+                    <td style="text-align:right;">
+                        <input 
+                            type="text" 
+                            id="input-servico-preco-${idx}"
+                            class="os-table-inline-input text-right"
+                            value="${preco.toFixed(2).replace('.', ',')}"
+                            oninput="OSModule.atualizarLinhaServico(${idx}, 'preco', this.value)"
+                            style="width: 95px; text-align: right;"
+                            title="Clique para editar o preço"
+                        >
+                    </td>
+                    <td style="text-align:center;">
+                        <div style="display:inline-flex; gap:6px; align-items:center; justify-content:center;">
+                            <button type="button" class="btn-quick-edit" onclick="OSModule.focarEdicaoServico(${idx})" title="Editar serviço">
+                                <i class="ph ph-pencil-simple"></i>
+                            </button>
+                            <button type="button" class="btn-quick-del" onclick="OSModule.removerLinhaServico(${idx})" title="Remover serviço">
+                                <i class="ph ph-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td style="text-align:right; font-weight:700; color:#1E293B;" id="subtotal-servico-${idx}">
                         ${window.UI ? UI.formatarMoeda(subtotal) : `R$ ${subtotal.toFixed(2)}`}
                     </td>
                 </tr>
