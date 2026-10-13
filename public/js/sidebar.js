@@ -446,6 +446,12 @@ const Sidebar = {
 
         // Alterna os painéis visíveis do ERP
         document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+
+        // Ao sair do módulo de Clientes, limpa a busca automaticamente
+        if (aba !== 'clientes' && window.Clientes && typeof Clientes.aoSair === 'function') {
+            Clientes.aoSair();
+        }
+
         const paneAtivo = document.getElementById(`tab-pane-${aba}`);
         if (paneAtivo) {
             paneAtivo.classList.remove('hidden');

@@ -41,16 +41,39 @@ const Clientes = {
     },
 
     /**
+     * Limpa a pesquisa e restaura o campo de busca
+     */
+    limparBusca() {
+        this.termoBusca = '';
+        clearTimeout(this.timerBusca);
+        const inputBusca = document.getElementById('input-busca-clientes');
+        if (inputBusca) inputBusca.value = '';
+        const btnLimparBusca = document.getElementById('btn-limpar-busca-clientes');
+        if (btnLimparBusca) btnLimparBusca.style.display = 'none';
+    },
+
+    /**
+     * Disparado quando o usuário sai da aba Clientes para outra aba
+     */
+    aoSair() {
+        this.limparBusca();
+        this.voltarParaLista();
+    },
+
+    /**
      * Disparado ao clicar na aba Clientes no menu lateral
      */
     async aoClicarMenu() {
         this.voltarParaLista();
-        if (this.cacheLista && !this.termoBusca) {
+        this.limparBusca();
+        this.paginaAtual = 1;
+
+        if (this.cacheLista) {
             this.renderizarTabela(this.cacheLista.clientes, this.cacheLista.paginacao);
             this.atualizarControlesPaginacao(this.cacheLista.paginacao);
             const badgeTotal = document.getElementById('badge-total-clientes');
             if (badgeTotal) badgeTotal.innerText = this.cacheLista.paginacao.total.toLocaleString('pt-BR');
-            this.carregarLista(this.paginaAtual, false);
+            this.carregarLista(1, false);
         } else {
             await this.carregarLista(1, true);
         }
@@ -122,9 +145,7 @@ const Clientes = {
         if (btnLimparBusca && !btnLimparBusca.dataset.hasListener) {
             btnLimparBusca.dataset.hasListener = 'true';
             btnLimparBusca.addEventListener('click', () => {
-                if (inputBusca) inputBusca.value = '';
-                btnLimparBusca.style.display = 'none';
-                this.termoBusca = '';
+                this.limparBusca();
                 this.paginaAtual = 1;
                 this.carregarLista(1, true);
             });
