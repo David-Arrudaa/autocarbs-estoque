@@ -9,11 +9,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. Inicia verificação de sessão no servidor imediatamente em paralelo com o carregamento das views
     const promessaSessao = API.verificarSessao().catch(() => null);
 
-    // 2. Pré-carrega as views estruturais essenciais (Estoque & Scanner)
+    // 2. Pré-carrega as views estruturais essenciais (Estoque, Scanner e Clientes)
     if (window.ViewLoader) {
         await ViewLoader.loadAll([
             { module: 'estoque', targetId: 'container-modulo-estoque' },
-            { module: 'scanner', targetId: 'container-modulo-scanner' }
+            { module: 'scanner', targetId: 'container-modulo-scanner' },
+            { module: 'clientes', targetId: 'tab-pane-clientes' }
         ]);
     }
 

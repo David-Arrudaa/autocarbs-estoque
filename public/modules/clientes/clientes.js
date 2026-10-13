@@ -20,6 +20,7 @@ const Clientes = {
     timerBusca: null,
     subviewAtiva: 'lista',
     iniciado: false,
+    cacheLista: null,
 
     /**
      * Ponto de entrada do módulo
@@ -27,8 +28,32 @@ const Clientes = {
     async iniciar() {
         this.configurarEventos();
         this.mostrarSubview('lista');
-        await this.carregarLista(1);
+        if (this.cacheLista && !this.termoBusca) {
+            this.renderizarTabela(this.cacheLista.clientes, this.cacheLista.paginacao);
+            this.atualizarControlesPaginacao(this.cacheLista.paginacao);
+            const badgeTotal = document.getElementById('badge-total-clientes');
+            if (badgeTotal) badgeTotal.innerText = this.cacheLista.paginacao.total.toLocaleString('pt-BR');
+            this.carregarLista(1, false);
+        } else {
+            await this.carregarLista(1, true);
+        }
         this.iniciado = true;
+    },
+
+    /**
+     * Disparado ao clicar na aba Clientes no menu lateral
+     */
+    async aoClicarMenu() {
+        this.voltarParaLista();
+        if (this.cacheLista && !this.termoBusca) {
+            this.renderizarTabela(this.cacheLista.clientes, this.cacheLista.paginacao);
+            this.atualizarControlesPaginacao(this.cacheLista.paginacao);
+            const badgeTotal = document.getElementById('badge-total-clientes');
+            if (badgeTotal) badgeTotal.innerText = this.cacheLista.paginacao.total.toLocaleString('pt-BR');
+            this.carregarLista(this.paginaAtual, false);
+        } else {
+            await this.carregarLista(1, true);
+        }
     },
 
     /**
@@ -64,15 +89,14 @@ const Clientes = {
         const formCliente = document.getElementById('form-cliente-erp');
         const btnAddVeiculo = document.getElementById('btn-adicionar-veiculo-lista');
 
-        // Busca instantânea com debounce e remoção de caracteres especiais
+        // Busca instantânea com debounce e suporte a Nome, CPF, Telefone e Placas
         if (inputBusca && !inputBusca.dataset.hasListener) {
             inputBusca.dataset.hasListener = 'true';
             inputBusca.addEventListener('input', (e) => {
                 const cursorPos = e.target.selectionStart;
                 const valorOriginal = e.target.value;
-                // Remove qualquer caractere especial (hífen, pontos, barras, etc.),
-                // permitindo apenas letras, números e espaços
-                const valorLimpo = valorOriginal.replace(/[^a-zA-Z0-9À-ÿ\s]/g, '');
+                // Permite letras, números, espaços e hífen (para busca por placa com ou sem hífen)
+                const valorLimpo = valorOriginal.replace(/[^a-zA-Z0-9À-ÿ\s\-]/g, '');
                 if (valorOriginal !== valorLimpo) {
                     e.target.value = valorLimpo;
                     if (cursorPos !== null) {
@@ -90,7 +114,7 @@ const Clientes = {
                 this.timerBusca = setTimeout(() => {
                     this.termoBusca = val;
                     this.paginaAtual = 1;
-                    this.carregarLista(1);
+                    this.carregarLista(1, true);
                 }, 300);
             });
         }
@@ -102,7 +126,7 @@ const Clientes = {
                 btnLimparBusca.style.display = 'none';
                 this.termoBusca = '';
                 this.paginaAtual = 1;
-                this.carregarLista(1);
+                this.carregarLista(1, true);
             });
         }
 
@@ -111,7 +135,8 @@ const Clientes = {
             btnReload.addEventListener('click', async () => {
                 const icon = document.getElementById('icon-reload-clientes');
                 if (icon) icon.classList.add('ph-spin');
-                await this.carregarLista(this.paginaAtual);
+                this.cacheLista = null;
+                await this.carregarLista(this.paginaAtual, true);
                 if (icon) icon.classList.remove('ph-spin');
             });
         }
@@ -221,18 +246,20 @@ const Clientes = {
     /**
      * Carrega lista paginada de clientes
      */
-    async carregarLista(pagina = 1) {
+    async carregarLista(pagina = 1, mostrarLoading = true) {
         const tbody = document.getElementById('tbody-clientes');
         if (!tbody) return;
 
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                    <i class="ph ph-spinner ph-spin" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--primary);"></i>
-                    Carregando clientes...
-                </td>
-            </tr>
-        `;
+        if (mostrarLoading) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <i class="ph ph-spinner ph-spin" style="font-size: 1.8rem; display: block; margin-bottom: 8px; color: var(--primary);"></i>
+                        Carregando clientes...
+                    </td>
+                </tr>
+            `;
+        }
 
         try {
             const res = await API.listarClientes({
@@ -248,6 +275,14 @@ const Clientes = {
             this.paginaAtual = res.paginacao.pagina;
             this.totalPaginas = res.paginacao.totalPaginas;
 
+            // Salva no cache se for a visualização inicial da página 1
+            if (!this.termoBusca && pagina === 1) {
+                this.cacheLista = {
+                    clientes: res.clientes || [],
+                    paginacao: res.paginacao
+                };
+            }
+
             this.renderizarTabela(res.clientes || [], res.paginacao);
             this.atualizarControlesPaginacao(res.paginacao);
 
@@ -256,19 +291,21 @@ const Clientes = {
 
         } catch (err) {
             console.error('[Clientes] Erro ao carregar lista:', err);
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" style="text-align: center; padding: 35px; color: #ef4444;">
-                        <i class="ph ph-warning-circle" style="font-size: 1.8rem; display: block; margin-bottom: 8px;"></i>
-                        Erro ao carregar clientes: ${err.message}
-                    </td>
-                </tr>
-            `;
+            if (mostrarLoading || !tbody.children.length) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 35px; color: #ef4444;">
+                            <i class="ph ph-warning-circle" style="font-size: 1.8rem; display: block; margin-bottom: 8px;"></i>
+                            Erro ao carregar clientes: ${err.message}
+                        </td>
+                    </tr>
+                `;
+            }
         }
     },
 
     /**
-     * Renderiza a tabela principal com layout limpo e enxuto
+     * Renderiza a tabela principal com layout limpo e identificação de veículos/placas
      */
     renderizarTabela(clientes, paginacao) {
         const tbody = document.getElementById('tbody-clientes');
@@ -291,10 +328,29 @@ const Clientes = {
             const cpf = UI.escapeHtml(cliente.cpf || '-');
             const telefone = UI.escapeHtml(cliente.telefone || '-');
 
+            // Se o cliente tem veículos vinculados (ex: ao buscar por placa), exibe identificação sutil
+            let infoVeiculos = '';
+            if (Array.isArray(cliente.veiculos) && cliente.veiculos.length > 0) {
+                const veiculosTexto = cliente.veiculos
+                    .slice(0, 2)
+                    .map(v => `${v.modelo || ''} (${v.placa || ''})`.trim())
+                    .filter(Boolean)
+                    .join(' • ');
+                if (veiculosTexto) {
+                    infoVeiculos = `<div style="font-size: 0.76rem; color: #64748b; margin-top: 3px; display: flex; align-items: center; gap: 4px;">
+                        <i class="ph ph-car" style="color: var(--primary, #2563eb);"></i>
+                        <span>${UI.escapeHtml(veiculosTexto)}</span>
+                    </div>`;
+                }
+            }
+
             return `
                 <tr>
                     <td style="text-align: center;">${cod}</td>
-                    <td><span class="servico-nome-titulo">${nome}</span></td>
+                    <td>
+                        <span class="servico-nome-titulo">${nome}</span>
+                        ${infoVeiculos}
+                    </td>
                     <td style="font-family: inherit;">${cpf}</td>
                     <td>${telefone}</td>
                     <td style="text-align: right;">
@@ -860,8 +916,9 @@ const Clientes = {
             const res = await API.salvarCliente(dados);
             if (!res.success) throw new Error(res.mensagem || 'Falha ao salvar cliente.');
 
+            this.cacheLista = null;
             this.voltarParaLista();
-            await this.carregarLista(this.paginaAtual);
+            await this.carregarLista(this.paginaAtual, true);
 
         } catch (err) {
             console.error('[Clientes] Erro ao salvar cliente:', err);
@@ -978,8 +1035,9 @@ const Clientes = {
             if (modal) modal.classList.add('hidden');
 
             this.clienteIdParaExcluir = null;
+            this.cacheLista = null;
 
-            await this.carregarLista(this.paginaAtual);
+            await this.carregarLista(this.paginaAtual, true);
 
         } catch (err) {
             console.error('[Clientes] Erro ao excluir:', err);

@@ -24,69 +24,81 @@ class ClientesService {
         const limit = Math.min(100, Math.max(1, parseInt(limite) || 15));
         const offset = (page - 1) * limit;
 
-        let query = supabaseClientes
-            .from('clientes')
-            .select('*, veiculos(*)', { count: 'exact' });
+        // 1. Navegação padrão sem filtro de busca: consulta ultra-rápida e enxuta (sem joins pesados)
+        if (!termoBusca) {
+            const ascending = ordem.toLowerCase() === 'asc';
+            const { data, count, error } = await supabaseClientes
+                .from('clientes')
+                .select('id, nome, cpf, telefone', { count: 'exact' })
+                .order(ordenarPor, { ascending })
+                .range(offset, offset + limit - 1);
 
-        if (termoBusca) {
-            const safe = escaparIlike(termoBusca);
-            // Busca por nome, CPF ou telefone no cliente
-            query = query.or(`nome.ilike.%${safe}%,cpf.ilike.%${safe}%,telefone.ilike.%${safe}%`);
+            if (error) throw error;
+
+            return {
+                clientes: data || [],
+                paginacao: {
+                    total: count || 0,
+                    pagina: page,
+                    limite: limit,
+                    totalPaginas: Math.ceil((count || 0) / limit) || 1
+                }
+            };
         }
 
-        // Ordenação
+        // 2. Quando há termo de busca: pesquisa inteligente por Nome, CPF, Telefone E Placa de Veículo!
+        const safe = escaparIlike(termoBusca);
         const ascending = ordem.toLowerCase() === 'asc';
-        query = query.order(ordenarPor, { ascending });
 
-        // Paginação
-        query = query.range(offset, offset + limit - 1);
+        // Busca nos clientes por nome, CPF ou telefone
+        let queryClientes = supabaseClientes
+            .from('clientes')
+            .select('id, nome, cpf, telefone, veiculos(id, placa, modelo, marca)', { count: 'exact' })
+            .or(`nome.ilike.%${safe}%,cpf.ilike.%${safe}%,telefone.ilike.%${safe}%`)
+            .order(ordenarPor, { ascending })
+            .range(offset, offset + limit - 1);
 
-        const { data, count, error } = await query;
+        const { data, count, error } = await queryClientes;
         if (error) throw error;
 
-        // Se a busca principal por cliente não retornou nada, tenta verificar se o termo era uma placa
         let clientesFinais = data || [];
         let totalCount = count || 0;
 
-        // Se houver termo de busca, também verifica se o termo corresponde a alguma placa de veículo
-        if (termoBusca) {
-            try {
-                const safe = escaparIlike(termoBusca);
-                const limpoPlaca = termoBusca.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        // Busca complementar em veículos por PLACA (com ou sem hífen, maiúscula/minúscula)
+        try {
+            const limpoPlaca = termoBusca.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            let condicoesPlaca = [`placa.ilike.%${safe}%`];
+            if (limpoPlaca && limpoPlaca !== termoBusca.toUpperCase()) {
+                condicoesPlaca.push(`placa.ilike.%${escaparIlike(limpoPlaca)}%`);
+            }
+            if (limpoPlaca.length >= 3) {
+                const comHifen = limpoPlaca.slice(0, 3) + '-' + limpoPlaca.slice(3);
+                condicoesPlaca.push(`placa.ilike.%${escaparIlike(comHifen)}%`);
+            }
 
-                let condicoesPlaca = [`placa.ilike.%${safe}%`];
-                if (limpoPlaca && limpoPlaca !== termoBusca.toUpperCase()) {
-                    condicoesPlaca.push(`placa.ilike.%${escaparIlike(limpoPlaca)}%`);
-                }
-                if (limpoPlaca.length >= 3) {
-                    const comHifen = limpoPlaca.slice(0, 3) + '-' + limpoPlaca.slice(3);
-                    condicoesPlaca.push(`placa.ilike.%${escaparIlike(comHifen)}%`);
-                }
+            const { data: veiculosMatch } = await supabaseClientes
+                .from('veiculos')
+                .select('cliente_id, placa, modelo, marca')
+                .or(condicoesPlaca.join(','));
 
-                const { data: veiculosMatch } = await supabaseClientes
-                    .from('veiculos')
-                    .select('cliente_id')
-                    .or(condicoesPlaca.join(','));
+            if (veiculosMatch && veiculosMatch.length > 0) {
+                const clientIds = [...new Set(veiculosMatch.map(v => v.cliente_id))];
+                const existingIds = new Set(clientesFinais.map(c => c.id));
+                const missingIds = clientIds.filter(id => !existingIds.has(id));
 
-                if (veiculosMatch && veiculosMatch.length > 0) {
-                    const clientIds = [...new Set(veiculosMatch.map(v => v.cliente_id))];
-                    const existingIds = new Set(clientesFinais.map(c => c.id));
-                    const missingIds = clientIds.filter(id => !existingIds.has(id));
+                if (missingIds.length > 0) {
+                    const { data: clientesPorPlaca } = await supabaseClientes
+                        .from('clientes')
+                        .select('id, nome, cpf, telefone, veiculos(id, placa, modelo, marca)')
+                        .in('id', missingIds);
 
-                    if (missingIds.length > 0) {
-                        const { data: clientesPorPlaca } = await supabaseClientes
-                            .from('clientes')
-                            .select('*, veiculos(*)')
-                            .in('id', missingIds);
-
-                        if (clientesPorPlaca && clientesPorPlaca.length > 0) {
-                            clientesFinais = [...clientesFinais, ...clientesPorPlaca];
-                            totalCount += clientesPorPlaca.length;
-                        }
+                    if (clientesPorPlaca && clientesPorPlaca.length > 0) {
+                        clientesFinais = [...clientesFinais, ...clientesPorPlaca];
+                        totalCount += clientesPorPlaca.length;
                     }
                 }
-            } catch (_) {}
-        }
+            }
+        } catch (_) {}
 
         // Higieniza e deduplica veículos por placa e clientes por ID
         const mapaClientes = new Map();
